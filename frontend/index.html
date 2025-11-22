@@ -19,9 +19,19 @@
             color: #333;
         }
 
+        body.modal-open {
+            overflow: hidden;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            transition: filter 0.3s;
+        }
+
+        .container.blurred {
+            filter: blur(4px);
+            pointer-events: none;
         }
 
         header {
@@ -57,6 +67,350 @@
             margin-bottom: 25px;
             color: #667eea;
         }
+
+        /* ============================================
+           GUIDED SETUP MODAL
+           ============================================ */
+        
+        .guided-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .guided-modal-overlay.show {
+            display: flex;
+        }
+
+        .guided-modal {
+            background: white;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: slideUp 0.4s;
+            position: relative;
+        }
+
+        .guided-modal-header {
+            text-align: center;
+            padding: 40px 40px 20px 40px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .guided-modal-header h2 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .guided-modal-header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .guided-modal-body {
+            padding: 40px;
+        }
+
+        .guided-modal-footer {
+            padding: 20px 40px;
+            border-top: 2px solid #f0f0f0;
+            text-align: center;
+        }
+
+        .guided-modal-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .guided-modal-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Welcome Screen */
+        .welcome-choices {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .choice-card {
+            padding: 30px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .choice-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .choice-card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .choice-card-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .choice-card-desc {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .choice-card-time {
+            font-size: 0.85em;
+            color: #999;
+            font-weight: 600;
+        }
+
+        /* Guided Question Screens */
+        .guided-question {
+            display: none;
+            animation: fadeInQuestion 0.4s;
+        }
+
+        .guided-question.active {
+            display: block;
+        }
+
+        @keyframes fadeInQuestion {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .question-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+        }
+
+        /* Progress Dots */
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+            background: #667eea;
+            transform: scale(1.2);
+        }
+
+        .progress-dot.completed {
+            background: #4caf50;
+        }
+
+        /* Big Option Buttons */
+        .big-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .big-option {
+            padding: 30px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .big-option:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .big-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+        }
+
+        .big-option-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .big-option-label {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Mood Chips in Modal */
+        .mood-chips-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .mood-chip-big {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .mood-chip-big:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .mood-chip-big.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Big Time Slider */
+        .big-time-display {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .big-slider {
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+            outline: none;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .big-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .big-slider::-moz-range-thumb {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .slider-labels-big {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Navigation Buttons */
+        .modal-nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal-btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modal-btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .modal-btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* ============================================
+           EXISTING STYLES (PRESERVED)
+           ============================================ */
 
         /* SECTION HEADERS */
         .section-header {
@@ -131,7 +485,7 @@
             font-size: 0.95em;
         }
 
-        /* LIGHTER VISUAL WEIGHT - Multi-select chips */
+        /* Multi-select chips */
         .chip-container {
             display: flex;
             flex-wrap: wrap;
@@ -162,7 +516,7 @@
             border-color: #667eea;
         }
 
-        /* LIGHTER VISUAL WEIGHT - Radio groups */
+        /* Radio groups */
         .radio-group {
             display: flex;
             gap: 10px;
@@ -193,7 +547,7 @@
             border-color: #667eea;
         }
 
-        /* Time slider with discrete steps */
+        /* Time slider */
         .time-display {
             text-align: center;
             font-size: 2.5rem;
@@ -271,7 +625,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
+            z-index: 3000;
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.3s;
@@ -322,17 +676,6 @@
             margin-top: 30px;
         }
 
-        .modal-btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
         .modal-btn.primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -366,53 +709,6 @@
                 transform: translateY(0);
                 opacity: 1;
             }
-        }
-
-        .slider-container {
-            padding: 10px 0;
-        }
-
-        .slider-display {
-            text-align: center;
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 5px;
-            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
-            outline: none;
-            opacity: 0.9;
-            transition: opacity 0.2s;
-        }
-
-        input[type="range"]:hover {
-            opacity: 1;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         /* Recommend button */
@@ -632,10 +928,135 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
+
+            .welcome-choices {
+                grid-template-columns: 1fr;
+            }
+
+            .big-options {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Guided Setup Modal -->
+    <div class="guided-modal-overlay" id="guidedModalOverlay">
+        <div class="guided-modal">
+            <div class="guided-modal-header">
+                <h2>🎮 Welcome to Lutem</h2>
+                <p id="modalHeaderText">Let's find your perfect game!</p>
+            </div>
+
+            <div class="guided-modal-body">
+                <!-- Welcome Screen -->
+                <div class="guided-question active" id="welcomeScreen">
+                    <div class="welcome-choices">
+                        <div class="choice-card" onclick="startQuickSetup()">
+                            <div class="choice-card-icon">🚀</div>
+                            <div class="choice-card-title">Quick Start</div>
+                            <div class="choice-card-desc">Answer 3 simple questions</div>
+                            <div class="choice-card-time">~30 seconds</div>
+                        </div>
+
+                        <div class="choice-card" onclick="useFullForm()">
+                            <div class="choice-card-icon">⚙️</div>
+                            <div class="choice-card-title">Custom Setup</div>
+                            <div class="choice-card-desc">Full control over all options</div>
+                            <div class="choice-card-time">~2 minutes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 1: Energy Level -->
+                <div class="guided-question" id="question1">
+                    <div class="progress-dots">
+                        <div class="progress-dot active"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                    </div>
+
+                    <h3 class="question-title">How are you feeling right now?</h3>
+                    <p class="question-subtitle">Choose what matches your current energy</p>
+
+                    <div class="big-options">
+                        <div class="big-option" data-value="LOW" onclick="selectBigOption(this, 'guidedEnergy')">
+                            <div class="big-option-icon">😌</div>
+                            <div class="big-option-label">Relaxed</div>
+                        </div>
+                        <div class="big-option" data-value="MEDIUM" onclick="selectBigOption(this, 'guidedEnergy')">
+                            <div class="big-option-icon">😊</div>
+                            <div class="big-option-label">Balanced</div>
+                        </div>
+                        <div class="big-option" data-value="HIGH" onclick="selectBigOption(this, 'guidedEnergy')">
+                            <div class="big-option-icon">🔥</div>
+                            <div class="big-option-label">Energized</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-nav-buttons">
+                        <button class="modal-btn modal-btn-secondary" onclick="goToWelcome()">← Back</button>
+                        <button class="modal-btn modal-btn-primary" id="q1NextBtn" disabled onclick="goToQuestion2()">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Question 2: Time -->
+                <div class="guided-question" id="question2">
+                    <div class="progress-dots">
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot active"></div>
+                        <div class="progress-dot"></div>
+                    </div>
+
+                    <h3 class="question-title">How much time do you have?</h3>
+                    <p class="question-subtitle">Drag the slider to set your available time</p>
+
+                    <div class="big-time-display" id="guidedTimeDisplay">30 minutes</div>
+                    <input type="range" id="guidedTimeSlider" min="0" max="7" value="2" step="1" class="big-slider">
+                    <div class="slider-labels-big">
+                        <span>5 min</span>
+                        <span>3+ hrs</span>
+                    </div>
+
+                    <div class="modal-nav-buttons">
+                        <button class="modal-btn modal-btn-secondary" onclick="goToQuestion1()">← Back</button>
+                        <button class="modal-btn modal-btn-primary" onclick="goToQuestion3()">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Question 3: Mood/Goals -->
+                <div class="guided-question" id="question3">
+                    <div class="progress-dots">
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot active"></div>
+                    </div>
+
+                    <h3 class="question-title">What do you want to feel?</h3>
+                    <p class="question-subtitle">Select one or more that resonate with you</p>
+
+                    <div class="mood-chips-grid">
+                        <div class="mood-chip-big" data-value="UNWIND" onclick="toggleMoodChip(this)">😌 Unwind & Relax</div>
+                        <div class="mood-chip-big" data-value="ACHIEVE" onclick="toggleMoodChip(this)">🏆 Achieve & Progress</div>
+                        <div class="mood-chip-big" data-value="ENGAGE" onclick="toggleMoodChip(this)">🎯 Engage & Focus</div>
+                        <div class="mood-chip-big" data-value="EXPLORE" onclick="toggleMoodChip(this)">🗺️ Explore & Discover</div>
+                        <div class="mood-chip-big" data-value="CHALLENGE" onclick="toggleMoodChip(this)">⚡ Challenge Myself</div>
+                        <div class="mood-chip-big" data-value="RECHARGE" onclick="toggleMoodChip(this)">🔋 Recharge Energy</div>
+                    </div>
+
+                    <div class="modal-nav-buttons">
+                        <button class="modal-btn modal-btn-secondary" onclick="goToQuestion2()">← Back</button>
+                        <button class="modal-btn modal-btn-primary" id="q3NextBtn" disabled onclick="submitGuidedSetup()">Get Recommendation 🎮</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guided-modal-footer">
+                <a href="#" onclick="useFullForm(); return false;">Or use the full form for more control →</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Touch Grass Modal -->
     <div class="modal-overlay" id="touchGrassModal">
         <div class="modal-content">
@@ -655,7 +1076,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="mainContainer">
         <header>
             <h1>🎮 LUTEM</h1>
             <p>Your AI-Powered Gaming Companion</p>
@@ -798,6 +1219,202 @@
         }
 
         // ============================================
+        // GUIDED SETUP STATE
+        // ============================================
+        const guidedState = {
+            energy: null,
+            time: 30,
+            moods: []
+        };
+
+        // Show guided modal on page load
+        window.addEventListener('load', () => {
+            showGuidedModal();
+        });
+
+        function showGuidedModal() {
+            document.getElementById('guidedModalOverlay').classList.add('show');
+            document.body.classList.add('modal-open');
+            document.getElementById('mainContainer').classList.add('blurred');
+        }
+
+        function hideGuidedModal() {
+            document.getElementById('guidedModalOverlay').classList.remove('show');
+            document.body.classList.remove('modal-open');
+            document.getElementById('mainContainer').classList.remove('blurred');
+        }
+
+        function startQuickSetup() {
+            showQuestion('question1');
+        }
+
+        function useFullForm() {
+            hideGuidedModal();
+        }
+
+        function showQuestion(questionId) {
+            document.querySelectorAll('.guided-question').forEach(q => q.classList.remove('active'));
+            document.getElementById(questionId).classList.add('active');
+        }
+
+        function goToWelcome() {
+            showQuestion('welcomeScreen');
+        }
+
+        function goToQuestion1() {
+            showQuestion('question1');
+        }
+
+        function goToQuestion2() {
+            showQuestion('question2');
+        }
+
+        function goToQuestion3() {
+            showQuestion('question3');
+        }
+
+        // Big option selection
+        function selectBigOption(element, stateKey) {
+            // Clear other selections
+            element.parentElement.querySelectorAll('.big-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            guidedState.energy = element.dataset.value;
+            
+            // Enable next button
+            document.getElementById('q1NextBtn').disabled = false;
+        }
+
+        // Mood chip toggle
+        function toggleMoodChip(element) {
+            element.classList.toggle('selected');
+            
+            // Update guided state
+            guidedState.moods = Array.from(
+                document.querySelectorAll('.mood-chip-big.selected')
+            ).map(chip => chip.dataset.value);
+            
+            // Enable next button if at least one selected
+            document.getElementById('q3NextBtn').disabled = guidedState.moods.length === 0;
+        }
+
+        // Guided time slider
+        document.getElementById('guidedTimeSlider')?.addEventListener('input', (e) => {
+            const stepIndex = parseInt(e.target.value);
+            const stepValue = getTimeStepValue(stepIndex);
+            const stepLabel = getTimeStepLabel(stepIndex);
+            
+            guidedState.time = stepValue;
+            document.getElementById('guidedTimeDisplay').textContent = stepLabel;
+            
+            if (stepValue === 999) {
+                setTimeout(() => showTouchGrassModal(), 300);
+            }
+        });
+
+        // Submit guided setup
+        async function submitGuidedSetup() {
+            if (guidedState.time === 999) {
+                showTouchGrassModal();
+                return;
+            }
+
+            // Map guided state to full form state
+            state.emotionalGoals = guidedState.moods;
+            state.energyLevel = guidedState.energy;
+            state.availableMinutes = guidedState.time;
+            state.interruptibility = 'MEDIUM'; // Default for guided
+            state.socialPreference = null; // Optional
+            state.timeOfDay = null; // Optional
+
+            // VISUAL UPDATE: Sync full form to match guided choices
+            syncFullFormToGuidedState();
+
+            // Hide modal
+            hideGuidedModal();
+
+            // Show loading in results panel
+            showLoading();
+
+            // Call recommendation API
+            try {
+                const requestBody = {
+                    availableMinutes: state.availableMinutes,
+                    desiredEmotionalGoals: state.emotionalGoals,
+                    requiredInterruptibility: state.interruptibility,
+                    currentEnergyLevel: state.energyLevel,
+                    timeOfDay: state.timeOfDay,
+                    socialPreference: state.socialPreference
+                };
+
+                console.log('=== GUIDED SETUP REQUEST ===');
+                console.log('Request body:', requestBody);
+
+                const response = await fetch('http://localhost:8080/recommendations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Received data:', data);
+                displayResults(data);
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                resultsPanel.innerHTML = `
+                    <div style="color: red; text-align: center; padding: 40px;">
+                        <p style="font-size: 1.2em;">⚠️ Error</p>
+                        <p>Could not fetch recommendations. Please make sure the backend is running.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Sync full form visual state to match guided selections
+        function syncFullFormToGuidedState() {
+            // 1. Update emotional goal chips
+            emotionalGoalsContainer.querySelectorAll('.chip').forEach(chip => {
+                if (guidedState.moods.includes(chip.dataset.value)) {
+                    chip.classList.add('selected');
+                } else {
+                    chip.classList.remove('selected');
+                }
+            });
+
+            // 2. Update energy level radio buttons
+            energyLevelContainer.querySelectorAll('.radio-option').forEach(option => {
+                if (option.dataset.value === guidedState.energy) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+
+            // 3. Update time slider
+            const timeIndex = TIME_STEPS.findIndex(step => step.value === guidedState.time);
+            if (timeIndex !== -1) {
+                timeSlider.value = timeIndex;
+                timeDisplay.textContent = TIME_STEPS[timeIndex].label;
+            }
+
+            // 4. Update interruptibility (set to MEDIUM as default)
+            interruptibilityContainer.querySelectorAll('.radio-option').forEach(option => {
+                if (option.dataset.value === 'MEDIUM') {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        // ============================================
         // TOUCH GRASS MODAL
         // ============================================
         function showTouchGrassModal() {
@@ -809,11 +1426,19 @@
             const modal = document.getElementById('touchGrassModal');
             modal.classList.remove('show');
             
-            if (!keepSelection) {
-                const timeSlider = document.getElementById('timeSlider');
-                timeSlider.value = 6;
-                state.availableMinutes = 180;
-                document.getElementById('timeDisplay').textContent = '3 hours';
+            // Always reset to 3 hours (even if "I'm Ready!" is clicked)
+            // This prevents the modal from appearing again on recommendation
+            const timeSlider = document.getElementById('timeSlider');
+            timeSlider.value = 6;
+            state.availableMinutes = 180;
+            document.getElementById('timeDisplay').textContent = '3 hours';
+
+            // Also reset guided slider if in guided mode
+            const guidedSlider = document.getElementById('guidedTimeSlider');
+            if (guidedSlider) {
+                guidedSlider.value = 6;
+                guidedState.time = 180;
+                document.getElementById('guidedTimeDisplay').textContent = '3 hours';
             }
         }
 
@@ -829,7 +1454,7 @@
         });
 
         // ============================================
-        // STATE & GAME DATA
+        // STATE & FORM MANAGEMENT
         // ============================================
         const state = {
             emotionalGoals: [],
@@ -869,7 +1494,7 @@
             setupRadioGroup(interruptibilityContainer, 'interruptibility');
             setupRadioGroup(energyLevelContainer, 'energyLevel');
             setupRadioGroup(timeOfDayContainer, 'timeOfDay', true);
-            setupRadioGroup(socialPreferenceContainer, 'socialPreference', true); // Made optional
+            setupRadioGroup(socialPreferenceContainer, 'socialPreference', true);
 
             // Time slider with discrete steps
             timeSlider.addEventListener('input', (e) => {
@@ -917,7 +1542,7 @@
                 return;
             }
 
-            // Validation - only require core fields
+            // Validation
             if (state.emotionalGoals.length === 0) {
                 alert('Please select at least one emotional goal');
                 return;
