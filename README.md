@@ -9,6 +9,7 @@
 **Last Updated:** November 22, 2025
 
 ### ✨ What's Working Now
+- ✅ **Guided Setup Modal** - Two-path onboarding (Quick Start vs Custom Setup)
 - ✅ **Smart Recommendation Engine** - 5-dimensional scoring algorithm
 - ✅ **20 Diverse Games** - Fully categorized with rich metadata
 - ✅ **6-Parameter Input System** - Emotional goals, energy, flexibility, time, social preference
@@ -22,13 +23,14 @@
 ### 🎯 QuickWins Progress
 - ✅ **#1: Loading Spinner** - COMPLETE (with rotating tips)
 - ✅ **#2: Fun Slider** - COMPLETE (discrete steps + "Touch Grass" modal)
-- ⏳ **#3: Display Top 3 Alternatives** - NEXT (frontend work, backend ready)
+- ✅ **#3: UI Cleanup** - COMPLETE (collapsible advanced options, visual hierarchy)
+- ✅ **#4: Guided Setup Modal** - COMPLETE (Quick Start wizard + Custom Setup)
 
 ### 🚀 Up Next
-- UI/UX Enhancement Phase - Modern design refresh
-- Expand game library (40+ games)
+- Display all 3 alternatives in frontend UI
 - Session feedback system (1-5 stars)
 - Weekly satisfaction recap
+- Expand game library (40+ games)
 - Database integration (PostgreSQL)
 
 👉 **See [SESSION_COMPLETE_SUMMARY.md](SESSION_COMPLETE_SUMMARY.md) for detailed technical overview**
@@ -197,11 +199,38 @@ The Witcher 3 • Minecraft • Dark Souls III • Civilization VI • Valorant 
 
 ## 💡 Key Features
 
+### 🚀 Guided Setup Modal (NEW!)
+Two-path onboarding system for different user preferences:
+
+**Quick Start (~30 seconds):**
+- Step 1: Choose your energy level (Relaxed 😌 / Balanced 😊 / Energized 🔥)
+- Step 2: Set available time with big friendly slider
+- Step 3: Select emotional goals (multi-select mood chips)
+- Progress dots show current step
+- Back/Next navigation on every step
+- Auto-fills sensible defaults for advanced options
+
+**Custom Setup:**
+- Direct access to full form
+- Complete control over all 6 parameters
+- Collapsible advanced options (Time of Day, Social Preference)
+- Visual hierarchy with clear sections
+
+**Smart Features:**
+- Welcome modal appears on page load
+- Background blurs when modal is active
+- Smooth animations between questions
+- "Skip to full form" link always visible
+- Form state syncs after wizard completion
+- Both paths lead to same powerful recommendation engine
+
 ### 🌱 "Touch Grass" Modal
 When selecting 3+ hours on the time slider:
 - Friendly reminder to take breaks
 - Promotes healthy gaming habits
 - Two options: keep selection or adjust time
+- Always resets to 3 hours after closing (prevents re-trigger)
+- Appears above all other modals
 
 ### 🎯 Multi-Dimensional Matching
 Goes beyond simple genre matching:
