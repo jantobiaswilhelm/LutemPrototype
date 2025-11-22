@@ -58,32 +58,94 @@
             color: #667eea;
         }
 
+        /* SECTION HEADERS */
+        .section-header {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #667eea;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-header:first-of-type {
+            margin-top: 0;
+        }
+
+        /* ADVANCED OPTIONS TOGGLE */
+        .advanced-toggle {
+            margin: 30px 0 15px 0;
+            padding: 12px 18px;
+            background: #f8f9ff;
+            border: 1px solid #e0e7ff;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .advanced-toggle:hover {
+            background: #eef2ff;
+            border-color: #667eea;
+        }
+
+        .advanced-toggle-text {
+            font-weight: 600;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .advanced-toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+
+        .advanced-toggle.open .advanced-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .advanced-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .advanced-content.open {
+            max-height: 600px;
+        }
+
         .input-group {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-weight: 600;
             color: #555;
+            font-size: 0.95em;
         }
 
-        /* Multi-select chips */
+        /* LIGHTER VISUAL WEIGHT - Multi-select chips */
         .chip-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
 
         .chip {
-            padding: 10px 18px;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
+            padding: 8px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
             background: white;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 0.95em;
+            font-size: 0.9em;
             font-weight: 500;
             user-select: none;
         }
@@ -91,7 +153,7 @@
         .chip:hover {
             border-color: #667eea;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.15);
         }
 
         .chip.selected {
@@ -100,22 +162,23 @@
             border-color: #667eea;
         }
 
-        /* Radio groups */
+        /* LIGHTER VISUAL WEIGHT - Radio groups */
         .radio-group {
             display: flex;
-            gap: 12px;
+            gap: 10px;
         }
 
         .radio-option {
             flex: 1;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
             background: white;
             cursor: pointer;
             text-align: center;
             transition: all 0.3s;
             font-weight: 500;
+            font-size: 0.9em;
             user-select: none;
         }
 
@@ -130,7 +193,6 @@
             border-color: #667eea;
         }
 
-        /* Time slider */
         /* Time slider with discrete steps */
         .time-display {
             text-align: center;
@@ -366,6 +428,7 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 30px;
         }
 
         .recommend-btn:hover:not(:disabled) {
@@ -573,6 +636,25 @@
     </style>
 </head>
 <body>
+    <!-- Touch Grass Modal -->
+    <div class="modal-overlay" id="touchGrassModal">
+        <div class="modal-content">
+            <div class="modal-icon">🌱</div>
+            <h2>Time to Touch Grass?</h2>
+            <p>3+ hours of gaming is a marathon session!</p>
+            <p style="margin-top: 15px; font-weight: 600;">Before you dive in, consider:</p>
+            <ul style="text-align: left; margin-top: 10px;">
+                <li>Have you moved your body today?</li>
+                <li>Have you had water recently?</li>
+                <li>Is your space comfortable for a long session?</li>
+            </ul>
+            <div class="modal-buttons">
+                <button class="modal-btn secondary" onclick="closeTouchGrassModal(false)">I'll Choose Less Time</button>
+                <button class="modal-btn primary" onclick="closeTouchGrassModal(true)">I'm Ready! 🎮</button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>🎮 LUTEM</h1>
@@ -584,9 +666,12 @@
             <div class="input-panel">
                 <h2>What are you looking for?</h2>
 
-                <!-- 1. Emotional Goals (Multi-select) -->
+                <!-- SECTION 1: WHAT MATTERS MOST -->
+                <div class="section-header">🎯 What matters most?</div>
+
+                <!-- 1. Emotional Goals -->
                 <div class="input-group">
-                    <label>🎯 What do you want to feel? (Select all that apply)</label>
+                    <label>What do you want to feel? (Select all that apply)</label>
                     <div class="chip-container" id="emotionalGoals">
                         <div class="chip" data-value="UNWIND">Unwind & Relax</div>
                         <div class="chip" data-value="ACHIEVE">Achieve & Progress</div>
@@ -597,51 +682,9 @@
                     </div>
                 </div>
 
-                <!-- 2. Interruptibility -->
+                <!-- 2. Time Slider -->
                 <div class="input-group">
-                    <label>⏸️ How flexible is your time?</label>
-                    <div class="radio-group" id="interruptibility">
-                        <div class="radio-option" data-value="HIGH">Very Flexible</div>
-                        <div class="radio-option" data-value="MEDIUM">Moderately</div>
-                        <div class="radio-option" data-value="LOW">Needs Completion</div>
-                    </div>
-                </div>
-
-                <!-- 3. Energy Level -->
-                <div class="input-group">
-                    <label>⚡ What's your energy level?</label>
-                    <div class="radio-group" id="energyLevel">
-                        <div class="radio-option" data-value="HIGH">High Energy</div>
-                        <div class="radio-option" data-value="MEDIUM">Medium</div>
-                        <div class="radio-option" data-value="LOW">Low Energy</div>
-                    </div>
-                </div>
-
-                <!-- 4. Time of Day (Optional) -->
-                <div class="input-group">
-                    <label>🕐 Time of day? (Optional)</label>
-                    <div class="radio-group" id="timeOfDay">
-                        <div class="radio-option" data-value="MORNING">Morning</div>
-                        <div class="radio-option" data-value="MIDDAY">Midday</div>
-                        <div class="radio-option" data-value="AFTERNOON">Afternoon</div>
-                        <div class="radio-option" data-value="EVENING">Evening</div>
-                        <div class="radio-option" data-value="LATE_NIGHT">Late Night</div>
-                    </div>
-                </div>
-
-                <!-- 5. Social Preference -->
-                <div class="input-group">
-                    <label>👥 How do you want to play?</label>
-                    <div class="radio-group" id="socialPreference">
-                        <div class="radio-option" data-value="SOLO">Solo</div>
-                        <div class="radio-option" data-value="COOP">Co-op</div>
-                        <div class="radio-option" data-value="COMPETITIVE">Competitive</div>
-                    </div>
-                </div>
-
-                <!-- 6. Time Slider -->
-                <div class="input-group">
-                    <label>⏱️ How much time do you have?</label>
+                    <label>How much time do you have?</label>
                     <div class="time-display" id="timeDisplay">30 minutes</div>
                     <input type="range" id="timeSlider" min="0" max="7" value="2" step="1" class="discrete-slider">
                     <div class="time-labels">
@@ -653,6 +696,64 @@
                         <span>2hr</span>
                         <span>3hr</span>
                         <span>3hr+</span>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: RIGHT NOW I'M FEELING -->
+                <div class="section-header">⚡ Right now I'm feeling...</div>
+
+                <!-- 3. Energy Level -->
+                <div class="input-group">
+                    <label>What's your energy level?</label>
+                    <div class="radio-group" id="energyLevel">
+                        <div class="radio-option" data-value="HIGH">High Energy</div>
+                        <div class="radio-option" data-value="MEDIUM">Medium</div>
+                        <div class="radio-option" data-value="LOW">Low Energy</div>
+                    </div>
+                </div>
+
+                <!-- 4. Interruptibility -->
+                <div class="input-group">
+                    <label>How flexible is your time?</label>
+                    <div class="radio-group" id="interruptibility">
+                        <div class="radio-option" data-value="HIGH">Very Flexible</div>
+                        <div class="radio-option" data-value="MEDIUM">Moderately</div>
+                        <div class="radio-option" data-value="LOW">Needs Completion</div>
+                    </div>
+                </div>
+
+                <!-- ADVANCED OPTIONS TOGGLE -->
+                <div class="advanced-toggle" id="advancedToggle">
+                    <span class="advanced-toggle-text">
+                        <span>⚙️</span>
+                        <span>Advanced Options</span>
+                        <span style="font-size: 0.85em; font-weight: 400; color: #999;">(Optional)</span>
+                    </span>
+                    <span class="advanced-toggle-icon">▼</span>
+                </div>
+
+                <!-- ADVANCED OPTIONS CONTENT -->
+                <div class="advanced-content" id="advancedContent">
+                    <!-- 5. Time of Day -->
+                    <div class="input-group">
+                        <label>Time of day?</label>
+                        <div class="radio-group" id="timeOfDay">
+                            <div class="radio-option" data-value="MORNING">Morning</div>
+                            <div class="radio-option" data-value="MIDDAY">Midday</div>
+                            <div class="radio-option" data-value="AFTERNOON">Afternoon</div>
+                            <div class="radio-option" data-value="EVENING">Evening</div>
+                            <div class="radio-option" data-value="LATE_NIGHT">Late Night</div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Social Preference -->
+                    <div class="input-group">
+                        <label>How do you want to play?</label>
+                        <div class="radio-group" id="socialPreference">
+                            <div class="radio-option" data-value="SOLO">Solo</div>
+                            <div class="radio-option" data-value="COOP">Co-op</div>
+                            <div class="radio-option" data-value="COMPETITIVE">Competitive</div>
+                        </div>
                     </div>
                 </div>
 
@@ -685,7 +786,7 @@
             { value: 60, label: '1 hour' },
             { value: 120, label: '2 hours' },
             { value: 180, label: '3 hours' },
-            { value: 999, label: '3+ hours 🌱' } // Special value for marathon sessions
+            { value: 999, label: '3+ hours 🌱' }
         ];
 
         function getTimeStepValue(index) {
@@ -709,7 +810,6 @@
             modal.classList.remove('show');
             
             if (!keepSelection) {
-                // Reset to 3 hours (index 6)
                 const timeSlider = document.getElementById('timeSlider');
                 timeSlider.value = 6;
                 state.availableMinutes = 180;
@@ -718,8 +818,19 @@
         }
 
         // ============================================
+        // ADVANCED OPTIONS TOGGLE
+        // ============================================
+        const advancedToggle = document.getElementById('advancedToggle');
+        const advancedContent = document.getElementById('advancedContent');
+
+        advancedToggle.addEventListener('click', () => {
+            advancedToggle.classList.toggle('open');
+            advancedContent.classList.toggle('open');
+        });
+
+        // ============================================
         // STATE & GAME DATA
-        // ============================================ management
+        // ============================================
         const state = {
             emotionalGoals: [],
             interruptibility: null,
@@ -757,8 +868,8 @@
             // Radio groups (single-select)
             setupRadioGroup(interruptibilityContainer, 'interruptibility');
             setupRadioGroup(energyLevelContainer, 'energyLevel');
-            setupRadioGroup(timeOfDayContainer, 'timeOfDay', true); // optional
-            setupRadioGroup(socialPreferenceContainer, 'socialPreference');
+            setupRadioGroup(timeOfDayContainer, 'timeOfDay', true);
+            setupRadioGroup(socialPreferenceContainer, 'socialPreference', true); // Made optional
 
             // Time slider with discrete steps
             timeSlider.addEventListener('input', (e) => {
@@ -769,7 +880,6 @@
                 state.availableMinutes = stepValue;
                 timeDisplay.textContent = stepLabel;
                 
-                // Show modal if 3+ hours selected
                 if (stepValue === 999) {
                     setTimeout(() => showTouchGrassModal(), 300);
                 }
@@ -782,7 +892,6 @@
         function setupRadioGroup(container, stateKey, isOptional = false) {
             container.querySelectorAll('.radio-option').forEach(option => {
                 option.addEventListener('click', () => {
-                    // Allow deselection for optional fields
                     if (isOptional && option.classList.contains('selected')) {
                         option.classList.remove('selected');
                         state[stateKey] = null;
@@ -803,27 +912,24 @@
 
         // Get recommendation
         async function getRecommendation() {
-            // Handle 3+ hours case
             if (state.availableMinutes === 999) {
                 showTouchGrassModal();
-                return; // Don't make API call for marathon sessions
+                return;
             }
 
-            // Validation
+            // Validation - only require core fields
             if (state.emotionalGoals.length === 0) {
                 alert('Please select at least one emotional goal');
                 return;
             }
-            if (!state.interruptibility || !state.energyLevel || !state.socialPreference) {
-                alert('Please complete all required fields (marked with labels)');
+            if (!state.interruptibility || !state.energyLevel) {
+                alert('Please complete all required fields');
                 return;
             }
 
-            // Show loading state
             showLoading();
 
             try {
-                // Transform state to match backend field names
                 const requestBody = {
                     availableMinutes: state.availableMinutes,
                     desiredEmotionalGoals: state.emotionalGoals,
@@ -834,9 +940,7 @@
                 };
 
                 console.log('=== REQUEST BEING SENT ===');
-                console.log('State:', state);
                 console.log('Request body:', requestBody);
-                console.log('JSON:', JSON.stringify(requestBody, null, 2));
 
                 const response = await fetch('http://localhost:8080/recommendations', {
                     method: 'POST',
@@ -852,9 +956,6 @@
 
                 const data = await response.json();
                 console.log('Received data:', data);
-                console.log('topRecommendation:', data.topRecommendation);
-                console.log('reason:', data.reason);
-                console.log('alternatives:', data.alternatives);
                 displayResults(data);
             } catch (error) {
                 console.error('Error fetching recommendations:', error);
@@ -914,9 +1015,6 @@
             const alternatives = data.alternatives || [];
             const alternativeReasons = data.alternativeReasons || [];
 
-            console.log('topGame:', topGame);
-            console.log('topReason:', topReason);
-
             if (!topGame) {
                 resultsPanel.innerHTML = `
                     <div style="color: red; text-align: center; padding: 40px;">
@@ -938,7 +1036,7 @@
                 html += '<h3>🎯 Alternative Options</h3>';
                 alternatives.forEach((alt, index) => {
                     const altReason = alternativeReasons[index] || 'Good alternative match';
-                    const score = 85 - (index * 10); // 85%, 75% for alternatives
+                    const score = 85 - (index * 10);
                     html += createGameCard(alt, altReason, false, score);
                 });
                 html += '</div>';
@@ -951,8 +1049,6 @@
         }
 
         function createGameCard(game, reason, isTopPick, score) {
-            console.log('createGameCard called with game:', game);
-            
             if (!game || !game.name) {
                 console.error('Invalid game object:', game);
                 return '<div class="game-card"><p>Error: Invalid game data</p></div>';
@@ -999,29 +1095,34 @@
                     </div>
                 `;
             } catch (error) {
-                console.error('Error creating game card:', error, game);
+                console.error('Error creating game card:', error);
                 return '<div class="game-card"><p>Error rendering game card</p></div>';
             }
         }
 
-        function formatEnum(value) {
-            if (!value) return '';
-            return value.split('_')
+        function formatEnum(str) {
+            if (!str) return '';
+            return str.split('_')
                 .map(word => word.charAt(0) + word.slice(1).toLowerCase())
                 .join(' ');
         }
 
         function setupFeedbackListeners() {
             document.querySelectorAll('.rating-btn').forEach(btn => {
-                btn.addEventListener('click', async function() {
-                    const gameId = parseInt(this.dataset.gameId);
-                    const rating = parseInt(this.dataset.rating);
+                btn.addEventListener('click', async (e) => {
+                    const gameId = parseInt(e.target.dataset.gameId);
+                    const rating = parseInt(e.target.dataset.rating);
 
                     // Visual feedback
-                    this.parentElement.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
+                    const container = e.target.closest('.feedback-section');
+                    container.querySelectorAll('.rating-btn').forEach(b => {
+                        b.classList.remove('selected');
+                        if (parseInt(b.dataset.gameId) === gameId && parseInt(b.dataset.rating) <= rating) {
+                            b.classList.add('selected');
+                        }
+                    });
 
-                    // Submit feedback
+                    // Send to backend
                     try {
                         await fetch('http://localhost:8080/sessions/feedback', {
                             method: 'POST',
@@ -1033,36 +1134,16 @@
                                 satisfactionScore: rating
                             })
                         });
-
-                        console.log(`Feedback submitted: Game ${gameId}, Rating ${rating}`);
+                        console.log(`Feedback sent: Game ${gameId}, Rating ${rating}`);
                     } catch (error) {
-                        console.error('Error submitting feedback:', error);
+                        console.error('Error sending feedback:', error);
                     }
                 });
             });
         }
 
-        // Initialize app
+        // Initialize on page load
         init();
     </script>
-
-    <!-- Touch Grass Modal -->
-    <div class="modal-overlay" id="touchGrassModal">
-        <div class="modal-content">
-            <div class="modal-icon">🌱☀️</div>
-            <h2>Time to Touch Grass!</h2>
-            <p>Hey gamer! 3+ hours is a marathon session. Remember to:</p>
-            <ul style="text-align: left; margin: 20px 0;">
-                <li>🚶 Take breaks every hour</li>
-                <li>💧 Stay hydrated</li>
-                <li>🌳 Maybe step outside?</li>
-            </ul>
-            <div class="modal-buttons">
-                <button class="modal-btn primary" onclick="closeTouchGrassModal(true)">Got it! 👍</button>
-                <button class="modal-btn secondary" onclick="closeTouchGrassModal(false)">Change Time 🕐</button>
-            </div>
-        </div>
-    </div>
-
 </body>
 </html>
