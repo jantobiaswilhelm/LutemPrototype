@@ -48,39 +48,42 @@ Now when you click **Run** (Shift+F10):
 
 ---
 
-## Option 2: Shell Script Run Configuration
+## Option 2: Application Run Configuration (For .bat Files)
 
-If you prefer running the .bat file directly:
+⚠️ **WINDOWS NOTE:** "Shell Script" config doesn't work for .bat files!  
+Use "Application" config with cmd.exe instead.
 
-### Step 1: Install Shell Script Plugin
-
-1. `File` → `Settings` → `Plugins`
-2. Search for **"Shell Script"**
-3. Install it (should be built-in)
-4. Restart IntelliJ
-
-### Step 2: Create Shell Script Configuration
+### Step 1: Create Application Configuration
 
 1. **Open Run Configurations:**
    - `Run` → `Edit Configurations...`
-   - Click `+` → `Shell Script`
+   - Click `+` → **`Application`** (NOT Shell Script!)
 
 2. **Configure:**
    ```
    Name: Lutem Full Stack
-   Script path: D:\Lutem\ProjectFiles\lutem-mvp\start-lutem.bat
+   
+   Path to executable: C:\Windows\System32\cmd.exe
+   
+   Program arguments: /c "start-lutem.bat"
+   
    Working directory: D:\Lutem\ProjectFiles\lutem-mvp
-   Execute in terminal: ✓ (checked)
    ```
 
-3. **Click Apply & OK**
+3. **Remove Build Task:**
+   - In "Before launch" section, click `-` to remove "Build"
+   - (We don't need to build to run a batch file)
 
-4. **Set as Default:**
+4. **Click Apply & OK**
+
+5. **Set as Default:**
    - Click the dropdown next to Run button (top right)
    - Select "Lutem Full Stack"
 
 ### Result:
 Click **Run** button → Everything starts via .bat script
+
+**Note:** This works but has no debugging. Consider Option 1 instead!
 
 ---
 
