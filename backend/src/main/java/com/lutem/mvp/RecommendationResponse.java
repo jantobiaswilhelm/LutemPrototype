@@ -1,21 +1,48 @@
 package com.lutem.mvp;
 
+import java.util.List;
+
 public class RecommendationResponse {
-    private Game game;
+    private Game topRecommendation;
+    private List<Game> alternatives; // Top 2 alternatives
     private String reason;
-    
+    private List<String> alternativeReasons; // Reasons for each alternative
+
     // Constructors
     public RecommendationResponse() {}
-    
-    public RecommendationResponse(Game game, String reason) {
-        this.game = game;
+
+    public RecommendationResponse(Game topRecommendation, List<Game> alternatives, 
+                                  String reason, List<String> alternativeReasons) {
+        this.topRecommendation = topRecommendation;
+        this.alternatives = alternatives;
         this.reason = reason;
+        this.alternativeReasons = alternativeReasons;
     }
-    
+
+    // Backward compatibility with old single-game constructor
+    public RecommendationResponse(Game game, String reason) {
+        this.topRecommendation = game;
+        this.reason = reason;
+        this.alternatives = List.of();
+        this.alternativeReasons = List.of();
+    }
+
     // Getters and Setters
-    public Game getGame() { return game; }
-    public void setGame(Game game) { this.game = game; }
-    
+    public Game getTopRecommendation() { return topRecommendation; }
+    public void setTopRecommendation(Game topRecommendation) { 
+        this.topRecommendation = topRecommendation; 
+    }
+
+    public List<Game> getAlternatives() { return alternatives; }
+    public void setAlternatives(List<Game> alternatives) { 
+        this.alternatives = alternatives; 
+    }
+
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }
+
+    public List<String> getAlternativeReasons() { return alternativeReasons; }
+    public void setAlternativeReasons(List<String> alternativeReasons) { 
+        this.alternativeReasons = alternativeReasons; 
+    }
 }

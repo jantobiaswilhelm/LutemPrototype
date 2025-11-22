@@ -3,160 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lutem MVP</title>
+    <title>Lutem - AI-Powered Gaming Recommendations</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
+            color: #333;
         }
-        
+
         .container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 600px;
-            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        
-        h1 {
-            color: #667eea;
+
+        header {
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: white;
         }
-        
-        .form-group {
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+        }
+
+        .input-panel, .results-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .input-panel h2 {
+            margin-bottom: 25px;
+            color: #667eea;
+        }
+
+        .input-group {
             margin-bottom: 25px;
         }
-        
-        label {
+
+        .input-group label {
             display: block;
-            margin-bottom: 8px;
-            color: #333;
+            margin-bottom: 10px;
             font-weight: 600;
+            color: #555;
         }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
+
+        /* Multi-select chips */
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            padding: 10px 18px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            font-weight: 500;
+            user-select: none;
         }
-        
-        input:focus, select:focus {
-            outline: none;
+
+        .chip:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .chip.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border-color: #667eea;
         }
-        
-        /* Time slider styles */
+
+        /* Radio groups */
+        .radio-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .radio-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .radio-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .radio-option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Time slider */
+        /* Time slider with discrete steps */
         .time-display {
             text-align: center;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #667eea;
             margin-bottom: 20px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        
-        .slider {
+
+        .discrete-slider {
             width: 100%;
             height: 8px;
             border-radius: 5px;
             background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
             outline: none;
-            -webkit-appearance: none;
-            margin-bottom: 10px;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+            cursor: pointer;
         }
-        
-        .slider::-webkit-slider-thumb {
+
+        .discrete-slider:hover {
+            opacity: 1;
+        }
+
+        .discrete-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             background: white;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            border: 3px solid #667eea;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
             transition: transform 0.2s;
         }
-        
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+
+        .discrete-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
         }
-        
-        .slider::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
+
+        .discrete-slider::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             background: white;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            border: 3px solid #667eea;
+            border: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
             transition: transform 0.2s;
         }
-        
-        .slider::-moz-range-thumb:hover {
-            transform: scale(1.2);
+
+        .discrete-slider::-moz-range-thumb:hover {
+            transform: scale(1.1);
         }
-        
+
         .time-labels {
             display: flex;
             justify-content: space-between;
-            font-size: 0.75rem;
+            margin-top: 10px;
+            font-size: 0.85rem;
             color: #666;
-            margin-top: 5px;
         }
-        
-        /* Touch Grass Popup */
+
+        .time-labels span {
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Touch Grass Modal */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeIn 0.3s;
         }
-        
+
         .modal-overlay.show {
             display: flex;
         }
-        
-        .modal {
+
+        .modal-content {
             background: white;
-            border-radius: 20px;
             padding: 40px;
+            border-radius: 20px;
             max-width: 500px;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.4s ease-out;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s;
         }
-        
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .modal-content ul {
+            padding-left: 20px;
+        }
+
+        .modal-content li {
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal-btn.secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .modal-btn.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         @keyframes slideUp {
             from {
-                transform: translateY(50px);
+                transform: translateY(30px);
                 opacity: 0;
             }
             to {
@@ -164,209 +305,378 @@
                 opacity: 1;
             }
         }
-        
-        .modal-emoji {
-            font-size: 5rem;
-            margin-bottom: 20px;
+
+        .slider-container {
+            padding: 10px 0;
         }
-        
-        .modal h2 {
+
+        .slider-display {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
             color: #667eea;
             margin-bottom: 15px;
         }
-        
-        .modal p {
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        
-        .modal button {
-            width: auto;
-            padding: 12px 30px;
-            margin: 5px;
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+            outline: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
         }
 
-        
-        button {
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Recommend button */
+        .recommend-btn {
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            border-radius: 12px;
+            font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, opacity 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-        
-        button:hover:not(:disabled) {
+
+        .recommend-btn:hover:not(:disabled) {
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
-        
-        button:disabled {
+
+        .recommend-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
-        
-        /* Loading Spinner */
+
+        /* Loading spinner */
         .loading {
-            display: none;
             text-align: center;
-            margin-top: 30px;
-            padding: 30px;
-            background: #f5f5f5;
-            border-radius: 8px;
+            padding: 60px 20px;
         }
-        
-        .loading.show {
-            display: block;
-            animation: fadeIn 0.3s ease-in;
-        }
-        
+
         .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
             width: 50px;
             height: 50px;
-            border: 5px solid #e0e0e0;
-            border-top: 5px solid #667eea;
-            border-radius: 50%;
-            margin: 0 auto 20px;
             animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        .loading-text {
+
+        .loading-tips {
+            font-size: 1.1em;
             color: #667eea;
-            font-size: 1.2rem;
+            font-weight: 500;
+            margin-top: 15px;
+            min-height: 30px;
+            transition: opacity 0.3s;
+        }
+
+        /* Game cards */
+        .game-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .game-card.top-pick {
+            border: 3px solid #667eea;
+            background: linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%);
+        }
+
+        .top-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
             font-weight: 600;
             margin-bottom: 15px;
         }
-        
-        .loading-tip {
-            color: #666;
-            font-style: italic;
-            min-height: 40px;
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .result {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            display: none;
-        }
-        
-        .result.show {
-            display: block;
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        .game-title {
-            font-size: 1.5rem;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .feedback {
+
+        .game-header {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
         }
-        
-        .feedback button {
-            width: auto;
-            padding: 10px 20px;
-            font-size: 1.2rem;
+
+        .game-title {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .match-score {
+            background: #f0f4ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.95em;
+        }
+
+        .game-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .meta-tag {
+            padding: 6px 14px;
+            background: #f5f5f5;
+            border-radius: 16px;
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .game-details {
+            margin: 15px 0;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .game-details strong {
+            color: #333;
+            display: inline-block;
+            min-width: 160px;
+        }
+
+        .recommendation-reason {
+            background: #f8f9ff;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #555;
+            font-style: italic;
+        }
+
+        .alternatives-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px dashed #e0e0e0;
+        }
+
+        .alternatives-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .feedback-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .feedback-section h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .rating-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .rating-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .rating-btn:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .rating-btn.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .placeholder .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 Lutem</h1>
-        
-        <div class="form-group">
-            <label for="minutes">Available Time</label>
-            <div class="time-display" id="timeDisplay">30 minutes</div>
-            <input type="range" id="minutes" min="0" max="7" value="2" step="1" class="slider">
-            <div class="time-labels">
-                <span>5min</span>
-                <span>15min</span>
-                <span>30min</span>
-                <span>45min</span>
-                <span>1hr</span>
-                <span>2hr</span>
-                <span>3hr</span>
-                <span>3hr+</span>
+        <header>
+            <h1>🎮 LUTEM</h1>
+            <p>Your AI-Powered Gaming Companion</p>
+        </header>
+
+        <div class="main-content">
+            <!-- INPUT PANEL -->
+            <div class="input-panel">
+                <h2>What are you looking for?</h2>
+
+                <!-- 1. Emotional Goals (Multi-select) -->
+                <div class="input-group">
+                    <label>🎯 What do you want to feel? (Select all that apply)</label>
+                    <div class="chip-container" id="emotionalGoals">
+                        <div class="chip" data-value="UNWIND">Unwind & Relax</div>
+                        <div class="chip" data-value="ACHIEVE">Achieve & Progress</div>
+                        <div class="chip" data-value="ENGAGE">Engage & Focus</div>
+                        <div class="chip" data-value="EXPLORE">Explore & Discover</div>
+                        <div class="chip" data-value="CHALLENGE">Challenge Myself</div>
+                        <div class="chip" data-value="RECHARGE">Recharge Energy</div>
+                    </div>
+                </div>
+
+                <!-- 2. Interruptibility -->
+                <div class="input-group">
+                    <label>⏸️ How flexible is your time?</label>
+                    <div class="radio-group" id="interruptibility">
+                        <div class="radio-option" data-value="HIGH">Very Flexible</div>
+                        <div class="radio-option" data-value="MEDIUM">Moderately</div>
+                        <div class="radio-option" data-value="LOW">Needs Completion</div>
+                    </div>
+                </div>
+
+                <!-- 3. Energy Level -->
+                <div class="input-group">
+                    <label>⚡ What's your energy level?</label>
+                    <div class="radio-group" id="energyLevel">
+                        <div class="radio-option" data-value="HIGH">High Energy</div>
+                        <div class="radio-option" data-value="MEDIUM">Medium</div>
+                        <div class="radio-option" data-value="LOW">Low Energy</div>
+                    </div>
+                </div>
+
+                <!-- 4. Time of Day (Optional) -->
+                <div class="input-group">
+                    <label>🕐 Time of day? (Optional)</label>
+                    <div class="radio-group" id="timeOfDay">
+                        <div class="radio-option" data-value="MORNING">Morning</div>
+                        <div class="radio-option" data-value="MIDDAY">Midday</div>
+                        <div class="radio-option" data-value="AFTERNOON">Afternoon</div>
+                        <div class="radio-option" data-value="EVENING">Evening</div>
+                        <div class="radio-option" data-value="LATE_NIGHT">Late Night</div>
+                    </div>
+                </div>
+
+                <!-- 5. Social Preference -->
+                <div class="input-group">
+                    <label>👥 How do you want to play?</label>
+                    <div class="radio-group" id="socialPreference">
+                        <div class="radio-option" data-value="SOLO">Solo</div>
+                        <div class="radio-option" data-value="COOP">Co-op</div>
+                        <div class="radio-option" data-value="COMPETITIVE">Competitive</div>
+                    </div>
+                </div>
+
+                <!-- 6. Time Slider -->
+                <div class="input-group">
+                    <label>⏱️ How much time do you have?</label>
+                    <div class="time-display" id="timeDisplay">30 minutes</div>
+                    <input type="range" id="timeSlider" min="0" max="7" value="2" step="1" class="discrete-slider">
+                    <div class="time-labels">
+                        <span>5min</span>
+                        <span>15min</span>
+                        <span>30min</span>
+                        <span>45min</span>
+                        <span>1hr</span>
+                        <span>2hr</span>
+                        <span>3hr</span>
+                        <span>3hr+</span>
+                    </div>
+                </div>
+
+                <!-- Recommend Button -->
+                <button class="recommend-btn" id="recommendBtn">
+                    🎮 Get Recommendation
+                </button>
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="mood">Desired Mood</label>
-            <select id="mood">
-                <option value="relax">Relax</option>
-                <option value="focus">Focus</option>
-                <option value="challenge">Challenge</option>
-            </select>
-        </div>
-        
-        <button id="recommendBtn" onclick="getRecommendation()">Get Recommendation</button>
-        
-        <!-- Loading Spinner -->
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <div class="loading-text">Finding your perfect game...</div>
-            <div class="loading-tip" id="loadingTip">🎮 Gaming tip will appear here</div>
-        </div>
-        
-        <!-- Result -->
-        <div class="result" id="result">
-            <div class="game-title" id="gameTitle"></div>
-            <p id="reason"></p>
-            <p><strong>Time:</strong> <span id="gameTime"></span></p>
-            <p><strong>Mood:</strong> <span id="gameMood"></span></p>
-            
-            <div class="feedback">
-                <p style="flex: 1;">Rate your satisfaction:</p>
-                <button onclick="submitFeedback(1)">1</button>
-                <button onclick="submitFeedback(2)">2</button>
-                <button onclick="submitFeedback(3)">3</button>
-                <button onclick="submitFeedback(4)">4</button>
-                <button onclick="submitFeedback(5)">5</button>
+
+            <!-- RESULTS PANEL -->
+            <div class="results-panel" id="resultsPanel">
+                <div class="placeholder">
+                    <div class="icon">🎮</div>
+                    <p>Select your preferences and click "Get Recommendation"</p>
+                    <p style="margin-top: 10px; font-size: 0.9em;">We'll find the perfect game for your mood and time!</p>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- Touch Grass Modal -->
-    <div class="modal-overlay" id="touchGrassModal">
-        <div class="modal">
-            <div class="modal-emoji">🌱☀️</div>
-            <h2>Time to Touch Grass!</h2>
-            <p>Hey gamer! 3+ hours is a marathon session. Remember to take breaks, stay hydrated, and maybe step outside for a bit! 🎮💚</p>
-            <p><strong>Pro tip:</strong> Your best gaming happens when you're well-rested and refreshed!</p>
-            <button onclick="closeModal()">Got it! 👍</button>
-            <button onclick="closeModalAndAdjust()">Change Time 🕐</button>
-        </div>
-    </div>
-    
+
     <script>
-        const API_URL = 'http://localhost:8080';
-        const MIN_LOADING_TIME = 1200; // Minimum time to show loading (ms)
-        let currentGameId = null;
-        let tipInterval = null;
-        let loadingStartTime = null;
-        
-        // Time step values (in minutes)
+        // ============================================
+        // DISCRETE TIME STEPS
+        // ============================================
         const TIME_STEPS = [
             { value: 5, label: '5 minutes' },
             { value: 15, label: '15 minutes' },
@@ -377,179 +687,382 @@
             { value: 180, label: '3 hours' },
             { value: 999, label: '3+ hours 🌱' } // Special value for marathon sessions
         ];
-        
-        // Update time display when slider changes
-        function updateTimeDisplay() {
-            const slider = document.getElementById('minutes');
-            const display = document.getElementById('timeDisplay');
-            const stepIndex = parseInt(slider.value);
-            const timeStep = TIME_STEPS[stepIndex];
-            
-            display.textContent = timeStep.label;
-            
-            // Show "touch grass" modal if 3+ hours selected
-            if (timeStep.value === 999) {
-                showTouchGrassModal();
-            }
+
+        function getTimeStepValue(index) {
+            return TIME_STEPS[index].value;
         }
-        
-        // Show the touch grass modal
+
+        function getTimeStepLabel(index) {
+            return TIME_STEPS[index].label;
+        }
+
+        // ============================================
+        // TOUCH GRASS MODAL
+        // ============================================
         function showTouchGrassModal() {
-            document.getElementById('touchGrassModal').classList.add('show');
+            const modal = document.getElementById('touchGrassModal');
+            modal.classList.add('show');
         }
-        
-        // Close modal and keep 3+ hours selection
-        function closeModal() {
-            document.getElementById('touchGrassModal').classList.remove('show');
-        }
-        
-        // Close modal and reset to 3 hours
-        function closeModalAndAdjust() {
-            document.getElementById('touchGrassModal').classList.remove('show');
-            const slider = document.getElementById('minutes');
-            slider.value = 6; // Index 6 = 3 hours
-            updateTimeDisplay();
-        }
-        
-        // Get current minutes value from slider
-        function getCurrentMinutes() {
-            const slider = document.getElementById('minutes');
-            const stepIndex = parseInt(slider.value);
-            return TIME_STEPS[stepIndex].value;
-        }
-        
-        // Initialize slider on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const slider = document.getElementById('minutes');
+
+        function closeTouchGrassModal(keepSelection) {
+            const modal = document.getElementById('touchGrassModal');
+            modal.classList.remove('show');
             
-            // Update display when slider changes
-            slider.addEventListener('input', updateTimeDisplay);
-            
-            // Set initial display
-            updateTimeDisplay();
-        });
-        
-        // Gaming tips to show during loading
-        const gamingTips = [
-            "💡 Short gaming sessions can be more satisfying than long ones!",
-            "🎯 Playing games that match your mood improves enjoyment by 40%",
-            "🧘 Relaxing games before bed can improve sleep quality",
-            "⚡ Quick puzzle games are perfect for mental breaks",
-            "🎮 Roguelikes offer maximum satisfaction in minimal time",
-            "🌟 The best game is one that fits your available time",
-            "💪 Challenge games work best when you're mentally fresh",
-            "🔄 Variety in gaming moods prevents burnout",
-            "⏰ Gaming in 30-minute chunks can boost productivity",
-            "🎨 Creative games are great for afternoon mental resets"
-        ];
-        
-        function showLoading() {
-            // Track when loading started
-            loadingStartTime = Date.now();
-            
-            // Hide result, show loading
-            document.getElementById('result').classList.remove('show');
-            document.getElementById('loading').classList.add('show');
-            document.getElementById('recommendBtn').disabled = true;
-            
-            // Start rotating tips
-            let tipIndex = 0;
-            document.getElementById('loadingTip').textContent = gamingTips[tipIndex];
-            
-            tipInterval = setInterval(() => {
-                tipIndex = (tipIndex + 1) % gamingTips.length;
-                document.getElementById('loadingTip').textContent = gamingTips[tipIndex];
-            }, 2500); // Change tip every 2.5 seconds
-        }
-        
-        async function hideLoading() {
-            // Calculate how long loading has been shown
-            const elapsedTime = Date.now() - loadingStartTime;
-            const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
-            
-            // Wait for minimum display time if needed
-            if (remainingTime > 0) {
-                await new Promise(resolve => setTimeout(resolve, remainingTime));
-            }
-            
-            document.getElementById('loading').classList.remove('show');
-            document.getElementById('recommendBtn').disabled = false;
-            
-            // Stop rotating tips
-            if (tipInterval) {
-                clearInterval(tipInterval);
-                tipInterval = null;
+            if (!keepSelection) {
+                // Reset to 3 hours (index 6)
+                const timeSlider = document.getElementById('timeSlider');
+                timeSlider.value = 6;
+                state.availableMinutes = 180;
+                document.getElementById('timeDisplay').textContent = '3 hours';
             }
         }
-        
+
+        // ============================================
+        // STATE & GAME DATA
+        // ============================================ management
+        const state = {
+            emotionalGoals: [],
+            interruptibility: null,
+            energyLevel: null,
+            timeOfDay: null,
+            socialPreference: null,
+            availableMinutes: 30
+        };
+
+        // Elements
+        const emotionalGoalsContainer = document.getElementById('emotionalGoals');
+        const interruptibilityContainer = document.getElementById('interruptibility');
+        const energyLevelContainer = document.getElementById('energyLevel');
+        const timeOfDayContainer = document.getElementById('timeOfDay');
+        const socialPreferenceContainer = document.getElementById('socialPreference');
+        const timeSlider = document.getElementById('timeSlider');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const recommendBtn = document.getElementById('recommendBtn');
+        const resultsPanel = document.getElementById('resultsPanel');
+
+        // Initialize
+        function init() {
+            setupEventListeners();
+        }
+
+        function setupEventListeners() {
+            // Emotional Goals (multi-select)
+            emotionalGoalsContainer.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('selected');
+                    updateEmotionalGoals();
+                });
+            });
+
+            // Radio groups (single-select)
+            setupRadioGroup(interruptibilityContainer, 'interruptibility');
+            setupRadioGroup(energyLevelContainer, 'energyLevel');
+            setupRadioGroup(timeOfDayContainer, 'timeOfDay', true); // optional
+            setupRadioGroup(socialPreferenceContainer, 'socialPreference');
+
+            // Time slider with discrete steps
+            timeSlider.addEventListener('input', (e) => {
+                const stepIndex = parseInt(e.target.value);
+                const stepValue = getTimeStepValue(stepIndex);
+                const stepLabel = getTimeStepLabel(stepIndex);
+                
+                state.availableMinutes = stepValue;
+                timeDisplay.textContent = stepLabel;
+                
+                // Show modal if 3+ hours selected
+                if (stepValue === 999) {
+                    setTimeout(() => showTouchGrassModal(), 300);
+                }
+            });
+
+            // Recommend button
+            recommendBtn.addEventListener('click', getRecommendation);
+        }
+
+        function setupRadioGroup(container, stateKey, isOptional = false) {
+            container.querySelectorAll('.radio-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    // Allow deselection for optional fields
+                    if (isOptional && option.classList.contains('selected')) {
+                        option.classList.remove('selected');
+                        state[stateKey] = null;
+                    } else {
+                        container.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+                        option.classList.add('selected');
+                        state[stateKey] = option.dataset.value;
+                    }
+                });
+            });
+        }
+
+        function updateEmotionalGoals() {
+            state.emotionalGoals = Array.from(
+                emotionalGoalsContainer.querySelectorAll('.chip.selected')
+            ).map(chip => chip.dataset.value);
+        }
+
+        // Get recommendation
         async function getRecommendation() {
-            const minutes = getCurrentMinutes();
-            const mood = document.getElementById('mood').value;
-            
             // Handle 3+ hours case
-            if (minutes === 999) {
+            if (state.availableMinutes === 999) {
                 showTouchGrassModal();
                 return; // Don't make API call for marathon sessions
             }
-            
+
+            // Validation
+            if (state.emotionalGoals.length === 0) {
+                alert('Please select at least one emotional goal');
+                return;
+            }
+            if (!state.interruptibility || !state.energyLevel || !state.socialPreference) {
+                alert('Please complete all required fields (marked with labels)');
+                return;
+            }
+
+            // Show loading state
             showLoading();
-            
+
             try {
-                const response = await fetch(`${API_URL}/recommendations`, {
+                // Transform state to match backend field names
+                const requestBody = {
+                    availableMinutes: state.availableMinutes,
+                    desiredEmotionalGoals: state.emotionalGoals,
+                    requiredInterruptibility: state.interruptibility,
+                    currentEnergyLevel: state.energyLevel,
+                    timeOfDay: state.timeOfDay,
+                    socialPreference: state.socialPreference
+                };
+
+                console.log('=== REQUEST BEING SENT ===');
+                console.log('State:', state);
+                console.log('Request body:', requestBody);
+                console.log('JSON:', JSON.stringify(requestBody, null, 2));
+
+                const response = await fetch('http://localhost:8080/recommendations', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        availableMinutes: parseInt(minutes),
-                        desiredMood: mood
-                    })
+                    body: JSON.stringify(requestBody)
                 });
-                
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
-                await hideLoading(); // Now waits for minimum time
-                displayRecommendation(data);
+                console.log('Received data:', data);
+                console.log('topRecommendation:', data.topRecommendation);
+                console.log('reason:', data.reason);
+                console.log('alternatives:', data.alternatives);
+                displayResults(data);
             } catch (error) {
-                await hideLoading(); // Wait even on error
-                alert('Error connecting to backend. Make sure it\'s running!');
-                console.error(error);
+                console.error('Error fetching recommendations:', error);
+                resultsPanel.innerHTML = `
+                    <div style="color: red; text-align: center; padding: 40px;">
+                        <p style="font-size: 1.2em;">⚠️ Error</p>
+                        <p>Could not fetch recommendations. Please make sure the backend is running.</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Error: ${error.message}</p>
+                    </div>
+                `;
             }
         }
-        
-        function displayRecommendation(data) {
-            currentGameId = data.game.id;
-            
-            document.getElementById('gameTitle').textContent = data.game.name;
-            document.getElementById('reason').textContent = data.reason;
-            document.getElementById('gameTime').textContent = 
-                `${data.game.minMinutes}-${data.game.maxMinutes} minutes`;
-            document.getElementById('gameMood').textContent = 
-                data.game.moodTags.join(', ');
-            
-            document.getElementById('result').classList.add('show');
+
+        // Loading state
+        const loadingTips = [
+            'Finding your perfect gaming match...',
+            'Analyzing your mood and preferences...',
+            'Scanning 20+ games in our library...',
+            'Calculating optimal recommendations...',
+            'Almost there! Preparing your results...'
+        ];
+
+        let tipIndex = 0;
+        let tipInterval;
+
+        function showLoading() {
+            tipIndex = 0;
+            resultsPanel.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="font-size: 1.2em; font-weight: 600; color: #667eea;">Finding your perfect game...</p>
+                    <p class="loading-tips" id="loadingTip">${loadingTips[0]}</p>
+                </div>
+            `;
+
+            tipInterval = setInterval(() => {
+                tipIndex = (tipIndex + 1) % loadingTips.length;
+                const tipElement = document.getElementById('loadingTip');
+                if (tipElement) {
+                    tipElement.style.opacity = '0';
+                    setTimeout(() => {
+                        tipElement.textContent = loadingTips[tipIndex];
+                        tipElement.style.opacity = '1';
+                    }, 300);
+                }
+            }, 2000);
         }
-        
-        async function submitFeedback(score) {
-            if (!currentGameId) return;
-            
-            try {
-                await fetch(`${API_URL}/sessions/feedback`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        gameId: currentGameId,
-                        satisfactionScore: score
-                    })
+
+        // Display results
+        function displayResults(data) {
+            clearInterval(tipInterval);
+
+            console.log('displayResults called with:', data);
+
+            const topGame = data.topRecommendation;
+            const topReason = data.reason;
+            const alternatives = data.alternatives || [];
+            const alternativeReasons = data.alternativeReasons || [];
+
+            console.log('topGame:', topGame);
+            console.log('topReason:', topReason);
+
+            if (!topGame) {
+                resultsPanel.innerHTML = `
+                    <div style="color: red; text-align: center; padding: 40px;">
+                        <p style="font-size: 1.2em;">⚠️ No Games Found</p>
+                        <p>No games match your preferences. Try adjusting your criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            // Top recommendation
+            html += createGameCard(topGame, topReason, true, 100);
+
+            // Alternatives
+            if (alternatives.length > 0) {
+                html += '<div class="alternatives-section">';
+                html += '<h3>🎯 Alternative Options</h3>';
+                alternatives.forEach((alt, index) => {
+                    const altReason = alternativeReasons[index] || 'Good alternative match';
+                    const score = 85 - (index * 10); // 85%, 75% for alternatives
+                    html += createGameCard(alt, altReason, false, score);
                 });
-                
-                alert(`Thanks for your feedback! (${score}/5)`);
+                html += '</div>';
+            }
+
+            resultsPanel.innerHTML = html;
+
+            // Setup feedback listeners
+            setupFeedbackListeners();
+        }
+
+        function createGameCard(game, reason, isTopPick, score) {
+            console.log('createGameCard called with game:', game);
+            
+            if (!game || !game.name) {
+                console.error('Invalid game object:', game);
+                return '<div class="game-card"><p>Error: Invalid game data</p></div>';
+            }
+
+            try {
+                return `
+                    <div class="game-card ${isTopPick ? 'top-pick' : ''}">
+                        ${isTopPick ? '<span class="top-badge">🏆 Top Pick for You</span>' : ''}
+                        
+                        <div class="game-header">
+                            <h3 class="game-title">${game.name}</h3>
+                            <span class="match-score">${score}% Match</span>
+                        </div>
+
+                        <div class="game-meta">
+                            <span class="meta-tag">⏱️ ${game.minMinutes}-${game.maxMinutes} min</span>
+                            <span class="meta-tag">⏸️ ${formatEnum(game.interruptibility)}</span>
+                            <span class="meta-tag">⚡ ${formatEnum(game.energyRequired)}</span>
+                            <span class="meta-tag">👥 ${game.socialPreferences.map(formatEnum).join('/')}</span>
+                        </div>
+
+                        <div class="game-details">
+                            <div><strong>🎯 Emotional Goals:</strong> ${game.emotionalGoals.map(formatEnum).join(', ')}</div>
+                            <div><strong>🕐 Best Time:</strong> ${game.bestTimeOfDay && game.bestTimeOfDay.length > 0 ? game.bestTimeOfDay.map(formatEnum).join(', ') : 'Any time'}</div>
+                            <div><strong>🎮 Genre:</strong> ${game.genre || 'Various'}</div>
+                            <div><strong>📝 Description:</strong> ${game.description || 'Great game!'}</div>
+                        </div>
+
+                        <div class="recommendation-reason">
+                            <strong>Why this game?</strong> ${reason}
+                        </div>
+
+                        <div class="feedback-section">
+                            <h4>How satisfied were you? 😊</h4>
+                            <div class="rating-buttons">
+                                <button class="rating-btn" data-game-id="${game.id}" data-rating="1">1</button>
+                                <button class="rating-btn" data-game-id="${game.id}" data-rating="2">2</button>
+                                <button class="rating-btn" data-game-id="${game.id}" data-rating="3">3</button>
+                                <button class="rating-btn" data-game-id="${game.id}" data-rating="4">4</button>
+                                <button class="rating-btn" data-game-id="${game.id}" data-rating="5">5</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
             } catch (error) {
-                alert('Error submitting feedback');
-                console.error(error);
+                console.error('Error creating game card:', error, game);
+                return '<div class="game-card"><p>Error rendering game card</p></div>';
             }
         }
+
+        function formatEnum(value) {
+            if (!value) return '';
+            return value.split('_')
+                .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+                .join(' ');
+        }
+
+        function setupFeedbackListeners() {
+            document.querySelectorAll('.rating-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const gameId = parseInt(this.dataset.gameId);
+                    const rating = parseInt(this.dataset.rating);
+
+                    // Visual feedback
+                    this.parentElement.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    // Submit feedback
+                    try {
+                        await fetch('http://localhost:8080/sessions/feedback', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                gameId: gameId,
+                                satisfactionScore: rating
+                            })
+                        });
+
+                        console.log(`Feedback submitted: Game ${gameId}, Rating ${rating}`);
+                    } catch (error) {
+                        console.error('Error submitting feedback:', error);
+                    }
+                });
+            });
+        }
+
+        // Initialize app
+        init();
     </script>
+
+    <!-- Touch Grass Modal -->
+    <div class="modal-overlay" id="touchGrassModal">
+        <div class="modal-content">
+            <div class="modal-icon">🌱☀️</div>
+            <h2>Time to Touch Grass!</h2>
+            <p>Hey gamer! 3+ hours is a marathon session. Remember to:</p>
+            <ul style="text-align: left; margin: 20px 0;">
+                <li>🚶 Take breaks every hour</li>
+                <li>💧 Stay hydrated</li>
+                <li>🌳 Maybe step outside?</li>
+            </ul>
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="closeTouchGrassModal(true)">Got it! 👍</button>
+                <button class="modal-btn secondary" onclick="closeTouchGrassModal(false)">Change Time 🕐</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

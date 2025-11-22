@@ -1,207 +1,309 @@
 # Lutem MVP
 
-AI-powered game recommendation system based on available time and mood.
+**AI-powered game recommendation system that matches games to your mood, time, and energy level.**
 
 ## 📍 Project Status
 
-**Current Phase:** ✅ **Phase 4** - UI Polish & QuickWins
+**Current Phase:** ✅ **Core MVP Complete** - Multi-Dimensional Recommendation System
 
 **Last Updated:** November 22, 2025
 
-### What's Working Now
-- ✅ Spring Boot backend running on port 8080
-- ✅ Frontend with interactive UI and loading spinner
-- ✅ 10 hardcoded games with metadata (time, mood, interruptibility)
-- ✅ Rule-based recommendation engine (filters by time + mood)
-- ✅ Satisfaction feedback system (1-5 rating)
-- ✅ Basic learning algorithm (ranks by average satisfaction)
-- ✅ Full REST API with 3 endpoints
-- ✅ CORS enabled for local development
-- ✅ **NEW:** Loading spinner with rotating gaming tips
+### ✨ What's Working Now
+- ✅ **Smart Recommendation Engine** - 5-dimensional scoring algorithm
+- ✅ **20 Diverse Games** - Fully categorized with rich metadata
+- ✅ **6-Parameter Input System** - Emotional goals, energy, flexibility, time, social preference
+- ✅ **Top 3 Alternatives** - Backend returns multiple options with explanations
+- ✅ **Fun Time Slider** - Discrete steps with "Touch Grass" modal for 3+ hours
+- ✅ **Loading Spinner** - Professional animations with rotating gaming tips
+- ✅ **Spring Boot Backend** - RESTful API on port 8080
+- ✅ **Modern Frontend** - Clean, responsive UI with smooth transitions
+- ✅ **5 Enum System** - EmotionalGoal, Interruptibility, EnergyLevel, TimeOfDay, SocialPreference
 
-### QuickWins Progress
-- ✅ **Loading Spinner** - Complete! (with rotating tips)
-- ⏳ **Input Validation** - Next (30 min)
-- ⏳ **Top 3 Alternatives** - Planned (45 min)
+### 🎯 QuickWins Progress
+- ✅ **#1: Loading Spinner** - COMPLETE (with rotating tips)
+- ✅ **#2: Fun Slider** - COMPLETE (discrete steps + "Touch Grass" modal)
+- ⏳ **#3: Display Top 3 Alternatives** - NEXT (frontend work, backend ready)
 
-### Up Next
-- **Phase 5** - Enhanced satisfaction learning with trends
-- **Phase 6** - Database integration + deployment (SQLite/Postgres, Render, Netlify)
-- **Phase 7** - External API integration (Google Calendar or RAWG API)
+### 🚀 Up Next
+- UI/UX Enhancement Phase - Modern design refresh
+- Expand game library (40+ games)
+- Session feedback system (1-5 stars)
+- Weekly satisfaction recap
+- Database integration (PostgreSQL)
 
-👉 **See [TODO.md](TODO.md) for complete roadmap and task list**
+👉 **See [SESSION_COMPLETE_SUMMARY.md](SESSION_COMPLETE_SUMMARY.md) for detailed technical overview**
 
 ---
 
 ## 🚀 Quick Start
 
-### Option 1: Use Startup Scripts (EASIEST)
+### ✨ EASIEST: Use Startup Scripts
 ```cmd
-# Check your environment first
-check-environment.bat
-
-# Start everything
+# Start everything at once
 start-lutem.bat
 
 # Or start individually:
-start-frontend-only.bat  # Opens browser
+start-backend.bat   # Launches backend with Maven
+start-frontend.bat  # Opens frontend in browser
 ```
 
-### Option 2: Manual Startup
-
-**Backend (IntelliJ):**
+### 🔧 Alternative: IntelliJ
+**Backend:**
 1. Open `backend/pom.xml` in IntelliJ IDEA
-2. Right-click `LutemMvpApplication.java`
-3. Select "Run 'LutemMvpApplication'"
-4. Wait for: "Started LutemMvpApplication"
+2. Build → Rebuild Project
+3. Run `src/main/java/com/lutem/mvp/LutemMvpApplication.java`
+4. Wait for: `"Started LutemMvpApplication"`
 
 **Frontend:**
 - Double-click `frontend/index.html`
-- Or run: `start-frontend-only.bat`
 
-### Option 3: Command Line (After Maven Wrapper Setup)
-```bash
-cd backend
-mvnw.cmd spring-boot:run  # Windows
-./mvnw spring-boot:run     # Mac/Linux
+**⚠️ Note:** If IntelliJ serves old code, use `start-backend.bat` (always uses Maven)
+
+---
+
+## 🎮 How It Works
+
+### User Input (6 Parameters)
+1. **⏱️ Available Time** - 5min to 3+ hours (discrete slider)
+2. **🎯 Emotional Goals** - Unwind, Recharge, Engage, Challenge, Achieve, Explore (multi-select)
+3. **⏸️ Interruptibility** - Can you pause? (High/Medium/Low)
+4. **⚡ Energy Level** - How much mental energy? (Low/Medium/High)
+5. **🌙 Time of Day** - Morning/Afternoon/Evening/Late Night (optional)
+6. **👥 Social Preference** - Solo/Co-op/Competitive
+
+### Smart Recommendation Algorithm
+**5-Tier Scoring System (100 points):**
+- **Time Match (30%)** - Game must fit your available time
+- **Emotional Goal Match (25%)** - Aligns with desired mood
+- **Interruptibility Match (20%)** - Matches your flexibility needs
+- **Energy Level Match (15%)** - Suits your current mental state
+- **Time of Day Match (5%)** - Optimal playing time bonus
+- **Social Preference Match (5%)** - Solo/multiplayer fit
+
+### Output
+- **Top Recommendation** with explanation
+- **3 Alternative Games** with reasons
+- **All results scored and ranked**
+
+**Example:**
+```
+Input: 30 min, Unwind + Achieve, High flexibility, Low energy, Evening, Solo
+
+Top Pick: Unpacking (92/100)
+→ "Zen puzzle game, perfect for evening wind-down, easy to pause"
+
+Alternatives:
+1. Stardew Valley (88/100)
+2. PowerWash Simulator (85/100)
+3. Dorfromantik (82/100)
 ```
 
 ---
 
-## ⚙️ Maven Setup (One-Time)
-
-**Problem:** Maven not in system PATH  
-**Solution:** Add Maven Wrapper (makes project self-contained)
-
-```cmd
-# Check what's available
-check-environment.bat
-
-# Setup Maven Wrapper  
-setup-maven-wrapper.bat
-```
-
-**See:** [MAVEN_SETUP_GUIDE.md](MAVEN_SETUP_GUIDE.md) for detailed instructions
-
----
-
-## Project Structure
+## 📂 Project Structure
 ```
 lutem-mvp/
-├── backend/              # Spring Boot API
-│   ├── src/
-│   ├── pom.xml
-│   ├── mvnw.cmd         # Maven wrapper (Windows)
-│   └── mvnw             # Maven wrapper (Unix)
-├── frontend/             # Simple HTML/JS UI
-│   └── index.html
-├── docs/                 # Documentation
-│   ├── CLAUDE_INSTRUCTIONS.md
-│   ├── adding-maven-wrapper.md
-│   └── QUICK_START_IMPROVEMENTS.md
-├── start-lutem.bat      # Start everything
-├── start-frontend-only.bat
-├── check-environment.bat
-└── setup-maven-wrapper.bat
+├── backend/                      # Spring Boot API
+│   ├── src/main/java/com/lutem/mvp/
+│   │   ├── LutemMvpApplication.java      # Main app
+│   │   ├── GameController.java           # API + 20 games
+│   │   ├── Game.java                     # Game model
+│   │   ├── EmotionalGoal.java            # Enum: mood types
+│   │   ├── Interruptibility.java         # Enum: pause flexibility
+│   │   ├── EnergyLevel.java              # Enum: mental energy
+│   │   ├── TimeOfDay.java                # Enum: optimal timing
+│   │   ├── SocialPreference.java         # Enum: solo/co-op
+│   │   ├── RecommendationRequest.java    # Request model
+│   │   └── RecommendationResponse.java   # Response model
+│   └── pom.xml                   # Maven config
+├── frontend/
+│   └── index.html                # Full-stack app (1000+ lines)
+├── docs/                         # Documentation
+├── start-backend.bat             # Reliable Maven launcher
+├── start-frontend.bat            # Opens browser
+├── start-lutem.bat               # Start everything
+├── force-clean.bat               # Deep clean build cache
+├── git-commit.bat                # Git workflow helper
+└── SESSION_COMPLETE_SUMMARY.md   # Technical deep-dive
 ```
 
 ---
 
-## API Endpoints
+## 🎯 API Endpoints
 
-**Backend runs on:** `http://localhost:8080`
+**Backend:** `http://localhost:8080`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/games` | Get all available games |
-| POST | `/recommendations` | Get game recommendation |
-| POST | `/sessions/feedback` | Submit satisfaction rating |
+### GET /games
+Returns all 20 games with full metadata.
 
-### Example: Get Recommendation
+**Response:**
 ```json
-POST /recommendations
+[
+  {
+    "id": 1,
+    "name": "Unpacking",
+    "minMinutes": 10,
+    "maxMinutes": 20,
+    "emotionalGoals": ["UNWIND", "ACHIEVE", "EXPLORE"],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": ["MIDDAY", "EVENING", "LATE_NIGHT"],
+    "socialPreferences": ["SOLO"],
+    "genre": "Puzzle",
+    "description": "Zen unpacking simulator with cozy vibes"
+  }
+]
+```
+
+### POST /recommendations
+Get personalized game recommendation.
+
+**Request:**
+```json
 {
   "availableMinutes": 30,
-  "desiredMood": "relax"
+  "desiredEmotionalGoals": ["UNWIND", "ACHIEVE"],
+  "requiredInterruptibility": "HIGH",
+  "currentEnergyLevel": "LOW",
+  "timeOfDay": "EVENING",
+  "socialPreference": "SOLO"
 }
 ```
 
-### Example: Submit Feedback
+**Response:**
 ```json
-POST /sessions/feedback
 {
-  "gameId": 1,
-  "satisfactionScore": 5
+  "game": { /* Game object */ },
+  "alternatives": [ /* 3 Game objects */ ],
+  "reason": "Perfect fit: matches your low energy evening mood",
+  "alternativeReasons": [ /* 3 reasons */ ]
 }
 ```
 
 ---
 
-## MVP Features
+## 🎮 Game Library (20 Games)
 
-✅ **Core Functionality**
-- Hardcoded list of 10 games with metadata
-- Time-based filtering (min/max minutes)
-- Mood-based filtering (relax/focus/challenge)
-- Rule-based recommendation engine
-- Simple satisfaction learning algorithm
+### Casual (5-30 min)
+Unpacking • Dorfromantik • Tetris Effect • Dead Cells • Rocket League • Baba Is You
 
-✅ **User Experience**
-- Clean, responsive UI
-- Loading spinner with gaming tips
-- Satisfaction feedback (1-5 rating)
-- Smooth animations and transitions
+### Mid-Range (30-60 min)
+Hades • Stardew Valley • Slay the Spire • Apex Legends • PowerWash Simulator • Into the Breach • A Short Hike • Loop Hero
+
+### Long-Form (60+ min)
+The Witcher 3 • Minecraft • Dark Souls III • Civilization VI • Valorant • The Witness
 
 ---
 
-## Technologies
+## 💡 Key Features
 
-- **Backend**: Spring Boot 3.2, Java 17+
-- **Frontend**: Vanilla HTML/CSS/JavaScript
-- **Storage**: In-memory (no database for MVP)
-- **Build**: Maven (with Maven Wrapper)
+### 🌱 "Touch Grass" Modal
+When selecting 3+ hours on the time slider:
+- Friendly reminder to take breaks
+- Promotes healthy gaming habits
+- Two options: keep selection or adjust time
 
----
+### 🎯 Multi-Dimensional Matching
+Goes beyond simple genre matching:
+- Considers emotional state (6 goals)
+- Respects energy levels (3 levels)
+- Accommodates flexibility needs (3 types)
+- Optimizes for time of day
+- Matches social preferences
 
-## Development Resources
-
-| Resource | Description |
-|----------|-------------|
-| [TODO.md](TODO.md) | Task tracking and session notes |
-| [MAVEN_SETUP_GUIDE.md](MAVEN_SETUP_GUIDE.md) | Long-term Maven solution |
-| `docs/CLAUDE_INSTRUCTIONS.md` | Claude project setup guide |
-| `docs/adding-maven-wrapper.md` | Maven wrapper setup details |
-| `lutem_mvp_roadmap.docx` | Original project roadmap |
-
----
-
-## Troubleshooting
-
-**Backend won't start:**
-- Check port 8080 is free: `netstat -ano | findstr :8080`
-- Verify IntelliJ is using JDK 17+
-- See IntelliJ console for errors
-
-**Scripts don't work:**
-- Run `check-environment.bat` to diagnose
-- Follow `setup-maven-wrapper.bat` instructions
-- Or use IntelliJ manual startup method
-
-**Frontend can't connect:**
-- Verify backend console shows "Started"
-- Check browser DevTools (F12) for errors
-- Confirm backend is on port 8080
+### 🔄 Transparent Recommendations
+Always explains WHY a game was recommended:
+- Shows scoring breakdown
+- Lists matching attributes
+- Provides context for alternatives
 
 ---
 
-## Contributing
+## 🛠️ Technologies
 
-For development workflow and best practices, see:
-- `docs/CLAUDE_INSTRUCTIONS.md`
-- Current QuickWins status in TODO.md
+- **Backend**: Spring Boot 3.2.0, Java 17+
+- **Frontend**: Vanilla HTML/CSS/JavaScript (no framework)
+- **Build**: Maven 3.9+ (use provided startup scripts)
+- **Storage**: In-memory (future: PostgreSQL)
+- **API**: RESTful with JSON
 
 ---
 
-## License
+## ⚙️ Troubleshooting
 
-This is an educational project for Strategic Business Innovation 2025.
+### Backend won't start
+```cmd
+# Option 1: Use reliable startup script
+start-backend.bat
+
+# Option 2: Deep clean + rebuild in IntelliJ
+force-clean.bat
+# Then: Build → Rebuild Project
+```
+
+### IntelliJ serves old code
+**Problem:** Build cache not updating  
+**Solution:** Always use `start-backend.bat` (uses Maven, never caches)
+
+### Port 8080 already in use
+```cmd
+# Find process using port
+netstat -ano | findstr :8080
+
+# Kill process (replace PID)
+taskkill /PID <PID> /F
+```
+
+### Frontend can't connect
+1. Verify backend console shows: `"Started LutemMvpApplication"`
+2. Check browser DevTools (F12) for errors
+3. Confirm backend URL is `http://localhost:8080`
+
+---
+
+## 📚 Documentation
+
+| File | Description |
+|------|-------------|
+| [SESSION_COMPLETE_SUMMARY.md](SESSION_COMPLETE_SUMMARY.md) | Technical deep-dive and architecture |
+| [TODO.md](TODO.md) | Roadmap, tasks, and progress tracking |
+| `docs/CLAUDE_INSTRUCTIONS.md` | Development environment setup |
+| `QuickWin_2_FunSlider.md` | Time slider feature documentation |
+
+---
+
+## 🎯 Next Development Phase
+
+### UI/UX Enhancement
+- Modern design system
+- Improved color scheme
+- Better visual hierarchy
+- Responsive layout improvements
+
+### Content Expansion
+- Add 20+ more games (target: 40 total)
+- Broader genre coverage
+- More diverse emotional profiles
+
+### Feature Additions
+- Display all 3 alternatives in frontend
+- Session feedback system (1-5 stars)
+- Weekly satisfaction summary
+- Game discovery history
+
+---
+
+## 📝 License
+
+Educational project for Strategic Business Innovation 2025  
+University of Applied Sciences Northwestern Switzerland
+
+---
+
+## 🙏 Acknowledgments
+
+Built with:
+- Spring Boot
+- Claude AI (development assistant)
+- IntelliJ IDEA
+- A passion for gaming and UX
