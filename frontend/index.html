@@ -212,8 +212,10 @@
     
     <script>
         const API_URL = 'http://localhost:8080';
+        const MIN_LOADING_TIME = 1200; // Minimum time to show loading (ms)
         let currentGameId = null;
         let tipInterval = null;
+        let loadingStartTime = null;
         
         // Gaming tips to show during loading
         const gamingTips = [
@@ -230,6 +232,9 @@
         ];
         
         function showLoading() {
+            // Track when loading started
+            loadingStartTime = Date.now();
+            
             // Hide result, show loading
             document.getElementById('result').classList.remove('show');
             document.getElementById('loading').classList.add('show');
@@ -245,7 +250,16 @@
             }, 2500); // Change tip every 2.5 seconds
         }
         
-        function hideLoading() {
+        async function hideLoading() {
+            // Calculate how long loading has been shown
+            const elapsedTime = Date.now() - loadingStartTime;
+            const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsedTime);
+            
+            // Wait for minimum display time if needed
+            if (remainingTime > 0) {
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+            }
+            
             document.getElementById('loading').classList.remove('show');
             document.getElementById('recommendBtn').disabled = false;
             
@@ -275,10 +289,10 @@
                 });
                 
                 const data = await response.json();
-                hideLoading();
+                await hideLoading(); // Now waits for minimum time
                 displayRecommendation(data);
             } catch (error) {
-                hideLoading();
+                await hideLoading(); // Wait even on error
                 alert('Error connecting to backend. Make sure it\'s running!');
                 console.error(error);
             }
