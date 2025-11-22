@@ -72,11 +72,65 @@
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, opacity 0.3s;
         }
         
-        button:hover {
+        button:hover:not(:disabled) {
             transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 30px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .loading.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e0e0;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #667eea;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .loading-tip {
+            color: #666;
+            font-style: italic;
+            min-height: 40px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .result {
@@ -89,6 +143,7 @@
         
         .result.show {
             display: block;
+            animation: fadeIn 0.5s ease-in;
         }
         
         .game-title {
@@ -128,8 +183,16 @@
             </select>
         </div>
         
-        <button onclick="getRecommendation()">Get Recommendation</button>
+        <button id="recommendBtn" onclick="getRecommendation()">Get Recommendation</button>
         
+        <!-- Loading Spinner -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Finding your perfect game...</div>
+            <div class="loading-tip" id="loadingTip">🎮 Gaming tip will appear here</div>
+        </div>
+        
+        <!-- Result -->
         <div class="result" id="result">
             <div class="game-title" id="gameTitle"></div>
             <p id="reason"></p>
@@ -150,10 +213,54 @@
     <script>
         const API_URL = 'http://localhost:8080';
         let currentGameId = null;
+        let tipInterval = null;
+        
+        // Gaming tips to show during loading
+        const gamingTips = [
+            "💡 Short gaming sessions can be more satisfying than long ones!",
+            "🎯 Playing games that match your mood improves enjoyment by 40%",
+            "🧘 Relaxing games before bed can improve sleep quality",
+            "⚡ Quick puzzle games are perfect for mental breaks",
+            "🎮 Roguelikes offer maximum satisfaction in minimal time",
+            "🌟 The best game is one that fits your available time",
+            "💪 Challenge games work best when you're mentally fresh",
+            "🔄 Variety in gaming moods prevents burnout",
+            "⏰ Gaming in 30-minute chunks can boost productivity",
+            "🎨 Creative games are great for afternoon mental resets"
+        ];
+        
+        function showLoading() {
+            // Hide result, show loading
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('recommendBtn').disabled = true;
+            
+            // Start rotating tips
+            let tipIndex = 0;
+            document.getElementById('loadingTip').textContent = gamingTips[tipIndex];
+            
+            tipInterval = setInterval(() => {
+                tipIndex = (tipIndex + 1) % gamingTips.length;
+                document.getElementById('loadingTip').textContent = gamingTips[tipIndex];
+            }, 2500); // Change tip every 2.5 seconds
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('show');
+            document.getElementById('recommendBtn').disabled = false;
+            
+            // Stop rotating tips
+            if (tipInterval) {
+                clearInterval(tipInterval);
+                tipInterval = null;
+            }
+        }
         
         async function getRecommendation() {
             const minutes = document.getElementById('minutes').value;
             const mood = document.getElementById('mood').value;
+            
+            showLoading();
             
             try {
                 const response = await fetch(`${API_URL}/recommendations`, {
@@ -168,8 +275,10 @@
                 });
                 
                 const data = await response.json();
+                hideLoading();
                 displayRecommendation(data);
             } catch (error) {
+                hideLoading();
                 alert('Error connecting to backend. Make sure it\'s running!');
                 console.error(error);
             }
