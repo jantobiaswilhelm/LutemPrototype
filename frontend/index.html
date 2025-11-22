@@ -62,6 +62,132 @@
             border-color: #667eea;
         }
         
+        /* Time slider styles */
+        .time-display {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+            outline: none;
+            -webkit-appearance: none;
+            margin-bottom: 10px;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border: 3px solid #667eea;
+            transition: transform 0.2s;
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            border: 3px solid #667eea;
+            transition: transform 0.2s;
+        }
+        
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Touch Grass Popup */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-emoji {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        
+        .modal h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .modal p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .modal button {
+            width: auto;
+            padding: 12px 30px;
+            margin: 5px;
+        }
+
+        
         button {
             width: 100%;
             padding: 15px;
@@ -170,8 +296,19 @@
         <h1>🎮 Lutem</h1>
         
         <div class="form-group">
-            <label for="minutes">Available Time (minutes)</label>
-            <input type="number" id="minutes" min="5" max="180" value="30">
+            <label for="minutes">Available Time</label>
+            <div class="time-display" id="timeDisplay">30 minutes</div>
+            <input type="range" id="minutes" min="0" max="7" value="2" step="1" class="slider">
+            <div class="time-labels">
+                <span>5min</span>
+                <span>15min</span>
+                <span>30min</span>
+                <span>45min</span>
+                <span>1hr</span>
+                <span>2hr</span>
+                <span>3hr</span>
+                <span>3hr+</span>
+            </div>
         </div>
         
         <div class="form-group">
@@ -210,12 +347,87 @@
         </div>
     </div>
     
+    <!-- Touch Grass Modal -->
+    <div class="modal-overlay" id="touchGrassModal">
+        <div class="modal">
+            <div class="modal-emoji">🌱☀️</div>
+            <h2>Time to Touch Grass!</h2>
+            <p>Hey gamer! 3+ hours is a marathon session. Remember to take breaks, stay hydrated, and maybe step outside for a bit! 🎮💚</p>
+            <p><strong>Pro tip:</strong> Your best gaming happens when you're well-rested and refreshed!</p>
+            <button onclick="closeModal()">Got it! 👍</button>
+            <button onclick="closeModalAndAdjust()">Change Time 🕐</button>
+        </div>
+    </div>
+    
     <script>
         const API_URL = 'http://localhost:8080';
         const MIN_LOADING_TIME = 1200; // Minimum time to show loading (ms)
         let currentGameId = null;
         let tipInterval = null;
         let loadingStartTime = null;
+        
+        // Time step values (in minutes)
+        const TIME_STEPS = [
+            { value: 5, label: '5 minutes' },
+            { value: 15, label: '15 minutes' },
+            { value: 30, label: '30 minutes' },
+            { value: 45, label: '45 minutes' },
+            { value: 60, label: '1 hour' },
+            { value: 120, label: '2 hours' },
+            { value: 180, label: '3 hours' },
+            { value: 999, label: '3+ hours 🌱' } // Special value for marathon sessions
+        ];
+        
+        // Update time display when slider changes
+        function updateTimeDisplay() {
+            const slider = document.getElementById('minutes');
+            const display = document.getElementById('timeDisplay');
+            const stepIndex = parseInt(slider.value);
+            const timeStep = TIME_STEPS[stepIndex];
+            
+            display.textContent = timeStep.label;
+            
+            // Show "touch grass" modal if 3+ hours selected
+            if (timeStep.value === 999) {
+                showTouchGrassModal();
+            }
+        }
+        
+        // Show the touch grass modal
+        function showTouchGrassModal() {
+            document.getElementById('touchGrassModal').classList.add('show');
+        }
+        
+        // Close modal and keep 3+ hours selection
+        function closeModal() {
+            document.getElementById('touchGrassModal').classList.remove('show');
+        }
+        
+        // Close modal and reset to 3 hours
+        function closeModalAndAdjust() {
+            document.getElementById('touchGrassModal').classList.remove('show');
+            const slider = document.getElementById('minutes');
+            slider.value = 6; // Index 6 = 3 hours
+            updateTimeDisplay();
+        }
+        
+        // Get current minutes value from slider
+        function getCurrentMinutes() {
+            const slider = document.getElementById('minutes');
+            const stepIndex = parseInt(slider.value);
+            return TIME_STEPS[stepIndex].value;
+        }
+        
+        // Initialize slider on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('minutes');
+            
+            // Update display when slider changes
+            slider.addEventListener('input', updateTimeDisplay);
+            
+            // Set initial display
+            updateTimeDisplay();
+        });
         
         // Gaming tips to show during loading
         const gamingTips = [
@@ -271,8 +483,14 @@
         }
         
         async function getRecommendation() {
-            const minutes = document.getElementById('minutes').value;
+            const minutes = getCurrentMinutes();
             const mood = document.getElementById('mood').value;
+            
+            // Handle 3+ hours case
+            if (minutes === 999) {
+                showTouchGrassModal();
+                return; // Don't make API call for marathon sessions
+            }
             
             showLoading();
             
