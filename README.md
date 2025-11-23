@@ -1,3 +1,9 @@
+<div align="center">
+  <img src="frontend/lutem-logo.png" alt="Lutem Logo" width="500">
+</div>
+
+---
+
 # Lutem MVP
 
 **AI-powered game recommendation system that matches games to your mood, time, and energy level.**
