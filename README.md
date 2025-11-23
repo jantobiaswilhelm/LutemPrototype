@@ -21,13 +21,13 @@
 - ✅ **Complete Frontend JavaScript** - All interactions, API calls, and UI logic (500+ lines)
 - ✅ **Loading Spinner with Gaming Quotes** - 24 iconic quotes, 2-second minimum display, smooth animations
 - ✅ **Guided Setup Modal** - Two-path onboarding (Quick Start vs Custom Setup)
-- ✅ **Smart Recommendation Engine** - 5-dimensional scoring algorithm
-- ✅ **20 Curated Games with Images** - Full library with Steam cover art
+- ✅ **Smart Recommendation Engine** - 8-dimensional scoring algorithm with genre preference soft ranking
+- ✅ **41 Curated Games with Images** - Full library with Steam cover art and genre tags
   - Casual games (5-30 min): 7 titles
   - Mid-range (30-60 min): 9 titles  
   - Long-form (60+ min): 4 titles
 - ✅ **Results Display** - Top pick with golden badge + 3 alternatives
-- ✅ **6-Parameter Input System** - Emotional goals, energy, flexibility, time, social preference
+- ✅ **7-Parameter Input System** - Emotional goals, genre preferences (soft ranking), energy, flexibility, time, social preference
 - ✅ **Feedback System** - 1-5 emoji ratings that update satisfaction tracking
 - ✅ **Touch Grass Modal** - Wellness reminder for 3+ hour sessions
 - ✅ **Maven Wrapper** - Self-contained backend execution without system Maven installation
@@ -100,16 +100,17 @@ start-frontend.bat  # Opens frontend in browser
 
 ## 🎮 How It Works
 
-### User Input (6 Parameters)
+### User Input (7 Parameters)
 1. **⏱️ Available Time** - 5min to 3+ hours (discrete slider)
 2. **🎯 Emotional Goals** - Unwind, Recharge, Engage, Challenge, Achieve, Explore (multi-select)
-3. **⏸️ Interruptibility** - Can you pause? (High/Medium/Low)
-4. **⚡ Energy Level** - How much mental energy? (Low/Medium/High)
-5. **🌙 Time of Day** - Morning/Afternoon/Evening/Late Night (optional)
-6. **👥 Social Preference** - Solo/Co-op/Competitive
+3. **🎮 Genre Preferences** - 20+ genres (Puzzle, Action, Strategy, RPG, etc.) - SOFT RANKING (optional)
+4. **⏸️ Interruptibility** - Can you pause? (High/Medium/Low)
+5. **⚡ Energy Level** - How much mental energy? (Low/Medium/High)
+6. **🌙 Time of Day** - Morning/Afternoon/Evening/Late Night (optional)
+7. **👥 Social Preference** - Solo/Co-op/Competitive
 
 ### Smart Recommendation Algorithm
-**5-Tier Scoring System (100 points):**
+**8-Tier Scoring System (115 points max):**
 - **Time Match (30%)** - Game must fit your available time
 - **Emotional Goal Match (25%)** - Aligns with desired mood
 - **Interruptibility Match (20%)** - Matches your flexibility needs
@@ -117,6 +118,7 @@ start-frontend.bat  # Opens frontend in browser
 - **Time of Day Match (5%)** - Optimal playing time bonus
 - **Social Preference Match (5%)** - Solo/multiplayer fit
 - **Satisfaction Bonus (max 10%)** - Previous user ratings
+- **Genre Preference Boost (max 15%)** - SOFT RANKING: Boosts score for preferred genres without eliminating other matches
 
 ### Output
 - **Top Recommendation** with golden crown badge, game image, and 95% match indicator
@@ -326,6 +328,42 @@ When selecting 3+ hours on the time slider:
 - Always resets to 3 hours after closing (prevents re-trigger)
 - Appears above all other modals (z-index: 3000)
 
+### 🎮 Genre Preference System (SOFT RANKING)
+**NEW FEATURE:** Intelligent genre preference without over-filtering
+
+**20+ Genre Options:**
+- 🧩 Puzzle • ⚔️ Action • 🎲 Strategy • 🗡️ RPG • 🎯 Platformer
+- 🏎️ Racing • ⚽ Sports • 🎲 Roguelike • 🃏 Card Game
+- 🔫 Tactical FPS • 👻 Horror • 🏗️ Sandbox • 🎉 Party Game
+- 📊 Management • 🏡 Life Sim • 🕵️ Social Deduction
+- ⛺ Survival • 🤝 Co-op Adventure • 👾 Arcade • 🚜 Farming Sim
+
+**How It Works:**
+- **Multi-select chip interface** - Click genres you enjoy
+- **Soft ranking approach** - Boosts preferred genres (+15% max score)
+- **Never eliminates games** - Prevents over-filtering
+- **Intelligent scoring** - Calculates match percentage based on overlap
+- **Optional feature** - Leave blank for standard recommendations
+
+**Why Soft Ranking?**
+Traditional hard filtering (showing ONLY selected genres) can:
+- Eliminate excellent matches that don't perfectly fit genre tags
+- Reduce recommendation quality by ignoring other 7 scoring dimensions
+- Create artificial barriers to game discovery
+
+Lutem's soft ranking:
+- ✅ Prioritizes your genre preferences
+- ✅ Still considers emotional fit, time, energy, etc.
+- ✅ Surfaces unexpected gems you might love
+- ✅ Maintains recommendation quality and diversity
+
+**Example:**
+You select "Puzzle" and "Strategy":
+- Games with both genres get +15% boost
+- Games with one genre get +7.5% boost  
+- Games with neither genre still eligible if they match other criteria
+- Result: Smart prioritization without missing great recommendations
+
 ### 🎯 Results Display
 **Top Recommendation Card:**
 - 👑 Golden "Top Pick" badge
@@ -508,6 +546,17 @@ Built with:
 ---
 
 ## 🔄 Changelog
+
+### November 23, 2025 - Late Evening
+- **GENRE PREFERENCES:** Added intelligent genre preference system
+  - 20+ genre options with emoji icons
+  - Multi-select chip interface
+  - Soft ranking approach (boosts score, doesn't filter)
+  - Backend scoring integration (+15% max boost)
+  - Formula: (matchedGenres / totalPreferredGenres) * 15.0
+  - All 41 games tagged with appropriate genres
+  - Preserves multi-dimensional recommendation quality
+  - Optional feature - works great with or without selection
 
 ### November 23, 2025 - Evening Session
 - **LOADING SPINNER:** Added engaging 2-second loading experience

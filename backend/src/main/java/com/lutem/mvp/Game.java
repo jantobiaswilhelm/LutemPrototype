@@ -19,7 +19,7 @@ public class Game {
     private List<SocialPreference> socialPreferences;
     
     // Metadata
-    private String genre;
+    private List<String> genres;  // Changed to List to support multiple genres
     private String description;
     private String imageUrl;  // Game cover art URL
     
@@ -32,6 +32,7 @@ public class Game {
         this.emotionalGoals = new ArrayList<>();
         this.bestTimeOfDay = new ArrayList<>();
         this.socialPreferences = new ArrayList<>();
+        this.genres = new ArrayList<>();  // Initialize genres list
         this.averageSatisfaction = 0.0;
         this.sessionCount = 0;
     }
@@ -39,7 +40,7 @@ public class Game {
     public Game(Long id, String name, int minMinutes, int maxMinutes, 
                 List<EmotionalGoal> emotionalGoals, Interruptibility interruptibility,
                 EnergyLevel energyRequired, List<TimeOfDay> bestTimeOfDay,
-                List<SocialPreference> socialPreferences, String genre, String description,
+                List<SocialPreference> socialPreferences, List<String> genres, String description,
                 String imageUrl) {
         this.id = id;
         this.name = name;
@@ -50,7 +51,7 @@ public class Game {
         this.energyRequired = energyRequired;
         this.bestTimeOfDay = bestTimeOfDay;
         this.socialPreferences = socialPreferences;
-        this.genre = genre;
+        this.genres = genres;
         this.description = description;
         this.imageUrl = imageUrl;
         this.averageSatisfaction = 0.0;
@@ -95,8 +96,8 @@ public class Game {
         this.socialPreferences = socialPreferences; 
     }
 
-    public String getGenre() { return genre; }
-    public void setGenre(String genre) { this.genre = genre; }
+    public List<String> getGenres() { return genres; }
+    public void setGenres(List<String> genres) { this.genres = genres; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }

@@ -929,11 +929,15 @@
         .advanced-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            opacity: 0;
+            pointer-events: none;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
         }
 
         .advanced-content.open {
             max-height: 600px;
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .input-group {
@@ -970,6 +974,14 @@
         .chip:hover {
             transform: translateY(-2px);
             box-shadow: 0 3px 8px var(--shadow);
+        }
+
+        /* Generic selected state for chips (like genres) */
+        .chip.selected {
+            background: var(--accent-primary) !important;
+            color: var(--text-header) !important;
+            border-color: var(--accent-primary) !important;
+            font-weight: 600;
         }
 
         /* Mood-specific chip colors */
@@ -1896,6 +1908,49 @@
                     </div>
                 </div>
 
+                <!-- GENRE PREFERENCES TOGGLE -->
+                <div class="advanced-toggle" id="genreToggle">
+                    <span class="advanced-toggle-text">
+                        <span>🎯</span>
+                        <span>Genre Preferences</span>
+                        <span style="font-size: 0.85em; font-weight: 400; color: var(--text-light);">(Optional - helps rank results)</span>
+                    </span>
+                    <span class="advanced-toggle-icon">▼</span>
+                </div>
+
+                <!-- GENRE PREFERENCES CONTENT -->
+                <div class="advanced-content" id="genreContent">
+                    <div class="input-group">
+                        <label>Select genres you enjoy (ranks them higher in results)</label>
+                        <div class="chip-container" id="genrePreferences">
+                            <div class="chip" data-genre="RPG">🗡️ RPG</div>
+                            <div class="chip" data-genre="Action">⚔️ Action</div>
+                            <div class="chip" data-genre="Strategy">♟️ Strategy</div>
+                            <div class="chip" data-genre="Puzzle">🧩 Puzzle</div>
+                            <div class="chip" data-genre="Adventure">🗺️ Adventure</div>
+                            <div class="chip" data-genre="Simulation">🎮 Simulation</div>
+                            <div class="chip" data-genre="Sports">⚽ Sports</div>
+                            <div class="chip" data-genre="Racing">🏎️ Racing</div>
+                            <div class="chip" data-genre="Roguelike">🎲 Roguelike</div>
+                            <div class="chip" data-genre="Card Game">🃏 Card Game</div>
+                            <div class="chip" data-genre="Battle Royale">🎯 Battle Royale</div>
+                            <div class="chip" data-genre="Tactical FPS">🔫 Tactical FPS</div>
+                            <div class="chip" data-genre="Horror">👻 Horror</div>
+                            <div class="chip" data-genre="Platformer">🦘 Platformer</div>
+                            <div class="chip" data-genre="Sandbox">🏗️ Sandbox</div>
+                            <div class="chip" data-genre="Party Game">🎉 Party Game</div>
+                            <div class="chip" data-genre="Board Game">🎲 Board Game</div>
+                            <div class="chip" data-genre="Management">📊 Management</div>
+                            <div class="chip" data-genre="Life Sim">🏡 Life Sim</div>
+                            <div class="chip" data-genre="Social Deduction">🕵️ Social Deduction</div>
+                            <div class="chip" data-genre="Survival">⛺ Survival</div>
+                            <div class="chip" data-genre="Co-op Adventure">🤝 Co-op Adventure</div>
+                            <div class="chip" data-genre="Arcade">👾 Arcade</div>
+                            <div class="chip" data-genre="Farming Sim">🚜 Farming Sim</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ADVANCED OPTIONS TOGGLE -->
                 <div class="advanced-toggle" id="advancedToggle">
                     <span class="advanced-toggle-text">
@@ -1989,6 +2044,7 @@
         // ============================================
         const state = {
             selectedGoals: [],
+            selectedGenres: [],  // NEW: Track selected genres
             availableMinutes: 30,
             energyLevel: null,
             interruptibility: null,
@@ -2204,6 +2260,14 @@
                 }
             });
             
+            // Sync genre preferences
+            document.querySelectorAll('#genrePreferences .chip').forEach(chip => {
+                chip.classList.remove('selected');
+                if (state.selectedGenres.includes(chip.getAttribute('data-genre'))) {
+                    chip.classList.add('selected');
+                }
+            });
+            
             // Sync time slider
             const timeIndex = TIME_VALUES.indexOf(state.availableMinutes);
             if (timeIndex !== -1) {
@@ -2314,10 +2378,46 @@
         setupRadioGroup('timeOfDay', 'timeOfDay');
         setupRadioGroup('socialPreference', 'socialPreference');
 
+        // Genre Preferences (multi-select chips)
+        const genreChips = document.querySelectorAll('#genrePreferences .chip');
+        console.log(`Attaching click handlers to ${genreChips.length} genre chips`);
+        
+        genreChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const genre = chip.getAttribute('data-genre');
+                console.log(`Genre chip clicked: ${genre}`);
+                
+                if (chip.classList.contains('selected')) {
+                    chip.classList.remove('selected');
+                    state.selectedGenres = state.selectedGenres.filter(g => g !== genre);
+                    console.log(`Deselected ${genre}`);
+                } else {
+                    chip.classList.add('selected');
+                    state.selectedGenres.push(genre);
+                    console.log(`Selected ${genre}`);
+                }
+                console.log('All selected genres:', state.selectedGenres);
+            });
+        });
+
+        // Genre Preferences Toggle
+        document.getElementById('genreToggle').addEventListener('click', () => {
+            const content = document.getElementById('genreContent');
+            const icon = document.querySelector('#genreToggle .advanced-toggle-icon');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.textContent = '▼';
+            } else {
+                content.classList.add('open');
+                icon.textContent = '▲';
+            }
+        });
+
         // Advanced Options Toggle
         document.getElementById('advancedToggle').addEventListener('click', () => {
             const content = document.getElementById('advancedContent');
-            const icon = document.querySelector('.advanced-toggle-icon');
+            const icon = document.querySelector('#advancedToggle .advanced-toggle-icon');
             
             if (content.classList.contains('open')) {
                 content.classList.remove('open');
@@ -2374,7 +2474,8 @@
                     currentEnergyLevel: state.energyLevel,
                     requiredInterruptibility: state.interruptibility,
                     timeOfDay: state.timeOfDay,
-                    socialPreference: state.socialPreference
+                    socialPreference: state.socialPreference,
+                    preferredGenres: state.selectedGenres.length > 0 ? state.selectedGenres : null
                 };
 
                 console.log('Request:', requestBody);

@@ -30,7 +30,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.MIDDAY, TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
             Arrays.asList(SocialPreference.SOLO),
-            "Puzzle",
+            Arrays.asList("Puzzle", "Simulation"),
             "Zen unpacking simulator with cozy vibes",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1135690/header.jpg"
         ));
@@ -42,7 +42,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
-            "Puzzle",
+            Arrays.asList("Puzzle", "Strategy"),
             "Peaceful tile-placement puzzle game",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1455840/header.jpg"
         ));
@@ -54,7 +54,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
-            "Arcade",
+            Arrays.asList("Arcade", "Puzzle"),
             "Classic Tetris with stunning audiovisuals",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1003590/header.jpg"
         ));
@@ -66,7 +66,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO),
-            "Roguelike",
+            Arrays.asList("Roguelike", "Action", "Platformer"),
             "Fast-paced roguelike action platformer",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/588650/header.jpg"
         ));
@@ -78,7 +78,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
-            "Sports",
+            Arrays.asList("Sports", "Racing"),
             "Soccer with rocket-powered cars",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/252950/header.jpg"
         ));
@@ -90,7 +90,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.SOLO),
-            "Puzzle",
+            Arrays.asList("Puzzle"),
             "Brain-teasing puzzle game with rule manipulation",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/736260/header.jpg"
         ));
@@ -104,7 +104,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO),
-            "Roguelike",
+            Arrays.asList("Roguelike", "Action", "RPG"),
             "Action roguelike with compelling story",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg"
         ));
@@ -116,7 +116,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
-            "Farming Sim",
+            Arrays.asList("Farming Sim", "RPG", "Simulation"),
             "Relaxing farming and life simulation",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg"
         ));
@@ -128,7 +128,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
-            "Card Game",
+            Arrays.asList("Card Game", "Roguelike", "Strategy"),
             "Strategic deck-building roguelike",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/646570/header.jpg"
         ));
@@ -140,7 +140,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
-            "Battle Royale",
+            Arrays.asList("Battle Royale", "Action"),
             "Fast-paced team-based battle royale",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg"
         ));
@@ -152,7 +152,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
-            "Simulation",
+            Arrays.asList("Simulation"),
             "Meditative cleaning simulator",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1290000/header.jpg"
         ));
@@ -164,7 +164,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.SOLO),
-            "Strategy",
+            Arrays.asList("Strategy", "Puzzle"),
             "Turn-based tactical combat puzzle",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/590380/header.jpg"
         ));
@@ -178,7 +178,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO),
-            "RPG",
+            Arrays.asList("RPG", "Action", "Adventure"),
             "Epic story-driven open-world RPG",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg"
         ));
@@ -190,7 +190,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.BOTH),
-            "Sandbox",
+            Arrays.asList("Sandbox", "Survival", "Adventure"),
             "Creative building and exploration",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1366220/header.jpg"
         ));
@@ -202,7 +202,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
-            "Action RPG",
+            Arrays.asList("Action", "RPG", "Adventure"),
             "Challenging action RPG with precise combat",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/374320/header.jpg"
         ));
@@ -214,7 +214,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COMPETITIVE),
-            "Strategy",
+            Arrays.asList("Strategy"),
             "Turn-based historical strategy game",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg"
         ));
@@ -226,7 +226,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
-            "Adventure",
+            Arrays.asList("Adventure"),
             "Cozy exploration game in a beautiful park",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1055540/header.jpg"
         ));
@@ -238,7 +238,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
-            "Strategy",
+            Arrays.asList("Strategy", "Roguelike"),
             "Unique auto-battler with deck-building",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1282730/header.jpg"
         ));
@@ -250,7 +250,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
-            "Tactical FPS",
+            Arrays.asList("Tactical FPS", "Action"),
             "Character-based tactical shooter",
             "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/4150c5778e7c03bdb5825519d85e5e6e8ed3a849-1920x1080.jpg"
         ));
@@ -262,7 +262,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.SOLO),
-            "Puzzle",
+            Arrays.asList("Puzzle", "Adventure"),
             "Beautiful island filled with environmental puzzles",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/210970/header.jpg"
         ));
@@ -276,7 +276,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
             Arrays.asList(SocialPreference.SOLO),
-            "Adventure",
+            Arrays.asList("Adventure"),
             "Mystery adventure in Wyoming wilderness",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/383870/header.jpg"
         ));
@@ -288,7 +288,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COOP),
-            "Co-op Adventure",
+            Arrays.asList("Co-op Adventure", "Platformer"),
             "Inventive co-op platformer with creative mechanics",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1426210/header.jpg"
         ));
@@ -300,7 +300,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.MIDDAY, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COOP),
-            "Party Game",
+            Arrays.asList("Party Game", "Simulation"),
             "Frantic cooperative cooking under pressure",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/728880/header.jpg"
         ));
@@ -312,7 +312,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
-            "Puzzle",
+            Arrays.asList("Puzzle", "Adventure"),
             "Mind-bending portal puzzles with humor",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/620/header.jpg"
         ));
@@ -324,7 +324,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.COOP),
-            "Puzzle",
+            Arrays.asList("Puzzle"),
             "Defuse bombs through teamwork and communication",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/341800/header.jpg"
         ));
@@ -336,7 +336,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO),
-            "Survival",
+            Arrays.asList("Survival", "Adventure", "Horror"),
             "Underwater survival with exploration and crafting",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/264710/header.jpg"
         ));
@@ -348,7 +348,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
-            "Roguelike",
+            Arrays.asList("Roguelike", "Action"),
             "Third-person roguelike with intense action",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/632360/header.jpg"
         ));
@@ -360,7 +360,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO),
-            "Platformer",
+            Arrays.asList("Platformer", "Adventure"),
             "Stunning metroidvania with emotional story",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1057090/header.jpg"
         ));
@@ -372,7 +372,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.COMPETITIVE),
-            "Racing",
+            Arrays.asList("Racing"),
             "Precision arcade racing with time trials",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/2225070/header.jpg"
         ));
@@ -384,7 +384,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.MIDDAY, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.COMPETITIVE),
-            "Party Game",
+            Arrays.asList("Party Game"),
             "Colorful obstacle course battle royale",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1097150/header.jpg"
         ));
@@ -396,7 +396,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.COMPETITIVE),
-            "Board Game",
+            Arrays.asList("Board Game", "Strategy"),
             "Online chess - ultimate strategy challenge",
             "https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/SamCopeland/phpmeXx6V.png"
         ));
@@ -408,7 +408,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
             Arrays.asList(SocialPreference.SOLO),
-            "Platformer",
+            Arrays.asList("Platformer", "Adventure"),
             "Serene journey through a fading world",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/683320/header.jpg"
         ));
@@ -420,7 +420,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
-            "Management",
+            Arrays.asList("Management", "Adventure", "Simulation"),
             "Comforting game about dying and letting go",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/972660/header.jpg"
         ));
@@ -432,7 +432,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
-            "Strategy",
+            Arrays.asList("Strategy", "Simulation"),
             "Automate everything - factory building sim",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/427520/header.jpg"
         ));
@@ -444,7 +444,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
-            "Life Sim",
+            Arrays.asList("Life Sim", "Simulation"),
             "Peaceful island life with cute animals",
             "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/en_US/games/switch/a/animal-crossing-new-horizons-switch/hero"
         ));
@@ -456,7 +456,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
             Arrays.asList(SocialPreference.SOLO),
-            "Adventure",
+            Arrays.asList("Adventure"),
             "Meditative journey through desert landscape",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/638230/header.jpg"
         ));
@@ -468,7 +468,7 @@ public class GameController {
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.MIDDAY, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.COOP, SocialPreference.COMPETITIVE),
-            "Social Deduction",
+            Arrays.asList("Social Deduction", "Party Game"),
             "Find the impostor in spaceship tasks",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/945360/header.jpg"
         ));
@@ -480,7 +480,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.MIDDAY, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.COMPETITIVE),
-            "Card Game",
+            Arrays.asList("Card Game", "Strategy"),
             "Strategic card battler with deep tactics",
             "https://bnetcmsus-a.akamaihd.net/cms/page_media/w4/W4NE08DTET8P1521577412158.jpg"
         ));
@@ -492,7 +492,7 @@ public class GameController {
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
-            "Action",
+            Arrays.asList("Action", "Roguelike"),
             "Addictive auto-battler with constant upgrades",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1794680/header.jpg"
         ));
@@ -504,7 +504,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.SOLO),
-            "Platformer",
+            Arrays.asList("Platformer"),
             "Tight platforming with touching story",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/504230/header.jpg"
         ));
@@ -516,7 +516,7 @@ public class GameController {
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
-            "Tactical FPS",
+            Arrays.asList("Tactical FPS", "Action"),
             "Legendary tactical shooter with competitive gameplay",
             "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg"
         ));
@@ -653,6 +653,20 @@ public class GameController {
             score += (avg / 5.0) * 10.0;
             if (avg >= 4.0) {
                 matchReasons.add("highly rated by you");
+            }
+        }
+
+        // 8. GENRE PREFERENCE BOOST (max 15%) - SOFT RANKING
+        if (request.getPreferredGenres() != null && !request.getPreferredGenres().isEmpty()) {
+            long genreMatches = game.getGenres().stream()
+                .filter(genre -> request.getPreferredGenres().stream()
+                    .anyMatch(prefGenre -> prefGenre.equalsIgnoreCase(genre)))
+                .count();
+            
+            if (genreMatches > 0) {
+                double genreBonus = (genreMatches / (double) request.getPreferredGenres().size()) * 15.0;
+                score += genreBonus;
+                matchReasons.add("matches your genre preferences");
             }
         }
 

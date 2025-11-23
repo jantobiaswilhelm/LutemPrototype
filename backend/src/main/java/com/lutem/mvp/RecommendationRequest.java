@@ -12,6 +12,9 @@ public class RecommendationRequest {
     private TimeOfDay timeOfDay;
     private SocialPreference socialPreference;
     
+    // Genre preferences (optional)
+    private List<String> preferredGenres;
+    
     // Optional: let user indicate if time is inferred or selected
     private boolean timeOfDayInferred;
 
@@ -69,5 +72,10 @@ public class RecommendationRequest {
     public boolean isTimeOfDayInferred() { return timeOfDayInferred; }
     public void setTimeOfDayInferred(boolean timeOfDayInferred) { 
         this.timeOfDayInferred = timeOfDayInferred; 
+    }
+
+    public List<String> getPreferredGenres() { return preferredGenres; }
+    public void setPreferredGenres(List<String> preferredGenres) { 
+        this.preferredGenres = preferredGenres; 
     }
 }
