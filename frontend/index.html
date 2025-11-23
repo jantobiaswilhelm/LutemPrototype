@@ -5,6 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lutem - AI-Powered Gaming Recommendations</title>
     <style>
+        /* ============================================
+           CSS VARIABLES - Dark/Light Mode
+           ============================================ */
+        :root {
+            /* Light Mode Colors */
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-light: #999999;
+            --border-color: #e0e0e0;
+            --shadow: rgba(0,0,0,0.1);
+            --shadow-hover: rgba(0,0,0,0.15);
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            
+            /* Mood Colors */
+            --mood-unwind: #4FC3F7;
+            --mood-achieve: #66BB6A;
+            --mood-engage: #FFA726;
+            --mood-explore: #AB47BC;
+            --mood-challenge: #EF5350;
+            --mood-recharge: #26C6DA;
+            
+            /* UI Elements */
+            --input-bg: #f8f9ff;
+            --input-border: #e0e7ff;
+            --placeholder-bg: #f5f5f5;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode Colors */
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --bg-secondary: #0f1419;
+            --bg-card: #1a1f2e;
+            --text-primary: #e4e4e4;
+            --text-secondary: #a0a0a0;
+            --text-light: #666666;
+            --border-color: #2a2f3e;
+            --shadow: rgba(0,0,0,0.3);
+            --shadow-hover: rgba(0,0,0,0.5);
+            --accent-primary: #7c8adb;
+            --accent-secondary: #8b6bb7;
+            
+            /* Darker mood colors */
+            --mood-unwind: #0288D1;
+            --mood-achieve: #388E3C;
+            --mood-engage: #F57C00;
+            --mood-explore: #7B1FA2;
+            --mood-challenge: #C62828;
+            --mood-recharge: #0097A7;
+            
+            /* UI Elements */
+            --input-bg: #1a1f2e;
+            --input-border: #2a2f3e;
+            --placeholder-bg: #252a38;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,10 +72,11 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--bg-primary);
             min-height: 100vh;
             padding: 20px;
-            color: #333;
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
         }
 
         body.modal-open {
@@ -34,6 +94,33 @@
             pointer-events: none;
         }
 
+        /* ============================================
+           THEME TOGGLE
+           ============================================ */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-4px) rotate(15deg);
+            box-shadow: 0 6px 20px var(--shadow-hover);
+        }
+
         header {
             text-align: center;
             margin-bottom: 40px;
@@ -43,11 +130,12 @@
         header h1 {
             font-size: 3em;
             margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         header p {
             font-size: 1.2em;
-            opacity: 0.9;
+            opacity: 0.95;
         }
 
         .main-content {
@@ -57,21 +145,21 @@
         }
 
         .input-panel, .results-panel {
-            background: white;
+            background: var(--bg-card);
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px var(--shadow);
+            transition: background 0.3s, box-shadow 0.3s;
         }
 
         .input-panel h2 {
             margin-bottom: 25px;
-            color: #667eea;
+            color: var(--accent-primary);
         }
 
         /* ============================================
            GUIDED SETUP MODAL
            ============================================ */
-        
         .guided-modal-overlay {
             display: none;
             position: fixed;
@@ -91,31 +179,30 @@
         }
 
         .guided-modal {
-            background: white;
+            background: var(--bg-card);
             border-radius: 24px;
             max-width: 600px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 60px var(--shadow-hover);
             animation: slideUp 0.4s;
-            position: relative;
         }
 
         .guided-modal-header {
             text-align: center;
             padding: 40px 40px 20px 40px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .guided-modal-header h2 {
             font-size: 2em;
-            color: #667eea;
+            color: var(--accent-primary);
             margin-bottom: 10px;
         }
 
         .guided-modal-header p {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 1.1em;
         }
 
@@ -125,22 +212,16 @@
 
         .guided-modal-footer {
             padding: 20px 40px;
-            border-top: 2px solid #f0f0f0;
+            border-top: 2px solid var(--border-color);
             text-align: center;
         }
 
         .guided-modal-footer a {
-            color: #667eea;
+            color: var(--accent-primary);
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.95em;
         }
 
-        .guided-modal-footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Welcome Screen */
         .welcome-choices {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -149,18 +230,18 @@
 
         .choice-card {
             padding: 30px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 16px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: white;
+            background: var(--bg-card);
         }
 
         .choice-card:hover {
-            border-color: #667eea;
+            border-color: var(--accent-primary);
             transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 8px 20px var(--shadow);
         }
 
         .choice-card-icon {
@@ -171,23 +252,16 @@
         .choice-card-title {
             font-size: 1.3em;
             font-weight: 700;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 10px;
         }
 
         .choice-card-desc {
             font-size: 0.95em;
-            color: #666;
+            color: var(--text-secondary);
             margin-bottom: 20px;
         }
 
-        .choice-card-time {
-            font-size: 0.85em;
-            color: #999;
-            font-weight: 600;
-        }
-
-        /* Guided Question Screens */
         .guided-question {
             display: none;
             animation: fadeInQuestion 0.4s;
@@ -210,20 +284,12 @@
 
         .question-title {
             font-size: 1.8em;
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 30px;
             text-align: center;
             font-weight: 700;
         }
 
-        .question-subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.05em;
-        }
-
-        /* Progress Dots */
         .progress-dots {
             display: flex;
             justify-content: center;
@@ -235,20 +301,19 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: #e0e0e0;
+            background: var(--border-color);
             transition: all 0.3s;
         }
 
         .progress-dot.active {
-            background: #667eea;
+            background: var(--accent-primary);
             transform: scale(1.2);
         }
 
         .progress-dot.completed {
-            background: #4caf50;
+            background: var(--mood-achieve);
         }
 
-        /* Big Option Buttons */
         .big-options {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -258,23 +323,23 @@
 
         .big-option {
             padding: 30px 20px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 16px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: white;
+            background: var(--bg-card);
         }
 
         .big-option:hover {
-            border-color: #667eea;
+            border-color: var(--accent-primary);
             transform: translateY(-4px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 6px 16px var(--shadow);
         }
 
         .big-option.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+            border-color: var(--accent-primary);
+            background: var(--input-bg);
         }
 
         .big-option-icon {
@@ -285,10 +350,9 @@
         .big-option-label {
             font-size: 1.1em;
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
         }
 
-        /* Mood Chips in Modal */
         .mood-chips-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -298,75 +362,21 @@
 
         .mood-chip-big {
             padding: 20px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 14px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            background: white;
+            background: var(--bg-card);
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
         }
 
         .mood-chip-big:hover {
-            border-color: #667eea;
+            border-color: var(--accent-primary);
             transform: translateY(-2px);
         }
 
-        .mood-chip-big.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        /* Big Time Slider */
-        .big-time-display {
-            text-align: center;
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 30px;
-        }
-
-        .big-slider {
-            width: 100%;
-            height: 12px;
-            border-radius: 6px;
-            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
-            outline: none;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-
-        .big-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .big-slider::-moz-range-thumb {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .slider-labels-big {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9em;
-            color: #666;
-        }
-
-        /* Navigation Buttons */
         .modal-nav-buttons {
             display: flex;
             gap: 15px;
@@ -385,13 +395,13 @@
         }
 
         .modal-btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
         }
 
         .modal-btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px var(--shadow);
         }
 
         .modal-btn-primary:disabled {
@@ -400,62 +410,134 @@
         }
 
         .modal-btn-secondary {
-            background: #f0f0f0;
-            color: #666;
+            background: var(--placeholder-bg);
+            color: var(--text-secondary);
         }
 
         .modal-btn-secondary:hover {
-            background: #e0e0e0;
+            background: var(--border-color);
+        }
+
+        .big-time-display {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--accent-primary);
+            margin-bottom: 30px;
+        }
+
+        .big-slider {
+            width: 100%;
+            height: 12px;
+            border-radius: 6px;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            outline: none;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .big-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--shadow-hover);
+        }
+
+        /* Touch Grass Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 40px var(--shadow-hover);
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-content h2 {
+            color: var(--accent-primary);
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         /* ============================================
-           EXISTING STYLES (PRESERVED)
+           FORM ELEMENTS
            ============================================ */
-
-        /* SECTION HEADERS */
         .section-header {
             font-size: 1.1em;
             font-weight: 600;
-            color: #667eea;
+            color: var(--accent-primary);
             margin: 30px 0 20px 0;
             padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .section-header:first-of-type {
             margin-top: 0;
         }
 
-        /* ADVANCED OPTIONS TOGGLE */
         .advanced-toggle {
             margin: 30px 0 15px 0;
             padding: 12px 18px;
-            background: #f8f9ff;
-            border: 1px solid #e0e7ff;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
             transition: all 0.3s;
-            user-select: none;
         }
 
         .advanced-toggle:hover {
-            background: #eef2ff;
-            border-color: #667eea;
+            background: var(--placeholder-bg);
+            border-color: var(--accent-primary);
         }
 
         .advanced-toggle-text {
             font-weight: 600;
-            color: #667eea;
+            color: var(--accent-primary);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
         .advanced-toggle-icon {
-            font-size: 1.2em;
             transition: transform 0.3s;
         }
 
@@ -481,11 +563,10 @@
             display: block;
             margin-bottom: 12px;
             font-weight: 600;
-            color: #555;
+            color: var(--text-secondary);
             font-size: 0.95em;
         }
 
-        /* Multi-select chips */
         .chip-container {
             display: flex;
             flex-wrap: wrap;
@@ -494,29 +575,77 @@
 
         .chip {
             padding: 8px 14px;
-            border: 1px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 20px;
-            background: white;
+            background: var(--bg-card);
             cursor: pointer;
             transition: all 0.3s;
             font-size: 0.9em;
             font-weight: 500;
             user-select: none;
+            color: var(--text-primary);
         }
 
         .chip:hover {
-            border-color: #667eea;
             transform: translateY(-2px);
-            box-shadow: 0 3px 8px rgba(102, 126, 234, 0.15);
+            box-shadow: 0 3px 8px var(--shadow);
         }
 
-        .chip.selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Mood-specific chip colors */
+        .chip[data-value="UNWIND"], .mood-chip-big[data-value="UNWIND"] {
+            border-color: var(--mood-unwind);
+        }
+        .chip[data-value="UNWIND"].selected, .mood-chip-big[data-value="UNWIND"].selected {
+            background: var(--mood-unwind) !important;
             color: white;
-            border-color: #667eea;
+            border-color: var(--mood-unwind);
         }
 
-        /* Radio groups */
+        .chip[data-value="ACHIEVE"], .mood-chip-big[data-value="ACHIEVE"] {
+            border-color: var(--mood-achieve);
+        }
+        .chip[data-value="ACHIEVE"].selected, .mood-chip-big[data-value="ACHIEVE"].selected {
+            background: var(--mood-achieve) !important;
+            color: white;
+            border-color: var(--mood-achieve);
+        }
+
+        .chip[data-value="ENGAGE"], .mood-chip-big[data-value="ENGAGE"] {
+            border-color: var(--mood-engage);
+        }
+        .chip[data-value="ENGAGE"].selected, .mood-chip-big[data-value="ENGAGE"].selected {
+            background: var(--mood-engage) !important;
+            color: white;
+            border-color: var(--mood-engage);
+        }
+
+        .chip[data-value="EXPLORE"], .mood-chip-big[data-value="EXPLORE"] {
+            border-color: var(--mood-explore);
+        }
+        .chip[data-value="EXPLORE"].selected, .mood-chip-big[data-value="EXPLORE"].selected {
+            background: var(--mood-explore) !important;
+            color: white;
+            border-color: var(--mood-explore);
+        }
+
+        .chip[data-value="CHALLENGE"], .mood-chip-big[data-value="CHALLENGE"] {
+            border-color: var(--mood-challenge);
+        }
+        .chip[data-value="CHALLENGE"].selected, .mood-chip-big[data-value="CHALLENGE"].selected {
+            background: var(--mood-challenge) !important;
+            color: white;
+            border-color: var(--mood-challenge);
+        }
+
+        .chip[data-value="RECHARGE"], .mood-chip-big[data-value="RECHARGE"] {
+            border-color: var(--mood-recharge);
+        }
+        .chip[data-value="RECHARGE"].selected, .mood-chip-big[data-value="RECHARGE"].selected {
+            background: var(--mood-recharge) !important;
+            color: white;
+            border-color: var(--mood-recharge);
+        }
+
         .radio-group {
             display: flex;
             gap: 10px;
@@ -525,82 +654,53 @@
         .radio-option {
             flex: 1;
             padding: 10px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             border-radius: 10px;
-            background: white;
+            background: var(--bg-card);
             cursor: pointer;
             text-align: center;
             transition: all 0.3s;
             font-weight: 500;
             font-size: 0.9em;
-            user-select: none;
+            color: var(--text-primary);
         }
 
         .radio-option:hover {
-            border-color: #667eea;
+            border-color: var(--accent-primary);
             transform: translateY(-2px);
         }
 
         .radio-option.selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
             color: white;
-            border-color: #667eea;
+            border-color: var(--accent-primary);
         }
 
-        /* Time slider */
         .time-display {
             text-align: center;
             font-size: 2.5rem;
             font-weight: bold;
-            color: #667eea;
+            color: var(--accent-primary);
             margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .discrete-slider {
             width: 100%;
             height: 8px;
             border-radius: 5px;
-            background: linear-gradient(to right, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
             outline: none;
-            opacity: 0.9;
-            transition: opacity 0.2s;
             cursor: pointer;
-        }
-
-        .discrete-slider:hover {
-            opacity: 1;
         }
 
         .discrete-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            appearance: none;
             width: 28px;
             height: 28px;
             border-radius: 50%;
             background: white;
             cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
-        }
-
-        .discrete-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-        }
-
-        .discrete-slider::-moz-range-thumb {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
-        }
-
-        .discrete-slider::-moz-range-thumb:hover {
-            transform: scale(1.1);
+            box-shadow: 0 3px 10px var(--shadow-hover);
         }
 
         .time-labels {
@@ -608,91 +708,498 @@
             justify-content: space-between;
             margin-top: 10px;
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-secondary);
         }
 
-        .time-labels span {
-            flex: 1;
-            text-align: center;
-        }
-
-        /* Touch Grass Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
+        .recommend-btn {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 3000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-overlay.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s;
-        }
-
-        .modal-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
-
-        .modal-content h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .modal-content p {
-            color: #666;
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        .modal-content ul {
-            padding-left: 20px;
-        }
-
-        .modal-content li {
-            margin: 10px 0;
-            color: #666;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 15px;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px var(--shadow);
             margin-top: 30px;
         }
 
-        .modal-btn.primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .modal-btn.primary:hover {
+        .recommend-btn:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px var(--shadow-hover);
         }
 
-        .modal-btn.secondary {
-            background: #f0f0f0;
-            color: #666;
+        .recommend-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
-        .modal-btn.secondary:hover {
-            background: #e0e0e0;
+        /* ============================================
+           GAME CARDS WITH IMAGES
+           ============================================ */
+        .game-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px var(--shadow-hover);
+        }
+
+        .game-card.top-pick {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, 
+                rgba(102,126,234,0.05) 0%, 
+                rgba(118,75,162,0.05) 100%);
+        }
+
+        [data-theme="dark"] .game-card.top-pick {
+            background: linear-gradient(135deg, 
+                rgba(124,138,219,0.1) 0%, 
+                rgba(139,107,183,0.1) 100%);
+        }
+
+        .game-image-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover .game-image {
+            transform: scale(1.05);
+        }
+
+        .game-image-fallback {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+        }
+
+        .game-content {
+            padding: 25px;
+        }
+
+        .top-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .game-title {
+            font-size: 1.8em;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .match-score {
+            background: var(--input-bg);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--accent-primary);
+            font-size: 0.95em;
+        }
+
+        .game-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .meta-tag {
+            padding: 6px 14px;
+            background: var(--placeholder-bg);
+            border-radius: 16px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .game-details {
+            margin: 15px 0;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .game-details strong {
+            color: var(--text-primary);
+        }
+
+        .recommendation-reason {
+            background: var(--input-bg);
+            padding: 15px;
+            border-left: 4px solid var(--accent-primary);
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .alternatives-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px dashed var(--border-color);
+        }
+
+        .alternatives-section h3 {
+            color: var(--accent-primary);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .feedback-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--input-bg);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .feedback-section h4 {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .rating-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .rating-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            background: var(--bg-card);
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s;
+            color: var(--text-primary);
+        }
+
+        .rating-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-primary);
+        }
+
+        .rating-btn.selected {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-tips {
+            font-size: 1.1em;
+            color: var(--accent-primary);
+            font-weight: 500;
+            margin-top: 15px;
+            min-height: 30px;
+            transition: opacity 0.3s;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .placeholder .icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        /* ============================================
+           RESULTS DISPLAY
+           ============================================ */
+        .results-content {
+            animation: fadeIn 0.5s;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s;
+            overflow: hidden;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .result-card.top-pick {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, 
+                rgba(102,126,234,0.05) 0%, 
+                rgba(118,75,162,0.05) 100%);
+        }
+
+        .top-pick-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(255,215,0,0.4);
+        }
+
+        .badge-icon {
+            font-size: 1.2em;
+        }
+
+        .game-image-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .result-card:hover .game-image {
+            transform: scale(1.05);
+        }
+
+        .match-percentage {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(102,126,234,0.95);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-content {
+            padding: 25px;
+        }
+
+        .game-title {
+            font-size: 1.9em;
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .game-genre {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .game-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .game-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: var(--input-bg);
+            border-radius: 12px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .meta-icon {
+            font-size: 1.2em;
+        }
+
+        .match-reason {
+            background: var(--input-bg);
+            padding: 16px;
+            border-left: 4px solid var(--accent-primary);
+            border-radius: 8px;
+            margin: 20px 0;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .match-reason strong {
+            color: var(--text-primary);
+        }
+
+        .feedback-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .feedback-btn {
+            width: 55px;
+            height: 55px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            background: var(--bg-card);
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback-btn:hover {
+            transform: scale(1.15);
+            border-color: var(--accent-primary);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        /* ============================================
+           ALTERNATIVES SECTION
+           ============================================ */
+        .alternatives-section {
+            margin-top: 40px;
+        }
+
+        .alternatives-title {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .alternatives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .alternative-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px var(--shadow);
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+        }
+
+        .alternative-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px var(--shadow-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .alternative-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .alternative-content {
+            padding: 18px;
+        }
+
+        .alternative-content h4 {
+            font-size: 1.2em;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .alternative-genre {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .alternative-reason {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .alternative-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
         }
 
         @keyframes fadeIn {
@@ -711,228 +1218,13 @@
             }
         }
 
-        /* Recommend button */
-        .recommend-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            margin-top: 30px;
-        }
-
-        .recommend-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .recommend-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Loading spinner */
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-tips {
-            font-size: 1.1em;
-            color: #667eea;
-            font-weight: 500;
-            margin-top: 15px;
-            min-height: 30px;
-            transition: opacity 0.3s;
-        }
-
-        /* Game cards */
-        .game-card {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-        }
-
-        .game-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .game-card.top-pick {
-            border: 3px solid #667eea;
-            background: linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%);
-        }
-
-        .top-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-        }
-
-        .game-title {
-            font-size: 1.8em;
-            color: #333;
-            font-weight: 700;
-        }
-
-        .match-score {
-            background: #f0f4ff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            color: #667eea;
-            font-size: 0.95em;
-        }
-
-        .game-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .meta-tag {
-            padding: 6px 14px;
-            background: #f5f5f5;
-            border-radius: 16px;
-            font-size: 0.85em;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .game-details {
-            margin: 15px 0;
-            color: #555;
-            line-height: 1.8;
-        }
-
-        .game-details strong {
-            color: #333;
-            display: inline-block;
-            min-width: 160px;
-        }
-
-        .recommendation-reason {
-            background: #f8f9ff;
-            padding: 15px;
-            border-left: 4px solid #667eea;
-            margin-top: 15px;
-            border-radius: 8px;
-            font-size: 0.95em;
-            color: #555;
-            font-style: italic;
-        }
-
-        .alternatives-section {
-            margin-top: 30px;
-            padding-top: 30px;
-            border-top: 2px dashed #e0e0e0;
-        }
-
-        .alternatives-section h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .feedback-section {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9ff;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .feedback-section h4 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .rating-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .rating-btn {
-            width: 50px;
-            height: 50px;
-            border: 2px solid #e0e0e0;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-            font-size: 1.2em;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-
-        .rating-btn:hover {
-            transform: scale(1.1);
-            border-color: #667eea;
-        }
-
-        .rating-btn.selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-        }
-
-        .placeholder {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-
-        .placeholder .icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
-
         @media (max-width: 1024px) {
             .main-content {
                 grid-template-columns: 1fr;
             }
-
             .welcome-choices {
                 grid-template-columns: 1fr;
             }
-
             .big-options {
                 grid-template-columns: 1fr;
             }
@@ -940,6 +1232,11 @@
     </style>
 </head>
 <body>
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+        <span id="themeIcon">🌙</span>
+    </div>
+
     <!-- Guided Setup Modal -->
     <div class="guided-modal-overlay" id="guidedModalOverlay">
         <div class="guided-modal">
@@ -956,14 +1253,14 @@
                             <div class="choice-card-icon">🚀</div>
                             <div class="choice-card-title">Quick Start</div>
                             <div class="choice-card-desc">Answer 3 simple questions</div>
-                            <div class="choice-card-time">~30 seconds</div>
+                            <div style="font-size: 0.85em; color: var(--text-light); font-weight: 600;">~30 seconds</div>
                         </div>
 
                         <div class="choice-card" onclick="useFullForm()">
                             <div class="choice-card-icon">⚙️</div>
                             <div class="choice-card-title">Custom Setup</div>
                             <div class="choice-card-desc">Full control over all options</div>
-                            <div class="choice-card-time">~2 minutes</div>
+                            <div style="font-size: 0.85em; color: var(--text-light); font-weight: 600;">~2 minutes</div>
                         </div>
                     </div>
                 </div>
@@ -977,7 +1274,7 @@
                     </div>
 
                     <h3 class="question-title">How are you feeling right now?</h3>
-                    <p class="question-subtitle">Choose what matches your current energy</p>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 30px; font-size: 1.05em;">Choose what matches your current energy</p>
 
                     <div class="big-options">
                         <div class="big-option" data-value="LOW" onclick="selectBigOption(this, 'guidedEnergy')">
@@ -1009,11 +1306,11 @@
                     </div>
 
                     <h3 class="question-title">How much time do you have?</h3>
-                    <p class="question-subtitle">Drag the slider to set your available time</p>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 30px; font-size: 1.05em;">Drag the slider to set your available time</p>
 
                     <div class="big-time-display" id="guidedTimeDisplay">30 minutes</div>
                     <input type="range" id="guidedTimeSlider" min="0" max="7" value="2" step="1" class="big-slider">
-                    <div class="slider-labels-big">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: var(--text-secondary);">
                         <span>5 min</span>
                         <span>3+ hrs</span>
                     </div>
@@ -1033,7 +1330,7 @@
                     </div>
 
                     <h3 class="question-title">What do you want to feel?</h3>
-                    <p class="question-subtitle">Select one or more that resonate with you</p>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 30px; font-size: 1.05em;">Select one or more that resonate with you</p>
 
                     <div class="mood-chips-grid">
                         <div class="mood-chip-big" data-value="UNWIND" onclick="toggleMoodChip(this)">😌 Unwind & Relax</div>
@@ -1064,14 +1361,14 @@
             <h2>Time to Touch Grass?</h2>
             <p>3+ hours of gaming is a marathon session!</p>
             <p style="margin-top: 15px; font-weight: 600;">Before you dive in, consider:</p>
-            <ul style="text-align: left; margin-top: 10px;">
-                <li>Have you moved your body today?</li>
-                <li>Have you had water recently?</li>
-                <li>Is your space comfortable for a long session?</li>
+            <ul style="text-align: left; margin-top: 10px; padding-left: 20px;">
+                <li style="margin: 10px 0; color: var(--text-secondary);">Have you moved your body today?</li>
+                <li style="margin: 10px 0; color: var(--text-secondary);">Have you had water recently?</li>
+                <li style="margin: 10px 0; color: var(--text-secondary);">Is your space comfortable for a long session?</li>
             </ul>
             <div class="modal-buttons">
-                <button class="modal-btn secondary" onclick="closeTouchGrassModal(false)">I'll Choose Less Time</button>
-                <button class="modal-btn primary" onclick="closeTouchGrassModal(true)">I'm Ready! 🎮</button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeTouchGrassModal(false)">I'll Choose Less Time</button>
+                <button class="modal-btn modal-btn-primary" onclick="closeTouchGrassModal(true)">I'm Ready! 🎮</button>
             </div>
         </div>
     </div>
@@ -1094,12 +1391,12 @@
                 <div class="input-group">
                     <label>What do you want to feel? (Select all that apply)</label>
                     <div class="chip-container" id="emotionalGoals">
-                        <div class="chip" data-value="UNWIND">Unwind & Relax</div>
-                        <div class="chip" data-value="ACHIEVE">Achieve & Progress</div>
-                        <div class="chip" data-value="ENGAGE">Engage & Focus</div>
-                        <div class="chip" data-value="EXPLORE">Explore & Discover</div>
-                        <div class="chip" data-value="CHALLENGE">Challenge Myself</div>
-                        <div class="chip" data-value="RECHARGE">Recharge Energy</div>
+                        <div class="chip" data-value="UNWIND">😌 Unwind & Relax</div>
+                        <div class="chip" data-value="ACHIEVE">🏆 Achieve & Progress</div>
+                        <div class="chip" data-value="ENGAGE">🎯 Engage & Focus</div>
+                        <div class="chip" data-value="EXPLORE">🗺️ Explore & Discover</div>
+                        <div class="chip" data-value="CHALLENGE">⚡ Challenge Myself</div>
+                        <div class="chip" data-value="RECHARGE">🔋 Recharge Energy</div>
                     </div>
                 </div>
 
@@ -1148,7 +1445,7 @@
                     <span class="advanced-toggle-text">
                         <span>⚙️</span>
                         <span>Advanced Options</span>
-                        <span style="font-size: 0.85em; font-weight: 400; color: #999;">(Optional)</span>
+                        <span style="font-size: 0.85em; font-weight: 400; color: var(--text-light);">(Optional)</span>
                     </span>
                     <span class="advanced-toggle-icon">▼</span>
                 </div>
@@ -1195,383 +1492,300 @@
         </div>
     </div>
 
+
     <script>
         // ============================================
-        // DISCRETE TIME STEPS
+        // STATE MANAGEMENT
         // ============================================
-        const TIME_STEPS = [
-            { value: 5, label: '5 minutes' },
-            { value: 15, label: '15 minutes' },
-            { value: 30, label: '30 minutes' },
-            { value: 45, label: '45 minutes' },
-            { value: 60, label: '1 hour' },
-            { value: 120, label: '2 hours' },
-            { value: 180, label: '3 hours' },
-            { value: 999, label: '3+ hours 🌱' }
-        ];
-
-        function getTimeStepValue(index) {
-            return TIME_STEPS[index].value;
-        }
-
-        function getTimeStepLabel(index) {
-            return TIME_STEPS[index].label;
-        }
-
-        // ============================================
-        // GUIDED SETUP STATE
-        // ============================================
-        const guidedState = {
-            energy: null,
-            time: 30,
-            moods: []
+        const state = {
+            selectedGoals: [],
+            availableMinutes: 30,
+            energyLevel: null,
+            interruptibility: null,
+            timeOfDay: null,
+            socialPreference: null,
+            guidedEnergy: null,
+            guidedTime: 30,
+            guidedGoals: []
         };
 
-        // Show guided modal on page load
-        window.addEventListener('load', () => {
-            showGuidedModal();
+        const TIME_VALUES = [5, 15, 30, 45, 60, 120, 180, 200];
+        const TIME_LABELS = ['5 minutes', '15 minutes', '30 minutes', '45 minutes', 
+                             '1 hour', '2 hours', '3 hours', '3+ hours'];
+
+        // ============================================
+        // THEME TOGGLE
+        // ============================================
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const root = document.documentElement;
+
+        // Load theme from localStorage
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        root.setAttribute('data-theme', savedTheme);
+        themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            root.setAttribute('data-theme', newTheme);
+            themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', newTheme);
         });
 
-        function showGuidedModal() {
-            document.getElementById('guidedModalOverlay').classList.add('show');
-            document.body.classList.add('modal-open');
-            document.getElementById('mainContainer').classList.add('blurred');
+        // ============================================
+        // GUIDED MODAL FUNCTIONS
+        // ============================================
+        function startQuickSetup() {
+            document.getElementById('welcomeScreen').classList.remove('active');
+            document.getElementById('question1').classList.add('active');
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 1 of 3';
         }
 
-        function hideGuidedModal() {
-            document.getElementById('guidedModalOverlay').classList.remove('show');
+        function useFullForm() {
+            document.getElementById('guidedModalOverlay').style.display = 'none';
             document.body.classList.remove('modal-open');
             document.getElementById('mainContainer').classList.remove('blurred');
         }
 
-        function startQuickSetup() {
-            showQuestion('question1');
-        }
-
-        function useFullForm() {
-            hideGuidedModal();
-        }
-
-        function showQuestion(questionId) {
-            document.querySelectorAll('.guided-question').forEach(q => q.classList.remove('active'));
-            document.getElementById(questionId).classList.add('active');
-        }
-
         function goToWelcome() {
-            showQuestion('welcomeScreen');
+            document.getElementById('question1').classList.remove('active');
+            document.getElementById('welcomeScreen').classList.add('active');
+            document.getElementById('modalHeaderText').textContent = "Let's find your perfect game!";
         }
 
         function goToQuestion1() {
-            showQuestion('question1');
+            document.getElementById('question2').classList.remove('active');
+            document.getElementById('question1').classList.add('active');
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 1 of 3';
         }
 
         function goToQuestion2() {
-            showQuestion('question2');
+            document.getElementById('question1').classList.remove('active');
+            document.getElementById('question2').classList.add('active');
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 2 of 3';
         }
 
         function goToQuestion3() {
-            showQuestion('question3');
+            document.getElementById('question2').classList.remove('active');
+            document.getElementById('question3').classList.add('active');
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 3 of 3';
         }
 
-        // Big option selection
         function selectBigOption(element, stateKey) {
-            // Clear other selections
-            element.parentElement.querySelectorAll('.big-option').forEach(opt => opt.classList.remove('selected'));
-            element.classList.add('selected');
+            // Deselect all siblings
+            element.parentElement.querySelectorAll('.big-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
             
-            guidedState.energy = element.dataset.value;
+            // Select this one
+            element.classList.add('selected');
+            state[stateKey] = element.getAttribute('data-value');
             
             // Enable next button
             document.getElementById('q1NextBtn').disabled = false;
         }
 
-        // Mood chip toggle
         function toggleMoodChip(element) {
-            element.classList.toggle('selected');
+            const value = element.getAttribute('data-value');
             
-            // Update guided state
-            guidedState.moods = Array.from(
-                document.querySelectorAll('.mood-chip-big.selected')
-            ).map(chip => chip.dataset.value);
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                state.guidedGoals = state.guidedGoals.filter(g => g !== value);
+            } else {
+                element.classList.add('selected');
+                state.guidedGoals.push(value);
+            }
             
-            // Enable next button if at least one selected
-            document.getElementById('q3NextBtn').disabled = guidedState.moods.length === 0;
+            // Enable/disable submit button
+            document.getElementById('q3NextBtn').disabled = state.guidedGoals.length === 0;
         }
 
-        // Guided time slider
-        document.getElementById('guidedTimeSlider')?.addEventListener('input', (e) => {
-            const stepIndex = parseInt(e.target.value);
-            const stepValue = getTimeStepValue(stepIndex);
-            const stepLabel = getTimeStepLabel(stepIndex);
+        function submitGuidedSetup() {
+            // Map guided state to main form state
+            state.energyLevel = state.guidedEnergy;
+            state.availableMinutes = state.guidedTime;
+            state.selectedGoals = [...state.guidedGoals];
+            state.interruptibility = 'MEDIUM'; // Default
             
-            guidedState.time = stepValue;
-            document.getElementById('guidedTimeDisplay').textContent = stepLabel;
+            // Sync UI
+            syncFormFromState();
             
-            if (stepValue === 999) {
-                setTimeout(() => showTouchGrassModal(), 300);
-            }
-        });
-
-        // Submit guided setup
-        async function submitGuidedSetup() {
-            if (guidedState.time === 999) {
-                showTouchGrassModal();
-                return;
-            }
-
-            // Map guided state to full form state
-            state.emotionalGoals = guidedState.moods;
-            state.energyLevel = guidedState.energy;
-            state.availableMinutes = guidedState.time;
-            state.interruptibility = 'MEDIUM'; // Default for guided
-            state.socialPreference = null; // Optional
-            state.timeOfDay = null; // Optional
-
-            // VISUAL UPDATE: Sync full form to match guided choices
-            syncFullFormToGuidedState();
-
-            // Hide modal
-            hideGuidedModal();
-
-            // Show loading in results panel
-            showLoading();
-
-            // Call recommendation API
-            try {
-                const requestBody = {
-                    availableMinutes: state.availableMinutes,
-                    desiredEmotionalGoals: state.emotionalGoals,
-                    requiredInterruptibility: state.interruptibility,
-                    currentEnergyLevel: state.energyLevel,
-                    timeOfDay: state.timeOfDay,
-                    socialPreference: state.socialPreference
-                };
-
-                console.log('=== GUIDED SETUP REQUEST ===');
-                console.log('Request body:', requestBody);
-
-                const response = await fetch('http://localhost:8080/recommendations', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log('Received data:', data);
-                displayResults(data);
-            } catch (error) {
-                console.error('Error fetching recommendations:', error);
-                resultsPanel.innerHTML = `
-                    <div style="color: red; text-align: center; padding: 40px;">
-                        <p style="font-size: 1.2em;">⚠️ Error</p>
-                        <p>Could not fetch recommendations. Please make sure the backend is running.</p>
-                        <p style="margin-top: 10px; font-size: 0.9em;">Error: ${error.message}</p>
-                    </div>
-                `;
-            }
+            // Close modal
+            document.getElementById('guidedModalOverlay').style.display = 'none';
+            document.body.classList.remove('modal-open');
+            document.getElementById('mainContainer').classList.remove('blurred');
+            
+            // Auto-submit
+            getRecommendation();
         }
 
-        // Sync full form visual state to match guided selections
-        function syncFullFormToGuidedState() {
-            // 1. Update emotional goal chips
-            emotionalGoalsContainer.querySelectorAll('.chip').forEach(chip => {
-                if (guidedState.moods.includes(chip.dataset.value)) {
+        function syncFormFromState() {
+            // Sync emotional goals
+            document.querySelectorAll('#emotionalGoals .chip').forEach(chip => {
+                chip.classList.remove('selected');
+                if (state.selectedGoals.includes(chip.getAttribute('data-value'))) {
                     chip.classList.add('selected');
-                } else {
-                    chip.classList.remove('selected');
                 }
             });
-
-            // 2. Update energy level radio buttons
-            energyLevelContainer.querySelectorAll('.radio-option').forEach(option => {
-                if (option.dataset.value === guidedState.energy) {
-                    option.classList.add('selected');
-                } else {
-                    option.classList.remove('selected');
-                }
-            });
-
-            // 3. Update time slider
-            const timeIndex = TIME_STEPS.findIndex(step => step.value === guidedState.time);
+            
+            // Sync time slider
+            const timeIndex = TIME_VALUES.indexOf(state.availableMinutes);
             if (timeIndex !== -1) {
-                timeSlider.value = timeIndex;
-                timeDisplay.textContent = TIME_STEPS[timeIndex].label;
+                document.getElementById('timeSlider').value = timeIndex;
+                updateTimeDisplay(timeIndex);
             }
-
-            // 4. Update interruptibility (set to MEDIUM as default)
-            interruptibilityContainer.querySelectorAll('.radio-option').forEach(option => {
-                if (option.dataset.value === 'MEDIUM') {
-                    option.classList.add('selected');
-                } else {
-                    option.classList.remove('selected');
+            
+            // Sync energy level
+            document.querySelectorAll('#energyLevel .radio-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.getAttribute('data-value') === state.energyLevel) {
+                    opt.classList.add('selected');
                 }
             });
         }
+
+        // Guided Time Slider
+        document.getElementById('guidedTimeSlider').addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            state.guidedTime = TIME_VALUES[index];
+            document.getElementById('guidedTimeDisplay').textContent = TIME_LABELS[index];
+        });
 
         // ============================================
         // TOUCH GRASS MODAL
         // ============================================
-        function showTouchGrassModal() {
-            const modal = document.getElementById('touchGrassModal');
-            modal.classList.add('show');
-        }
-
         function closeTouchGrassModal(keepSelection) {
             const modal = document.getElementById('touchGrassModal');
-            modal.classList.remove('show');
+            modal.style.display = 'none';
             
-            // Always reset to 3 hours (even if "I'm Ready!" is clicked)
-            // This prevents the modal from appearing again on recommendation
-            const timeSlider = document.getElementById('timeSlider');
-            timeSlider.value = 6;
-            state.availableMinutes = 180;
-            document.getElementById('timeDisplay').textContent = '3 hours';
-
-            // Also reset guided slider if in guided mode
-            const guidedSlider = document.getElementById('guidedTimeSlider');
-            if (guidedSlider) {
-                guidedSlider.value = 6;
-                guidedState.time = 180;
-                document.getElementById('guidedTimeDisplay').textContent = '3 hours';
+            if (!keepSelection) {
+                // Reset to 3 hours (index 6)
+                document.getElementById('timeSlider').value = 6;
+                state.availableMinutes = 180;
+                updateTimeDisplay(6);
             }
         }
 
         // ============================================
-        // ADVANCED OPTIONS TOGGLE
+        // MAIN FORM INTERACTIONS
         // ============================================
-        const advancedToggle = document.getElementById('advancedToggle');
-        const advancedContent = document.getElementById('advancedContent');
+        
+        // Emotional Goals (multi-select chips)
+        document.querySelectorAll('#emotionalGoals .chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const value = chip.getAttribute('data-value');
+                
+                if (chip.classList.contains('selected')) {
+                    chip.classList.remove('selected');
+                    state.selectedGoals = state.selectedGoals.filter(g => g !== value);
+                } else {
+                    chip.classList.add('selected');
+                    state.selectedGoals.push(value);
+                }
+            });
+        });
 
-        advancedToggle.addEventListener('click', () => {
-            advancedToggle.classList.toggle('open');
-            advancedContent.classList.toggle('open');
+        // Time Slider
+        const timeSlider = document.getElementById('timeSlider');
+        const timeDisplay = document.getElementById('timeDisplay');
+
+        function updateTimeDisplay(index) {
+            timeDisplay.textContent = TIME_LABELS[index];
+        }
+
+        timeSlider.addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            state.availableMinutes = TIME_VALUES[index];
+            updateTimeDisplay(index);
+            
+            // Show Touch Grass modal for 3+ hours
+            if (index === 7) {
+                document.getElementById('touchGrassModal').style.display = 'flex';
+            }
+        });
+
+        // Radio Groups (single-select)
+        function setupRadioGroup(groupId, stateKey) {
+            document.querySelectorAll(`#${groupId} .radio-option`).forEach(option => {
+                option.addEventListener('click', () => {
+                    // Deselect all
+                    document.querySelectorAll(`#${groupId} .radio-option`).forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Select this one
+                    option.classList.add('selected');
+                    state[stateKey] = option.getAttribute('data-value');
+                });
+            });
+        }
+
+        setupRadioGroup('energyLevel', 'energyLevel');
+        setupRadioGroup('interruptibility', 'interruptibility');
+        setupRadioGroup('timeOfDay', 'timeOfDay');
+        setupRadioGroup('socialPreference', 'socialPreference');
+
+        // Advanced Options Toggle
+        document.getElementById('advancedToggle').addEventListener('click', () => {
+            const content = document.getElementById('advancedContent');
+            const icon = document.querySelector('.advanced-toggle-icon');
+            
+            if (content.classList.contains('open')) {
+                content.classList.remove('open');
+                icon.textContent = '▼';
+            } else {
+                content.classList.add('open');
+                icon.textContent = '▲';
+            }
         });
 
         // ============================================
-        // STATE & FORM MANAGEMENT
+        // API COMMUNICATION
         // ============================================
-        const state = {
-            emotionalGoals: [],
-            interruptibility: null,
-            energyLevel: null,
-            timeOfDay: null,
-            socialPreference: null,
-            availableMinutes: 30
-        };
+        const API_URL = 'http://localhost:8080';
 
-        // Elements
-        const emotionalGoalsContainer = document.getElementById('emotionalGoals');
-        const interruptibilityContainer = document.getElementById('interruptibility');
-        const energyLevelContainer = document.getElementById('energyLevel');
-        const timeOfDayContainer = document.getElementById('timeOfDay');
-        const socialPreferenceContainer = document.getElementById('socialPreference');
-        const timeSlider = document.getElementById('timeSlider');
-        const timeDisplay = document.getElementById('timeDisplay');
-        const recommendBtn = document.getElementById('recommendBtn');
-        const resultsPanel = document.getElementById('resultsPanel');
-
-        // Initialize
-        function init() {
-            setupEventListeners();
-        }
-
-        function setupEventListeners() {
-            // Emotional Goals (multi-select)
-            emotionalGoalsContainer.querySelectorAll('.chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    chip.classList.toggle('selected');
-                    updateEmotionalGoals();
-                });
-            });
-
-            // Radio groups (single-select)
-            setupRadioGroup(interruptibilityContainer, 'interruptibility');
-            setupRadioGroup(energyLevelContainer, 'energyLevel');
-            setupRadioGroup(timeOfDayContainer, 'timeOfDay', true);
-            setupRadioGroup(socialPreferenceContainer, 'socialPreference', true);
-
-            // Time slider with discrete steps
-            timeSlider.addEventListener('input', (e) => {
-                const stepIndex = parseInt(e.target.value);
-                const stepValue = getTimeStepValue(stepIndex);
-                const stepLabel = getTimeStepLabel(stepIndex);
-                
-                state.availableMinutes = stepValue;
-                timeDisplay.textContent = stepLabel;
-                
-                if (stepValue === 999) {
-                    setTimeout(() => showTouchGrassModal(), 300);
-                }
-            });
-
-            // Recommend button
-            recommendBtn.addEventListener('click', getRecommendation);
-        }
-
-        function setupRadioGroup(container, stateKey, isOptional = false) {
-            container.querySelectorAll('.radio-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    if (isOptional && option.classList.contains('selected')) {
-                        option.classList.remove('selected');
-                        state[stateKey] = null;
-                    } else {
-                        container.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
-                        option.classList.add('selected');
-                        state[stateKey] = option.dataset.value;
-                    }
-                });
-            });
-        }
-
-        function updateEmotionalGoals() {
-            state.emotionalGoals = Array.from(
-                emotionalGoalsContainer.querySelectorAll('.chip.selected')
-            ).map(chip => chip.dataset.value);
-        }
-
-        // Get recommendation
         async function getRecommendation() {
-            if (state.availableMinutes === 999) {
-                showTouchGrassModal();
-                return;
-            }
-
+            const btn = document.getElementById('recommendBtn');
+            const resultsPanel = document.getElementById('resultsPanel');
+            
             // Validation
-            if (state.emotionalGoals.length === 0) {
-                alert('Please select at least one emotional goal');
+            if (state.selectedGoals.length === 0) {
+                alert('Please select at least one emotional goal!');
                 return;
             }
-            if (!state.interruptibility || !state.energyLevel) {
-                alert('Please complete all required fields');
+            
+            if (!state.energyLevel) {
+                alert('Please select your energy level!');
                 return;
             }
 
-            showLoading();
+            // Show loading
+            btn.disabled = true;
+            btn.textContent = '🎮 Finding your game...';
+            resultsPanel.innerHTML = `
+                <div class="placeholder">
+                    <div class="icon">⏳</div>
+                    <p>Analyzing your preferences...</p>
+                </div>
+            `;
 
             try {
                 const requestBody = {
                     availableMinutes: state.availableMinutes,
-                    desiredEmotionalGoals: state.emotionalGoals,
-                    requiredInterruptibility: state.interruptibility,
+                    desiredEmotionalGoals: state.selectedGoals,
                     currentEnergyLevel: state.energyLevel,
+                    requiredInterruptibility: state.interruptibility,
                     timeOfDay: state.timeOfDay,
                     socialPreference: state.socialPreference
                 };
 
-                console.log('=== REQUEST BEING SENT ===');
-                console.log('Request body:', requestBody);
+                console.log('Request:', requestBody);
 
-                const response = await fetch('http://localhost:8080/recommendations', {
+                const response = await fetch(`${API_URL}/recommendations`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody)
                 });
 
@@ -1580,195 +1794,183 @@
                 }
 
                 const data = await response.json();
-                console.log('Received data:', data);
+                console.log('Response:', data);
+                
                 displayResults(data);
+                
             } catch (error) {
-                console.error('Error fetching recommendations:', error);
+                console.error('Error:', error);
                 resultsPanel.innerHTML = `
-                    <div style="color: red; text-align: center; padding: 40px;">
-                        <p style="font-size: 1.2em;">⚠️ Error</p>
-                        <p>Could not fetch recommendations. Please make sure the backend is running.</p>
-                        <p style="margin-top: 10px; font-size: 0.9em;">Error: ${error.message}</p>
+                    <div class="placeholder">
+                        <div class="icon">❌</div>
+                        <p>Error connecting to server</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Make sure the backend is running on port 8080</p>
                     </div>
                 `;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🎮 Get Recommendation';
             }
         }
 
-        // Loading state
-        const loadingTips = [
-            'Finding your perfect gaming match...',
-            'Analyzing your mood and preferences...',
-            'Scanning 20+ games in our library...',
-            'Calculating optimal recommendations...',
-            'Almost there! Preparing your results...'
-        ];
-
-        let tipIndex = 0;
-        let tipInterval;
-
-        function showLoading() {
-            tipIndex = 0;
-            resultsPanel.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p style="font-size: 1.2em; font-weight: 600; color: #667eea;">Finding your perfect game...</p>
-                    <p class="loading-tips" id="loadingTip">${loadingTips[0]}</p>
-                </div>
-            `;
-
-            tipInterval = setInterval(() => {
-                tipIndex = (tipIndex + 1) % loadingTips.length;
-                const tipElement = document.getElementById('loadingTip');
-                if (tipElement) {
-                    tipElement.style.opacity = '0';
-                    setTimeout(() => {
-                        tipElement.textContent = loadingTips[tipIndex];
-                        tipElement.style.opacity = '1';
-                    }, 300);
-                }
-            }, 2000);
-        }
-
-        // Display results
         function displayResults(data) {
-            clearInterval(tipInterval);
-
-            console.log('displayResults called with:', data);
-
-            const topGame = data.topRecommendation;
-            const topReason = data.reason;
-            const alternatives = data.alternatives || [];
-            const alternativeReasons = data.alternativeReasons || [];
-
-            if (!topGame) {
+            const resultsPanel = document.getElementById('resultsPanel');
+            
+            if (!data.topRecommendation || data.topRecommendation.id === 0) {
                 resultsPanel.innerHTML = `
-                    <div style="color: red; text-align: center; padding: 40px;">
-                        <p style="font-size: 1.2em;">⚠️ No Games Found</p>
-                        <p>No games match your preferences. Try adjusting your criteria.</p>
+                    <div class="placeholder">
+                        <div class="icon">🤔</div>
+                        <p>No perfect match found</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Try adjusting your preferences</p>
                     </div>
                 `;
                 return;
             }
 
-            let html = '';
-
-            // Top recommendation
-            html += createGameCard(topGame, topReason, true, 100);
-
-            // Alternatives
-            if (alternatives.length > 0) {
-                html += '<div class="alternatives-section">';
-                html += '<h3>🎯 Alternative Options</h3>';
-                alternatives.forEach((alt, index) => {
-                    const altReason = alternativeReasons[index] || 'Good alternative match';
-                    const score = 85 - (index * 10);
-                    html += createGameCard(alt, altReason, false, score);
-                });
-                html += '</div>';
-            }
-
-            resultsPanel.innerHTML = html;
-
-            // Setup feedback listeners
-            setupFeedbackListeners();
-        }
-
-        function createGameCard(game, reason, isTopPick, score) {
-            if (!game || !game.name) {
-                console.error('Invalid game object:', game);
-                return '<div class="game-card"><p>Error: Invalid game data</p></div>';
-            }
-
-            try {
-                return `
-                    <div class="game-card ${isTopPick ? 'top-pick' : ''}">
-                        ${isTopPick ? '<span class="top-badge">🏆 Top Pick for You</span>' : ''}
+            let html = `
+                <div class="results-content" style="animation: fadeIn 0.5s;">
+                    <!-- TOP RECOMMENDATION -->
+                    <div class="result-card top-pick">
+                        <div class="top-pick-badge">
+                            <span class="badge-icon">👑</span>
+                            <span class="badge-text">Top Pick</span>
+                        </div>
                         
-                        <div class="game-header">
-                            <h3 class="game-title">${game.name}</h3>
-                            <span class="match-score">${score}% Match</span>
+                        <div class="game-image-container">
+                            <img src="${data.topRecommendation.imageUrl || 'https://via.placeholder.com/460x215/667eea/ffffff?text=No+Image'}" 
+                                 alt="${data.topRecommendation.name}"
+                                 class="game-image"
+                                 onerror="this.src='https://via.placeholder.com/460x215/667eea/ffffff?text=No+Image'">
+                            <div class="match-percentage">95% Match</div>
                         </div>
-
-                        <div class="game-meta">
-                            <span class="meta-tag">⏱️ ${game.minMinutes}-${game.maxMinutes} min</span>
-                            <span class="meta-tag">⏸️ ${formatEnum(game.interruptibility)}</span>
-                            <span class="meta-tag">⚡ ${formatEnum(game.energyRequired)}</span>
-                            <span class="meta-tag">👥 ${game.socialPreferences.map(formatEnum).join('/')}</span>
-                        </div>
-
-                        <div class="game-details">
-                            <div><strong>🎯 Emotional Goals:</strong> ${game.emotionalGoals.map(formatEnum).join(', ')}</div>
-                            <div><strong>🕐 Best Time:</strong> ${game.bestTimeOfDay && game.bestTimeOfDay.length > 0 ? game.bestTimeOfDay.map(formatEnum).join(', ') : 'Any time'}</div>
-                            <div><strong>🎮 Genre:</strong> ${game.genre || 'Various'}</div>
-                            <div><strong>📝 Description:</strong> ${game.description || 'Great game!'}</div>
-                        </div>
-
-                        <div class="recommendation-reason">
-                            <strong>Why this game?</strong> ${reason}
-                        </div>
-
-                        <div class="feedback-section">
-                            <h4>How satisfied were you? 😊</h4>
-                            <div class="rating-buttons">
-                                <button class="rating-btn" data-game-id="${game.id}" data-rating="1">1</button>
-                                <button class="rating-btn" data-game-id="${game.id}" data-rating="2">2</button>
-                                <button class="rating-btn" data-game-id="${game.id}" data-rating="3">3</button>
-                                <button class="rating-btn" data-game-id="${game.id}" data-rating="4">4</button>
-                                <button class="rating-btn" data-game-id="${game.id}" data-rating="5">5</button>
+                        
+                        <div class="result-content">
+                            <h3 class="game-title">${data.topRecommendation.name}</h3>
+                            <p class="game-genre">${data.topRecommendation.genre || 'Game'}</p>
+                            <p class="game-description">${data.topRecommendation.description || ''}</p>
+                            
+                            <div class="game-meta">
+                                <div class="meta-item">
+                                    <span class="meta-icon">⏱️</span>
+                                    <span>${data.topRecommendation.minMinutes}-${data.topRecommendation.maxMinutes} min</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-icon">⚡</span>
+                                    <span>${getEnergyLabel(data.topRecommendation.energyRequired)}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-icon">⏸️</span>
+                                    <span>${getInterruptibilityLabel(data.topRecommendation.interruptibility)}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="match-reason">
+                                <strong>Why this works:</strong> ${data.topReason}
+                            </div>
+                            
+                            <div class="feedback-section">
+                                <p style="margin-bottom: 10px; font-weight: 600;">How was this recommendation?</p>
+                                <div class="feedback-buttons">
+                                    ${[1,2,3,4,5].map(score => `
+                                        <button class="feedback-btn" onclick="submitFeedback(${data.topRecommendation.id}, ${score})">
+                                            ${score === 1 ? '😞' : score === 2 ? '😕' : score === 3 ? '😐' : score === 4 ? '😊' : '🤩'}
+                                        </button>
+                                    `).join('')}
+                                </div>
                             </div>
                         </div>
                     </div>
+            `;
+
+            // ALTERNATIVES
+            if (data.alternatives && data.alternatives.length > 0) {
+                html += `
+                    <div class="alternatives-section">
+                        <h3 class="alternatives-title">Also Consider</h3>
+                        <div class="alternatives-grid">
                 `;
+
+                data.alternatives.forEach((game, index) => {
+                    html += `
+                        <div class="alternative-card">
+                            <img src="${game.imageUrl || 'https://via.placeholder.com/300x140/764ba2/ffffff?text=No+Image'}" 
+                                 alt="${game.name}"
+                                 class="alternative-image"
+                                 onerror="this.src='https://via.placeholder.com/300x140/764ba2/ffffff?text=No+Image'">
+                            <div class="alternative-content">
+                                <h4>${game.name}</h4>
+                                <p class="alternative-genre">${game.genre || 'Game'}</p>
+                                <p class="alternative-reason">${data.alternativeReasons[index]}</p>
+                                <div class="alternative-meta">
+                                    <span>⏱️ ${game.minMinutes}-${game.maxMinutes}min</span>
+                                    <span>⚡ ${getEnergyLabel(game.energyRequired)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+            resultsPanel.innerHTML = html;
+        }
+
+        function getEnergyLabel(level) {
+            const labels = { 'HIGH': 'High Energy', 'MEDIUM': 'Medium', 'LOW': 'Low Energy' };
+            return labels[level] || level;
+        }
+
+        function getInterruptibilityLabel(level) {
+            const labels = { 'HIGH': 'Very Flexible', 'MEDIUM': 'Moderate', 'LOW': 'Needs Completion' };
+            return labels[level] || level;
+        }
+
+        async function submitFeedback(gameId, score) {
+            try {
+                const response = await fetch(`${API_URL}/sessions/feedback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        gameId: gameId,
+                        satisfactionScore: score
+                    })
+                });
+
+                if (response.ok) {
+                    // Show success feedback
+                    const feedbackSection = event.target.closest('.feedback-section');
+                    feedbackSection.innerHTML = `
+                        <p style="color: var(--mood-achieve); font-weight: 600;">
+                            ✅ Thanks for your feedback!
+                        </p>
+                    `;
+                }
             } catch (error) {
-                console.error('Error creating game card:', error);
-                return '<div class="game-card"><p>Error rendering game card</p></div>';
+                console.error('Feedback error:', error);
             }
         }
 
-        function formatEnum(str) {
-            if (!str) return '';
-            return str.split('_')
-                .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-                .join(' ');
-        }
+        // Recommend Button
+        document.getElementById('recommendBtn').addEventListener('click', getRecommendation);
 
-        function setupFeedbackListeners() {
-            document.querySelectorAll('.rating-btn').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    const gameId = parseInt(e.target.dataset.gameId);
-                    const rating = parseInt(e.target.dataset.rating);
-
-                    // Visual feedback
-                    const container = e.target.closest('.feedback-section');
-                    container.querySelectorAll('.rating-btn').forEach(b => {
-                        b.classList.remove('selected');
-                        if (parseInt(b.dataset.gameId) === gameId && parseInt(b.dataset.rating) <= rating) {
-                            b.classList.add('selected');
-                        }
-                    });
-
-                    // Send to backend
-                    try {
-                        await fetch('http://localhost:8080/sessions/feedback', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                gameId: gameId,
-                                satisfactionScore: rating
-                            })
-                        });
-                        console.log(`Feedback sent: Game ${gameId}, Rating ${rating}`);
-                    } catch (error) {
-                        console.error('Error sending feedback:', error);
-                    }
-                });
-            });
-        }
-
-        // Initialize on page load
-        init();
+        // ============================================
+        // INIT ON PAGE LOAD
+        // ============================================
+        window.addEventListener('load', () => {
+            // Show guided modal on first load
+            const hasSeenModal = localStorage.getItem('hasSeenGuidedModal');
+            if (!hasSeenModal) {
+                document.getElementById('guidedModalOverlay').style.display = 'flex';
+                document.body.classList.add('modal-open');
+                document.getElementById('mainContainer').classList.add('blurred');
+                localStorage.setItem('hasSeenGuidedModal', 'true');
+            }
+        });
     </script>
 </body>
 </html>

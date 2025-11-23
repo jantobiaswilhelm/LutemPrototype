@@ -31,7 +31,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MIDDAY, TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
             Arrays.asList(SocialPreference.SOLO),
             "Puzzle",
-            "Zen unpacking simulator with cozy vibes"
+            "Zen unpacking simulator with cozy vibes",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1135690/header.jpg"
         ));
 
         // 2. Dorfromantik - Unwind, Engage
@@ -42,7 +43,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
             "Puzzle",
-            "Peaceful tile-placement puzzle game"
+            "Peaceful tile-placement puzzle game",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1455840/header.jpg"
         ));
 
         // 3. Tetris Effect - Recharge, Challenge
@@ -53,7 +55,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
             "Arcade",
-            "Classic Tetris with stunning audiovisuals"
+            "Classic Tetris with stunning audiovisuals",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1003590/header.jpg"
         ));
 
         // 4. Dead Cells - Challenge, Achieve
@@ -64,7 +67,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO),
             "Roguelike",
-            "Fast-paced roguelike action platformer"
+            "Fast-paced roguelike action platformer",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/588650/header.jpg"
         ));
 
         // 5. Rocket League - Challenge, Recharge
@@ -75,7 +79,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
             "Sports",
-            "Soccer with rocket-powered cars"
+            "Soccer with rocket-powered cars",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/252950/header.jpg"
         ));
 
         // 6. Baba Is You - Engage, Challenge
@@ -86,7 +91,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.SOLO),
             "Puzzle",
-            "Brain-teasing puzzle game with rule manipulation"
+            "Brain-teasing puzzle game with rule manipulation",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/736260/header.jpg"
         ));
 
         // MID-RANGE GAMES (30-60 min)
@@ -99,7 +105,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO),
             "Roguelike",
-            "Action roguelike with compelling story"
+            "Action roguelike with compelling story",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg"
         ));
 
         // 8. Stardew Valley - Unwind, Achieve, Explore
@@ -110,7 +117,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             "Farming Sim",
-            "Relaxing farming and life simulation"
+            "Relaxing farming and life simulation",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg"
         ));
 
         // 9. Slay the Spire - Engage, Challenge, Achieve
@@ -121,7 +129,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
             "Card Game",
-            "Strategic deck-building roguelike"
+            "Strategic deck-building roguelike",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/646570/header.jpg"
         ));
 
         // 10. Apex Legends - Challenge, Recharge
@@ -132,7 +141,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
             "Battle Royale",
-            "Fast-paced team-based battle royale"
+            "Fast-paced team-based battle royale",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg"
         ));
 
         // 11. PowerWash Simulator - Unwind
@@ -143,7 +153,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             "Simulation",
-            "Meditative cleaning simulator"
+            "Meditative cleaning simulator",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1290000/header.jpg"
         ));
 
         // 12. Into the Breach - Engage, Challenge
@@ -154,7 +165,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.SOLO),
             "Strategy",
-            "Turn-based tactical combat puzzle"
+            "Turn-based tactical combat puzzle",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/590380/header.jpg"
         ));
 
         // LONG-FORM GAMES (60+ min)
@@ -167,7 +179,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO),
             "RPG",
-            "Epic story-driven open-world RPG"
+            "Epic story-driven open-world RPG",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg"
         ));
 
         // 14. Minecraft - Explore, Unwind, Achieve
@@ -178,7 +191,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.BOTH),
             "Sandbox",
-            "Creative building and exploration"
+            "Creative building and exploration",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1366220/header.jpg"
         ));
 
         // 15. Dark Souls III - Challenge, Engage
@@ -189,7 +203,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             "Action RPG",
-            "Challenging action RPG with precise combat"
+            "Challenging action RPG with precise combat",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/374320/header.jpg"
         ));
 
         // 16. Civilization VI - Engage, Achieve
@@ -200,7 +215,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COMPETITIVE),
             "Strategy",
-            "Turn-based historical strategy game"
+            "Turn-based historical strategy game",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg"
         ));
 
         // 17. A Short Hike - Unwind, Explore
@@ -211,7 +227,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
             "Adventure",
-            "Cozy exploration game in a beautiful park"
+            "Cozy exploration game in a beautiful park",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1055540/header.jpg"
         ));
 
         // 18. Loop Hero - Engage, Achieve
@@ -222,7 +239,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.ANY),
             Arrays.asList(SocialPreference.SOLO),
             "Strategy",
-            "Unique auto-battler with deck-building"
+            "Unique auto-battler with deck-building",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1282730/header.jpg"
         ));
 
         // 19. Valorant - Challenge
@@ -233,7 +251,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
             "Tactical FPS",
-            "Character-based tactical shooter"
+            "Character-based tactical shooter",
+            "https://images.contentstack.io/v3/assets/bltb6530b271fddd0b1/blt5c61e5e37cdf83d8/621d7e23b50e930c28e29c98/VAL_YR1_Ep1_Store-Thumbnail_1920x1080.jpg"
         ));
 
         // 20. The Witness - Engage, Explore
@@ -244,7 +263,8 @@ public class GameController {
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
             Arrays.asList(SocialPreference.SOLO),
             "Puzzle",
-            "Beautiful island filled with environmental puzzles"
+            "Beautiful island filled with environmental puzzles",
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/210970/header.jpg"
         ));
     }
 

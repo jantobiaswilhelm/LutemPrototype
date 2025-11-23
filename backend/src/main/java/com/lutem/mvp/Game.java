@@ -21,6 +21,7 @@ public class Game {
     // Metadata
     private String genre;
     private String description;
+    private String imageUrl;  // Game cover art URL
     
     // Learning metrics
     private double averageSatisfaction;
@@ -38,7 +39,8 @@ public class Game {
     public Game(Long id, String name, int minMinutes, int maxMinutes, 
                 List<EmotionalGoal> emotionalGoals, Interruptibility interruptibility,
                 EnergyLevel energyRequired, List<TimeOfDay> bestTimeOfDay,
-                List<SocialPreference> socialPreferences, String genre, String description) {
+                List<SocialPreference> socialPreferences, String genre, String description,
+                String imageUrl) {
         this.id = id;
         this.name = name;
         this.minMinutes = minMinutes;
@@ -50,6 +52,7 @@ public class Game {
         this.socialPreferences = socialPreferences;
         this.genre = genre;
         this.description = description;
+        this.imageUrl = imageUrl;
         this.averageSatisfaction = 0.0;
         this.sessionCount = 0;
     }
@@ -97,6 +100,9 @@ public class Game {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     public double getAverageSatisfaction() { return averageSatisfaction; }
     public void setAverageSatisfaction(double averageSatisfaction) { 
