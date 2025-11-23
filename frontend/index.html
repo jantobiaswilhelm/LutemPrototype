@@ -3555,12 +3555,15 @@
                                 style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; 
                                 background: var(--background); color: var(--text-primary); font-size: 0.95em; cursor: pointer;">
                             <option value="">All Moods</option>
-                            <option value="Unwind">Unwind</option>
-                            <option value="Recharge">Recharge</option>
-                            <option value="Engage">Engage</option>
-                            <option value="Challenge">Challenge</option>
-                            <option value="Explore">Explore</option>
-                            <option value="Achieve">Achieve</option>
+                            <option value="UNWIND">😌 Unwind</option>
+                            <option value="RECHARGE">⚡ Recharge</option>
+                            <option value="ENGAGE">🎯 Engage</option>
+                            <option value="CHALLENGE">💪 Challenge</option>
+                            <option value="EXPLORE">🗺️ Explore</option>
+                            <option value="ACHIEVE">🏆 Achieve</option>
+                            <option value="ADVENTURE_TIME">🗺️ Adventure</option>
+                            <option value="PROGRESS_ORIENTED">📈 Progress</option>
+                            <option value="LOCKING_IN">🔒 Focus</option>
                         </select>
                     </div>
                     
@@ -3815,6 +3818,37 @@
             });
         }
         
+        // Helper functions for game cards
+        function getEmotionalGoalEmoji(goalName) {
+            const emojiMap = {
+                'UNWIND': '😌',
+                'RECHARGE': '⚡',
+                'ENGAGE': '🎯',
+                'CHALLENGE': '💪',
+                'EXPLORE': '🗺️',
+                'ACHIEVE': '🏆',
+                'ADVENTURE_TIME': '🗺️',
+                'PROGRESS_ORIENTED': '📈',
+                'LOCKING_IN': '🔒'
+            };
+            return emojiMap[goalName] || '🎮';
+        }
+        
+        function getEmotionalGoalColor(goalName) {
+            const colorMap = {
+                'UNWIND': '#9b59b6',
+                'RECHARGE': '#e74c3c',
+                'ENGAGE': '#3498db',
+                'CHALLENGE': '#f39c12',
+                'EXPLORE': '#1abc9c',
+                'ACHIEVE': '#2ecc71',
+                'ADVENTURE_TIME': '#16a085',
+                'PROGRESS_ORIENTED': '#27ae60',
+                'LOCKING_IN': '#8e44ad'
+            };
+            return colorMap[goalName] || '#667eea';
+        }
+        
         function createGameCard(game) {
             const card = document.createElement('div');
             card.className = 'game-card';
@@ -4010,12 +4044,15 @@
             if (game.emotionalGoals && game.emotionalGoals.length > 0) {
                 const mood = game.emotionalGoals[0].name;
                 const colors = {
-                    'Unwind': '#667eea, #764ba2',
-                    'Recharge': '#f093fb, #f5576c',
-                    'Engage': '#4facfe, #00f2fe',
-                    'Challenge': '#fa709a, #fee140',
-                    'Explore': '#30cfd0, #330867',
-                    'Achieve': '#a8edea, #fed6e3'
+                    'UNWIND': '#667eea, #764ba2',
+                    'RECHARGE': '#f093fb, #f5576c',
+                    'ENGAGE': '#4facfe, #00f2fe',
+                    'CHALLENGE': '#fa709a, #fee140',
+                    'EXPLORE': '#30cfd0, #330867',
+                    'ACHIEVE': '#a8edea, #fed6e3',
+                    'ADVENTURE_TIME': '#30cfd0, #330867',
+                    'PROGRESS_ORIENTED': '#a8edea, #fed6e3',
+                    'LOCKING_IN': '#667eea, #764ba2'
                 };
                 return colors[mood] || '#667eea, #764ba2';
             }
