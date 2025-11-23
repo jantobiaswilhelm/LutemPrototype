@@ -1950,8 +1950,8 @@
                         <div class="choice-card" onclick="startQuickSetup()">
                             <div class="choice-card-icon">🚀</div>
                             <div class="choice-card-title">Quick Start</div>
-                            <div class="choice-card-desc">Answer 3 simple questions</div>
-                            <div style="font-size: 0.85em; color: var(--text-light); font-weight: 600;">~30 seconds</div>
+                            <div class="choice-card-desc">Answer 4 simple questions</div>
+                            <div style="font-size: 0.85em; color: var(--text-light); font-weight: 600;">~40 seconds</div>
                         </div>
 
                         <div class="choice-card" onclick="useFullForm()">
@@ -1967,6 +1967,7 @@
                 <div class="guided-question" id="question1">
                     <div class="progress-dots">
                         <div class="progress-dot active"></div>
+                        <div class="progress-dot"></div>
                         <div class="progress-dot"></div>
                         <div class="progress-dot"></div>
                     </div>
@@ -2001,6 +2002,7 @@
                         <div class="progress-dot completed"></div>
                         <div class="progress-dot active"></div>
                         <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
                     </div>
 
                     <h3 class="question-title">How much time do you have?</h3>
@@ -2025,6 +2027,7 @@
                         <div class="progress-dot completed"></div>
                         <div class="progress-dot completed"></div>
                         <div class="progress-dot active"></div>
+                        <div class="progress-dot"></div>
                     </div>
 
                     <h3 class="question-title">What do you want to feel?</h3>
@@ -2041,7 +2044,43 @@
 
                     <div class="modal-nav-buttons">
                         <button class="modal-btn modal-btn-secondary" onclick="goToQuestion2()">← Back</button>
-                        <button class="modal-btn modal-btn-primary" id="q3NextBtn" disabled onclick="submitGuidedSetup()">Get Recommendation 🎮</button>
+                        <button class="modal-btn modal-btn-primary" id="q3NextBtn" disabled onclick="goToQuestion4()">Next →</button>
+                    </div>
+                </div>
+
+                <!-- Question 4: Interruptibility -->
+                <div class="guided-question" id="question4">
+                    <div class="progress-dots">
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot completed"></div>
+                        <div class="progress-dot active"></div>
+                    </div>
+
+                    <h3 class="question-title">Can you pause anytime?</h3>
+                    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 30px; font-size: 1.05em;">Do you need the flexibility to stop whenever needed?</p>
+
+                    <div class="big-options">
+                        <div class="big-option" data-value="HIGH" onclick="selectBigOption(this, 'guidedInterruptibility')">
+                            <div class="big-option-icon">⏸️</div>
+                            <div class="big-option-label">Yes, Anytime</div>
+                            <div style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Total flexibility</div>
+                        </div>
+                        <div class="big-option" data-value="MEDIUM" onclick="selectBigOption(this, 'guidedInterruptibility')">
+                            <div class="big-option-icon">💾</div>
+                            <div class="big-option-label">Some Pauses</div>
+                            <div style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Are fine</div>
+                        </div>
+                        <div class="big-option" data-value="LOW" onclick="selectBigOption(this, 'guidedInterruptibility')">
+                            <div class="big-option-icon">🔒</div>
+                            <div class="big-option-label">No, I'm Locked In</div>
+                            <div style="font-size: 0.85em; opacity: 0.8; margin-top: 5px;">Full commitment</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-nav-buttons">
+                        <button class="modal-btn modal-btn-secondary" onclick="goToQuestion3()">← Back</button>
+                        <button class="modal-btn modal-btn-primary" id="q4NextBtn" disabled onclick="submitGuidedSetup()">Get Recommendation 🎮</button>
                     </div>
                 </div>
             </div>
@@ -2307,7 +2346,8 @@
             socialPreference: null,
             guidedEnergy: null,
             guidedTime: 30,
-            guidedGoals: []
+            guidedGoals: [],
+            guidedInterruptibility: null
         };
 
         const TIME_VALUES = [5, 15, 30, 45, 60, 120, 180, 200];
@@ -2425,7 +2465,7 @@
         function startQuickSetup() {
             document.getElementById('welcomeScreen').classList.remove('active');
             document.getElementById('question1').classList.add('active');
-            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 1 of 3';
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 1 of 4';
         }
 
         function useFullForm() {
@@ -2443,19 +2483,25 @@
         function goToQuestion1() {
             document.getElementById('question2').classList.remove('active');
             document.getElementById('question1').classList.add('active');
-            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 1 of 3';
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 1 of 4';
         }
 
         function goToQuestion2() {
             document.getElementById('question1').classList.remove('active');
             document.getElementById('question2').classList.add('active');
-            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 2 of 3';
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 2 of 4';
         }
 
         function goToQuestion3() {
             document.getElementById('question2').classList.remove('active');
             document.getElementById('question3').classList.add('active');
-            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 3 of 3';
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 3 of 4';
+        }
+
+        function goToQuestion4() {
+            document.getElementById('question3').classList.remove('active');
+            document.getElementById('question4').classList.add('active');
+            document.getElementById('modalHeaderText').textContent = 'Quick Setup - Step 4 of 4';
         }
 
         function selectBigOption(element, stateKey) {
@@ -2468,8 +2514,12 @@
             element.classList.add('selected');
             state[stateKey] = element.getAttribute('data-value');
             
-            // Enable next button
-            document.getElementById('q1NextBtn').disabled = false;
+            // Enable next button based on which question we're on
+            if (stateKey === 'guidedEnergy') {
+                document.getElementById('q1NextBtn').disabled = false;
+            } else if (stateKey === 'guidedInterruptibility') {
+                document.getElementById('q4NextBtn').disabled = false;
+            }
         }
 
         function toggleMoodChip(element) {
@@ -2492,7 +2542,7 @@
             state.energyLevel = state.guidedEnergy;
             state.availableMinutes = state.guidedTime;
             state.selectedGoals = [...state.guidedGoals];
-            state.interruptibility = 'MEDIUM'; // Default
+            state.interruptibility = state.guidedInterruptibility; // Use guided value
             
             // Sync UI
             syncFormFromState();
@@ -2534,6 +2584,14 @@
             document.querySelectorAll('#energyLevel .radio-option').forEach(opt => {
                 opt.classList.remove('selected');
                 if (opt.getAttribute('data-value') === state.energyLevel) {
+                    opt.classList.add('selected');
+                }
+            });
+            
+            // Sync interruptibility
+            document.querySelectorAll('#interruptibility .radio-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.getAttribute('data-value') === state.interruptibility) {
                     opt.classList.add('selected');
                 }
             });
@@ -2723,6 +2781,16 @@
                 markFieldAsError(energyGroup, '⚠️ How are you feeling?');
             } else if (validationEnabled) {
                 markFieldAsValid(energyGroup, '✓ Perfect!');
+            }
+
+            // 3. Validate Interruptibility
+            const interruptibilityGroup = document.querySelector('#interruptibility').closest('.input-group');
+            if (!state.interruptibility) {
+                isValid = false;
+                errors.push('Please select if you can pause anytime');
+                markFieldAsError(interruptibilityGroup, '⚠️ Can you pause anytime?');
+            } else if (validationEnabled) {
+                markFieldAsValid(interruptibilityGroup, '✓ Good to know!');
             }
 
             // If validation fails on first submit, enable live validation
