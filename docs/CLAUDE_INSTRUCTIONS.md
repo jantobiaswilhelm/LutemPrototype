@@ -4,23 +4,32 @@
 
 ### Starting the Application
 
-**EASIEST: Use the startup scripts**
-```bash
-# Start everything at once
-D:\Lutem\ProjectFiles\lutem-mvp\start-lutem.bat
+**⚠️ CRITICAL: ALWAYS USE THE BAT FILES - THIS IS THE PRIMARY METHOD ⚠️**
 
-# Or start individually:
+Claude must ALWAYS use the startup batch files to start the application. These files are specifically configured to work reliably and should be the default approach in all situations.
+
+```bash
+# Start backend (ALWAYS use this)
 D:\Lutem\ProjectFiles\lutem-mvp\start-backend.bat
+
+# Start frontend (ALWAYS use this)
 D:\Lutem\ProjectFiles\lutem-mvp\start-frontend.bat
+
+# Or start everything at once
+D:\Lutem\ProjectFiles\lutem-mvp\start-lutem.bat
 ```
 
-**IF SCRIPTS FAIL: Use IntelliJ**
-Maven is not in system PATH, so use IntelliJ to run the backend:
-1. Open: `D:\Lutem\ProjectFiles\lutem-mvp\backend\pom.xml` in IntelliJ
-2. Locate: `src/main/java/.../LutemMvpApplication.java`
-3. Right-click → "Run 'LutemMvpApplication'"
-4. Wait for: "Started LutemMvpApplication in X seconds"
-5. Then open: `D:\Lutem\ProjectFiles\lutem-mvp\frontend\index.html`
+**Why the bat files are mandatory:**
+- They auto-detect JAVA_HOME
+- They use the Maven wrapper (no system Maven needed)
+- They handle all environment setup automatically
+- They are tested and known to work reliably
+
+**❌ DO NOT use IntelliJ startup instructions unless explicitly requested by the user**
+**❌ DO NOT try to start the backend with direct Maven commands**
+**❌ DO NOT suggest manual JAVA_HOME configuration**
+
+The bat files handle everything automatically.
 
 ### Testing the Application
 

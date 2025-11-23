@@ -2,7 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Current] - November 23, 2025 - Late Evening
+## [Current] - November 23, 2025 - Documentation Update
+
+### Updated - Startup Instructions 📝
+- **CRITICAL UPDATE:** Clarified that bat files are the PRIMARY startup method
+  - Updated CLAUDE_INSTRUCTIONS.md with mandatory bat file usage
+  - Updated README.md Quick Start section for consistency
+  - Emphasized that IntelliJ is secondary/optional method
+  - Added clear warnings against manual Maven/JAVA_HOME configuration
+  
+### Why This Matters
+- Bat files auto-detect JAVA_HOME
+- Maven wrapper is built-in (no system Maven needed)
+- Consistent, reliable startup across all environments
+- Prevents confusion about startup methods
+
+---
+
+## [Previous] - November 23, 2025 - Late Evening
 
 ### Added - Genre Preference Feature 🎮
 - **NEW FEATURE:** Genre preference soft ranking system

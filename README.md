@@ -76,17 +76,25 @@
 
 ## 🚀 Quick Start
 
-### ✨ EASIEST: Use Startup Scripts
+### ✨ PRIMARY METHOD: Use Startup Scripts (ALWAYS)
 ```cmd
-# Start everything at once
-start-lutem.bat
+# Start backend (use this by default)
+start-backend.bat
 
-# Or start individually:
-start-backend.bat   # Launches backend with Maven
-start-frontend.bat  # Opens frontend in browser
+# Start frontend (use this by default)
+start-frontend.bat
+
+# Or start everything at once
+start-lutem.bat
 ```
 
-### 🔧 Alternative: IntelliJ
+**Why these scripts?**
+- ✅ Auto-detect JAVA_HOME
+- ✅ Use Maven wrapper (no system Maven needed)
+- ✅ Tested and reliable
+- ✅ Handle all environment setup automatically
+
+### 🔧 Alternative: IntelliJ (Only if requested)
 **Backend:**
 1. Open `backend/pom.xml` in IntelliJ IDEA
 2. Build → Rebuild Project
@@ -96,7 +104,7 @@ start-frontend.bat  # Opens frontend in browser
 **Frontend:**
 - Double-click `frontend/index.html`
 
-**⚠️ Note:** If IntelliJ serves old code, use `start-backend.bat` (always uses Maven)
+**⚠️ Note:** Scripts are the primary method - IntelliJ is secondary
 
 ---
 
