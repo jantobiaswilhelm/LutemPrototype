@@ -24,13 +24,20 @@ Maven is not in system PATH, so use IntelliJ to run the backend:
 
 ### Testing the Application
 
-After starting backend (port 8080) and opening frontend:
-1. Enter minutes (e.g., 30)
-2. Select mood (relax/focus/challenge)
-3. Click "Get Recommendation"
-4. Verify: Loading spinner appears with rotating tips
-5. Result: Game recommendation fades in
-6. Test feedback: Click 1-5 rating buttons
+**IMPORTANT: Claude should ALWAYS automatically prepare for testing after making changes - no permission needed**
+
+Automatic test preparation (Claude runs this automatically):
+1. Restart backend if changes were made to backend code
+2. Open frontend in browser if not already open
+3. Inform user that application is ready for testing
+
+User will then manually test:
+- Enter minutes (e.g., 30)
+- Select mood (relax/focus/challenge)
+- Click "Get Recommendation"
+- Verify: Loading spinner appears with rotating tips
+- Result: Game recommendation fades in
+- Test feedback: Click 1-5 rating buttons
 
 ### Project Structure
 
