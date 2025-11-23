@@ -16,8 +16,8 @@
 
 ### ✨ What's Working Now
 - ✅ **Professional Branding** - Custom Lutem logo with transparent background across all UI
-- ✅ **4 Color Palette Themes** - Café (default), Soft Lavender, Natural Earth, Ocean Breeze
-- ✅ **Dark/Light Mode Toggle** - Persistent theme switching with localStorage
+- ✅ **8 Theme Combinations** - 4 color palettes × light/dark modes with unified selector
+- ✅ **Combined Theme Toggle** - Single palette selector menu for both palette and mode
 - ✅ **Complete Frontend JavaScript** - All interactions, API calls, and UI logic (500+ lines)
 - ✅ **Smart Input Validation** - Hybrid validation with friendly error messages, live feedback, red/green borders
 - ✅ **Loading Spinner with Gaming Quotes** - 24 iconic quotes, 2-second minimum display, smooth animations
@@ -66,6 +66,24 @@
 - ✅ **#6: Branding & Themes** - Professional logo + 4 color palettes
 
 ### 🚀 Up Next
+
+**Calendar Integration - In Progress:**
+- ⚠️ Calendar backend complete (all CRUD endpoints working)
+- ⚠️ Calendar frontend partially implemented (initialization code added)
+- ⚠️ Known issues documented in `docs/calendar-known-issues.md`
+- ⚠️ Fix guide available in `docs/calendar-fix-guide.md`
+
+**Priority Fixes Needed:**
+1. Fix calendar display (not rendering)
+2. Make wizard accessible from calendar tab
+3. Fix task creation functionality
+4. Add task type selection (Task vs Gaming Session)
+5. Complete gaming session workflow integration
+
+👉 **See [docs/calendar-known-issues.md](docs/calendar-known-issues.md) for detailed issue tracking**  
+👉 **See [docs/calendar-fix-guide.md](docs/calendar-fix-guide.md) for step-by-step fix instructions**
+
+**Other Enhancements:**
 - Enhanced game card animations
 - Session history tracking
 - Weekly satisfaction dashboard
@@ -426,26 +444,31 @@ The Witcher 3 • Minecraft • Dark Souls III • Civilization VI
 
 ## 💡 Key Features
 
-### 🌙 Dark Mode & Color Palettes
-**Dark/Light Mode Toggle:**
-- **Toggle button** (bottom-right corner)
-- **Persistent** via localStorage
-- **Smooth transitions** between themes
-- **Complete coverage** - all UI elements themed
-- **Icons change** - 🌙 (light) ↔ ☀️ (dark)
+### 🌙 Color Palette & Theme System *(Updated Nov 23, 2025)*
+**✨ NEW: Combined Palette Selector** - Single unified interface for both palette and mode selection
+
+**8 Total Theme Combinations:**
+- 4 color palettes × 2 modes (light/dark)
+- Each palette available in both light and dark variants
+- Unified palette selector menu (bottom-right corner)
+- Separate controls for mode (☀️ Light / 🌙 Dark) and palette selection
 
 **4 Color Palette Themes:**
-- 🍂 **Café (Default)** - Warm browns and creams, cozy coffee shop aesthetic
-- 💜 **Soft Lavender** - Gentle purples and pastels, calming and elegant
-- 🌿 **Natural Earth** - Green earth tones, organic and grounded
-- 🌊 **Ocean Breeze** - Cool blues and teals, fresh and serene
+- ☕ **Warm Café (Default)** - Cozy browns and creams (light) / Rich coffee tones (dark)
+- 💜 **Soft Lavender** - Gentle purples (light) / Deep mysterious purples (dark)
+- 🌿 **Natural Earth** - Fresh green tones (light) / Deep forest greens (dark)
+- 🌊 **Ocean Breeze** - Sky blues (light) / Deep ocean blues (dark)
 
-Each palette includes:
-- Custom color variables for backgrounds, text, and accents
-- Mood-specific colors that adapt to the theme
-- Optimized contrast for readability
-- Seamless transitions between palettes
-- Persistent selection via localStorage
+**Key Features:**
+- **Unified selector:** Combined palette and mode toggle in single menu
+- **Visual preview:** Color swatches for each palette option
+- **Instant switching:** Changes apply immediately without reload
+- **Persistent storage:** Preferences saved via localStorage
+- **Smart icons:** Palette icon in light mode, moon icon in dark mode
+- **Mood adaptation:** All 6 mood colors adjust per theme and mode
+- **Smooth transitions:** Seamless visual changes between themes
+
+👉 **See [COLOR_PALETTE_SYSTEM.md](docs/features/COLOR_PALETTE_SYSTEM.md) for complete documentation**
 
 ### 🚀 Guided Setup Modal
 Two-path onboarding system for different user preferences:
@@ -700,6 +723,52 @@ Built with:
 ---
 
 ## 🔄 Changelog
+
+### November 23, 2025 - Calendar Integration Attempt
+- **CALENDAR BACKEND:** Complete CRUD API implementation
+  - POST /calendar/events - Create events (tasks or gaming sessions)
+  - GET /calendar/events - Retrieve all events (with date filtering)
+  - PUT /calendar/events/{id} - Update event times/details
+  - DELETE /calendar/events/{id} - Remove events
+  - CalendarEvent entity with EventType enum (GAME/TASK)
+  - Full JPA repository with query methods
+- **CALENDAR FRONTEND:** Partial implementation (not yet functional)
+  - FullCalendar library integration attempted
+  - Event modals created (Event Details, Add Task)
+  - Calendar initialization code added
+  - Event management functions implemented
+  - Utility functions for date formatting
+  - Toast notification system
+- **KNOWN ISSUES:** Documented 5 critical blockers
+  - Issue #1: Calendar not displaying on Calendar tab
+  - Issue #2: Game wizard not accessible from calendar
+  - Issue #3: Task creation functionality not working
+  - Issue #4: Missing task type selection (Task vs Gaming Session)
+  - Issue #5: Gaming session workflow not integrated
+- **DOCUMENTATION:** Comprehensive issue tracking created
+  - `docs/calendar-known-issues.md` - Detailed issue analysis
+  - `docs/calendar-fix-guide.md` - Step-by-step debugging guide
+  - `docs/TODO.md` - Updated project roadmap
+  - README updated with calendar status section
+- **NEXT SESSION PRIORITIES:**
+  - Fix calendar display issue first
+  - Make wizard globally accessible
+  - Complete task type selection modal
+  - Test full calendar → wizard → event flow
+
+### November 23, 2025 - Late Night Session (Theme System Enhancement)
+- **COMBINED THEME TOGGLE:** Unified palette selector interface
+  - Merged separate palette and mode toggles into single menu
+  - Added dark mode variants for all 4 color palettes (8 total combinations)
+  - Improved UX with visual color swatches and mode toggle buttons
+  - Smart icon display: palette icon (light) / moon icon (dark)
+  - Maintains localStorage persistence and instant switching
+  - Created comprehensive COLOR_PALETTE_SYSTEM.md documentation
+- **WHY THIS CHANGE:**
+  - Reduces UI clutter (one button instead of two)
+  - Improves discoverability with visual preview
+  - Provides more theme variety (4 themes → 8 combinations)
+  - Maintains all previous functionality with better organization
 
 ### November 23, 2025 - Late Night Session
 - **PROGRESSIVE RECOMMENDATIONS:** Enhanced results display system

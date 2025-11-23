@@ -1,335 +1,308 @@
-# Lutem MVP Changelog
+# Lutem MVP - Changelog
 
 All notable changes to this project will be documented in this file.
 
-## [Current] - November 23, 2025 - Games Library with Filters ✨
-
-### Added - Games Library Tab (Quick Win #6)
-- **GAMES LIBRARY VIEW:** Complete game browsing experience
-  - Beautiful card-based grid layout
-  - Each card shows:
-    - Game cover image or emoji with gradient background
-    - Time badge (min-max duration)
-    - Game name and description (truncated to 3 lines)
-    - Genre tags (up to 3 displayed)
-    - Mood badges with colors and emojis (up to 3)
-    - Interruptibility status indicator
-  - Smooth hover effects (lift up with enhanced shadow)
-  - Click any card to view full game details (reuses maximized view)
-
-- **COMPREHENSIVE FILTER SYSTEM:**
-  - **Search Bar:** Real-time text search across names and descriptions
-  - **Genre Filter:** Dropdown with all available genres from database
-  - **Mood Filter:** Filter by emotional goals (Unwind, Recharge, Engage, Challenge, Explore, Achieve)
-  - **Time Filter:** Filter by session length
-    - Quick (0-30 min)
-    - Medium (30-60 min)
-    - Long (60+ min)
-  - **Clear All Filters:** Reset all filters with one click
-
-- **USER EXPERIENCE:**
-  - Real-time filtering (instant updates without page reload)
-  - Results count display ("Showing X games")
-  - Loading state with spinner
-  - Empty state with friendly message
-  - Responsive design (single column grid on mobile)
-  - Smooth animations and transitions
-
-- **TECHNICAL FEATURES:**
-  - Games fetched once from `/games` endpoint
-  - Client-side filtering for instant response
-  - Reuses existing maximized game view component
-  - Color-coded mood badges with consistent scheme
-  - Efficient rendering with minimal DOM updates
-
-### Technical Implementation
-- **Frontend Changes:**
-  - Created comprehensive Games Library HTML structure
-  - Added filter controls (search, genre, mood, time)
-  - Implemented `loadGamesLibrary()` to fetch games
-  - Created `populateGenreFilter()` for dynamic genre options
-  - Built `applyFilters()` for real-time filtering logic
-  - Implemented `renderGames()` for grid display
-  - Created `createGameCard()` for individual game cards
-  - Added `getGameGradient()` for mood-based gradients
-  - Enhanced tab navigation to trigger library load
-  
-- **CSS Enhancements:**
-  - Focus states for all filter inputs
-  - Hover effects for clear filters button
-  - Game card hover animations
-  - Responsive grid layout
-  - Smooth transitions with cubic-bezier easing
-
-### Why This Matters
-- **Discovery:** Users can browse all 41 games at once
-- **Flexibility:** Powerful filtering for specific needs
-- **Engagement:** Beautiful visuals encourage exploration
-- **Convenience:** Quick access to full game library
-- **Mobile-Friendly:** Works great on all screen sizes
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## [Previous] - November 23, 2025 - Interruptibility Required Field ✅
+## [Unreleased]
 
-### Added - Required Interruptibility Validation (Quick Win #5)
-- **FORM VALIDATION:** Interruptibility is now a required field
-  - Added validation check for "Can I pause anytime?" field
-  - Shows error message: "⚠️ Can you pause anytime?"
-  - Shows success feedback: "✓ Good to know!" when selected
-  - Prevents incomplete recommendations without pause flexibility info
-  
-- **QUICK START WIZARD UPDATE:** Added Question 4
-  - Extended wizard from 3 to 4 questions
-  - New Question 4: "Can you pause anytime?"
-  - Three clear options:
-    - "Yes, Anytime" (HIGH) - Total flexibility
-    - "Some Pauses" (MEDIUM) - Are fine
-    - "No, I'm Locked In" (LOW) - Full commitment
-  - Updated estimated time: ~40 seconds (was ~30)
-  - All progress indicators show "X of 4" instead of "X of 3"
-  
-- **STATE MANAGEMENT:**
-  - Added `guidedInterruptibility` to state object
-  - Proper value mapping between wizard and main form
-  - Fixed value mismatch bug (ANYTIME/SAVEPOINTS/COMMITTED → HIGH/MEDIUM/LOW)
-  - Enhanced `syncFormFromState()` to include interruptibility
-  - Wizard properly transfers selection to main form
+### Known Issues
+- Calendar not displaying on Calendar tab ([#1](docs/calendar-known-issues.md#1))
+- Game wizard not accessible from Calendar tab ([#2](docs/calendar-known-issues.md#2))
+- Task creation functionality not working ([#3](docs/calendar-known-issues.md#3))
+- Missing task type selection modal ([#4](docs/calendar-known-issues.md#4))
+- Gaming session workflow not integrated ([#5](docs/calendar-known-issues.md#5))
 
-### Technical Implementation
-- **Frontend Changes:**
-  - Updated `validateForm()` to check interruptibility
-  - Added Question 4 HTML structure to wizard
-  - Created `goToQuestion4()` navigation function
-  - Enhanced `selectBigOption()` to enable Q4 next button
-  - Fixed `submitGuidedSetup()` to use guided interruptibility value
-  - Updated `syncFormFromState()` to sync interruptibility selection
-  
-- **Bug Fixes:**
-  - Fixed wizard value mismatch causing server errors
-  - Corrected data-value attributes (HIGH/MEDIUM/LOW)
-  - Ensured proper state transfer from wizard to form
-  - Validated backend compatibility with values
-
-### Why This Matters
-- **Better Recommendations:** Algorithm needs pause flexibility for accurate matching
-- **User Clarity:** Forces users to think about their session constraints
-- **Prevents Errors:** No more incomplete requests to backend
-- **Wizard Completeness:** All essential inputs now in Quick Start flow
-- **Professional UX:** Consistent validation across all required fields
+See [docs/calendar-known-issues.md](docs/calendar-known-issues.md) for detailed analysis.
 
 ---
 
-## [Previous] - November 23, 2025 - Input Validation System ✅
+## [0.4.0] - 2025-11-23 (Theme System & Calendar Enhancement)
 
-### Added - Smart Input Validation (Quick Win #4)
-- **HYBRID VALIDATION:** Intelligent form validation with user-friendly feedback
-  - Initial state: Clean form, no validation nag
-  - On submit: Validates all required fields
-  - After first validation: Live validation enabled
-  - Auto-scrolls to first error
-  - Prevents broken API calls
-  
-- **VISUAL FEEDBACK:**
-  - Red borders around invalid fields with shake animation
-  - Green borders + checkmarks for valid fields
-  - Helpful inline error messages:
-    - "⚠️ Pick what you want to feel" (emotional goals)
-    - "⚠️ How are you feeling?" (energy level)
-  - Smooth animations for state transitions
-  
-- **FRONTEND VALIDATION:**
-  - Validates emotional goals (at least 1 required)
-  - Validates energy level (required)
-  - Validates available minutes (must be > 0)
-  - Live validation triggers on chip/button clicks
-  - `validateForm()` function with comprehensive checks
-  - `triggerValidationIfEnabled()` for hybrid approach
-  
-- **BACKEND VALIDATION:**
-  - Server-side validation in GameController
-  - `validateRequest()` method with detailed checks
-  - Returns validation error response if checks fail
-  - Prevents malformed data from reaching recommendation engine
-  
-### Technical Implementation
-- **Files Modified:**
-  - `frontend/index.html` - Added validation CSS and JavaScript
-  - `backend/.../GameController.java` - Added validation methods
-  
-- **CSS Classes:**
-  - `.input-group.error` - Red border styling
-  - `.input-group.valid` - Green border styling  
-  - `.validation-message` - Error/success message styling
-  - `@keyframes shake` - Error attention animation
-  
-- **JavaScript Functions:**
-  - `validateForm()` - Main validation logic
-  - `markFieldAsError()` - Show error state
-  - `markFieldAsValid()` - Show success state
-  - `triggerValidationIfEnabled()` - Conditional validation
+### Added - Frontend
+- **Dark/Light Mode Toggle**
+  - Theme switcher button with smooth transitions
+  - Persistent theme preference using localStorage
+  - System preference detection on first load
+  - Animated theme transition effects
 
-### Why This Matters
-- Better UX - users know what's missing immediately
-- Prevents confusion and frustration
-- Reduces backend errors from incomplete data
-- Professional, polished feel
-- Follows best practices (hybrid validation approach)
+- **Color Palette System**
+  - Comprehensive CSS custom properties for theming
+  - Light mode palette with soft, professional colors
+  - Dark mode palette with reduced eye strain
+  - Mood-based accent colors (relax: blue, focus: purple, challenge: red)
+  - Consistent color application across all UI elements
+
+- **Calendar Free Time Display**
+  - "Your Available Time" section in home tab
+  - Displays next 3 free time slots from calendar
+  - Shows duration and time range for each slot
+  - Automatic filtering of busy periods
+  - Fallback message when no calendar events exist
+  - Real-time updates based on calendar data
+
+### Enhanced - Frontend
+- Improved visual hierarchy with theme-aware colors
+- Better contrast ratios for accessibility
+- Smooth color transitions between theme changes
+- Modal and overlay backgrounds adapted for both themes
+
+### Documentation
+- Created `docs/features/COLOR_PALETTE_SYSTEM.md`
+  - Complete color reference for both themes
+  - Usage guidelines for developers
+  - Semantic color naming conventions
+
+### Technical
+- Refactored CSS to use custom properties throughout
+- Improved calendar data fetching and parsing
+- Better error handling for calendar API calls
 
 ---
 
-## [Previous] - November 23, 2025 - Documentation Update
+## [0.3.0] - 2025-11-23 (Calendar Integration - Partial)
 
-### Updated - Startup Instructions 📝
-- **CRITICAL UPDATE:** Clarified that bat files are the PRIMARY startup method
-  - Updated CLAUDE_INSTRUCTIONS.md with mandatory bat file usage
-  - Updated README.md Quick Start section for consistency
-  - Emphasized that IntelliJ is secondary/optional method
-  - Added clear warnings against manual Maven/JAVA_HOME configuration
-  
-### Why This Matters
-- Bat files auto-detect JAVA_HOME
-- Maven wrapper is built-in (no system Maven needed)
-- Consistent, reliable startup across all environments
-- Prevents confusion about startup methods
+### Added - Backend
+- **CalendarController** - Full CRUD REST API for calendar events
+  - `POST /calendar/events` - Create new events
+  - `GET /calendar/events` - Retrieve all events with optional date filtering
+  - `GET /calendar/events/{id}` - Get single event by ID
+  - `PUT /calendar/events/{id}` - Update existing event
+  - `DELETE /calendar/events/{id}` - Delete event
+- **CalendarEvent** entity with JPA annotations
+- **EventType** enum (GAME, TASK) for event categorization
+- **CalendarEventRepository** with custom query methods
+
+### Added - Frontend (Non-Functional)
+- FullCalendar library integration (v6.1.8)
+- Calendar initialization code with event handlers
+- Event Details modal with delete functionality
+- Add Task modal with form validation
+- Calendar-wizard integration code
+- Event management functions (load, create, update, delete)
+- Utility functions:
+  - `formatDateTimeLocal()` - For datetime inputs
+  - `formatDateTime()` - For display
+  - `calculateDuration()` - Between dates
+  - `showToast()` - Notification system
+- CSS animations for toast notifications
+- Calendar event color coding (blue for games, gray for tasks)
+
+### Changed
+- Updated `index.html` with calendar JavaScript (+400 lines)
+- Added `API_BASE_URL` constant for calendar endpoints
+- Modified recommendation flow to support calendar event creation
+- Enhanced modal styling for better consistency
+
+### Documentation
+- Created `docs/calendar-known-issues.md` - Comprehensive issue tracking
+- Created `docs/calendar-fix-guide.md` - Debugging and fix instructions
+- Updated `docs/TODO.md` - Added calendar tasks to backlog
+- Updated `README.md` - Calendar status and next priorities
 
 ---
 
-## [Previous] - November 23, 2025 - Late Evening
+## [0.2.0] - 2025-11-23 (Theme System & Progressive Display)
 
-### Added - Genre Preference Feature 🎮
-- **NEW FEATURE:** Genre preference soft ranking system
-  - 20+ genre options with emoji icons (Puzzle 🧩, Action ⚔️, Strategy 🎲, etc.)
-  - Multi-select chip interface in main form
-  - Soft ranking boost (+15% max) - doesn't eliminate games, just prioritizes
-  - Backend scoring integration in GameController
-  - Added `preferredGenres` field to RecommendationRequest
-  - All 41 games now tagged with appropriate genres
-  
-### Technical Details
-- **Frontend Changes:**
-  - New genre selection section with 20 genre chips
-  - Visual feedback for selected genres
-  - Clean UI integration below "What matters most?" section
-  
-- **Backend Changes:**
-  - Genre preference boost in scoring algorithm (section 8)
-  - Calculates match percentage based on genre overlap
-  - Maximum 15-point boost for perfect genre matches
-  - Gracefully handles missing genre preferences (no penalty)
-  
-- **Algorithm Enhancement:**
-  - Genre matching is SOFT RANKING (boosts score, doesn't filter)
-  - Prevents over-filtering that could eliminate good matches
-  - Balances genre preference with other 7 scoring dimensions
+### Added
+- **Combined Theme Selector** - Unified palette and mode interface
+  - 8 total theme combinations (4 palettes × 2 modes)
+  - Visual color swatches in selector menu
+  - Smart icon display (palette icon in light, moon in dark)
+  - Single menu for both palette and mode selection
+- **Progressive Recommendations Display**
+  - Top 1 + 3 alternatives shown initially
+  - "See 6 More Alternatives" button for remaining games
+  - Smooth expansion animation
+  - Automatic button removal after expansion
+  - Reduces decision paralysis and cognitive load
+
+### Changed
+- Refactored theme toggle system for better UX
+- Enhanced results display with progressive disclosure
+- Improved theme switching performance
+- Updated documentation with UX principles
+
+### Documentation
+- Created `docs/features/COLOR_PALETTE_SYSTEM.md` - Complete theme documentation
+- Added "Why This Works" section to README with research citations
+- Enhanced output examples with progressive display flow
+
+---
+
+## [0.1.5] - 2025-11-23 (Genre Preferences - Soft Ranking)
+
+### Added
+- **Genre Preference System** with 20+ genre options
+  - Multi-select chip interface with emoji icons
+  - Soft ranking algorithm (boosts scores, doesn't filter)
+  - Backend integration with +15% max boost
   - Formula: `(matchedGenres / totalPreferredGenres) * 15.0`
+  - Optional feature - works with or without selection
+- Tagged all 41 games with appropriate genres
+- Genre matching logic in recommendation algorithm
 
-### Why This Matters
-- Gives users more control over recommendations
-- Doesn't restrict matches (soft ranking approach)
-- Preserves algorithm's multi-dimensional intelligence
-- Enhances personalization without sacrificing quality
+### Changed
+- Enhanced recommendation scoring with genre preferences
+- Improved game metadata with genre tags
+- Updated frontend validation for genre selection
 
 ---
 
-## [November 23, 2025 - Evening Session]
+## [0.1.4] - 2025-11-23 (Loading Experience & Developer Onboarding)
 
-### Added - Loading & Developer Experience
-- **LOADING SPINNER:** Added engaging 2-second loading experience
-  - 24 iconic gaming quotes from classic titles
-  - Smooth spinner animation with theme-aware colors
-  - Smart timing system (minimum 2s display to prevent flashing)
-  - Random quote rotation on each load
-  - Created comprehensive feature documentation
-  
-- **MAVEN WRAPPER:** Improved developer onboarding
-  - Added Maven wrapper for standalone execution
-  - No system Maven installation required
-  - Auto-detect JAVA_HOME in start-backend.bat
-  - Version-locked Maven 3.9.6 for consistency
-  - Created setup documentation guide
-  
-- **DEVELOPER EXPERIENCE:** Enhanced build reliability
-  - Updated startup scripts with better error messages
+### Added
+- **Loading Spinner** with gaming quotes
+  - 24 iconic quotes from classic games
+  - 2-second minimum display time
+  - Random quote rotation
+  - Theme-aware animations
+- **Maven Wrapper** for standalone execution
+  - No system Maven required
+  - Auto-detect JAVA_HOME in startup scripts
+  - Version-locked Maven 3.9.6
   - Improved first-run experience
-  - Self-contained project setup
+
+### Changed
+- Enhanced `start-backend.bat` with better error messages
+- Updated startup documentation
+- Improved build reliability
+
+### Documentation
+- Created `docs/LOADING_SPINNER_FEATURE.md` - Feature guide
+- Created `docs/MAVEN_WRAPPER_SETUP.md` - Setup instructions
+- Created `docs/LOADING_SPINNER_IMPLEMENTATION.md` - Technical docs
 
 ---
 
-## [November 23, 2025 - Morning Session]
+## [0.1.3] - 2025-11-23 (Branding & Visual Identity)
 
-### Added - Branding & Visual Identity
-- **BRANDING:** Added professional Lutem logo
-  - Created custom logo with transparent background
-  - Integrated logo into main header and modal
-  - Updated README with centered logo
-  - Optimized margins and spacing
-  
-- **UI/UX:** Added 4 color palette themes
-  - 🍂 Café (default warm browns)
-  - 💜 Soft Lavender
-  - 🌿 Natural Earth
-  - 🌊 Ocean Breeze
-  - Persistent theme selection via localStorage
-  - Seamless transitions between palettes
-  
-- **GAME LIBRARY:** Expanded to 20 categorized games
-  - 7 casual games (5-30 min)
-  - 9 mid-range games (30-60 min)
-  - 4 long-form games (60+ min)
-  - All games include Steam cover art and metadata
+### Added
+- **Lutem Logo** with transparent background
+  - 440px in main header
+  - 304px in guided modal
+  - Professional visual identity
+- **4 Color Palette Themes**
+  - ☕ Café (warm browns) - Default
+  - 💜 Soft Lavender (gentle purples)
+  - 🌿 Natural Earth (fresh greens)
+  - 🌊 Ocean Breeze (sky blues)
+- **Game Library Expansion** - 20 games categorized:
+  - 7 casual (5-30 min)
+  - 9 mid-range (30-60 min)
+  - 4 long-form (60+ min)
+- Steam cover art for all games
 
-### Fixed - Frontend Restoration
-- **MAJOR:** Restored complete frontend functionality
-  - Added 484 lines of JavaScript
-  - Added 255 lines of results display CSS
-  - Restored theme toggle, guided modal, feedback system
-  - Fixed all event handlers and state management
+### Changed
+- Improved UI layout with logo integration
+- Enhanced README with centered branding
+- Optimized margins and spacing
 
 ---
 
-## [November 22, 2025]
+## [0.1.2] - 2025-11-23 (Frontend Restoration)
 
-### Added - UI Improvements
-- Implemented Guided Setup Modal with Quick Start wizard
-- Added UI cleanup with collapsible advanced options
-- Created comprehensive session documentation
-- Enhanced time slider with "Touch Grass" modal
-- **QuickWin #1:** Loading spinner with rotating gaming tips
+### Fixed
+- **CRITICAL:** Restored 484 lines of JavaScript
+  - All interactions and event handlers
+  - Complete API communication layer
+  - Modal system (guided setup, feedback)
+  - Theme toggle functionality
+  - State management
+- **CRITICAL:** Restored 255 lines of results display CSS
+  - Game cards and badges
+  - Alternative recommendations layout
+  - Image display and loading states
+  - Hover effects and animations
+
+### Changed
+- Complete end-to-end testing and validation
+- Verified all features working correctly
+
+---
+
+## [0.1.1] - 2025-11-22 (UX Enhancements)
+
+### Added
+- **Guided Setup Modal** with Quick Start wizard
+  - 3-step onboarding flow
+  - Energy level, time, and mood selection
+  - Progress indicators
+  - "Skip to full form" option
+- **Touch Grass Modal** for 3+ hour sessions
+  - Wellness reminder
+  - Health checklist
+  - Time adjustment option
+- **Collapsible Advanced Options**
+  - Time of Day
+  - Social Preference
+  - Progressive disclosure UX
+
+### Changed
+- Enhanced time slider with wellness features
+- Improved form hierarchy and visual clarity
+- Better onboarding for new users
+
+---
+
+## [0.1.0] - 2025-11-22 (MVP Foundation)
+
+### Added
+- **Spring Boot Backend** (Port 8080)
+  - RESTful API with 3 endpoints
+  - In-memory storage (HashMap)
+  - 8-dimensional recommendation algorithm
+  - Satisfaction feedback system
+- **Frontend** (Single-page app)
+  - Modern HTML/CSS/JavaScript
+  - Multi-step form with validation
+  - Results display with alternatives
+  - Dark/light mode toggle
+  - Emoji feedback system (1-5 stars)
+- **Game Library** - Initial 41 games
+  - Rich metadata (genre, time, energy, etc.)
+  - Multi-dimensional categorization
+  - Satisfaction tracking
+- **5 Enum Systems**
+  - EmotionalGoal (6 options)
+  - Interruptibility (3 levels)
+  - EnergyLevel (3 levels)
+  - TimeOfDay (4 periods)
+  - SocialPreference (3 types)
+- **Documentation**
+  - Comprehensive README
+  - API documentation
+  - Setup instructions
+  - Troubleshooting guide
+
+### Technical
+- Java 17+ / Spring Boot 3.2.0
+- Maven build system
+- SQLite for future persistence
+- Vanilla JavaScript (no frameworks)
+- CSS custom properties for theming
 
 ---
 
 ## Version History
 
-### MVP v0.5 - Current State
-- ✅ Complete 8-dimensional recommendation system
-- ✅ Genre preference soft ranking
-- ✅ 41 games with full metadata
-- ✅ Professional branding and theming
-- ✅ Guided onboarding
-- ✅ Loading spinner with quotes
-- ✅ Maven wrapper integration
+- **[0.3.0]** - Calendar integration (backend complete, frontend partial) - 2025-11-23
+- **[0.2.0]** - Combined theme selector & progressive display - 2025-11-23
+- **[0.1.5]** - Genre preferences with soft ranking - 2025-11-23
+- **[0.1.4]** - Loading spinner & Maven wrapper - 2025-11-23
+- **[0.1.3]** - Branding, logo, and 4 color palettes - 2025-11-23
+- **[0.1.2]** - Frontend restoration (JavaScript & CSS) - 2025-11-23
+- **[0.1.1]** - UX enhancements (guided modal, wellness) - 2025-11-22
+- **[0.1.0]** - MVP foundation (backend + frontend) - 2025-11-22
 
-### MVP v0.4 - UI Polish
-- Multi-theme system
-- Dark/light mode
-- Enhanced game library
-- Professional visual identity
+---
 
-### MVP v0.3 - User Experience
-- Guided setup modal
-- Touch Grass wellness feature
-- Collapsible advanced options
-- Loading animations
-
-### MVP v0.2 - Core Functionality
-- Multi-dimensional scoring
-- Feedback system
-- Alternative recommendations
-- Steam image integration
-
-### MVP v0.1 - Foundation
-- Basic recommendation engine
-- REST API endpoints
-- Initial game library
-- Simple frontend form
+**Documentation:**
+- [README.md](README.md) - Project overview and setup
+- [docs/calendar-known-issues.md](docs/calendar-known-issues.md) - Calendar issue tracking
+- [docs/calendar-fix-guide.md](docs/calendar-fix-guide.md) - Fix instructions
+- [docs/TODO.md](docs/TODO.md) - Development roadmap
+- [SESSION_COMPLETE_SUMMARY.md](SESSION_COMPLETE_SUMMARY.md) - Technical deep-dive
