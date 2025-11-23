@@ -1362,6 +1362,48 @@
             font-weight: 700;
         }
 
+        .game-title-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            width: 38px;
+            height: 38px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-card);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            color: var(--text-primary);
+        }
+
+        .action-btn:hover {
+            background: var(--input-bg);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .action-btn.favorite.active {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
         .match-score {
             background: var(--input-bg);
             padding: 8px 16px;
@@ -2706,7 +2748,23 @@
                         </div>
                         
                         <div class="result-content">
-                            <h3 class="game-title">${data.topRecommendation.name}</h3>
+                            <div class="game-title-header">
+                                <h3 class="game-title">${data.topRecommendation.name}</h3>
+                                <div class="game-actions">
+                                    ${data.topRecommendation.storeUrl ? `
+                                        <button class="action-btn store-btn" 
+                                                onclick="event.stopPropagation(); window.open('${data.topRecommendation.storeUrl}', '_blank')" 
+                                                title="View in ${data.topRecommendation.storePlatform || 'store'}">
+                                            🛒
+                                        </button>
+                                    ` : ''}
+                                    <button class="action-btn favorite" 
+                                            onclick="event.stopPropagation(); toggleFavorite(this, ${data.topRecommendation.id})" 
+                                            title="Add to favorites">
+                                        ♡
+                                    </button>
+                                </div>
+                            </div>
                             <p class="game-genre">${data.topRecommendation.genre || 'Game'}</p>
                             <p class="game-description">${data.topRecommendation.description || ''}</p>
                             
@@ -2723,6 +2781,12 @@
                                     <span class="meta-icon">⏸️</span>
                                     <span>${getInterruptibilityLabel(data.topRecommendation.interruptibility)}</span>
                                 </div>
+                                ${data.topRecommendation.userRating > 0 ? `
+                                <div class="meta-item">
+                                    <span class="meta-icon">⭐</span>
+                                    <span>${data.topRecommendation.userRating.toFixed(1)}/5</span>
+                                </div>
+                                ` : ''}
                             </div>
                             
                             <div class="match-reason">
@@ -2767,12 +2831,29 @@
                                 <div class="match-percentage" style="position: absolute; bottom: 10px; left: 10px; font-size: 0.85em;">${matchPercentage}% Match</div>
                             </div>
                             <div class="alternative-content">
-                                <h4>${game.name}</h4>
+                                <div class="game-title-header" style="margin-bottom: 5px;">
+                                    <h4 style="margin: 0;">${game.name}</h4>
+                                    <div class="game-actions">
+                                        ${game.storeUrl ? `
+                                            <button class="action-btn store-btn" style="width: 32px; height: 32px; font-size: 1em;"
+                                                    onclick="event.stopPropagation(); window.open('${game.storeUrl}', '_blank')" 
+                                                    title="View in ${game.storePlatform || 'store'}">
+                                                🛒
+                                            </button>
+                                        ` : ''}
+                                        <button class="action-btn favorite" style="width: 32px; height: 32px; font-size: 1em;"
+                                                onclick="event.stopPropagation(); toggleFavorite(this, ${game.id})" 
+                                                title="Add to favorites">
+                                            ♡
+                                        </button>
+                                    </div>
+                                </div>
                                 <p class="alternative-genre">${game.genre || 'Game'}</p>
                                 <p class="alternative-reason">${data.alternativeReasons[index] || 'Great alternative for you'}</p>
                                 <div class="alternative-meta">
                                     <span>⏱️ ${game.minMinutes}-${game.maxMinutes}min</span>
                                     <span>⚡ ${getEnergyLabel(game.energyRequired)}</span>
+                                    ${game.userRating > 0 ? `<span>⭐ ${game.userRating.toFixed(1)}</span>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -2824,6 +2905,21 @@
             }
         }
 
+        // Toggle favorite button
+        function toggleFavorite(button, gameId) {
+            button.classList.toggle('active');
+            
+            if (button.classList.contains('active')) {
+                button.textContent = '♥';
+                console.log('Added to favorites:', gameId);
+                // TODO: Implement actual favorite functionality
+            } else {
+                button.textContent = '♡';
+                console.log('Removed from favorites:', gameId);
+                // TODO: Implement actual unfavorite functionality
+            }
+        }
+
         // ============================================
         // MAXIMIZED GAME VIEW
         // ============================================
@@ -2838,7 +2934,23 @@
                          class="maximized-game-image"
                          onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22225%22%3E%3Crect fill=%22%23667eea%22 width=%22400%22 height=%22225%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3E🎮 No Image%3C/text%3E%3C/svg%3E';">
                     <div class="maximized-game-info">
-                        <h2 class="maximized-game-title">${game.name}</h2>
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 10px;">
+                            <h2 class="maximized-game-title" style="margin-bottom: 0;">${game.name}</h2>
+                            <div class="game-actions">
+                                ${game.storeUrl ? `
+                                    <button class="action-btn store-btn"
+                                            onclick="event.stopPropagation(); window.open('${game.storeUrl}', '_blank')" 
+                                            title="View in ${game.storePlatform || 'store'}">
+                                        🛒
+                                    </button>
+                                ` : ''}
+                                <button class="action-btn favorite"
+                                        onclick="event.stopPropagation(); toggleFavorite(this, ${game.id})" 
+                                        title="Add to favorites">
+                                    ♡
+                                </button>
+                            </div>
+                        </div>
                         <p class="maximized-game-genre">${game.genre || 'Game'}</p>
                         <div class="maximized-game-meta">
                             <div class="maximized-meta-badge">
@@ -2857,6 +2969,12 @@
                                 <span>⏸️</span>
                                 <span>${getInterruptibilityLabel(game.interruptibility)}</span>
                             </div>
+                            ${game.userRating > 0 ? `
+                            <div class="maximized-meta-badge">
+                                <span>⭐</span>
+                                <span>${game.userRating.toFixed(1)}/5</span>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                 </div>

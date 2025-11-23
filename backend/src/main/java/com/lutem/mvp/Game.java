@@ -22,6 +22,8 @@ public class Game {
     private List<String> genres;  // Changed to List to support multiple genres
     private String description;
     private String imageUrl;  // Game cover art URL
+    private String storeUrl;  // Link to game store page (Steam, Epic, etc.)
+    private double userRating;  // Store user rating (0-5 stars)
     
     // Learning metrics
     private double averageSatisfaction;
@@ -41,7 +43,7 @@ public class Game {
                 List<EmotionalGoal> emotionalGoals, Interruptibility interruptibility,
                 EnergyLevel energyRequired, List<TimeOfDay> bestTimeOfDay,
                 List<SocialPreference> socialPreferences, List<String> genres, String description,
-                String imageUrl) {
+                String imageUrl, String storeUrl, double userRating) {
         this.id = id;
         this.name = name;
         this.minMinutes = minMinutes;
@@ -54,6 +56,8 @@ public class Game {
         this.genres = genres;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.storeUrl = storeUrl;
+        this.userRating = userRating;
         this.averageSatisfaction = 0.0;
         this.sessionCount = 0;
     }
@@ -104,6 +108,12 @@ public class Game {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public String getStoreUrl() { return storeUrl; }
+    public void setStoreUrl(String storeUrl) { this.storeUrl = storeUrl; }
+
+    public double getUserRating() { return userRating; }
+    public void setUserRating(double userRating) { this.userRating = userRating; }
 
     public double getAverageSatisfaction() { return averageSatisfaction; }
     public void setAverageSatisfaction(double averageSatisfaction) { 

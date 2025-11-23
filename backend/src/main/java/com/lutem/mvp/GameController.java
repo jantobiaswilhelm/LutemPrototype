@@ -32,7 +32,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Puzzle", "Simulation"),
             "Zen unpacking simulator with cozy vibes",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1135690/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1135690/header.jpg",
+            "https://store.steampowered.com/app/1135690/Unpacking/",
+            4.0 // userRating
         ));
 
         // 2. Dorfromantik - Unwind, Locking in
@@ -44,7 +46,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Puzzle", "Strategy"),
             "Peaceful tile-placement puzzle game",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1455840/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1455840/header.jpg",
+            "https://store.steampowered.com/app/1455840/Dorfromantik/",
+            4.0 // userRating
         ));
 
         // 3. Tetris Effect - Recharge, Challenge
@@ -56,7 +60,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Arcade", "Puzzle"),
             "Classic Tetris with stunning audiovisuals",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1003590/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1003590/header.jpg",
+            "https://store.steampowered.com/app/1003590/Tetris_Effect_Connected/",
+            4.0 // userRating
         ));
 
         // 4. Dead Cells - Challenge, Progress Oriented
@@ -68,7 +74,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Roguelike", "Action", "Platformer"),
             "Fast-paced roguelike action platformer",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/588650/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/588650/header.jpg",
+            "https://store.steampowered.com/app/588650/Dead_Cells/",
+            4.0 // userRating
         ));
 
         // 5. Rocket League - Challenge, Recharge
@@ -80,7 +88,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
             Arrays.asList("Sports", "Racing"),
             "Soccer with rocket-powered cars",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/252950/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/252950/header.jpg",
+            "https://store.steampowered.com/app/252950/Rocket_League/",
+            4.0 // userRating
         ));
 
         // 6. Baba Is You - Locking in, Challenge
@@ -92,7 +102,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Puzzle"),
             "Brain-teasing puzzle game with rule manipulation",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/736260/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/736260/header.jpg",
+            "https://store.steampowered.com/app/736260/Baba_Is_You/",
+            4.0 // userRating
         ));
 
         // MID-RANGE GAMES (30-60 min)
@@ -106,7 +118,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Roguelike", "Action", "RPG"),
             "Action roguelike with compelling story",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg",
+            "https://store.steampowered.com/app/1145360/Hades/",
+            4.0 // userRating
         ));
 
         // 8. Stardew Valley - Unwind, Progress Oriented, Adventure Time
@@ -118,7 +132,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             Arrays.asList("Farming Sim", "RPG", "Simulation"),
             "Relaxing farming and life simulation",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg",
+            "https://store.steampowered.com/app/413150/Stardew_Valley/",
+            4.0 // userRating
         ));
 
         // 9. Slay the Spire - Locking in, Challenge, Progress Oriented
@@ -130,7 +146,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Card Game", "Roguelike", "Strategy"),
             "Strategic deck-building roguelike",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/646570/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/646570/header.jpg",
+            "https://store.steampowered.com/app/646570/Slay_the_Spire/",
+            4.0 // userRating
         ));
 
         // 10. Apex Legends - Challenge, Recharge
@@ -142,7 +160,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
             Arrays.asList("Battle Royale", "Action"),
             "Fast-paced team-based battle royale",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg",
+            "https://store.steampowered.com/app/1172470/Apex_Legends/",
+            4.0 // userRating
         ));
 
         // 11. PowerWash Simulator - Unwind, Progress Oriented
@@ -154,7 +174,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             Arrays.asList("Simulation"),
             "Meditative cleaning simulator",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1290000/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1290000/header.jpg",
+            "https://store.steampowered.com/app/1290000/PowerWash_Simulator/",
+            4.0 // userRating
         ));
 
         // 12. Into the Breach - Locking in, Challenge
@@ -166,7 +188,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Strategy", "Puzzle"),
             "Turn-based tactical combat puzzle",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/590380/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/590380/header.jpg",
+            "https://store.steampowered.com/app/590380/Into_the_Breach/",
+            4.0 // userRating
         ));
 
         // LONG-FORM GAMES (60+ min)
@@ -180,7 +204,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("RPG", "Action", "Adventure"),
             "Epic story-driven open-world RPG",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg",
+            "https://store.steampowered.com/app/292030/The_Witcher_3_Wild_Hunt/",
+            4.0 // userRating
         ));
 
         // 14. Minecraft - Adventure Time, Unwind, Progress Oriented
@@ -192,7 +218,9 @@ public class GameController {
             Arrays.asList(SocialPreference.BOTH),
             Arrays.asList("Sandbox", "Survival", "Adventure"),
             "Creative building and exploration",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1366220/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1366220/header.jpg",
+            "https://www.minecraft.net/",
+            4.0 // userRating
         ));
 
         // 15. Dark Souls III - Challenge, Locking in
@@ -204,7 +232,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             Arrays.asList("Action", "RPG", "Adventure"),
             "Challenging action RPG with precise combat",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/374320/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/374320/header.jpg",
+            "https://store.steampowered.com/app/374320/DARK_SOULS_III/",
+            4.0 // userRating
         ));
 
         // 16. Civilization VI - Locking in, Progress Oriented
@@ -216,7 +246,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COMPETITIVE),
             Arrays.asList("Strategy"),
             "Turn-based historical strategy game",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg",
+            "https://store.steampowered.com/app/289070/Sid_Meiers_Civilization_VI/",
+            4.0 // userRating
         ));
 
         // 17. A Short Hike - Unwind, Adventure Time
@@ -228,7 +260,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Adventure"),
             "Cozy exploration game in a beautiful park",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1055540/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1055540/header.jpg",
+            "https://store.steampowered.com/app/1055540/A_Short_Hike/",
+            4.0 // userRating
         ));
 
         // 18. Loop Hero - Locking in, Progress Oriented
@@ -240,7 +274,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Strategy", "Roguelike"),
             "Unique auto-battler with deck-building",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1282730/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1282730/header.jpg",
+            "https://store.steampowered.com/app/1282730/Loop_Hero/",
+            4.0 // userRating
         ));
 
         // 19. Valorant - Challenge
@@ -252,7 +288,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
             Arrays.asList("Tactical FPS", "Action"),
             "Character-based tactical shooter",
-            "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/4150c5778e7c03bdb5825519d85e5e6e8ed3a849-1920x1080.jpg"
+            "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/4150c5778e7c03bdb5825519d85e5e6e8ed3a849-1920x1080.jpg",
+            "https://playvalorant.com/",
+            4.0 // userRating
         ));
 
         // 20. The Witness - Locking in, Adventure Time
@@ -264,7 +302,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Puzzle", "Adventure"),
             "Beautiful island filled with environmental puzzles",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/210970/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/210970/header.jpg",
+            "https://store.steampowered.com/app/210970/The_Witness/",
+            4.0 // userRating
         ));
 
         // === POPULAR ADDITIONS TO FILL GAPS ===
@@ -278,7 +318,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Adventure"),
             "Mystery adventure in Wyoming wilderness",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/383870/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/383870/header.jpg",
+            "https://store.steampowered.com/app/383870/Firewatch/",
+            4.0 // userRating
         ));
 
         // 22. It Takes Two - Co-op masterpiece
@@ -290,7 +332,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COOP),
             Arrays.asList("Co-op Adventure", "Platformer"),
             "Inventive co-op platformer with creative mechanics",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1426210/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1426210/header.jpg",
+            "https://store.steampowered.com/app/1426210/It_Takes_Two/",
+            4.0 // userRating
         ));
 
         // 23. Overcooked 2 - Chaotic cooking
@@ -302,7 +346,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COOP),
             Arrays.asList("Party Game", "Simulation"),
             "Frantic cooperative cooking under pressure",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/728880/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/728880/header.jpg",
+            "https://store.steampowered.com/app/728880/Overcooked_2/",
+            4.0 // userRating
         ));
 
         // 24. Portal 2 - Puzzle perfection
@@ -314,7 +360,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             Arrays.asList("Puzzle", "Adventure"),
             "Mind-bending portal puzzles with humor",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/620/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/620/header.jpg",
+            "https://store.steampowered.com/app/620/Portal_2/",
+            4.0 // userRating
         ));
 
         // 25. Keep Talking and Nobody Explodes - Communication puzzle
@@ -326,7 +374,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COOP),
             Arrays.asList("Puzzle"),
             "Defuse bombs through teamwork and communication",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/341800/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/341800/header.jpg",
+            "https://store.steampowered.com/app/341800/Keep_Talking_and_Nobody_Explodes/",
+            4.0 // userRating
         ));
 
         // 26. Subnautica - Underwater exploration
@@ -338,7 +388,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Survival", "Adventure", "Horror"),
             "Underwater survival with exploration and crafting",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/264710/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/264710/header.jpg",
+            "https://store.steampowered.com/app/264710/Subnautica/",
+            4.0 // userRating
         ));
 
         // 27. Risk of Rain 2 - Fast roguelike shooter
@@ -350,7 +402,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             Arrays.asList("Roguelike", "Action"),
             "Third-person roguelike with intense action",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/632360/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/632360/header.jpg",
+            "https://store.steampowered.com/app/632360/Risk_of_Rain_2/",
+            4.0 // userRating
         ));
 
         // 28. Ori and the Will of the Wisps - Beautiful platformer
@@ -362,7 +416,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Platformer", "Adventure"),
             "Stunning metroidvania with emotional story",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1057090/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1057090/header.jpg",
+            "https://store.steampowered.com/app/1057090/Ori_and_the_Will_of_the_Wisps/",
+            4.0 // userRating
         ));
 
         // 29. Trackmania - Time trial racing
@@ -374,7 +430,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COMPETITIVE),
             Arrays.asList("Racing"),
             "Precision arcade racing with time trials",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/2225070/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/2225070/header.jpg",
+            "https://www.trackmania.com/",
+            4.0 // userRating
         ));
 
         // 30. Fall Guys - Party game chaos
@@ -386,7 +444,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COMPETITIVE),
             Arrays.asList("Party Game"),
             "Colorful obstacle course battle royale",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1097150/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1097150/header.jpg",
+            "https://store.steampowered.com/app/1097150/Fall_Guys/",
+            4.0 // userRating
         ));
 
         // 31. Chess Online - Classic competitive chess
@@ -398,7 +458,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COMPETITIVE),
             Arrays.asList("Board Game", "Strategy"),
             "Online chess - ultimate strategy challenge",
-            "https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/SamCopeland/phpmeXx6V.png"
+            "https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/SamCopeland/phpmeXx6V.png",
+            "https://www.chess.com/",
+            4.0 // userRating
         ));
 
         // 32. Gris - Emotional art piece
@@ -410,7 +472,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Platformer", "Adventure"),
             "Serene journey through a fading world",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/683320/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/683320/header.jpg",
+            "https://store.steampowered.com/app/683320/GRIS/",
+            4.0 // userRating
         ));
 
         // 33. Spiritfarer - Cozy management adventure
@@ -422,7 +486,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             Arrays.asList("Management", "Adventure", "Simulation"),
             "Comforting game about dying and letting go",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/972660/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/972660/header.jpg",
+            "https://store.steampowered.com/app/972660/Spiritfarer_Farewell_Edition/",
+            4.0 // userRating
         ));
 
         // 34. Factorio - Factory building optimization
@@ -434,7 +500,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO, SocialPreference.COOP),
             Arrays.asList("Strategy", "Simulation"),
             "Automate everything - factory building sim",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/427520/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/427520/header.jpg",
+            "https://store.steampowered.com/app/427520/Factorio/",
+            4.0 // userRating
         ));
 
         // 35. Animal Crossing - Ultimate relaxation
@@ -446,7 +514,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Life Sim", "Simulation"),
             "Peaceful island life with cute animals",
-            "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/en_US/games/switch/a/animal-crossing-new-horizons-switch/hero"
+            "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/en_US/games/switch/a/animal-crossing-new-horizons-switch/hero",
+            "https://www.nintendo.com/us/store/products/animal-crossing-new-horizons-switch/",
+            4.0 // userRating
         ));
 
         // 36. Journey - Wordless exploration
@@ -458,7 +528,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Adventure"),
             "Meditative journey through desert landscape",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/638230/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/638230/header.jpg",
+            "https://store.steampowered.com/app/638230/Journey/",
+            4.0 // userRating
         ));
 
         // 37. Among Us - Social deduction
@@ -470,7 +542,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COOP, SocialPreference.COMPETITIVE),
             Arrays.asList("Social Deduction", "Party Game"),
             "Find the impostor in spaceship tasks",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/945360/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/945360/header.jpg",
+            "https://store.steampowered.com/app/945360/Among_Us/",
+            4.0 // userRating
         ));
 
         // 38. Hearthstone - Digital card game
@@ -482,7 +556,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COMPETITIVE),
             Arrays.asList("Card Game", "Strategy"),
             "Strategic card battler with deep tactics",
-            "https://bnetcmsus-a.akamaihd.net/cms/page_media/w4/W4NE08DTET8P1521577412158.jpg"
+            "https://bnetcmsus-a.akamaihd.net/cms/page_media/w4/W4NE08DTET8P1521577412158.jpg",
+            "https://hearthstone.blizzard.com/",
+            4.0 // userRating
         ));
 
         // 39. Vampire Survivors - Progression heaven
@@ -494,7 +570,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Action", "Roguelike"),
             "Addictive auto-battler with constant upgrades",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/1794680/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/1794680/header.jpg",
+            "https://store.steampowered.com/app/1794680/Vampire_Survivors/",
+            4.0 // userRating
         ));
 
         // 40. Celeste - Precision platforming
@@ -506,7 +584,9 @@ public class GameController {
             Arrays.asList(SocialPreference.SOLO),
             Arrays.asList("Platformer"),
             "Tight platforming with touching story",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/504230/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/504230/header.jpg",
+            "https://store.steampowered.com/app/504230/Celeste/",
+            4.0 // userRating
         ));
 
         // 41. Counter-Strike 2 - Competitive FPS
@@ -518,7 +598,9 @@ public class GameController {
             Arrays.asList(SocialPreference.COMPETITIVE, SocialPreference.COOP),
             Arrays.asList("Tactical FPS", "Action"),
             "Legendary tactical shooter with competitive gameplay",
-            "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg"
+            "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
+            "https://store.steampowered.com/app/730/CounterStrike_2/",
+            4.0 // userRating
         ));
     }
 
