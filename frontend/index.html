@@ -121,6 +121,55 @@
             box-shadow: 0 6px 20px var(--shadow-hover);
         }
 
+        /* ============================================
+           WIZARD TOGGLE BUTTON
+           ============================================ */
+        .wizard-toggle {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: 2px solid transparent;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s;
+            z-index: 1000;
+            color: white;
+        }
+
+        .wizard-toggle:hover {
+            transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.5);
+        }
+
+        .wizard-toggle::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
         header {
             text-align: center;
             margin-bottom: 40px;
@@ -1015,6 +1064,10 @@
             height: 250px;
             overflow: hidden;
             position: relative;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(139,107,183,0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .game-image {
@@ -1022,6 +1075,8 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.3s;
+            display: block;
+            background: transparent;
         }
 
         .result-card:hover .game-image {
@@ -1167,6 +1222,8 @@
             width: 100%;
             height: 150px;
             object-fit: cover;
+            display: block;
+            background: linear-gradient(135deg, rgba(118,75,162,0.1), rgba(102,126,234,0.1));
         }
 
         .alternative-content {
@@ -1235,6 +1292,11 @@
     <!-- Theme Toggle Button -->
     <div class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
         <span id="themeIcon">🌙</span>
+    </div>
+
+    <!-- Wizard Toggle Button -->
+    <div class="wizard-toggle" id="wizardToggle" title="Quick Start Wizard">
+        <span>🧙</span>
     </div>
 
     <!-- Guided Setup Modal -->
@@ -1535,6 +1597,23 @@
         });
 
         // ============================================
+        // WIZARD TOGGLE
+        // ============================================
+        const wizardToggle = document.getElementById('wizardToggle');
+        
+        wizardToggle.addEventListener('click', () => {
+            // Reset wizard to welcome screen
+            document.querySelectorAll('.guided-question').forEach(q => q.classList.remove('active'));
+            document.getElementById('welcomeScreen').classList.add('active');
+            document.getElementById('modalHeaderText').textContent = "Let's find your perfect game!";
+            
+            // Show the modal
+            document.getElementById('guidedModalOverlay').style.display = 'flex';
+            document.body.classList.add('modal-open');
+            document.getElementById('mainContainer').classList.add('blurred');
+        });
+
+        // ============================================
         // GUIDED MODAL FUNCTIONS
         // ============================================
         function startQuickSetup() {
@@ -1651,6 +1730,11 @@
             const index = parseInt(e.target.value);
             state.guidedTime = TIME_VALUES[index];
             document.getElementById('guidedTimeDisplay').textContent = TIME_LABELS[index];
+            
+            // Show Touch Grass modal for 3+ hours
+            if (index === 7) {
+                document.getElementById('touchGrassModal').style.display = 'flex';
+            }
         });
 
         // ============================================
@@ -1662,9 +1746,17 @@
             
             if (!keepSelection) {
                 // Reset to 3 hours (index 6)
-                document.getElementById('timeSlider').value = 6;
+                const timeSlider = document.getElementById('timeSlider');
+                const guidedTimeSlider = document.getElementById('guidedTimeSlider');
+                
+                timeSlider.value = 6;
+                guidedTimeSlider.value = 6;
+                
                 state.availableMinutes = 180;
+                state.guidedTime = 180;
+                
                 updateTimeDisplay(6);
+                document.getElementById('guidedTimeDisplay').textContent = TIME_LABELS[6];
             }
         }
 
@@ -1837,10 +1929,11 @@
                         </div>
                         
                         <div class="game-image-container">
-                            <img src="${data.topRecommendation.imageUrl || 'https://via.placeholder.com/460x215/667eea/ffffff?text=No+Image'}" 
+                            <img src="${data.topRecommendation.imageUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22460%22 height=%22215%22%3E%3Crect fill=%22%23667eea%22 width=%22460%22 height=%22215%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3E🎮 ${data.topRecommendation.name}%3C/text%3E%3C/svg%3E'}" 
                                  alt="${data.topRecommendation.name}"
                                  class="game-image"
-                                 onerror="this.src='https://via.placeholder.com/460x215/667eea/ffffff?text=No+Image'">
+                                 loading="eager"
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22460%22 height=%22215%22%3E%3Crect fill=%22%23667eea%22 width=%22460%22 height=%22215%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2224%22 fill=%22white%22%3E🎮 No Image%3C/text%3E%3C/svg%3E';">
                             <div class="match-percentage">95% Match</div>
                         </div>
                         
@@ -1893,10 +1986,11 @@
                 data.alternatives.forEach((game, index) => {
                     html += `
                         <div class="alternative-card">
-                            <img src="${game.imageUrl || 'https://via.placeholder.com/300x140/764ba2/ffffff?text=No+Image'}" 
+                            <img src="${game.imageUrl || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22140%22%3E%3Crect fill=%22%23764ba2%22 width=%22300%22 height=%22140%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2216%22 fill=%22white%22%3E🎮 ${game.name}%3C/text%3E%3C/svg%3E'}" 
                                  alt="${game.name}"
                                  class="alternative-image"
-                                 onerror="this.src='https://via.placeholder.com/300x140/764ba2/ffffff?text=No+Image'">
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22140%22%3E%3Crect fill=%22%23764ba2%22 width=%22300%22 height=%22140%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2216%22 fill=%22white%22%3E🎮 No Image%3C/text%3E%3C/svg%3E';">
                             <div class="alternative-content">
                                 <h4>${game.name}</h4>
                                 <p class="alternative-genre">${game.genre || 'Game'}</p>
