@@ -4,9 +4,11 @@ import java.util.List;
 
 public class RecommendationResponse {
     private Game topRecommendation;
-    private List<Game> alternatives; // Top 2 alternatives
+    private List<Game> alternatives; // Top 4 alternatives
     private String reason;
     private List<String> alternativeReasons; // Reasons for each alternative
+    private Integer topMatchPercentage;
+    private List<Integer> alternativeMatchPercentages;
 
     // Constructors
     public RecommendationResponse() {}
@@ -17,6 +19,17 @@ public class RecommendationResponse {
         this.alternatives = alternatives;
         this.reason = reason;
         this.alternativeReasons = alternativeReasons;
+    }
+
+    public RecommendationResponse(Game topRecommendation, List<Game> alternatives, 
+                                  String reason, List<String> alternativeReasons,
+                                  Integer topMatchPercentage, List<Integer> alternativeMatchPercentages) {
+        this.topRecommendation = topRecommendation;
+        this.alternatives = alternatives;
+        this.reason = reason;
+        this.alternativeReasons = alternativeReasons;
+        this.topMatchPercentage = topMatchPercentage;
+        this.alternativeMatchPercentages = alternativeMatchPercentages;
     }
 
     // Backward compatibility with old single-game constructor
@@ -44,5 +57,15 @@ public class RecommendationResponse {
     public List<String> getAlternativeReasons() { return alternativeReasons; }
     public void setAlternativeReasons(List<String> alternativeReasons) { 
         this.alternativeReasons = alternativeReasons; 
+    }
+
+    public Integer getTopMatchPercentage() { return topMatchPercentage; }
+    public void setTopMatchPercentage(Integer topMatchPercentage) {
+        this.topMatchPercentage = topMatchPercentage;
+    }
+
+    public List<Integer> getAlternativeMatchPercentages() { return alternativeMatchPercentages; }
+    public void setAlternativeMatchPercentages(List<Integer> alternativeMatchPercentages) {
+        this.alternativeMatchPercentages = alternativeMatchPercentages;
     }
 }

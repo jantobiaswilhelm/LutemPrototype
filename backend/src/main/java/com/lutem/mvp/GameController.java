@@ -561,19 +561,34 @@ public class GameController {
             return createNoMatchResponse();
         }
 
-        // Get top 3
+        // Get top 5 (1 main + 4 alternatives)
         Game topRecommendation = rankedGames.get(0).getKey();
         String topReason = rankedGames.get(0).getValue().reason;
+        double topScore = rankedGames.get(0).getValue().score;
         
         List<Game> alternatives = new ArrayList<>();
         List<String> alternativeReasons = new ArrayList<>();
+        List<Double> alternativeScores = new ArrayList<>();
         
-        for (int i = 1; i < Math.min(3, rankedGames.size()); i++) {
+        for (int i = 1; i < Math.min(5, rankedGames.size()); i++) {
             alternatives.add(rankedGames.get(i).getKey());
             alternativeReasons.add(rankedGames.get(i).getValue().reason);
+            alternativeScores.add(rankedGames.get(i).getValue().score);
         }
 
-        return new RecommendationResponse(topRecommendation, alternatives, topReason, alternativeReasons);
+        // Calculate match percentages
+        double maxScore = topScore;
+        Integer topMatchPercentage = calculateMatchPercentage(topScore, maxScore);
+        
+        List<Integer> alternativeMatchPercentages = new ArrayList<>();
+        for (Double score : alternativeScores) {
+            alternativeMatchPercentages.add(calculateMatchPercentage(score, maxScore));
+        }
+
+        return new RecommendationResponse(
+            topRecommendation, alternatives, topReason, alternativeReasons,
+            topMatchPercentage, alternativeMatchPercentages
+        );
     }
 
     private ScoringResult scoreGame(Game game, RecommendationRequest request) {
@@ -587,10 +602,10 @@ public class GameController {
         
         if (game.getMaxMinutes() <= request.getAvailableMinutes()) {
             score += 30.0;
-            matchReasons.add("fits your " + request.getAvailableMinutes() + " min");
+            matchReasons.add("Fits your " + request.getAvailableMinutes() + "-minute window");
         } else if (game.getMinMinutes() <= request.getAvailableMinutes()) {
             score += 20.0;
-            matchReasons.add("playable in " + request.getAvailableMinutes() + " min");
+            matchReasons.add("Can start in " + request.getAvailableMinutes() + " minutes");
         }
 
         // 2. EMOTIONAL GOAL MATCH (25%)
@@ -598,7 +613,7 @@ public class GameController {
             for (EmotionalGoal goal : request.getDesiredEmotionalGoals()) {
                 if (game.hasEmotionalGoal(goal)) {
                     score += 25.0 / request.getDesiredEmotionalGoals().size();
-                    matchReasons.add(goal.getDisplayName().toLowerCase());
+                    matchReasons.add("Great for " + goal.getDisplayName().toLowerCase());
                 }
             }
         }
@@ -607,10 +622,10 @@ public class GameController {
         if (request.getRequiredInterruptibility() != null) {
             if (game.getInterruptibility() == request.getRequiredInterruptibility()) {
                 score += 20.0;
-                matchReasons.add(game.getInterruptibility().getDisplayName().toLowerCase());
+                matchReasons.add(game.getInterruptibility().getDisplayName() + " - " + getInterruptibilityDescription(game.getInterruptibility()));
             } else if (game.getInterruptibility().ordinal() >= request.getRequiredInterruptibility().ordinal()) {
                 score += 15.0;
-                matchReasons.add("flexible pausing");
+                matchReasons.add("Easy to pause when needed");
             } else {
                 score -= 10.0;
             }
@@ -620,10 +635,10 @@ public class GameController {
         if (request.getCurrentEnergyLevel() != null) {
             if (game.getEnergyRequired() == request.getCurrentEnergyLevel()) {
                 score += 15.0;
-                matchReasons.add(game.getEnergyRequired().getDisplayName().toLowerCase() + " energy");
+                matchReasons.add("Perfect match for your " + game.getEnergyRequired().getDisplayName().toLowerCase() + " energy level");
             } else if (game.getEnergyRequired().ordinal() < request.getCurrentEnergyLevel().ordinal()) {
                 score += 12.0;
-                matchReasons.add("light on energy");
+                matchReasons.add("Won't drain your energy");
             } else {
                 score -= 5.0;
             }
@@ -633,7 +648,7 @@ public class GameController {
         if (request.getTimeOfDay() != null) {
             if (game.isSuitableForTimeOfDay(request.getTimeOfDay())) {
                 score += 5.0;
-                matchReasons.add("good for " + request.getTimeOfDay().getDisplayName().toLowerCase());
+                matchReasons.add("Ideal for " + request.getTimeOfDay().getDisplayName().toLowerCase());
             }
         }
 
@@ -641,7 +656,7 @@ public class GameController {
         if (request.getSocialPreference() != null) {
             if (game.matchesSocialPreference(request.getSocialPreference())) {
                 score += 5.0;
-                matchReasons.add(request.getSocialPreference().getDisplayName().toLowerCase());
+                matchReasons.add("Perfect for " + request.getSocialPreference().getDisplayName().toLowerCase() + " play");
             } else {
                 score -= 5.0;
             }
@@ -652,7 +667,9 @@ public class GameController {
         if (game.getSessionCount() > 0) {
             score += (avg / 5.0) * 10.0;
             if (avg >= 4.0) {
-                matchReasons.add("highly rated by you");
+                matchReasons.add("You've loved this before (" + String.format("%.1f", avg) + "/5 ⭐)");
+            } else if (avg >= 3.5) {
+                matchReasons.add("Previously enjoyed by you");
             }
         }
 
@@ -666,12 +683,36 @@ public class GameController {
             if (genreMatches > 0) {
                 double genreBonus = (genreMatches / (double) request.getPreferredGenres().size()) * 15.0;
                 score += genreBonus;
-                matchReasons.add("matches your genre preferences");
+                String matchedGenres = game.getGenres().stream()
+                    .filter(genre -> request.getPreferredGenres().stream()
+                        .anyMatch(prefGenre -> prefGenre.equalsIgnoreCase(genre)))
+                    .collect(Collectors.joining(", "));
+                matchReasons.add("Matches your taste: " + matchedGenres);
             }
         }
 
-        String reason = "Perfect for: " + String.join(", ", matchReasons);
+        // Build reason summary
+        String reason;
+        if (matchReasons.isEmpty()) {
+            reason = "Available game for your time slot";
+        } else if (matchReasons.size() <= 3) {
+            reason = String.join(" • ", matchReasons);
+        } else {
+            // Show top 3 reasons
+            reason = matchReasons.subList(0, 3).stream()
+                .collect(Collectors.joining(" • "));
+        }
+        
         return new ScoringResult(score, reason);
+    }
+
+    private String getInterruptibilityDescription(Interruptibility level) {
+        switch (level) {
+            case HIGH: return "pause anytime";
+            case MEDIUM: return "pause at savepoints";
+            case LOW: return "must complete session";
+            default: return "";
+        }
     }
 
     private RecommendationResponse createNoMatchResponse() {
@@ -712,6 +753,17 @@ public class GameController {
             return 3.0;
         }
         return scores.stream().mapToInt(Integer::intValue).average().orElse(3.0);
+    }
+
+    private Integer calculateMatchPercentage(double score, double maxScore) {
+        if (maxScore == 0) {
+            return 0;
+        }
+        // Calculate percentage: normalize score to 0-100 range
+        // Maximum possible score is around 115 (30+25+20+15+5+5+10+15 with perfect matches)
+        double normalizedScore = (score / 115.0) * 100.0;
+        // Ensure it's between 0 and 100
+        return Math.max(0, Math.min(100, (int) Math.round(normalizedScore)));
     }
 
     // Helper class for scoring
