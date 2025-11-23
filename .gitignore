@@ -1,5 +1,6 @@
 # Maven
 target/
+**/target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -12,6 +13,7 @@ buildNumber.properties
 
 # IDE
 .idea/
+.idea/workspace.xml
 *.iml
 .vscode/
 *.swp
@@ -28,3 +30,12 @@ Thumbs.db
 # Database
 *.db
 *.db-journal
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Temporary files
+*.tmp
+commit-message.txt
