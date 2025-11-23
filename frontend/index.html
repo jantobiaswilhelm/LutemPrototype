@@ -2350,6 +2350,9 @@
             guidedInterruptibility: null
         };
 
+        // Session tracking for feedback
+        let currentSessionId = null;
+
         const TIME_VALUES = [5, 15, 30, 45, 60, 120, 180, 200];
         const TIME_LABELS = ['5 minutes', '15 minutes', '30 minutes', '45 minutes', 
                              '1 hour', '2 hours', '3 hours', '3+ hours'];
@@ -2926,6 +2929,10 @@
         function displayResults(data) {
             const resultsPanel = document.getElementById('resultsPanel');
             
+            // Store sessionId for feedback tracking
+            currentSessionId = data.sessionId || null;
+            console.log('📊 Session ID stored:', currentSessionId);
+            
             if (!data.topRecommendation || data.topRecommendation.id === 0) {
                 resultsPanel.innerHTML = `
                     <div class="placeholder">
@@ -3005,7 +3012,7 @@
                                 <p style="margin-bottom: 10px; font-weight: 600;">How was this recommendation?</p>
                                 <div class="feedback-buttons">
                                     ${[1,2,3,4,5].map(score => `
-                                        <button class="feedback-btn" onclick="event.stopPropagation(); submitFeedback(event, ${data.topRecommendation.id}, ${score})">
+                                        <button class="feedback-btn" onclick="event.stopPropagation(); submitFeedback(event, ${data.topRecommendation.id}, ${score}, ${data.sessionId || 'null'})">
                                             ${score === 1 ? '😞' : score === 2 ? '😕' : score === 3 ? '😐' : score === 4 ? '😊' : '🤩'}
                                         </button>
                                     `).join('')}
@@ -3088,18 +3095,31 @@
             return labels[level] || level;
         }
 
-        async function submitFeedback(event, gameId, score) {
+        async function submitFeedback(event, gameId, score, sessionId = null) {
             try {
+                // Use passed sessionId or fall back to global currentSessionId
+                const effectiveSessionId = sessionId || currentSessionId;
+                
+                console.log('💬 Submitting feedback:', {
+                    sessionId: effectiveSessionId,
+                    gameId: gameId,
+                    score: score
+                });
+                
                 const response = await fetch(`${API_URL}/sessions/feedback`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        gameId: gameId,
+                        sessionId: effectiveSessionId,  // Include sessionId for database tracking
+                        gameId: gameId,                  // Keep for backward compatibility
                         satisfactionScore: score
                     })
                 });
 
                 if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Feedback saved:', result);
+                    
                     // Show success feedback
                     const feedbackSection = event.target.closest('.feedback-section');
                     feedbackSection.innerHTML = `
@@ -3218,16 +3238,26 @@
 
         async function submitFeedbackInModal(gameId, score) {
             try {
+                console.log('💬 Submitting feedback in modal:', {
+                    sessionId: currentSessionId,
+                    gameId: gameId,
+                    score: score
+                });
+                
                 const response = await fetch(`${API_URL}/sessions/feedback`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        gameId: gameId,
+                        sessionId: currentSessionId,  // Include sessionId for database tracking
+                        gameId: gameId,               // Keep for backward compatibility
                         satisfactionScore: score
                     })
                 });
 
                 if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Modal feedback saved:', result);
+                    
                     // Update the feedback section in the modal
                     const feedbackSection = document.querySelector('.maximized-feedback-section');
                     if (feedbackSection) {

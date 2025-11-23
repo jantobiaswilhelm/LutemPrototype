@@ -1,5 +1,6 @@
-package com.lutem.mvp;
+package com.lutem.mvp.dto;
 
+import com.lutem.mvp.model.Game;
 import java.util.List;
 
 public class RecommendationResponse {
@@ -9,6 +10,7 @@ public class RecommendationResponse {
     private List<String> alternativeReasons; // Reasons for each alternative
     private Integer topMatchPercentage;
     private List<Integer> alternativeMatchPercentages;
+    private Long sessionId; // ID of the session record for feedback tracking
 
     // Constructors
     public RecommendationResponse() {}
@@ -46,6 +48,10 @@ public class RecommendationResponse {
         this.topRecommendation = topRecommendation; 
     }
 
+    // Backward compatibility: getGame() returns topRecommendation
+    public Game getGame() { return topRecommendation; }
+    public void setGame(Game game) { this.topRecommendation = game; }
+
     public List<Game> getAlternatives() { return alternatives; }
     public void setAlternatives(List<Game> alternatives) { 
         this.alternatives = alternatives; 
@@ -68,4 +74,7 @@ public class RecommendationResponse {
     public void setAlternativeMatchPercentages(List<Integer> alternativeMatchPercentages) {
         this.alternativeMatchPercentages = alternativeMatchPercentages;
     }
+
+    public Long getSessionId() { return sessionId; }
+    public void setSessionId(Long sessionId) { this.sessionId = sessionId; }
 }

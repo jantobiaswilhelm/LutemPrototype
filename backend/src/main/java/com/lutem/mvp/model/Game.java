@@ -1,29 +1,60 @@
-package com.lutem.mvp;
+package com.lutem.mvp.model;
 
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
+import com.lutem.mvp.*;
 
+@Entity
+@Table(name = "games")
 public class Game {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private String name;
     
     // Time
     private int minMinutes;
     private int maxMinutes;
     
-    // Multi-dimensional attributes
-    private List<EmotionalGoal> emotionalGoals;
+    // Multi-dimensional attributes - stored as comma-separated strings
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "game_emotional_goals", joinColumns = @JoinColumn(name = "game_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "emotional_goal")
+    private List<EmotionalGoal> emotionalGoals = new ArrayList<>();
+    
+    @Enumerated(EnumType.STRING)
     private Interruptibility interruptibility;
+    
+    @Enumerated(EnumType.STRING)
     private EnergyLevel energyRequired;
-    private List<TimeOfDay> bestTimeOfDay;
-    private List<SocialPreference> socialPreferences;
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "game_time_of_day", joinColumns = @JoinColumn(name = "game_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "time_of_day")
+    private List<TimeOfDay> bestTimeOfDay = new ArrayList<>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "game_social_preferences", joinColumns = @JoinColumn(name = "game_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "social_preference")
+    private List<SocialPreference> socialPreferences = new ArrayList<>();
     
     // Metadata
-    private List<String> genres;  // Changed to List to support multiple genres
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "game_genres", joinColumns = @JoinColumn(name = "game_id"))
+    @Column(name = "genre")
+    private List<String> genres = new ArrayList<>();
+    
+    @Column(length = 1000)
     private String description;
-    private String imageUrl;  // Game cover art URL
-    private String storeUrl;  // Link to game store page (Steam, Epic, etc.)
-    private double userRating;  // Store user rating (0-5 stars)
+    
+    private String imageUrl;
+    private String storeUrl;
+    private double userRating;
     
     // Learning metrics
     private double averageSatisfaction;
@@ -34,7 +65,7 @@ public class Game {
         this.emotionalGoals = new ArrayList<>();
         this.bestTimeOfDay = new ArrayList<>();
         this.socialPreferences = new ArrayList<>();
-        this.genres = new ArrayList<>();  // Initialize genres list
+        this.genres = new ArrayList<>();
         this.averageSatisfaction = 0.0;
         this.sessionCount = 0;
     }

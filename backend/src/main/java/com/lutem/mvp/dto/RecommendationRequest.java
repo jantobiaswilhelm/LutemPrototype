@@ -1,5 +1,6 @@
-package com.lutem.mvp;
+package com.lutem.mvp.dto;
 
+import com.lutem.mvp.*;
 import java.util.List;
 
 public class RecommendationRequest {
@@ -77,5 +78,13 @@ public class RecommendationRequest {
     public List<String> getPreferredGenres() { return preferredGenres; }
     public void setPreferredGenres(List<String> preferredGenres) { 
         this.preferredGenres = preferredGenres; 
+    }
+    
+    // Helper method for backward compatibility - gets first emotional goal
+    public String getDesiredMood() {
+        if (desiredEmotionalGoals != null && !desiredEmotionalGoals.isEmpty()) {
+            return desiredEmotionalGoals.get(0).name().toLowerCase();
+        }
+        return null;
     }
 }

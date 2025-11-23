@@ -1,0 +1,1081 @@
+[
+  {
+    "name": "Unpacking",
+    "minMinutes": 10,
+    "maxMinutes": 20,
+    "emotionalGoals": [
+      "UNWIND",
+      "PROGRESS_ORIENTED",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "MIDDAY",
+      "EVENING",
+      "LATE_NIGHT"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Puzzle",
+      "Simulation"
+    ],
+    "description": "Zen unpacking simulator with cozy vibes",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1135690/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1135690/Unpacking/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Dorfromantik",
+    "minMinutes": 15,
+    "maxMinutes": 25,
+    "emotionalGoals": [
+      "UNWIND",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Puzzle",
+      "Strategy"
+    ],
+    "description": "Peaceful tile-placement puzzle game",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1455840/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1455840/Dorfromantik/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Tetris Effect",
+    "minMinutes": 5,
+    "maxMinutes": 20,
+    "emotionalGoals": [
+      "RECHARGE",
+      "CHALLENGE"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Arcade",
+      "Puzzle"
+    ],
+    "description": "Classic Tetris with stunning audiovisuals",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1003590/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1003590/Tetris_Effect_Connected/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Dead Cells",
+    "minMinutes": 15,
+    "maxMinutes": 25,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Roguelike",
+      "Action",
+      "Platformer"
+    ],
+    "description": "Fast-paced roguelike action platformer",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/588650/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/588650/Dead_Cells/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Rocket League",
+    "minMinutes": 10,
+    "maxMinutes": 15,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "COOP"
+    ],
+    "genres": [
+      "Sports",
+      "Racing"
+    ],
+    "description": "Soccer with rocket-powered cars",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/252950/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/252950/Rocket_League/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Baba Is You",
+    "minMinutes": 15,
+    "maxMinutes": 25,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "CHALLENGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Puzzle"
+    ],
+    "description": "Brain-teasing puzzle game with rule manipulation",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/736260/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/736260/Baba_Is_You/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Hades",
+    "minMinutes": 30,
+    "maxMinutes": 45,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "PROGRESS_ORIENTED",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "MORNING",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Roguelike",
+      "Action",
+      "RPG"
+    ],
+    "description": "Action roguelike with compelling story",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1145360/Hades/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Stardew Valley",
+    "minMinutes": 30,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "UNWIND",
+      "PROGRESS_ORIENTED",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Farming Sim",
+      "RPG",
+      "Simulation"
+    ],
+    "description": "Relaxing farming and life simulation",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/413150/Stardew_Valley/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Slay the Spire",
+    "minMinutes": 30,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "CHALLENGE",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Card Game",
+      "Roguelike",
+      "Strategy"
+    ],
+    "description": "Strategic deck-building roguelike",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/646570/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/646570/Slay_the_Spire/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Apex Legends",
+    "minMinutes": 30,
+    "maxMinutes": 45,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "COOP"
+    ],
+    "genres": [
+      "Battle Royale",
+      "Action"
+    ],
+    "description": "Fast-paced team-based battle royale",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1172470/Apex_Legends/",
+    "userRating": 4.0
+  },
+  {
+    "name": "PowerWash Simulator",
+    "minMinutes": 30,
+    "maxMinutes": 45,
+    "emotionalGoals": [
+      "UNWIND",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "EVENING",
+      "LATE_NIGHT"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Simulation"
+    ],
+    "description": "Meditative cleaning simulator",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1290000/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1290000/PowerWash_Simulator/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Into the Breach",
+    "minMinutes": 30,
+    "maxMinutes": 50,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "CHALLENGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Strategy",
+      "Puzzle"
+    ],
+    "description": "Turn-based tactical combat puzzle",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/590380/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/590380/Into_the_Breach/",
+    "userRating": 4.0
+  },
+  {
+    "name": "The Witcher 3",
+    "minMinutes": 60,
+    "maxMinutes": 120,
+    "emotionalGoals": [
+      "ADVENTURE_TIME",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "RPG",
+      "Action",
+      "Adventure"
+    ],
+    "description": "Epic story-driven open-world RPG",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/292030/The_Witcher_3_Wild_Hunt/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Minecraft",
+    "minMinutes": 60,
+    "maxMinutes": 180,
+    "emotionalGoals": [
+      "ADVENTURE_TIME",
+      "UNWIND",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "BOTH"
+    ],
+    "genres": [
+      "Sandbox",
+      "Survival",
+      "Adventure"
+    ],
+    "description": "Creative building and exploration",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1366220/header.jpg",
+    "storeUrl": "https://www.minecraft.net/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Dark Souls III",
+    "minMinutes": 60,
+    "maxMinutes": 120,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Action",
+      "RPG",
+      "Adventure"
+    ],
+    "description": "Challenging action RPG with precise combat",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/374320/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/374320/DARK_SOULS_III/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Civilization VI",
+    "minMinutes": 60,
+    "maxMinutes": 180,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COMPETITIVE"
+    ],
+    "genres": [
+      "Strategy"
+    ],
+    "description": "Turn-based historical strategy game",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/289070/Sid_Meiers_Civilization_VI/",
+    "userRating": 4.0
+  },
+  {
+    "name": "A Short Hike",
+    "minMinutes": 5,
+    "maxMinutes": 30,
+    "emotionalGoals": [
+      "UNWIND",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Adventure"
+    ],
+    "description": "Cozy exploration game in a beautiful park",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1055540/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1055540/A_Short_Hike/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Loop Hero",
+    "minMinutes": 30,
+    "maxMinutes": 50,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Strategy",
+      "Roguelike"
+    ],
+    "description": "Unique auto-battler with deck-building",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1282730/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1282730/Loop_Hero/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Valorant",
+    "minMinutes": 35,
+    "maxMinutes": 50,
+    "emotionalGoals": [
+      "CHALLENGE"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "COOP"
+    ],
+    "genres": [
+      "Tactical FPS",
+      "Action"
+    ],
+    "description": "Character-based tactical shooter",
+    "imageUrl": "https://cmsassets.rgpub.io/sanity/images/dsfx7636/news/4150c5778e7c03bdb5825519d85e5e6e8ed3a849-1920x1080.jpg",
+    "storeUrl": "https://playvalorant.com/",
+    "userRating": 4.0
+  },
+  {
+    "name": "The Witness",
+    "minMinutes": 30,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Puzzle",
+      "Adventure"
+    ],
+    "description": "Beautiful island filled with environmental puzzles",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/210970/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/210970/The_Witness/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Firewatch",
+    "minMinutes": 30,
+    "maxMinutes": 45,
+    "emotionalGoals": [
+      "UNWIND",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "EVENING",
+      "LATE_NIGHT"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Adventure"
+    ],
+    "description": "Mystery adventure in Wyoming wilderness",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/383870/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/383870/Firewatch/",
+    "userRating": 4.0
+  },
+  {
+    "name": "It Takes Two",
+    "minMinutes": 45,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "PROGRESS_ORIENTED",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "COOP"
+    ],
+    "genres": [
+      "Co-op Adventure",
+      "Platformer"
+    ],
+    "description": "Inventive co-op platformer with creative mechanics",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1426210/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1426210/It_Takes_Two/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Overcooked 2",
+    "minMinutes": 20,
+    "maxMinutes": 40,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "MIDDAY",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "COOP"
+    ],
+    "genres": [
+      "Party Game",
+      "Simulation"
+    ],
+    "description": "Frantic cooperative cooking under pressure",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/728880/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/728880/Overcooked_2/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Portal 2",
+    "minMinutes": 30,
+    "maxMinutes": 50,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "CHALLENGE",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Puzzle",
+      "Adventure"
+    ],
+    "description": "Mind-bending portal puzzles with humor",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/620/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/620/Portal_2/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Keep Talking and Nobody Explodes",
+    "minMinutes": 15,
+    "maxMinutes": 30,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "COOP"
+    ],
+    "genres": [
+      "Puzzle"
+    ],
+    "description": "Defuse bombs through teamwork and communication",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/341800/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/341800/Keep_Talking_and_Nobody_Explodes/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Subnautica",
+    "minMinutes": 45,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "ADVENTURE_TIME",
+      "CHALLENGE",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Survival",
+      "Adventure",
+      "Horror"
+    ],
+    "description": "Underwater survival with exploration and crafting",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/264710/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/264710/Subnautica/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Risk of Rain 2",
+    "minMinutes": 30,
+    "maxMinutes": 45,
+    "emotionalGoals": [
+      "ADVENTURE_TIME",
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Roguelike",
+      "Action"
+    ],
+    "description": "Third-person roguelike with intense action",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/632360/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/632360/Risk_of_Rain_2/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Ori and the Will of the Wisps",
+    "minMinutes": 30,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "ADVENTURE_TIME",
+      "CHALLENGE"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Platformer",
+      "Adventure"
+    ],
+    "description": "Stunning metroidvania with emotional story",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1057090/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1057090/Ori_and_the_Will_of_the_Wisps/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Trackmania",
+    "minMinutes": 5,
+    "maxMinutes": 15,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE"
+    ],
+    "genres": [
+      "Racing"
+    ],
+    "description": "Precision arcade racing with time trials",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/2225070/header.jpg",
+    "storeUrl": "https://www.trackmania.com/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Fall Guys",
+    "minMinutes": 5,
+    "maxMinutes": 10,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "MIDDAY",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE"
+    ],
+    "genres": [
+      "Party Game"
+    ],
+    "description": "Colorful obstacle course battle royale",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1097150/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1097150/Fall_Guys/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Chess Online",
+    "minMinutes": 5,
+    "maxMinutes": 20,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "CHALLENGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE"
+    ],
+    "genres": [
+      "Board Game",
+      "Strategy"
+    ],
+    "description": "Online chess - ultimate strategy challenge",
+    "imageUrl": "https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/SamCopeland/phpmeXx6V.png",
+    "storeUrl": "https://www.chess.com/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Gris",
+    "minMinutes": 30,
+    "maxMinutes": 45,
+    "emotionalGoals": [
+      "UNWIND",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "EVENING",
+      "LATE_NIGHT"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Platformer",
+      "Adventure"
+    ],
+    "description": "Serene journey through a fading world",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/683320/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/683320/GRIS/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Spiritfarer",
+    "minMinutes": 45,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "UNWIND",
+      "PROGRESS_ORIENTED",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Management",
+      "Adventure",
+      "Simulation"
+    ],
+    "description": "Comforting game about dying and letting go",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/972660/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/972660/Spiritfarer_Farewell_Edition/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Factorio",
+    "minMinutes": 60,
+    "maxMinutes": 180,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Strategy",
+      "Simulation"
+    ],
+    "description": "Automate everything - factory building sim",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/427520/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/427520/Factorio/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Animal Crossing",
+    "minMinutes": 30,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "UNWIND",
+      "RECHARGE",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Life Sim",
+      "Simulation"
+    ],
+    "description": "Peaceful island life with cute animals",
+    "imageUrl": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/en_US/games/switch/a/animal-crossing-new-horizons-switch/hero",
+    "storeUrl": "https://www.nintendo.com/us/store/products/animal-crossing-new-horizons-switch/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Journey",
+    "minMinutes": 15,
+    "maxMinutes": 30,
+    "emotionalGoals": [
+      "UNWIND",
+      "ADVENTURE_TIME",
+      "RECHARGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "EVENING",
+      "LATE_NIGHT"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Adventure"
+    ],
+    "description": "Meditative journey through desert landscape",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/638230/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/638230/Journey/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Among Us",
+    "minMinutes": 10,
+    "maxMinutes": 20,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "MIDDAY",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "COOP",
+      "COMPETITIVE"
+    ],
+    "genres": [
+      "Social Deduction",
+      "Party Game"
+    ],
+    "description": "Find the impostor in spaceship tasks",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/945360/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/945360/Among_Us/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Hearthstone",
+    "minMinutes": 10,
+    "maxMinutes": 25,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "CHALLENGE"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "MIDDAY",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE"
+    ],
+    "genres": [
+      "Card Game",
+      "Strategy"
+    ],
+    "description": "Strategic card battler with deep tactics",
+    "imageUrl": "https://bnetcmsus-a.akamaihd.net/cms/page_media/w4/W4NE08DTET8P1521577412158.jpg",
+    "storeUrl": "https://hearthstone.blizzard.com/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Vampire Survivors",
+    "minMinutes": 15,
+    "maxMinutes": 25,
+    "emotionalGoals": [
+      "PROGRESS_ORIENTED",
+      "RECHARGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Action",
+      "Roguelike"
+    ],
+    "description": "Addictive auto-battler with constant upgrades",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1794680/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1794680/Vampire_Survivors/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Celeste",
+    "minMinutes": 20,
+    "maxMinutes": 40,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Platformer"
+    ],
+    "description": "Tight platforming with touching story",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/504230/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/504230/Celeste/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Counter-Strike 2",
+    "minMinutes": 30,
+    "maxMinutes": 50,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "COOP"
+    ],
+    "genres": [
+      "Tactical FPS",
+      "Action"
+    ],
+    "description": "Legendary tactical shooter with competitive gameplay",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/730/CounterStrike_2/",
+    "userRating": 4.0
+  }
+]
