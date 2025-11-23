@@ -3685,7 +3685,7 @@
             gamesLoading.style.display = 'block';
             
             try {
-                const response = await fetch(`${API_BASE}/games`);
+                const response = await fetch(`${API_URL}/games`);
                 if (!response.ok) throw new Error('Failed to fetch games');
                 
                 allGames = await response.json();
