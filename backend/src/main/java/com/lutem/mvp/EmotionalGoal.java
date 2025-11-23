@@ -1,12 +1,12 @@
 package com.lutem.mvp;
 
 public enum EmotionalGoal {
-    UNWIND("Unwind", "🛋️", "Low stress, calming, meditative"),
-    RECHARGE("Recharge", "⚡", "Light engagement, mental break, refreshing"),
-    ENGAGE("Engage", "🧠", "Active thinking, problem-solving, flow state"),
-    CHALLENGE("Challenge", "🎯", "High intensity, skill testing, competitive"),
-    EXPLORE("Explore", "🗺️", "Discovery, creativity, low-pressure wandering"),
-    ACHIEVE("Achieve", "🏆", "Progress-focused, satisfying completion, quick wins");
+    UNWIND("Unwind and relax", "😌", "Low stress, calming, meditative"),
+    RECHARGE("Recharge Energy", "🔋", "Light engagement, mental break, refreshing"),
+    LOCKING_IN("Locking in", "🎯", "Active focus, deep concentration, flow state"),
+    CHALLENGE("Challenge Myself", "⚡", "High intensity, skill testing, competitive"),
+    ADVENTURE_TIME("Adventure Time", "🗺️", "Discovery, exploration, trying new things"),
+    PROGRESS_ORIENTED("Progress Oriented", "🏆", "Achievement-focused, building momentum, quick wins");
 
     private final String displayName;
     private final String emoji;

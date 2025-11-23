@@ -650,28 +650,28 @@
             border-color: var(--mood-unwind);
         }
 
-        .chip[data-value="ACHIEVE"], .mood-chip-big[data-value="ACHIEVE"] {
+        .chip[data-value="PROGRESS_ORIENTED"], .mood-chip-big[data-value="PROGRESS_ORIENTED"] {
             border-color: var(--mood-achieve);
         }
-        .chip[data-value="ACHIEVE"].selected, .mood-chip-big[data-value="ACHIEVE"].selected {
+        .chip[data-value="PROGRESS_ORIENTED"].selected, .mood-chip-big[data-value="PROGRESS_ORIENTED"].selected {
             background: var(--mood-achieve) !important;
             color: white;
             border-color: var(--mood-achieve);
         }
 
-        .chip[data-value="ENGAGE"], .mood-chip-big[data-value="ENGAGE"] {
+        .chip[data-value="LOCKING_IN"], .mood-chip-big[data-value="LOCKING_IN"] {
             border-color: var(--mood-engage);
         }
-        .chip[data-value="ENGAGE"].selected, .mood-chip-big[data-value="ENGAGE"].selected {
+        .chip[data-value="LOCKING_IN"].selected, .mood-chip-big[data-value="LOCKING_IN"].selected {
             background: var(--mood-engage) !important;
             color: white;
             border-color: var(--mood-engage);
         }
 
-        .chip[data-value="EXPLORE"], .mood-chip-big[data-value="EXPLORE"] {
+        .chip[data-value="ADVENTURE_TIME"], .mood-chip-big[data-value="ADVENTURE_TIME"] {
             border-color: var(--mood-explore);
         }
-        .chip[data-value="EXPLORE"].selected, .mood-chip-big[data-value="EXPLORE"].selected {
+        .chip[data-value="ADVENTURE_TIME"].selected, .mood-chip-big[data-value="ADVENTURE_TIME"].selected {
             background: var(--mood-explore) !important;
             color: white;
             border-color: var(--mood-explore);
@@ -1340,16 +1340,16 @@
 
                     <div class="big-options">
                         <div class="big-option" data-value="LOW" onclick="selectBigOption(this, 'guidedEnergy')">
-                            <div class="big-option-icon">😌</div>
-                            <div class="big-option-label">Relaxed</div>
+                            <div class="big-option-icon">🔋</div>
+                            <div class="big-option-label">Low Energy</div>
                         </div>
                         <div class="big-option" data-value="MEDIUM" onclick="selectBigOption(this, 'guidedEnergy')">
-                            <div class="big-option-icon">😊</div>
-                            <div class="big-option-label">Balanced</div>
+                            <div class="big-option-icon">🔋🔋</div>
+                            <div class="big-option-label">Medium Energy</div>
                         </div>
                         <div class="big-option" data-value="HIGH" onclick="selectBigOption(this, 'guidedEnergy')">
-                            <div class="big-option-icon">🔥</div>
-                            <div class="big-option-label">Energized</div>
+                            <div class="big-option-icon">🔋🔋🔋</div>
+                            <div class="big-option-label">High Energy</div>
                         </div>
                     </div>
 
@@ -1395,10 +1395,10 @@
                     <p style="text-align: center; color: var(--text-secondary); margin-bottom: 30px; font-size: 1.05em;">Select one or more that resonate with you</p>
 
                     <div class="mood-chips-grid">
-                        <div class="mood-chip-big" data-value="UNWIND" onclick="toggleMoodChip(this)">😌 Unwind & Relax</div>
-                        <div class="mood-chip-big" data-value="ACHIEVE" onclick="toggleMoodChip(this)">🏆 Achieve & Progress</div>
-                        <div class="mood-chip-big" data-value="ENGAGE" onclick="toggleMoodChip(this)">🎯 Engage & Focus</div>
-                        <div class="mood-chip-big" data-value="EXPLORE" onclick="toggleMoodChip(this)">🗺️ Explore & Discover</div>
+                        <div class="mood-chip-big" data-value="UNWIND" onclick="toggleMoodChip(this)">😌 Unwind and relax</div>
+                        <div class="mood-chip-big" data-value="PROGRESS_ORIENTED" onclick="toggleMoodChip(this)">🏆 Progress Oriented</div>
+                        <div class="mood-chip-big" data-value="LOCKING_IN" onclick="toggleMoodChip(this)">🎯 Locking in</div>
+                        <div class="mood-chip-big" data-value="ADVENTURE_TIME" onclick="toggleMoodChip(this)">🗺️ Adventure Time</div>
                         <div class="mood-chip-big" data-value="CHALLENGE" onclick="toggleMoodChip(this)">⚡ Challenge Myself</div>
                         <div class="mood-chip-big" data-value="RECHARGE" onclick="toggleMoodChip(this)">🔋 Recharge Energy</div>
                     </div>
@@ -1453,10 +1453,10 @@
                 <div class="input-group">
                     <label>What do you want to feel? (Select all that apply)</label>
                     <div class="chip-container" id="emotionalGoals">
-                        <div class="chip" data-value="UNWIND">😌 Unwind & Relax</div>
-                        <div class="chip" data-value="ACHIEVE">🏆 Achieve & Progress</div>
-                        <div class="chip" data-value="ENGAGE">🎯 Engage & Focus</div>
-                        <div class="chip" data-value="EXPLORE">🗺️ Explore & Discover</div>
+                        <div class="chip" data-value="UNWIND">😌 Unwind and relax</div>
+                        <div class="chip" data-value="PROGRESS_ORIENTED">🏆 Progress Oriented</div>
+                        <div class="chip" data-value="LOCKING_IN">🎯 Locking in</div>
+                        <div class="chip" data-value="ADVENTURE_TIME">🗺️ Adventure Time</div>
                         <div class="chip" data-value="CHALLENGE">⚡ Challenge Myself</div>
                         <div class="chip" data-value="RECHARGE">🔋 Recharge Energy</div>
                     </div>
@@ -1486,19 +1486,19 @@
                 <div class="input-group">
                     <label>What's your energy level?</label>
                     <div class="radio-group" id="energyLevel">
-                        <div class="radio-option" data-value="HIGH">High Energy</div>
-                        <div class="radio-option" data-value="MEDIUM">Medium</div>
-                        <div class="radio-option" data-value="LOW">Low Energy</div>
+                        <div class="radio-option" data-value="HIGH">🔋🔋🔋 High Energy</div>
+                        <div class="radio-option" data-value="MEDIUM">🔋🔋 Medium</div>
+                        <div class="radio-option" data-value="LOW">🔋 Low Energy</div>
                     </div>
                 </div>
 
                 <!-- 4. Interruptibility -->
                 <div class="input-group">
-                    <label>How flexible is your time?</label>
+                    <label>Can I pause anytime?</label>
                     <div class="radio-group" id="interruptibility">
-                        <div class="radio-option" data-value="HIGH">Very Flexible</div>
-                        <div class="radio-option" data-value="MEDIUM">Moderately</div>
-                        <div class="radio-option" data-value="LOW">Needs Completion</div>
+                        <div class="radio-option" data-value="HIGH">Yes - Total flexibility</div>
+                        <div class="radio-option" data-value="MEDIUM">Some pauses are fine</div>
+                        <div class="radio-option" data-value="LOW">No - I'm locked in</div>
                     </div>
                 </div>
 

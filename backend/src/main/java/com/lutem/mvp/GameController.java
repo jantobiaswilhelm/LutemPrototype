@@ -23,9 +23,9 @@ public class GameController {
         
         // CASUAL GAMES (5-30 min)
         
-        // 1. Unpacking - Unwind, Achieve
+        // 1. Unpacking - Unwind, Progress Oriented
         games.add(new Game(id++, "Unpacking", 10, 20,
-            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.ACHIEVE, EmotionalGoal.EXPLORE),
+            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.PROGRESS_ORIENTED, EmotionalGoal.ADVENTURE_TIME),
             Interruptibility.HIGH,
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.MIDDAY, TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
@@ -35,9 +35,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1135690/header.jpg"
         ));
 
-        // 2. Dorfromantik - Unwind, Engage
+        // 2. Dorfromantik - Unwind, Locking in
         games.add(new Game(id++, "Dorfromantik", 15, 25,
-            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.ENGAGE),
+            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.LOCKING_IN),
             Interruptibility.HIGH,
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
@@ -59,9 +59,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1003590/header.jpg"
         ));
 
-        // 4. Dead Cells - Challenge, Achieve
+        // 4. Dead Cells - Challenge, Progress Oriented
         games.add(new Game(id++, "Dead Cells", 15, 25,
-            Arrays.asList(EmotionalGoal.CHALLENGE, EmotionalGoal.ACHIEVE),
+            Arrays.asList(EmotionalGoal.CHALLENGE, EmotionalGoal.PROGRESS_ORIENTED),
             Interruptibility.MEDIUM,
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.EVENING),
@@ -83,9 +83,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/252950/header.jpg"
         ));
 
-        // 6. Baba Is You - Engage, Challenge
+        // 6. Baba Is You - Locking in, Challenge
         games.add(new Game(id++, "Baba Is You", 15, 25,
-            Arrays.asList(EmotionalGoal.ENGAGE, EmotionalGoal.CHALLENGE),
+            Arrays.asList(EmotionalGoal.LOCKING_IN, EmotionalGoal.CHALLENGE),
             Interruptibility.HIGH,
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
@@ -97,9 +97,9 @@ public class GameController {
 
         // MID-RANGE GAMES (30-60 min)
 
-        // 7. Hades - Challenge, Achieve, Engage
+        // 7. Hades - Challenge, Progress Oriented, Locking in
         games.add(new Game(id++, "Hades", 30, 45,
-            Arrays.asList(EmotionalGoal.CHALLENGE, EmotionalGoal.ACHIEVE, EmotionalGoal.ENGAGE),
+            Arrays.asList(EmotionalGoal.CHALLENGE, EmotionalGoal.PROGRESS_ORIENTED, EmotionalGoal.LOCKING_IN),
             Interruptibility.MEDIUM,
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.EVENING),
@@ -109,9 +109,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg"
         ));
 
-        // 8. Stardew Valley - Unwind, Achieve, Explore
+        // 8. Stardew Valley - Unwind, Progress Oriented, Adventure Time
         games.add(new Game(id++, "Stardew Valley", 30, 60,
-            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.ACHIEVE, EmotionalGoal.EXPLORE),
+            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.PROGRESS_ORIENTED, EmotionalGoal.ADVENTURE_TIME),
             Interruptibility.HIGH,
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
@@ -121,9 +121,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/413150/header.jpg"
         ));
 
-        // 9. Slay the Spire - Engage, Challenge, Achieve
+        // 9. Slay the Spire - Locking in, Challenge, Progress Oriented
         games.add(new Game(id++, "Slay the Spire", 30, 60,
-            Arrays.asList(EmotionalGoal.ENGAGE, EmotionalGoal.CHALLENGE, EmotionalGoal.ACHIEVE),
+            Arrays.asList(EmotionalGoal.LOCKING_IN, EmotionalGoal.CHALLENGE, EmotionalGoal.PROGRESS_ORIENTED),
             Interruptibility.MEDIUM,
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.ANY),
@@ -145,9 +145,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/header.jpg"
         ));
 
-        // 11. PowerWash Simulator - Unwind
+        // 11. PowerWash Simulator - Unwind, Progress Oriented
         games.add(new Game(id++, "PowerWash Simulator", 30, 45,
-            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.ACHIEVE),
+            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.PROGRESS_ORIENTED),
             Interruptibility.HIGH,
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.EVENING, TimeOfDay.LATE_NIGHT),
@@ -157,9 +157,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1290000/header.jpg"
         ));
 
-        // 12. Into the Breach - Engage, Challenge
+        // 12. Into the Breach - Locking in, Challenge
         games.add(new Game(id++, "Into the Breach", 30, 50,
-            Arrays.asList(EmotionalGoal.ENGAGE, EmotionalGoal.CHALLENGE),
+            Arrays.asList(EmotionalGoal.LOCKING_IN, EmotionalGoal.CHALLENGE),
             Interruptibility.HIGH,
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),
@@ -171,9 +171,9 @@ public class GameController {
 
         // LONG-FORM GAMES (60+ min)
 
-        // 13. The Witcher 3 - Explore, Engage
+        // 13. The Witcher 3 - Adventure Time, Locking in
         games.add(new Game(id++, "The Witcher 3", 60, 120,
-            Arrays.asList(EmotionalGoal.EXPLORE, EmotionalGoal.ENGAGE),
+            Arrays.asList(EmotionalGoal.ADVENTURE_TIME, EmotionalGoal.LOCKING_IN),
             Interruptibility.MEDIUM,
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.EVENING),
@@ -183,9 +183,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg"
         ));
 
-        // 14. Minecraft - Explore, Unwind, Achieve
+        // 14. Minecraft - Adventure Time, Unwind, Progress Oriented
         games.add(new Game(id++, "Minecraft", 60, 180,
-            Arrays.asList(EmotionalGoal.EXPLORE, EmotionalGoal.UNWIND, EmotionalGoal.ACHIEVE),
+            Arrays.asList(EmotionalGoal.ADVENTURE_TIME, EmotionalGoal.UNWIND, EmotionalGoal.PROGRESS_ORIENTED),
             Interruptibility.HIGH,
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
@@ -195,9 +195,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1366220/header.jpg"
         ));
 
-        // 15. Dark Souls III - Challenge, Engage
+        // 15. Dark Souls III - Challenge, Locking in
         games.add(new Game(id++, "Dark Souls III", 60, 120,
-            Arrays.asList(EmotionalGoal.CHALLENGE, EmotionalGoal.ENGAGE),
+            Arrays.asList(EmotionalGoal.CHALLENGE, EmotionalGoal.LOCKING_IN),
             Interruptibility.MEDIUM,
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.EVENING),
@@ -207,9 +207,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/374320/header.jpg"
         ));
 
-        // 16. Civilization VI - Engage, Achieve
+        // 16. Civilization VI - Locking in, Progress Oriented
         games.add(new Game(id++, "Civilization VI", 60, 180,
-            Arrays.asList(EmotionalGoal.ENGAGE, EmotionalGoal.ACHIEVE),
+            Arrays.asList(EmotionalGoal.LOCKING_IN, EmotionalGoal.PROGRESS_ORIENTED),
             Interruptibility.HIGH,
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.EVENING),
@@ -219,9 +219,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/289070/header.jpg"
         ));
 
-        // 17. A Short Hike - Unwind, Explore
+        // 17. A Short Hike - Unwind, Adventure Time
         games.add(new Game(id++, "A Short Hike", 5, 30,
-            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.EXPLORE),
+            Arrays.asList(EmotionalGoal.UNWIND, EmotionalGoal.ADVENTURE_TIME),
             Interruptibility.HIGH,
             EnergyLevel.LOW,
             Arrays.asList(TimeOfDay.ANY),
@@ -231,9 +231,9 @@ public class GameController {
             "https://cdn.cloudflare.steamstatic.com/steam/apps/1055540/header.jpg"
         ));
 
-        // 18. Loop Hero - Engage, Achieve
+        // 18. Loop Hero - Locking in, Progress Oriented
         games.add(new Game(id++, "Loop Hero", 30, 50,
-            Arrays.asList(EmotionalGoal.ENGAGE, EmotionalGoal.ACHIEVE),
+            Arrays.asList(EmotionalGoal.LOCKING_IN, EmotionalGoal.PROGRESS_ORIENTED),
             Interruptibility.MEDIUM,
             EnergyLevel.MEDIUM,
             Arrays.asList(TimeOfDay.ANY),
@@ -255,9 +255,9 @@ public class GameController {
             "https://images.contentstack.io/v3/assets/bltb6530b271fddd0b1/blt5c61e5e37cdf83d8/621d7e23b50e930c28e29c98/VAL_YR1_Ep1_Store-Thumbnail_1920x1080.jpg"
         ));
 
-        // 20. The Witness - Engage, Explore
+        // 20. The Witness - Locking in, Adventure Time
         games.add(new Game(id++, "The Witness", 30, 60,
-            Arrays.asList(EmotionalGoal.ENGAGE, EmotionalGoal.EXPLORE),
+            Arrays.asList(EmotionalGoal.LOCKING_IN, EmotionalGoal.ADVENTURE_TIME),
             Interruptibility.HIGH,
             EnergyLevel.HIGH,
             Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON),

@@ -1,9 +1,9 @@
 package com.lutem.mvp;
 
 public enum Interruptibility {
-    HIGH("Very Flexible", "Can pause anytime, no progress loss", "✅"),
-    MEDIUM("Some Flexibility", "Can pause, but momentum breaks", "⚠️"),
-    LOW("Fully Committed", "Cannot pause, requires full commitment", "❌");
+    HIGH("Yes - Total flexibility", "Can pause anytime, no progress loss", "✅"),
+    MEDIUM("Some pauses are fine", "Can pause at save points", "⚠️"),
+    LOW("No - I'm locked in", "Cannot pause, requires full commitment", "❌");
 
     private final String displayName;
     private final String description;
