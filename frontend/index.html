@@ -1881,9 +1881,159 @@
         .input-group.error.shake {
             animation: shake 0.5s;
         }
+
+        /* ============================================
+           TAB NAVIGATION
+           ============================================ */
+        .tab-navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-bottom: 2px solid var(--border-color);
+            z-index: 900;
+            box-shadow: 0 2px 10px var(--shadow);
+            padding: 20px 30px;
+        }
+
+        .tab-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tab-logo {
+            font-size: 1.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .tab-button {
+            padding: 14px 32px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 1.05em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px var(--shadow);
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .tab-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px var(--shadow-hover);
+            border-color: var(--accent-primary);
+            background: var(--bg-card);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--text-header);
+            border-color: var(--accent-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px var(--shadow-hover);
+        }
+
+        .tab-icon {
+            font-size: 1.4em;
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+            margin-top: 140px; /* Space for fixed nav */
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* Adjust existing container for tab navigation */
+        .container {
+            margin-top: 0 !important;
+        }
+
+        @media (max-width: 768px) {
+            .tab-navigation {
+                padding: 15px 15px;
+            }
+
+            .tab-container {
+                gap: 12px;
+            }
+
+            .tab-logo {
+                font-size: 1.5em;
+            }
+
+            .tabs {
+                flex-direction: row;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .tab-button {
+                padding: 12px 20px;
+                font-size: 0.95em;
+                min-width: auto;
+                flex: 1;
+            }
+
+            .tab-button span:not(.tab-icon) {
+                display: none;
+            }
+
+            .page-content {
+                margin-top: 130px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Tab Navigation -->
+    <nav class="tab-navigation">
+        <div class="tab-container">
+            <div class="tab-logo">LUTEM</div>
+            <div class="tabs">
+                <button class="tab-button active" data-page="home">
+                    <span class="tab-icon">🏠</span>
+                    <span>Home</span>
+                </button>
+                <button class="tab-button" data-page="games">
+                    <span class="tab-icon">🎮</span>
+                    <span>Games</span>
+                </button>
+                <button class="tab-button" data-page="profile">
+                    <span class="tab-icon">👤</span>
+                    <span>Profile</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE (existing content) -->
+    <div id="home-page" class="page-content active">
+
     <!-- Color Palette Toggle Button -->
     <div class="palette-toggle" id="paletteToggle" title="Change Color Palette">
         <span id="paletteIcon">🎨</span>
@@ -3328,5 +3478,68 @@
             }
         });
     </script>
+
+    </div> <!-- End of home-page -->
+
+    <!-- GAMES PAGE -->
+    <div id="games-page" class="page-content">
+        <div class="container">
+            <header style="margin-top: 40px;">
+                <h1 style="text-align: center; color: var(--text-primary); font-size: 2.5em;">Game Library</h1>
+                <p style="text-align: center; color: var(--text-secondary); margin-top: 10px;">Browse all available games</p>
+            </header>
+            
+            <div style="padding: 40px 20px; text-align: center;">
+                <div style="font-size: 3em; margin-bottom: 20px;">🎮</div>
+                <h2 style="color: var(--text-primary); margin-bottom: 15px;">Games Library Coming Soon</h2>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                    We're building a beautiful game browser with filters and search. 
+                    For now, use the Home tab to get personalized recommendations!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE PAGE -->
+    <div id="profile-page" class="page-content">
+        <div class="container">
+            <header style="margin-top: 40px;">
+                <h1 style="text-align: center; color: var(--text-primary); font-size: 2.5em;">Your Profile</h1>
+                <p style="text-align: center; color: var(--text-secondary); margin-top: 10px;">Gaming stats and preferences</p>
+            </header>
+            
+            <div style="padding: 40px 20px; text-align: center;">
+                <div style="font-size: 3em; margin-bottom: 20px;">👤</div>
+                <h2 style="color: var(--text-primary); margin-bottom: 15px;">Profile Coming Soon</h2>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                    Soon you'll see your gaming stats, favorite moods, and personalized settings here. 
+                    Keep using Lutem to build your profile!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB NAVIGATION SCRIPT -->
+    <script>
+        // ============================================
+        // TAB NAVIGATION
+        // ============================================
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const pages = document.querySelectorAll('.page-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs and pages
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                pages.forEach(page => page.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding page
+                button.classList.add('active');
+                const pageId = button.dataset.page + '-page';
+                document.getElementById(pageId).classList.add('active');
+            });
+        });
+    </script>
+
 </body>
 </html>
