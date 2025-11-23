@@ -1818,6 +1818,69 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ============================================
+           VALIDATION STYLES
+           ============================================ */
+        .input-group.error .chip-container,
+        .input-group.error .radio-group {
+            border: 2px solid #e74c3c;
+            border-radius: 12px;
+            padding: 15px;
+            background: rgba(231, 76, 60, 0.05);
+        }
+
+        .input-group.valid .chip-container,
+        .input-group.valid .radio-group {
+            border: 2px solid #27ae60;
+            border-radius: 12px;
+            padding: 15px;
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        .validation-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 0.95em;
+            font-weight: 600;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .validation-message.error {
+            color: #e74c3c;
+        }
+
+        .validation-message.success {
+            color: #27ae60;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .validation-icon {
+            font-size: 1.2em;
+        }
+
+        /* Shake animation for errors */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .input-group.error.shake {
+            animation: shake 0.5s;
+        }
     </style>
 </head>
 <body>
@@ -2527,6 +2590,9 @@
                     chip.classList.add('selected');
                     state.selectedGoals.push(value);
                 }
+                
+                // Trigger validation if enabled
+                triggerValidationIfEnabled();
             });
         });
 
@@ -2561,6 +2627,9 @@
                     // Select this one
                     option.classList.add('selected');
                     state[stateKey] = option.getAttribute('data-value');
+                    
+                    // Trigger validation if enabled
+                    triggerValidationIfEnabled();
                 });
             });
         }
@@ -2621,6 +2690,83 @@
         });
 
         // ============================================
+        // VALIDATION
+        // ============================================
+        let validationEnabled = false; // Enable live validation after first submit attempt
+
+        function validateForm() {
+            let isValid = true;
+            const errors = [];
+
+            // Clear previous validation states
+            document.querySelectorAll('.input-group').forEach(group => {
+                group.classList.remove('error', 'valid', 'shake');
+                const existingMessage = group.querySelector('.validation-message');
+                if (existingMessage) existingMessage.remove();
+            });
+
+            // 1. Validate Emotional Goals
+            const goalsGroup = document.querySelector('#emotionalGoals').closest('.input-group');
+            if (state.selectedGoals.length === 0) {
+                isValid = false;
+                errors.push('Please select at least one emotional goal');
+                markFieldAsError(goalsGroup, '⚠️ Pick what you want to feel');
+            } else if (validationEnabled) {
+                markFieldAsValid(goalsGroup, '✓ Got it!');
+            }
+
+            // 2. Validate Energy Level
+            const energyGroup = document.querySelector('#energyLevel').closest('.input-group');
+            if (!state.energyLevel) {
+                isValid = false;
+                errors.push('Please select your energy level');
+                markFieldAsError(energyGroup, '⚠️ How are you feeling?');
+            } else if (validationEnabled) {
+                markFieldAsValid(energyGroup, '✓ Perfect!');
+            }
+
+            // If validation fails on first submit, enable live validation
+            if (!isValid && !validationEnabled) {
+                validationEnabled = true;
+                
+                // Scroll to first error
+                const firstError = document.querySelector('.input-group.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+
+            return isValid;
+        }
+
+        function markFieldAsError(groupElement, message) {
+            groupElement.classList.add('error', 'shake');
+            groupElement.classList.remove('valid');
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = 'validation-message error';
+            messageEl.innerHTML = `<span class="validation-icon">⚠️</span><span>${message}</span>`;
+            groupElement.appendChild(messageEl);
+        }
+
+        function markFieldAsValid(groupElement, message) {
+            groupElement.classList.add('valid');
+            groupElement.classList.remove('error');
+            
+            const messageEl = document.createElement('div');
+            messageEl.className = 'validation-message success';
+            messageEl.innerHTML = `<span class="validation-icon">✓</span><span>${message}</span>`;
+            groupElement.appendChild(messageEl);
+        }
+
+        // Live validation after first submit
+        function triggerValidationIfEnabled() {
+            if (validationEnabled) {
+                validateForm();
+            }
+        }
+
+        // ============================================
         // API COMMUNICATION
         // ============================================
         const API_URL = 'http://localhost:8080';
@@ -2629,15 +2775,9 @@
             const btn = document.getElementById('recommendBtn');
             const resultsPanel = document.getElementById('resultsPanel');
             
-            // Validation
-            if (state.selectedGoals.length === 0) {
-                alert('Please select at least one emotional goal!');
-                return;
-            }
-            
-            if (!state.energyLevel) {
-                alert('Please select your energy level!');
-                return;
+            // Run validation
+            if (!validateForm()) {
+                return; // Stop if validation fails
             }
 
             // Get random gaming quote

@@ -19,11 +19,12 @@
 - ✅ **4 Color Palette Themes** - Café (default), Soft Lavender, Natural Earth, Ocean Breeze
 - ✅ **Dark/Light Mode Toggle** - Persistent theme switching with localStorage
 - ✅ **Complete Frontend JavaScript** - All interactions, API calls, and UI logic (500+ lines)
+- ✅ **Smart Input Validation** - Hybrid validation with friendly error messages, live feedback, red/green borders
 - ✅ **Loading Spinner with Gaming Quotes** - 24 iconic quotes, 2-second minimum display, smooth animations
 - ✅ **Guided Setup Modal** - Two-path onboarding (Quick Start vs Custom Setup)
 - ✅ **Smart Recommendation Engine** - 8-dimensional scoring algorithm with genre preference soft ranking
 - ✅ **Progressive Recommendations Display** - Top 1 + 3 alternatives initially, "See More" button for 6 additional
-- ✅ **41 Curated Games with Images** - Full library with Steam cover art and genre tags
+- ✅ **41 Curated Games with Store Links** - Full library with Steam cover art, genre tags, and shopping cart links
   - Casual games (5-30 min): 7 titles
   - Mid-range (30-60 min): 9 titles  
   - Long-form (60+ min): 4 titles
@@ -59,9 +60,10 @@
 ### 🏆 QuickWins Complete
 - ✅ **#1: Loading Spinner** - Professional animations with rotating tips
 - ✅ **#2: Fun Slider** - Discrete steps + "Touch Grass" modal
-- ✅ **#3: UI Cleanup** - Collapsible advanced options, visual hierarchy
-- ✅ **#4: Guided Setup Modal** - Quick Start wizard + Custom Setup
-- ✅ **#5: Branding & Themes** - Professional logo + 4 color palettes
+- ✅ **#3: Store Links** - All 41 games have shopping cart links
+- ✅ **#4: Input Validation** - Hybrid validation with red/green borders, shake animations, friendly messages
+- ✅ **#5: Guided Setup Modal** - Quick Start wizard + Custom Setup
+- ✅ **#6: Branding & Themes** - Professional logo + 4 color palettes
 
 ### 🚀 Up Next
 - Enhanced game card animations

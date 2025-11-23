@@ -623,6 +623,14 @@ public class GameController {
     // POST /recommendations with multi-dimensional scoring
     @PostMapping("/recommendations")
     public RecommendationResponse getRecommendation(@RequestBody RecommendationRequest request) {
+        // Backend validation
+        List<String> validationErrors = validateRequest(request);
+        if (!validationErrors.isEmpty()) {
+            // Return error response (or throw exception for 400 Bad Request)
+            System.out.println("❌ Validation failed: " + String.join(", ", validationErrors));
+            return createValidationErrorResponse(validationErrors);
+        }
+        
         // Score all games
         Map<Game, ScoringResult> scoredGames = new HashMap<>();
         
@@ -835,6 +843,42 @@ public class GameController {
             return 3.0;
         }
         return scores.stream().mapToInt(Integer::intValue).average().orElse(3.0);
+    }
+
+    // Validation helper
+    private List<String> validateRequest(RecommendationRequest request) {
+        List<String> errors = new ArrayList<>();
+        
+        // 1. Validate emotional goals
+        if (request.getDesiredEmotionalGoals() == null || request.getDesiredEmotionalGoals().isEmpty()) {
+            errors.add("At least one emotional goal is required");
+        }
+        
+        // 2. Validate energy level
+        if (request.getCurrentEnergyLevel() == null) {
+            errors.add("Energy level is required");
+        }
+        
+        // 3. Validate available minutes (must be positive)
+        if (request.getAvailableMinutes() <= 0) {
+            errors.add("Available minutes must be greater than 0");
+        }
+        
+        return errors;
+    }
+
+    private RecommendationResponse createValidationErrorResponse(List<String> errors) {
+        Game errorGame = new Game();
+        errorGame.setId(-1L);
+        errorGame.setName("❌ Validation Error");
+        errorGame.setDescription(String.join("\n• ", errors));
+        
+        return new RecommendationResponse(
+            errorGame, 
+            new ArrayList<>(), 
+            "Please fill in all required fields: " + String.join(", ", errors), 
+            new ArrayList<>()
+        );
     }
 
     private Integer calculateMatchPercentage(double score, double maxScore) {
