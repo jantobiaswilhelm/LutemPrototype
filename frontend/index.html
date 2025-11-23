@@ -4,36 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lutem - AI-Powered Gaming Recommendations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* ============================================
            CSS VARIABLES - Dark/Light Mode
            ============================================ */
         :root {
-            /* Light Mode Colors */
-            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --bg-secondary: #ffffff;
-            --bg-card: #ffffff;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --text-light: #999999;
-            --border-color: #e0e0e0;
-            --shadow: rgba(0,0,0,0.1);
-            --shadow-hover: rgba(0,0,0,0.15);
-            --accent-primary: #667eea;
-            --accent-secondary: #764ba2;
+            /* Light Mode Colors - Warm Café Theme */
+            --bg-primary: linear-gradient(135deg, #f5e6d3 0%, #d4a574 100%);
+            --bg-secondary: #faf8f3;
+            --bg-card: #fffcf5;
+            --text-primary: #4a3f35;
+            --text-secondary: #8b7d6b;
+            --text-light: #b8a99a;
+            --text-header: #fffcf5;
+            --border-color: #e8dfd5;
+            --shadow: rgba(138, 108, 77, 0.12);
+            --shadow-hover: rgba(138, 108, 77, 0.2);
+            --accent-primary: #c89f7e;
+            --accent-secondary: #a67c5c;
             
-            /* Mood Colors */
-            --mood-unwind: #4FC3F7;
-            --mood-achieve: #66BB6A;
-            --mood-engage: #FFA726;
-            --mood-explore: #AB47BC;
-            --mood-challenge: #EF5350;
-            --mood-recharge: #26C6DA;
+            /* Mood Colors - Warmer versions */
+            --mood-unwind: #7db5d4;
+            --mood-achieve: #88b88a;
+            --mood-engage: #e8a868;
+            --mood-explore: #b885ba;
+            --mood-challenge: #d47b78;
+            --mood-recharge: #6eb5b8;
             
             /* UI Elements */
-            --input-bg: #f8f9ff;
-            --input-border: #e0e7ff;
-            --placeholder-bg: #f5f5f5;
+            --input-bg: #f9f4ed;
+            --input-border: #e8dfd5;
+            --placeholder-bg: #f0ebe3;
+        }
+
+        /* Soft Lavender Palette */
+        [data-palette="lavender"] {
+            --bg-primary: linear-gradient(135deg, #f0e8f5 0%, #d4c5e0 100%);
+            --bg-secondary: #faf8fc;
+            --bg-card: #fdfaff;
+            --text-primary: #3e3545;
+            --text-secondary: #7d6b8b;
+            --text-light: #a99bb8;
+            --text-header: #fdfaff;
+            --border-color: #e5dced;
+            --shadow: rgba(125, 107, 139, 0.12);
+            --shadow-hover: rgba(125, 107, 139, 0.2);
+            --accent-primary: #9d8db5;
+            --accent-secondary: #7c6a94;
+            
+            /* Mood Colors - Lavender tinted */
+            --mood-unwind: #8db8d4;
+            --mood-achieve: #88b89a;
+            --mood-engage: #d4a578;
+            --mood-explore: #b885ba;
+            --mood-challenge: #c87b88;
+            --mood-recharge: #78b8b8;
+            
+            /* UI Elements */
+            --input-bg: #f5f0fa;
+            --input-border: #e5dced;
+            --placeholder-bg: #ebe3f0;
+        }
+
+        /* Natural Earth Palette */
+        [data-palette="earth"] {
+            --bg-primary: linear-gradient(135deg, #e8f0e8 0%, #b8d4b8 100%);
+            --bg-secondary: #f8faf8;
+            --bg-card: #fbfff8;
+            --text-primary: #3a4535;
+            --text-secondary: #6b7d6b;
+            --text-light: #9bb89a;
+            --text-header: #fbfff8;
+            --border-color: #dce8dc;
+            --shadow: rgba(107, 125, 107, 0.12);
+            --shadow-hover: rgba(107, 125, 107, 0.2);
+            --accent-primary: #88a882;
+            --accent-secondary: #6b8b6b;
+            
+            /* Mood Colors - Earth tones */
+            --mood-unwind: #78b8c8;
+            --mood-achieve: #88b88a;
+            --mood-engage: #c8a878;
+            --mood-explore: #a888b8;
+            --mood-challenge: #c88878;
+            --mood-recharge: #78b8a8;
+            
+            /* UI Elements */
+            --input-bg: #f0f5f0;
+            --input-border: #dce8dc;
+            --placeholder-bg: #e3ebe3;
+        }
+
+        /* Ocean Breeze Palette */
+        [data-palette="ocean"] {
+            --bg-primary: linear-gradient(135deg, #e3f2fd 0%, #b3d9f2 100%);
+            --bg-secondary: #f5fafd;
+            --bg-card: #f8fcff;
+            --text-primary: #2c3e50;
+            --text-secondary: #607d8b;
+            --text-light: #90a4ae;
+            --text-header: #f8fcff;
+            --border-color: #d4e8f5;
+            --shadow: rgba(66, 133, 180, 0.12);
+            --shadow-hover: rgba(66, 133, 180, 0.2);
+            --accent-primary: #64b5f6;
+            --accent-secondary: #4285b4;
+            
+            /* Mood Colors - Ocean tones */
+            --mood-unwind: #64b5f6;
+            --mood-achieve: #66bb88;
+            --mood-engage: #ffa870;
+            --mood-explore: #9d7eb8;
+            --mood-challenge: #ef7b7b;
+            --mood-recharge: #4dd0e1;
+            
+            /* UI Elements */
+            --input-bg: #ebf5fb;
+            --input-border: #d4e8f5;
+            --placeholder-bg: #dfeef7;
         }
 
         [data-theme="dark"] {
@@ -71,7 +162,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-primary);
             min-height: 100vh;
             padding: 20px;
@@ -92,6 +183,153 @@
         .container.blurred {
             filter: blur(4px);
             pointer-events: none;
+        }
+
+        /* ============================================
+           COLOR PALETTE TOGGLE
+           ============================================ */
+        .palette-toggle {
+            position: fixed;
+            bottom: 190px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            box-shadow: 0 4px 15px var(--shadow);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .palette-toggle:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 6px 20px var(--shadow-hover);
+        }
+
+        .palette-toggle #paletteIcon {
+            transition: transform 0.3s ease;
+        }
+
+        .palette-toggle.active #paletteIcon {
+            transform: rotate(90deg);
+        }
+
+        .palette-menu {
+            position: fixed;
+            bottom: 190px;
+            right: 100px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 8px 30px var(--shadow-hover);
+            opacity: 0;
+            transform: translateX(20px) scale(0.9);
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+        }
+
+        .palette-menu.show {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            pointer-events: all;
+        }
+
+        .palette-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+            border: 2px solid transparent;
+        }
+
+        .palette-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .palette-option:hover {
+            background: var(--input-bg);
+            transform: translateX(-4px);
+        }
+
+        .palette-option.selected {
+            border-color: var(--accent-primary);
+            background: var(--input-bg);
+        }
+
+        .palette-swatch {
+            display: flex;
+            gap: 4px;
+            min-width: 60px;
+        }
+
+        .swatch-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+        }
+
+        .palette-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95em;
+            white-space: nowrap;
+        }
+
+        /* Cafe colors */
+        .palette-option[data-palette="cafe"] .swatch-circle:nth-child(1) {
+            background: linear-gradient(135deg, #f5e6d3, #d4a574);
+        }
+        .palette-option[data-palette="cafe"] .swatch-circle:nth-child(2) {
+            background: #c89f7e;
+        }
+        .palette-option[data-palette="cafe"] .swatch-circle:nth-child(3) {
+            background: #a67c5c;
+        }
+
+        /* Lavender colors */
+        .palette-option[data-palette="lavender"] .swatch-circle:nth-child(1) {
+            background: linear-gradient(135deg, #f0e8f5, #d4c5e0);
+        }
+        .palette-option[data-palette="lavender"] .swatch-circle:nth-child(2) {
+            background: #9d8db5;
+        }
+        .palette-option[data-palette="lavender"] .swatch-circle:nth-child(3) {
+            background: #7c6a94;
+        }
+
+        /* Earth colors */
+        .palette-option[data-palette="earth"] .swatch-circle:nth-child(1) {
+            background: linear-gradient(135deg, #e8f0e8, #b8d4b8);
+        }
+        .palette-option[data-palette="earth"] .swatch-circle:nth-child(2) {
+            background: #88a882;
+        }
+        .palette-option[data-palette="earth"] .swatch-circle:nth-child(3) {
+            background: #6b8b6b;
+        }
+
+        /* Ocean colors */
+        .palette-option[data-palette="ocean"] .swatch-circle:nth-child(1) {
+            background: linear-gradient(135deg, #e3f2fd, #b3d9f2);
+        }
+        .palette-option[data-palette="ocean"] .swatch-circle:nth-child(2) {
+            background: #64b5f6;
+        }
+        .palette-option[data-palette="ocean"] .swatch-circle:nth-child(3) {
+            background: #4285b4;
         }
 
         /* ============================================
@@ -141,7 +379,7 @@
             box-shadow: 0 4px 15px var(--shadow);
             transition: all 0.3s;
             z-index: 1000;
-            color: white;
+            color: var(--text-header);
         }
 
         .wizard-toggle:hover {
@@ -173,7 +411,7 @@
         header {
             text-align: center;
             margin-bottom: 40px;
-            color: white;
+            color: var(--text-header);
         }
 
         header h1 {
@@ -445,7 +683,7 @@
 
         .modal-btn-primary {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
+            color: var(--text-header);
         }
 
         .modal-btn-primary:hover:not(:disabled) {
@@ -490,7 +728,7 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: white;
+            background: var(--text-header);
             cursor: pointer;
             box-shadow: 0 4px 12px var(--shadow-hover);
         }
@@ -646,7 +884,7 @@
         }
         .chip[data-value="UNWIND"].selected, .mood-chip-big[data-value="UNWIND"].selected {
             background: var(--mood-unwind) !important;
-            color: white;
+            color: var(--text-header);
             border-color: var(--mood-unwind);
         }
 
@@ -655,7 +893,7 @@
         }
         .chip[data-value="PROGRESS_ORIENTED"].selected, .mood-chip-big[data-value="PROGRESS_ORIENTED"].selected {
             background: var(--mood-achieve) !important;
-            color: white;
+            color: var(--text-header);
             border-color: var(--mood-achieve);
         }
 
@@ -664,7 +902,7 @@
         }
         .chip[data-value="LOCKING_IN"].selected, .mood-chip-big[data-value="LOCKING_IN"].selected {
             background: var(--mood-engage) !important;
-            color: white;
+            color: var(--text-header);
             border-color: var(--mood-engage);
         }
 
@@ -673,7 +911,7 @@
         }
         .chip[data-value="ADVENTURE_TIME"].selected, .mood-chip-big[data-value="ADVENTURE_TIME"].selected {
             background: var(--mood-explore) !important;
-            color: white;
+            color: var(--text-header);
             border-color: var(--mood-explore);
         }
 
@@ -682,7 +920,7 @@
         }
         .chip[data-value="CHALLENGE"].selected, .mood-chip-big[data-value="CHALLENGE"].selected {
             background: var(--mood-challenge) !important;
-            color: white;
+            color: var(--text-header);
             border-color: var(--mood-challenge);
         }
 
@@ -691,7 +929,7 @@
         }
         .chip[data-value="RECHARGE"].selected, .mood-chip-big[data-value="RECHARGE"].selected {
             background: var(--mood-recharge) !important;
-            color: white;
+            color: var(--text-header);
             border-color: var(--mood-recharge);
         }
 
@@ -712,6 +950,10 @@
             font-weight: 500;
             font-size: 0.9em;
             color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .radio-option:hover {
@@ -721,7 +963,7 @@
 
         .radio-option.selected {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
+            color: var(--text-header);
             border-color: var(--accent-primary);
         }
 
@@ -747,7 +989,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: white;
+            background: var(--text-header);
             cursor: pointer;
             box-shadow: 0 3px 10px var(--shadow-hover);
         }
@@ -764,7 +1006,7 @@
             width: 100%;
             padding: 16px;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
+            color: var(--text-header);
             border: none;
             border-radius: 12px;
             font-size: 1.1em;
@@ -851,7 +1093,7 @@
         .top-badge {
             display: inline-block;
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
+            color: var(--text-header);
             padding: 6px 16px;
             border-radius: 20px;
             font-size: 0.85em;
@@ -969,7 +1211,7 @@
 
         .rating-btn.selected {
             background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
+            color: var(--text-header);
             border-color: var(--accent-primary);
         }
 
@@ -1042,8 +1284,8 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #000;
+            background: linear-gradient(135deg, #e8c468, #d4a574);
+            color: #4a3f35;
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: 700;
@@ -1052,7 +1294,7 @@
             align-items: center;
             gap: 6px;
             z-index: 10;
-            box-shadow: 0 2px 10px rgba(255,215,0,0.4);
+            box-shadow: 0 2px 10px rgba(212, 165, 116, 0.4);
         }
 
         .badge-icon {
@@ -1087,8 +1329,8 @@
             position: absolute;
             bottom: 15px;
             left: 15px;
-            background: rgba(102,126,234,0.95);
-            color: white;
+            background: var(--accent-primary);
+            color: var(--text-header);
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: 700;
@@ -1289,6 +1531,47 @@
     </style>
 </head>
 <body>
+    <!-- Color Palette Toggle Button -->
+    <div class="palette-toggle" id="paletteToggle" title="Change Color Palette">
+        <span id="paletteIcon">🎨</span>
+    </div>
+
+    <!-- Palette Menu -->
+    <div class="palette-menu" id="paletteMenu">
+        <div class="palette-option" data-palette="cafe">
+            <div class="palette-swatch">
+                <div class="swatch-circle"></div>
+                <div class="swatch-circle"></div>
+                <div class="swatch-circle"></div>
+            </div>
+            <div class="palette-label">☕ Warm Café</div>
+        </div>
+        <div class="palette-option" data-palette="lavender">
+            <div class="palette-swatch">
+                <div class="swatch-circle"></div>
+                <div class="swatch-circle"></div>
+                <div class="swatch-circle"></div>
+            </div>
+            <div class="palette-label">💜 Soft Lavender</div>
+        </div>
+        <div class="palette-option" data-palette="earth">
+            <div class="palette-swatch">
+                <div class="swatch-circle"></div>
+                <div class="swatch-circle"></div>
+                <div class="swatch-circle"></div>
+            </div>
+            <div class="palette-label">🌿 Natural Earth</div>
+        </div>
+        <div class="palette-option" data-palette="ocean">
+            <div class="palette-swatch">
+                <div class="swatch-circle"></div>
+                <div class="swatch-circle"></div>
+                <div class="swatch-circle"></div>
+            </div>
+            <div class="palette-label">🌊 Ocean Breeze</div>
+        </div>
+    </div>
+
     <!-- Theme Toggle Button -->
     <div class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
         <span id="themeIcon">🌙</span>
@@ -1486,9 +1769,18 @@
                 <div class="input-group">
                     <label>What's your energy level?</label>
                     <div class="radio-group" id="energyLevel">
-                        <div class="radio-option" data-value="HIGH">🔋🔋🔋 High Energy</div>
-                        <div class="radio-option" data-value="MEDIUM">🔋🔋 Medium</div>
-                        <div class="radio-option" data-value="LOW">🔋 Low Energy</div>
+                        <div class="radio-option" data-value="HIGH">
+                            <div style="font-size: 1.8em; margin-bottom: 8px;">🔋🔋🔋</div>
+                            <div>High Energy</div>
+                        </div>
+                        <div class="radio-option" data-value="MEDIUM">
+                            <div style="font-size: 1.8em; margin-bottom: 8px;">🔋🔋</div>
+                            <div>Medium</div>
+                        </div>
+                        <div class="radio-option" data-value="LOW">
+                            <div style="font-size: 1.8em; margin-bottom: 8px;">🔋</div>
+                            <div>Low Energy</div>
+                        </div>
                     </div>
                 </div>
 
@@ -1496,9 +1788,18 @@
                 <div class="input-group">
                     <label>Can I pause anytime?</label>
                     <div class="radio-group" id="interruptibility">
-                        <div class="radio-option" data-value="HIGH">Yes - Total flexibility</div>
-                        <div class="radio-option" data-value="MEDIUM">Some pauses are fine</div>
-                        <div class="radio-option" data-value="LOW">No - I'm locked in</div>
+                        <div class="radio-option" data-value="HIGH">
+                            <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 6px;">Yes</div>
+                            <div style="font-size: 0.85em; opacity: 0.8;">Total flexibility</div>
+                        </div>
+                        <div class="radio-option" data-value="MEDIUM">
+                            <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 6px;">Some pauses</div>
+                            <div style="font-size: 0.85em; opacity: 0.8;">are fine</div>
+                        </div>
+                        <div class="radio-option" data-value="LOW">
+                            <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 6px;">No</div>
+                            <div style="font-size: 0.85em; opacity: 0.8;">I'm locked in</div>
+                        </div>
                     </div>
                 </div>
 
@@ -1594,6 +1895,73 @@
             root.setAttribute('data-theme', newTheme);
             themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
             localStorage.setItem('theme', newTheme);
+        });
+
+        // ============================================
+        // COLOR PALETTE TOGGLE & MENU
+        // ============================================
+        const paletteToggle = document.getElementById('paletteToggle');
+        const paletteMenu = document.getElementById('paletteMenu');
+        const paletteOptions = document.querySelectorAll('.palette-option');
+        
+        // Load palette from localStorage
+        let currentPalette = localStorage.getItem('palette') || 'cafe';
+        
+        function applyPalette(palette) {
+            if (palette === 'cafe') {
+                root.removeAttribute('data-palette');
+            } else {
+                root.setAttribute('data-palette', palette);
+            }
+            localStorage.setItem('palette', palette);
+            currentPalette = palette;
+            
+            // Update selected state
+            paletteOptions.forEach(option => {
+                if (option.dataset.palette === palette) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+        
+        // Apply saved palette on load
+        applyPalette(currentPalette);
+        
+        // Toggle menu visibility
+        paletteToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = paletteMenu.classList.contains('show');
+            
+            if (isOpen) {
+                paletteMenu.classList.remove('show');
+                paletteToggle.classList.remove('active');
+            } else {
+                paletteMenu.classList.add('show');
+                paletteToggle.classList.add('active');
+            }
+        });
+        
+        // Handle palette selection
+        paletteOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const palette = option.dataset.palette;
+                applyPalette(palette);
+                
+                // Close menu
+                paletteMenu.classList.remove('show');
+                paletteToggle.classList.remove('active');
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!paletteToggle.contains(e.target) && !paletteMenu.contains(e.target)) {
+                paletteMenu.classList.remove('show');
+                paletteToggle.classList.remove('active');
+            }
         });
 
         // ============================================
