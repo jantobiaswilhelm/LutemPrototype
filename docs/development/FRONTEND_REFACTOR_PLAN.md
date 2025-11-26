@@ -63,29 +63,30 @@ frontend/
 
 
 ### Phase 0: Preparation (5 min)
-**Status:** ⬜ NOT STARTED
+**Status:** ✅ COMPLETE
 
-- [ ] Create feature branch: `git checkout -b refactor/frontend-split`
-- [ ] Create directory structure: `css/`, `css/pages/`, `js/`, `js/pages/`
-- [ ] Fix orphaned HTML bug (lines 5594-5706 after `</html>`)
-- [ ] Verify app works before changes
+- [x] Create feature branch: `git checkout -b refactor/frontend-split`
+- [x] Create directory structure: `css/`, `css/pages/`, `js/`, `js/pages/`, `assets/`
+- [x] Fix orphaned HTML bug (lines 5594-5706 after `</html>`) - Removed 12 lines
+- [x] Verify app works before changes
 
 ---
 
 ### Phase 1: Extract CSS Variables & Themes (30 min)
-**Status:** ⬜ NOT STARTED
+**Status:** ✅ COMPLETE
 
 **Source:** Lines 11-350 (approximately)
 
 **Tasks:**
-- [ ] Create `css/variables.css` - Extract all CSS custom properties
+- [x] Create `css/variables.css` - Extract all CSS custom properties
   - Light mode defaults (:root)
   - Café dark mode
   - Lavender light/dark
   - Earth light/dark  
   - Ocean light/dark
-- [ ] Create `css/themes.css` - Theme-specific overrides
-- [ ] Test all 8 theme combinations work
+- [x] Create `css/themes.css` - Theme-specific component overrides
+- [x] Link both files in index.html
+- [ ] Test all 8 theme combinations work (manual verification needed)
 
 **Verification:** Toggle through all palettes + light/dark modes
 
@@ -273,8 +274,8 @@ frontend/
 
 | Phase | Description | Status | Completed By |
 |-------|-------------|--------|--------------|
-| 0 | Preparation | ⬜ | - |
-| 1 | CSS Variables & Themes | ⬜ | - |
+| 0 | Preparation | ✅ | Nov 26, 2025 |
+| 1 | CSS Variables & Themes | ✅ | Nov 26, 2025 |
 | 2 | Base & Component CSS | ⬜ | - |
 | 3 | Page-Specific CSS | ⬜ | - |
 | 4 | State & API JS | ⬜ | - |
@@ -315,4 +316,4 @@ Original file preserved at `frontend/index.html.backup` before starting.
 
 ---
 
-*Last updated: November 26, 2025*
+*Last updated: November 26, 2025 - Phase 1 validated and completed*

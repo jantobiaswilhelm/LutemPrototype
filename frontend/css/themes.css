@@ -1,0 +1,18 @@
+/* ============================================
+   LUTEM THEME-SPECIFIC COMPONENT OVERRIDES
+   ============================================
+   Contains component-level style overrides 
+   that change based on theme/palette.
+   
+   Note: CSS variables are in variables.css.
+   This file is for non-variable theme rules.
+   ============================================ */
+
+/* --------------------------------------------
+   GAME CARDS - Dark Mode Override
+   -------------------------------------------- */
+[data-theme="dark"] .game-card.top-pick {
+    background: linear-gradient(135deg, 
+        rgba(124,138,219,0.1) 0%, 
+        rgba(139,107,183,0.1) 100%);
+}
