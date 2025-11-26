@@ -1,10 +1,10 @@
 package com.lutem.mvp.controller;
 
-import com.lutem.mvp.EmotionalGoal;
-import com.lutem.mvp.EnergyLevel;
-import com.lutem.mvp.Interruptibility;
-import com.lutem.mvp.SocialPreference;
-import com.lutem.mvp.TimeOfDay;
+import com.lutem.mvp.model.EmotionalGoal;
+import com.lutem.mvp.model.EnergyLevel;
+import com.lutem.mvp.model.Interruptibility;
+import com.lutem.mvp.model.SocialPreference;
+import com.lutem.mvp.model.TimeOfDay;
 import com.lutem.mvp.dto.RecommendationRequest;
 import com.lutem.mvp.dto.RecommendationResponse;
 import com.lutem.mvp.dto.SessionFeedback;

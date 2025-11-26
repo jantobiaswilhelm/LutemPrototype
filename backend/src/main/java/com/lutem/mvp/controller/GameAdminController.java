@@ -1,4 +1,4 @@
-package com.lutem.mvp;
+package com.lutem.mvp.controller;
 
 import com.lutem.mvp.model.Game;
 import com.lutem.mvp.repository.GameRepository;

@@ -1,16 +1,15 @@
-package com.lutem.mvp;
+package com.lutem.mvp.model;
 
-public enum SocialPreference {
-    SOLO("Solo", "Single-player experience", "🧍"),
-    COOP("Co-op", "Play with friends cooperatively", "👥"),
-    COMPETITIVE("Competitive", "Play against others", "⚔️"),
-    BOTH("Solo/Multiplayer", "Supports both modes", "🎮");
+public enum Interruptibility {
+    HIGH("Yes - Total flexibility", "Can pause anytime, no progress loss", "✅"),
+    MEDIUM("Some pauses are fine", "Can pause at save points", "⚠️"),
+    LOW("No - I'm locked in", "Cannot pause, requires full commitment", "❌");
 
     private final String displayName;
     private final String description;
     private final String emoji;
 
-    SocialPreference(String displayName, String description, String emoji) {
+    Interruptibility(String displayName, String description, String emoji) {
         this.displayName = displayName;
         this.description = description;
         this.emoji = emoji;

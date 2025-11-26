@@ -3,7 +3,6 @@ package com.lutem.mvp.model;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.ArrayList;
-import com.lutem.mvp.*;
 
 @Entity
 @Table(name = "games")

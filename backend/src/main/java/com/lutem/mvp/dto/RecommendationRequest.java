@@ -1,6 +1,10 @@
 package com.lutem.mvp.dto;
 
-import com.lutem.mvp.*;
+import com.lutem.mvp.model.EmotionalGoal;
+import com.lutem.mvp.model.EnergyLevel;
+import com.lutem.mvp.model.Interruptibility;
+import com.lutem.mvp.model.SocialPreference;
+import com.lutem.mvp.model.TimeOfDay;
 import java.util.List;
 
 public class RecommendationRequest {

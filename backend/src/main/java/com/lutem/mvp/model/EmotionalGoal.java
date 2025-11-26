@@ -1,4 +1,4 @@
-package com.lutem.mvp;
+package com.lutem.mvp.model;
 
 public enum EmotionalGoal {
     UNWIND("Unwind and relax", "😌", "Low stress, calming, meditative"),

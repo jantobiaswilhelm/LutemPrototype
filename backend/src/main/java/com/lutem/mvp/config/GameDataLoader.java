@@ -1,4 +1,4 @@
-package com.lutem.mvp;
+package com.lutem.mvp.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

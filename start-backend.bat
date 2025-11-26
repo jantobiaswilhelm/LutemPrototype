@@ -4,7 +4,14 @@ cd /d "%~dp0backend"
 
 REM Set JAVA_HOME if not already set
 if "%JAVA_HOME%"=="" (
-    if exist "C:\Program Files\Java\jdk-25" (
+    REM Check Java 25 at D:\programmes first
+    if exist "D:\programmes\bin\java.exe" (
+        set "JAVA_HOME=D:\programmes"
+        echo Using JDK 25: D:\programmes
+    ) else if exist "C:\Users\janib\.jdks\openjdk-18" (
+        set "JAVA_HOME=C:\Users\janib\.jdks\openjdk-18"
+        echo Using JDK 18: C:\Users\janib\.jdks\openjdk-18
+    ) else if exist "C:\Program Files\Java\jdk-25" (
         set "JAVA_HOME=C:\Program Files\Java\jdk-25"
         echo Using JDK: %JAVA_HOME%
     )

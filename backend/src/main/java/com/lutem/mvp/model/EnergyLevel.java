@@ -1,4 +1,4 @@
-package com.lutem.mvp;
+package com.lutem.mvp.model;
 
 public enum EnergyLevel {
     LOW("Low", "Exhausted - need something light", "🔋"),

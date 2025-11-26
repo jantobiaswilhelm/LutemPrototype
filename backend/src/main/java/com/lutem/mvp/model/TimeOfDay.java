@@ -1,4 +1,4 @@
-package com.lutem.mvp;
+package com.lutem.mvp.model;
 
 public enum TimeOfDay {
     MORNING("Morning", "6am - 12pm", "🌅"),
