@@ -93,19 +93,22 @@ frontend/
 ---
 
 ### Phase 2: Extract Base & Component CSS (30 min)
-**Status:** ⬜ NOT STARTED
+**Status:** 🟡 IN PROGRESS
 
 **Source:** Lines 350-1500 (approximately)
 
 **Tasks:**
-- [ ] Create `css/base.css` - Body, typography, reset
-- [ ] Create `css/components.css` - Extract:
-  - Buttons (`.btn`, `.mood-option`, etc.)
-  - Cards (`.result-card`, `.game-card`, etc.)
-  - Modals (`.guided-modal`, etc.)
-  - Forms (inputs, sliders, selects)
-  - Loading spinners
-- [ ] Create `css/layout.css` - Navigation, grid, responsive
+- [x] Create `css/base.css` - Body, typography, reset, animations, header
+- [x] Create `css/components.css` - Extract buttons, cards (partial)
+- [x] Create `css/layout.css` - Navigation, grid, responsive
+- [x] Link all CSS files in index.html
+- [ ] Extract more component styles (modals, forms, loading spinners)
+- [ ] Remove duplicated embedded CSS from index.html
+
+**Notes:**
+- Files created and linked but embedded CSS still remains
+- This creates some duplication but app works
+- Next: gradually migrate more styles and remove embedded duplicates
 
 **Verification:** All UI elements render correctly
 
@@ -276,7 +279,7 @@ frontend/
 |-------|-------------|--------|--------------|
 | 0 | Preparation | ✅ | Nov 26, 2025 |
 | 1 | CSS Variables & Themes | ✅ | Nov 26, 2025 |
-| 2 | Base & Component CSS | ⬜ | - |
+| 2 | Base & Component CSS | 🟡 | In Progress |
 | 3 | Page-Specific CSS | ⬜ | - |
 | 4 | State & API JS | ⬜ | - |
 | 5 | UI Helpers JS | ⬜ | - |
