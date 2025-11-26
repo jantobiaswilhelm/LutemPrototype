@@ -2,8 +2,10 @@
 
 **Created:** November 26, 2025  
 **Last Updated:** November 26, 2025  
-**Status:** Quick wins complete ✅ | README split ✅ | Frontend split pending  
+**Status:** Quick wins complete ✅ | README split ✅ | Frontend split 🟡 IN PROGRESS  
 **Priority:** Medium-High (technical debt)
+
+> **📋 Detailed frontend refactoring plan:** See [FRONTEND_REFACTOR_PLAN.md](./FRONTEND_REFACTOR_PLAN.md)
 
 ---
 
@@ -19,6 +21,17 @@ This document identifies structural issues in the Lutem MVP codebase that should
 
 **Problem:**  
 The entire frontend is in `frontend/index.html` - HTML, CSS (multiple themes), and JavaScript all embedded together.
+
+**⚠️ Additional Issue Found:** Lines 5594-5706 contain orphaned HTML after `</html>` - likely from a bad merge.
+
+**Detailed Breakdown:**
+| Section | Lines | Size |
+|---------|-------|------|
+| CSS Block | 11-2552 | 2,541 lines |
+| HTML Body | 2563-3054 | 491 lines |
+| Main JS | 3055-4604 | 1,549 lines |
+| Tab/Games JS | 4605-5593 | 988 lines |
+| Orphaned HTML | 5594-5706 | 112 lines (BUG) |
 
 **Impact:**
 - Hard to maintain and debug
@@ -232,7 +245,7 @@ Move to `demo/` directory or separate `gh-pages` branch.
 |-------|--------|--------|----------|--------|
 | 2. Java package structure | High | Low | ⭐ Do First | ✅ DONE |
 | 4. .gitignore maven JAR | High | Trivial | ⭐ Do First | ✅ DONE |
-| 1. Monolithic frontend | High | Medium | ⭐⭐ Do Soon | Pending |
+| 1. Monolithic frontend | High | Medium | ⭐⭐ Do Soon | 🟡 IN PROGRESS |
 | 3. Unix maven wrapper | Medium | Trivial | ⭐⭐ Do Soon | ✅ DONE |
 | 5. Database location | Low | Low | When convenient | Pending |
 | 6. No tests | Medium | High | When time allows | Pending |
