@@ -1,7 +1,8 @@
 # Lutem MVP - Structural Issues & Refactoring Guide
 
 **Created:** November 26, 2025  
-**Status:** Documented, pending resolution  
+**Last Updated:** November 26, 2025  
+**Status:** Quick wins complete ✅ | Frontend split pending  
 **Priority:** Medium-High (technical debt)
 
 ---
@@ -56,119 +57,64 @@ frontend/
 
 ---
 
-### 2. Misplaced Java Files (Package Structure Violation)
+### 2. ~~Misplaced Java Files (Package Structure Violation)~~ ✅ RESOLVED
 
-**Problem:**  
-Several Java files sit in the root `com.lutem.mvp` package instead of appropriate sub-packages.
+**Status:** FIXED - All files moved to correct packages.
 
-**Current State:**
+**Current State (Correct):**
 ```
 com.lutem.mvp/
+├── LutemMvpApplication.java  ✓
+├── config/
+│   └── GameDataLoader.java   ✓
 ├── controller/
-│   ├── CalendarController.java  ✓
-│   └── GameController.java      ✓
+│   ├── CalendarController.java   ✓
+│   ├── GameAdminController.java  ✓
+│   └── GameController.java       ✓
 ├── dto/
 │   ├── RecommendationRequest.java   ✓
 │   ├── RecommendationResponse.java  ✓
 │   └── SessionFeedback.java         ✓
 ├── model/
-│   ├── CalendarEvent.java    ✓
-│   ├── Game.java             ✓
-│   └── GameSession.java      ✓
+│   ├── CalendarEvent.java     ✓
+│   ├── EmotionalGoal.java     ✓
+│   ├── EnergyLevel.java       ✓
+│   ├── Game.java              ✓
+│   ├── GameSession.java       ✓
+│   ├── Interruptibility.java  ✓
+│   ├── SocialPreference.java  ✓
+│   └── TimeOfDay.java         ✓
 ├── repository/
 │   ├── GameRepository.java        ✓
 │   └── GameSessionRepository.java ✓
-├── service/
-│   └── GameSessionService.java    ✓
-│
-│   # ⚠️ MISPLACED FILES (in root package):
-├── EmotionalGoal.java        ❌ → should be model/ or enums/
-├── EnergyLevel.java          ❌ → should be model/ or enums/
-├── Interruptibility.java     ❌ → should be model/ or enums/
-├── SocialPreference.java     ❌ → should be model/ or enums/
-├── TimeOfDay.java            ❌ → should be model/ or enums/
-├── GameAdminController.java  ❌ → should be controller/
-├── GameDataLoader.java       ❌ → should be config/
-└── LutemMvpApplication.java  ✓ (correct location)
-```
-
-**Recommended Structure:**
-```
-com.lutem.mvp/
-├── LutemMvpApplication.java
-├── config/
-│   └── GameDataLoader.java
-├── controller/
-│   ├── CalendarController.java
-│   ├── GameController.java
-│   └── GameAdminController.java
-├── dto/
-│   ├── RecommendationRequest.java
-│   ├── RecommendationResponse.java
-│   └── SessionFeedback.java
-├── model/
-│   ├── CalendarEvent.java
-│   ├── Game.java
-│   ├── GameSession.java
-│   ├── EmotionalGoal.java
-│   ├── EnergyLevel.java
-│   ├── Interruptibility.java
-│   ├── SocialPreference.java
-│   └── TimeOfDay.java
-├── repository/
-│   ├── GameRepository.java
-│   └── GameSessionRepository.java
 └── service/
-    └── GameSessionService.java
+    └── GameSessionService.java    ✓
 ```
-
-**Effort:** 15-30 minutes (IntelliJ refactor → move)  
-**Risk:** Low (IDE handles import updates)
 
 ---
 
 ## 🟡 Medium Issues
 
-### 3. Missing Unix Maven Wrapper
+### 3. ~~Missing Unix Maven Wrapper~~ ✅ RESOLVED
 
-**Problem:**  
-Only `mvnw.cmd` (Windows) exists. Mac/Linux developers cannot use startup scripts.
+**Status:** FIXED - Unix `mvnw` script added.
 
 **Files Present:**
 - ✅ `backend/mvnw.cmd` (Windows)
-- ❌ `backend/mvnw` (Unix/Mac) - MISSING
-
-**Fix:**  
-Run in backend directory:
-```bash
-mvn wrapper:wrapper
-```
-Or copy `mvnw` from a new Spring Boot project.
-
-**Effort:** 2 minutes  
-**Risk:** None
+- ✅ `backend/mvnw` (Unix/Mac) - ADDED
+- ✅ `backend/.mvn/wrapper/maven-wrapper.jar`
+- ✅ `backend/.mvn/wrapper/maven-wrapper.properties`
 
 ---
 
-### 4. .gitignore Blocks Maven Wrapper JAR
+### 4. ~~.gitignore Blocks Maven Wrapper JAR~~ ✅ NOT AN ISSUE
 
-**Problem:**  
-The `.gitignore` excludes `maven-wrapper.jar`, which means new developers cloning the repo won't have a working Maven wrapper.
+**Status:** Verified - The `.gitignore` never contained this blocking line. The `maven-wrapper.jar` exists and is tracked properly.
 
-**Current .gitignore line:**
-```gitignore
-.mvn/wrapper/maven-wrapper.jar
-```
-
-**Impact:**  
-`mvnw.cmd` fails on fresh clones because the JAR is missing.
-
-**Fix Options:**
-1. Remove the line from `.gitignore` and commit the JAR
-2. Use wrapper download mode (adds network dependency)
-
-**Effort:** 1 minute  
-**Risk:** None
+**Files Present:**
+- ✅ `backend/.mvn/wrapper/maven-wrapper.jar`
+- ✅ `backend/.mvn/wrapper/maven-wrapper.properties`
+- ✅ `backend/mvnw.cmd` (Windows)
 
 ---
 
@@ -285,26 +231,26 @@ Move to `demo/` directory or separate `gh-pages` branch.
 
 ## Priority Matrix
 
-| Issue | Impact | Effort | Priority |
-|-------|--------|--------|----------|
-| 2. Java package structure | High | Low | ⭐ Do First |
-| 4. .gitignore maven JAR | High | Trivial | ⭐ Do First |
-| 1. Monolithic frontend | High | Medium | ⭐⭐ Do Soon |
-| 3. Unix maven wrapper | Medium | Trivial | ⭐⭐ Do Soon |
-| 5. Database location | Low | Low | When convenient |
-| 6. No tests | Medium | High | When time allows |
-| 7. README split | Low | Low | When convenient |
-| 8-10. Cleanup | Low | Low | When convenient |
+| Issue | Impact | Effort | Priority | Status |
+|-------|--------|--------|----------|--------|
+| 2. Java package structure | High | Low | ⭐ Do First | ✅ DONE |
+| 4. .gitignore maven JAR | High | Trivial | ⭐ Do First | ✅ DONE |
+| 1. Monolithic frontend | High | Medium | ⭐⭐ Do Soon | Pending |
+| 3. Unix maven wrapper | Medium | Trivial | ⭐⭐ Do Soon | ✅ DONE |
+| 5. Database location | Low | Low | When convenient | Pending |
+| 6. No tests | Medium | High | When time allows | Pending |
+| 7. README split | Low | Low | When convenient | Pending |
+| 8-10. Cleanup | Low | Low | When convenient | Pending |
 
 ---
 
 ## Quick Wins (Under 30 Minutes)
 
-1. **Move Java enums to model package** - 15 min
-2. **Move GameAdminController to controller package** - 2 min  
-3. **Move GameDataLoader to config package** - 2 min
-4. **Remove maven-wrapper.jar from .gitignore** - 1 min
-5. **Add Unix mvnw script** - 5 min
+1. ~~**Move Java enums to model package**~~ - ✅ DONE
+2. ~~**Move GameAdminController to controller package**~~ - ✅ DONE
+3. ~~**Move GameDataLoader to config package**~~ - ✅ DONE
+4. ~~**Remove maven-wrapper.jar from .gitignore**~~ - ✅ DONE (was never blocking)
+5. ~~**Add Unix mvnw script**~~ - ✅ DONE
 
 ---
 
