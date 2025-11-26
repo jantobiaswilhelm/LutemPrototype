@@ -2,7 +2,7 @@
 
 **Created:** November 26, 2025  
 **Last Updated:** November 26, 2025  
-**Status:** Quick wins complete ✅ | Frontend split pending  
+**Status:** Quick wins complete ✅ | README split ✅ | Frontend split pending  
 **Priority:** Medium-High (technical debt)
 
 ---
@@ -168,23 +168,20 @@ At minimum, add tests for:
 
 ---
 
-### 7. README is 856 Lines
+### 7. ~~README is 856 Lines~~ ✅ RESOLVED
 
-**Problem:**  
-`README.md` contains too much implementation detail, making it overwhelming for new developers.
+**Status:** FIXED - README split into focused documentation files.
 
-**Recommendation - Split into:**
-
+**New Structure:**
 | File | Content | Lines |
 |------|---------|-------|
-| `README.md` | Quick start, project overview | ~100 |
-| `docs/ARCHITECTURE.md` | Technical deep-dive, system design | ~200 |
-| `docs/API.md` | Endpoint documentation, examples | ~150 |
-| `docs/PSYCHOLOGY.md` | Research basis, evidence section | ~200 |
-| `docs/CONTRIBUTING.md` | Development workflow, code style | ~100 |
+| `README.md` | Quick start, project overview | ~145 |
+| `docs/ARCHITECTURE.md` | Technical deep-dive, system design | ~273 |
+| `docs/API.md` | Endpoint documentation, examples | ~221 |
+| `docs/PSYCHOLOGY.md` | Research basis, evidence section | ~221 |
+| `docs/CONTRIBUTING.md` | Development workflow, code style | ~246 |
 
-**Effort:** 1 hour  
-**Risk:** None
+**Result:** README reduced from 856 → 145 lines. All detailed content preserved in appropriate docs.
 
 ---
 
@@ -239,7 +236,7 @@ Move to `demo/` directory or separate `gh-pages` branch.
 | 3. Unix maven wrapper | Medium | Trivial | ⭐⭐ Do Soon | ✅ DONE |
 | 5. Database location | Low | Low | When convenient | Pending |
 | 6. No tests | Medium | High | When time allows | Pending |
-| 7. README split | Low | Low | When convenient | Pending |
+| 7. README split | Low | Low | When convenient | ✅ DONE |
 | 8-10. Cleanup | Low | Low | When convenient | Pending |
 
 ---
