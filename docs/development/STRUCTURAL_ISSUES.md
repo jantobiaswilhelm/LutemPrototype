@@ -2,7 +2,7 @@
 
 **Created:** November 26, 2025  
 **Last Updated:** November 26, 2025  
-**Status:** Quick wins complete ✅ | README split ✅ | Frontend split 🟡 IN PROGRESS  
+**Status:** Quick wins complete ✅ | README split ✅ | Frontend split ✅ COMPLETE  
 **Priority:** Medium-High (technical debt)
 
 > **📋 Detailed frontend refactoring plan:** See [FRONTEND_REFACTOR_PLAN.md](./FRONTEND_REFACTOR_PLAN.md)
@@ -245,7 +245,7 @@ Move to `demo/` directory or separate `gh-pages` branch.
 |-------|--------|--------|----------|--------|
 | 2. Java package structure | High | Low | ⭐ Do First | ✅ DONE |
 | 4. .gitignore maven JAR | High | Trivial | ⭐ Do First | ✅ DONE |
-| 1. Monolithic frontend | High | Medium | ⭐⭐ Do Soon | 🟡 IN PROGRESS |
+| 1. Monolithic frontend | High | Medium | ⭐⭐ Do Soon | ✅ DONE |
 | 3. Unix maven wrapper | Medium | Trivial | ⭐⭐ Do Soon | ✅ DONE |
 | 5. Database location | Low | Low | When convenient | Pending |
 | 6. No tests | Medium | High | When time allows | Pending |

@@ -1,87 +1,5 @@
 # Lutem MVP - Development TODO
 
-## 🚨 Critical Issues - Calendar Integration
-
-### High Priority (Blocking Calendar Feature)
-- [ ] **Fix calendar not displaying**
-  - Issue: Calendar component not rendering on Calendar tab
-  - File: `frontend/index.html`
-  - Section: Calendar initialization and FullCalendar library
-  - Documentation: `docs/calendar-known-issues.md` Issue #1
-
-- [ ] **Make wizard accessible from Calendar tab**
-  - Issue: Game wizard only available in Home tab
-  - Solution: Convert wizard to shared modal component
-  - Documentation: `docs/calendar-known-issues.md` Issue #2
-
-- [ ] **Fix task creation functionality**
-  - Issue: "Add Task" button and modal not working
-  - File: `frontend/index.html` - addTaskEvent() function
-  - Documentation: `docs/calendar-known-issues.md` Issue #3
-
-### Medium Priority (UX Enhancement)
-- [ ] **Add task type selection**
-  - Feature: Let users choose between Regular Task or Gaming Session
-  - Implementation: Modal with radio buttons before showing respective forms
-  - Documentation: `docs/calendar-known-issues.md` Issue #4
-
-- [ ] **Integrate gaming session workflow**
-  - Feature: Gaming sessions should open wizard and schedule recommended game
-  - Flow: Time slot → Type selection → Wizard → Game recommendation → Calendar event
-  - Documentation: `docs/calendar-known-issues.md` Issue #5
-
----
-
-## 📋 Backlog - Future Enhancements
-
-### Calendar Features
-- [ ] Add week/month/day view switching
-- [ ] Implement recurring events
-- [ ] Add calendar event reminders/notifications
-- [ ] Export calendar to Google Calendar/Outlook
-- [ ] Add calendar sharing functionality
-- [ ] Implement event search/filter
-
-### Game Recommendation
-- [ ] Add "Alternative Recommendations" section
-- [ ] Implement game history tracking
-- [ ] Add favorite games functionality
-- [ ] Create personalized recommendation learning
-- [ ] Add social features (friends' recommendations)
-
-### Profile & Settings
-- [ ] Add avatar upload
-- [ ] Implement theme customization
-- [ ] Add language localization
-- [ ] Create notification preferences
-- [ ] Add data export functionality
-
-### Statistics & Analytics
-- [ ] Weekly gaming recap dashboard
-- [ ] Mood tracking over time
-- [ ] Achievement progress visualization
-- [ ] Gaming time analytics
-- [ ] Satisfaction trends graph
-
-### Technical Improvements
-- [ ] Add proper error handling and user feedback
-- [ ] Implement loading states for all async operations
-- [ ] Add unit tests for recommendation algorithm
-- [ ] Optimize image loading and caching
-- [ ] Add offline support with service workers
-- [ ] Implement proper authentication system
-- [ ] Add database migration system
-
-### UI/UX Polish
-- [ ] Add micro-animations for interactions
-- [ ] Improve mobile responsiveness
-- [ ] Add keyboard shortcuts
-- [ ] Implement accessibility features (ARIA labels)
-- [ ] Add onboarding tutorial for new users
-- [ ] Create help/documentation section
-
----
-
 ## ✅ Completed Features
 
 ### Phase 0-5 (MVP Foundation)
@@ -98,93 +16,105 @@
 - ✅ Advanced options panel
 - ✅ Profile page with preferences
 - ✅ Games library page with filters
+- ✅ Theme system (8 combinations: 4 palettes × light/dark)
+- ✅ Demo mode for GitHub Pages
 
-### Recent Additions
-- ✅ Calendar backend endpoints (CRUD operations)
-- ✅ Calendar frontend structure
-- ✅ Event modals (details and add task)
-- ✅ Calendar utility functions
-- ✅ Event type differentiation (GAME vs TASK)
-
-### Frontend Refactoring (Nov 27, 2025)
-- ✅ CSS extracted to 6 modular files
+### Frontend Refactoring (Completed Nov 28, 2025)
+- ✅ CSS extracted to 6 modular files (variables, themes, base, components, layout, calendar)
 - ✅ JavaScript split into 14 focused modules
-- ✅ index.html reduced from 5,706 to 1,078 lines (81% reduction)
+- ✅ index.html reduced from 5,706 to 1,085 lines (81% reduction)
 - ✅ Clear separation of concerns
-- ✅ Proper script loading order with dependencies
-- [ ] Final testing of all 4 pages
-- [ ] Testing of all 8 theme combinations
+- ✅ All post-refactor bugs fixed (7 bugs tracked in BUGS.md)
+- ✅ Refactor branch merged to main and cleaned up
+
+### Backend Structure
+- ✅ Java packages properly organized (model/, controller/, config/, etc.)
+- ✅ All API endpoints working
+- ✅ Calendar backend endpoints ready (CRUD)
+- ✅ Unix mvnw script added for cross-platform support
 
 ---
 
-## 🐛 Known Bugs
+## 🟡 Deferred - Calendar Interactions
 
-### High Priority
-- ⚠️ Calendar not rendering (see Critical Issues)
-- ⚠️ Task creation modal not working (see Critical Issues)
-- ⚠️ Wizard not accessible from calendar (see Critical Issues)
+The Calendar tab displays correctly, but interactive features are deferred for future development:
 
-### Medium Priority
-- ⚠️ Image loading errors not handled gracefully on slow connections
-- ⚠️ Modal overlays sometimes don't close properly
-- ⚠️ Profile preferences not persisting after page refresh in some browsers
+- [ ] Task creation modal functionality
+- [ ] Make wizard accessible from Calendar tab
+- [ ] Gaming session workflow (time slot → wizard → recommendation → calendar event)
+- [ ] Task type selection (Regular Task vs Gaming Session)
+- [ ] Event editing functionality
 
-### Low Priority
-- ⚠️ Dark mode toggle animation sometimes stutters
-- ⚠️ Some game descriptions truncate oddly on small screens
-- ⚠️ Console warnings for deprecated FullCalendar options
+---
+
+## 📋 Backlog - Future Enhancements
+
+### Calendar Features (After Interactions Fixed)
+- [ ] Week/month/day view switching
+- [ ] Recurring events
+- [ ] Calendar event reminders/notifications
+- [ ] Export to Google Calendar/Outlook
+
+### Game Recommendation
+- [ ] "Alternative Recommendations" section
+- [ ] Game history tracking
+- [ ] Favorite games functionality
+- [ ] Personalized recommendation learning
+- [ ] Social features (friends' recommendations)
+
+### Profile & Settings
+- [ ] Avatar upload
+- [ ] Theme customization beyond current options
+- [ ] Language localization
+- [ ] Notification preferences
+- [ ] Data export functionality
+
+### Statistics & Analytics
+- [ ] Weekly gaming recap dashboard
+- [ ] Mood tracking over time
+- [ ] Achievement progress visualization
+- [ ] Gaming time analytics
+- [ ] Satisfaction trends graph
+
+### Technical Improvements
+- [ ] Proper error handling and user feedback
+- [ ] Loading states for all async operations
+- [ ] Unit tests for recommendation algorithm
+- [ ] Image loading optimization and caching
+- [ ] Offline support with service workers
+- [ ] Authentication system
+- [ ] Database migration system
+
+### UI/UX Polish
+- [ ] Micro-animations for interactions
+- [ ] Improved mobile responsiveness
+- [ ] Keyboard shortcuts
+- [ ] Accessibility features (ARIA labels)
+- [ ] Onboarding tutorial for new users
+- [ ] Help/documentation section
 
 ---
 
 ## 📚 Documentation Needs
 
 - [ ] Complete API documentation for all endpoints
-- [ ] Add JSDoc comments to major functions
-- [ ] Create user guide for calendar features
+- [ ] JSDoc comments for major functions
+- [ ] User guide for calendar features
 - [ ] Document recommendation algorithm logic
-- [ ] Write deployment guide
-- [ ] Create database schema documentation
-- [ ] Add troubleshooting guide
+- [ ] Deployment guide
+- [ ] Database schema documentation
 
 ---
 
-## 🚀 Next Sprint Goals
+## 📝 Session Notes
 
-### Sprint Goal: Fix Calendar Integration
-**Duration:** 1-2 weeks  
-**Priority:** High
-
-**Must Have:**
-1. Calendar displays correctly
-2. Task creation works
-3. Wizard accessible from calendar
-
-**Should Have:**
-4. Task type selection implemented
-5. Gaming session workflow complete
-
-**Nice to Have:**
-6. Event editing functionality
-7. Better error messages
-8. Calendar loading animation
+### Nov 28, 2025
+- Completed frontend refactoring (merged to main)
+- Fixed 7 post-refactor bugs
+- Deleted refactor/frontend-split branch
+- Calendar displays but interactions deferred
+- MVP core functionality complete and tested
 
 ---
 
-## 📝 Notes
-
-- **Calendar integration started:** November 23, 2025
-- **Known issues documented:** See `docs/calendar-known-issues.md`
-- **Backend ready:** All calendar endpoints tested and working
-- **Frontend blocked:** Calendar display and wizard integration issues
-
-**Development Team Notes:**
-- Focus on getting calendar visible first
-- Then fix task creation
-- Finally implement full gaming session workflow
-- Don't add new features until calendar is stable
-- **Frontend refactoring completed Nov 27** - now easier to debug issues
-
----
-
-**Last Updated:** November 27, 2025  
-**Next Review:** After frontend refactoring testing complete
+**Last Updated:** November 28, 2025
