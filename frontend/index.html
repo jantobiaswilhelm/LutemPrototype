@@ -18,8 +18,7 @@
     
     <!-- CSS moved to external files: variables.css, themes.css, base.css, components.css, layout.css -->
     
-    <!-- FullCalendar CSS & JS -->
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    <!-- FullCalendar JS (v6 has CSS bundled in JS) -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
     
     <!-- Demo Mode Scripts (for GitHub Pages) -->
@@ -277,60 +276,6 @@
         </div>
     </div>
 
-    <!-- Add Task Modal -->
-    <div class="modal-overlay" id="addTaskModal" style="display: none;">
-        <div class="modal-content" style="max-width: 500px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <h2 style="color: var(--text-primary); margin: 0;">Add Task/Event</h2>
-                <button onclick="closeAddTaskModal()" style="background: none; border: none; font-size: 1.8em; color: var(--text-secondary); cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 10px;">Title *</label>
-                <input type="text" id="task-title" placeholder="e.g., Team Meeting" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1em; background: var(--bg-primary); color: var(--text-primary);">
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 10px;">Description</label>
-                <textarea id="task-description" rows="3" placeholder="Optional details..." style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1em; background: var(--bg-primary); color: var(--text-primary); resize: vertical;"></textarea>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 10px;">Start Time *</label>
-                    <input type="datetime-local" id="task-start-time" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1em; background: var(--bg-primary); color: var(--text-primary);">
-                </div>
-                
-                <div>
-                    <label style="display: block; color: var(--text-primary); font-weight: 600; margin-bottom: 10px;">End Time *</label>
-                    <input type="datetime-local" id="task-end-time" style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1em; background: var(--bg-primary); color: var(--text-primary);">
-                </div>
-            </div>
-            
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-secondary" onclick="closeAddTaskModal()">Cancel</button>
-                <button class="modal-btn modal-btn-primary" onclick="saveTask()">Save Task</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Event Details Modal -->
-    <div class="modal-overlay" id="eventDetailsModal" style="display: none;">
-        <div class="modal-content" style="max-width: 500px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <h2 id="event-detail-title" style="color: var(--text-primary); margin: 0;">Event Details</h2>
-                <button onclick="closeEventDetailsModal()" style="background: none; border: none; font-size: 1.8em; color: var(--text-secondary); cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">&times;</button>
-            </div>
-            
-            <div id="event-detail-content" style="margin-bottom: 25px; color: var(--text-secondary);"></div>
-            
-            <div class="modal-buttons">
-                <button class="modal-btn modal-btn-secondary" onclick="deleteCurrentEvent()" style="background: #dc3545; color: white; border: none;">Delete</button>
-                <button class="modal-btn modal-btn-primary" onclick="closeEventDetailsModal()">Close</button>
-            </div>
-        </div>
-    </div>
-
     <div class="container" id="mainContainer">
         <header>
             <img src="lutem-logo.png" alt="Lutem - Your AI-Powered Gaming Companion" class="logo">
@@ -507,14 +452,6 @@
                     <p style="margin-top: 10px; font-size: 0.9em;">We'll find the perfect game for your mood and time!</p>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- MAXIMIZED GAME MODAL -->
-    <div id="gameMaximizedOverlay" class="modal-overlay" style="display: none;">
-        <div class="game-maximized-modal">
-            <button class="modal-close-maximized" onclick="closeMaximizedGame()">✕</button>
-            <div id="maximizedGameContent"></div>
         </div>
     </div>
 
@@ -984,6 +921,14 @@
                     Close
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- MAXIMIZED GAME MODAL (Global - works from all tabs) -->
+    <div id="gameMaximizedOverlay" class="modal-overlay" style="display: none;">
+        <div class="game-maximized-modal">
+            <button class="modal-close-maximized" onclick="closeMaximizedGame()">✕</button>
+            <div id="maximizedGameContent"></div>
         </div>
     </div>
 

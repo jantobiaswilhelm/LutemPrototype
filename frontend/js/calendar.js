@@ -2,7 +2,8 @@
 // CALENDAR FUNCTIONALITY
 // ============================================
 
-let calendar;
+// Use window.calendarInstance for global access (needed by tabs.js check)
+// Note: can't use window.calendar because browsers auto-create it for <div id="calendar">
 let currentEventId = null;
 let selectedTimeSlot = null;
 
@@ -17,7 +18,7 @@ function initCalendar() {
         return;
     }
     
-    calendar = new FullCalendar.Calendar(calendarEl, {
+    window.calendarInstance = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
         headerToolbar: {
             left: 'prev,next today',
@@ -64,7 +65,7 @@ function initCalendar() {
         }
     });
     
-    calendar.render();
+    window.calendarInstance.render();
     loadCalendarEvents();
     console.log('Calendar initialized');
 }
@@ -144,7 +145,7 @@ function setupCalendarRecommendationIntegration() {
  * Load calendar events from backend
  */
 async function loadCalendarEvents() {
-    if (!calendar) return;
+    if (!window.calendarInstance) return;
     
     try {
         const response = await fetch(`${API_BASE_URL}/calendar/events`);
@@ -152,11 +153,11 @@ async function loadCalendarEvents() {
             const events = await response.json();
             
             // Clear existing events
-            calendar.removeAllEvents();
+            window.calendarInstance.removeAllEvents();
             
             // Add events with proper colors
             events.forEach(event => {
-                calendar.addEvent({
+                window.calendarInstance.addEvent({
                     id: event.id,
                     title: event.title,
                     start: event.start,

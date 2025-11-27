@@ -9,7 +9,7 @@
 **AI-powered game recommendation system that matches games to your mood, time, and energy level.**
 
 [![Status](https://img.shields.io/badge/Status-Fully%20Functional-brightgreen)]()
-[![Games](https://img.shields.io/badge/Games-41%20titles-blue)]()
+[![Games](https://img.shields.io/badge/Games-57%20titles-blue)]()
 [![Themes](https://img.shields.io/badge/Themes-8%20combinations-purple)]()
 
 ---
@@ -54,7 +54,7 @@ start-lutem.bat
 ## Key Features
 
 - **8-Dimensional Scoring** - Time, mood, energy, interruptibility, time-of-day, social preference, satisfaction history, genre boost
-- **41 Curated Games** - With Steam images and store links
+- **57 Curated Games** - Diverse library including MOBAs, fighting games, JRPGs, quick-session titles, and more
 - **Soft Genre Ranking** - Boosts preferred genres without eliminating other matches
 - **Progressive Disclosure** - Top pick + 3 alternatives, "See More" for 6 additional
 - **8 Theme Combinations** - 4 palettes × light/dark modes
@@ -97,7 +97,7 @@ User Input → 8-Factor Scoring → Ranked Results → Feedback Loop
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/games` | GET | List all 41 games |
+| `/games` | GET | List all 57 games |
 | `/recommendations` | POST | Get personalized recommendations |
 | `/sessions/feedback` | POST | Submit satisfaction rating (1-5) |
 
@@ -111,6 +111,7 @@ User Input → 8-Factor Scoring → Ranked Results → Feedback Loop
 **Last Updated:** November 2025
 
 ### Recent Completions
+- ✅ Expanded game library to 57 titles (MOBAs, Fighting, JRPGs, Quick-session games)
 - ✅ Professional branding with Lutem logo
 - ✅ 8 theme combinations (4 palettes × 2 modes)
 - ✅ Loading spinner with 24 gaming quotes
@@ -120,7 +121,6 @@ User Input → 8-Factor Scoring → Ranked Results → Feedback Loop
 
 ### Up Next
 - Calendar integration (in progress)
-- Expand game library to 60+ titles
 - Session history tracking
 - Weekly satisfaction dashboard
 

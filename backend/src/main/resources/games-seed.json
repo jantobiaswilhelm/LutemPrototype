@@ -1077,5 +1077,431 @@
     "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg",
     "storeUrl": "https://store.steampowered.com/app/730/CounterStrike_2/",
     "userRating": 4.0
+  },
+  {
+    "name": "League of Legends",
+    "minMinutes": 25,
+    "maxMinutes": 45,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "COOP"
+    ],
+    "genres": [
+      "MOBA",
+      "Strategy"
+    ],
+    "description": "The world's most popular competitive MOBA",
+    "imageUrl": "https://cdn1.epicgames.com/offer/24b9b5e323bc40eea252a10cdd3b2f10/EGS_LeagueofLegends_RiotGames_S1_2560x1440-80471666c140f790f28dff68d72571ef",
+    "storeUrl": "https://www.leagueoflegends.com/",
+    "userRating": 4.0
+  },
+  {
+    "name": "EA Sports FC 25",
+    "minMinutes": 10,
+    "maxMinutes": 20,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "COOP",
+      "SOLO"
+    ],
+    "genres": [
+      "Sports",
+      "Simulation"
+    ],
+    "description": "The beautiful game - realistic football simulation",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/2669320/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/2669320/EA_SPORTS_FC_25/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Fortnite",
+    "minMinutes": 15,
+    "maxMinutes": 25,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "COOP"
+    ],
+    "genres": [
+      "Battle Royale",
+      "Action"
+    ],
+    "description": "Iconic battle royale with building mechanics",
+    "imageUrl": "https://cdn2.unrealengine.com/fortnite-chapter-5-season-1-key-art-1920x1080-11a96ea3d5ef.jpg",
+    "storeUrl": "https://www.fortnite.com/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Balatro",
+    "minMinutes": 15,
+    "maxMinutes": 30,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "PROGRESS_ORIENTED",
+      "UNWIND"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Card Game",
+      "Roguelike"
+    ],
+    "description": "Hypnotic poker-based roguelike deckbuilder",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/2379780/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/2379780/Balatro/",
+    "userRating": 4.5
+  },
+  {
+    "name": "Beat Saber",
+    "minMinutes": 5,
+    "maxMinutes": 20,
+    "emotionalGoals": [
+      "RECHARGE",
+      "CHALLENGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COMPETITIVE"
+    ],
+    "genres": [
+      "Rhythm",
+      "VR"
+    ],
+    "description": "Slash beats in VR - the ultimate rhythm game",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/620980/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/620980/Beat_Saber/",
+    "userRating": 4.5
+  },
+  {
+    "name": "Bloons TD 6",
+    "minMinutes": 15,
+    "maxMinutes": 30,
+    "emotionalGoals": [
+      "UNWIND",
+      "LOCKING_IN",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Tower Defense",
+      "Strategy"
+    ],
+    "description": "Colorful tower defense with deep strategy",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/960090/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/960090/Bloons_TD_6/",
+    "userRating": 4.5
+  },
+  {
+    "name": "Street Fighter 6",
+    "minMinutes": 5,
+    "maxMinutes": 15,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "RECHARGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "SOLO"
+    ],
+    "genres": [
+      "Fighting",
+      "Action"
+    ],
+    "description": "Modern fighting game with stylish combat",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1364780/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1364780/Street_Fighter_6/",
+    "userRating": 4.5
+  },
+  {
+    "name": "MultiVersus",
+    "minMinutes": 5,
+    "maxMinutes": 10,
+    "emotionalGoals": [
+      "RECHARGE",
+      "CHALLENGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "COMPETITIVE",
+      "COOP"
+    ],
+    "genres": [
+      "Fighting",
+      "Party Game"
+    ],
+    "description": "Free-to-play platform fighter with iconic characters",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1818750/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1818750/MultiVersus/",
+    "userRating": 4.0
+  },
+  {
+    "name": "Hitman 3",
+    "minMinutes": 30,
+    "maxMinutes": 60,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "CHALLENGE",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "AFTERNOON",
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Stealth",
+      "Puzzle",
+      "Action"
+    ],
+    "description": "Creative assassination sandbox with replayable levels",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1659040/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1659040/HITMAN_3/",
+    "userRating": 4.5
+  },
+  {
+    "name": "Persona 5 Royal",
+    "minMinutes": 60,
+    "maxMinutes": 120,
+    "emotionalGoals": [
+      "ADVENTURE_TIME",
+      "LOCKING_IN",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "EVENING",
+      "LATE_NIGHT"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Turn-based RPG",
+      "Adventure",
+      "Simulation"
+    ],
+    "description": "Stylish JRPG blending dungeon crawling with life sim",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1687950/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1687950/Persona_5_Royal/",
+    "userRating": 4.8
+  },
+  {
+    "name": "Final Fantasy VII Rebirth",
+    "minMinutes": 60,
+    "maxMinutes": 120,
+    "emotionalGoals": [
+      "ADVENTURE_TIME",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "MEDIUM",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "EVENING"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Action RPG",
+      "Adventure"
+    ],
+    "description": "Epic continuation of the beloved JRPG remake",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/2909400/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/2909400/FINAL_FANTASY_VII_REBIRTH/",
+    "userRating": 4.5
+  },
+  {
+    "name": "Phasmophobia",
+    "minMinutes": 20,
+    "maxMinutes": 40,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "ADVENTURE_TIME"
+    ],
+    "interruptibility": "LOW",
+    "energyRequired": "MEDIUM",
+    "bestTimeOfDay": [
+      "EVENING",
+      "LATE_NIGHT"
+    ],
+    "socialPreferences": [
+      "COOP"
+    ],
+    "genres": [
+      "Horror",
+      "Co-op"
+    ],
+    "description": "Terrifying ghost hunting with friends",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/739630/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/739630/Phasmophobia/",
+    "userRating": 4.5
+  },
+  {
+    "name": "Mini Metro",
+    "minMinutes": 5,
+    "maxMinutes": 15,
+    "emotionalGoals": [
+      "UNWIND",
+      "LOCKING_IN"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Puzzle",
+      "Strategy",
+      "Simulation"
+    ],
+    "description": "Minimalist subway planning puzzle",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/287980/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/287980/Mini_Metro/",
+    "userRating": 4.5
+  },
+  {
+    "name": "Spelunky 2",
+    "minMinutes": 10,
+    "maxMinutes": 20,
+    "emotionalGoals": [
+      "CHALLENGE",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "HIGH",
+    "bestTimeOfDay": [
+      "MORNING",
+      "AFTERNOON"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COOP"
+    ],
+    "genres": [
+      "Roguelike",
+      "Platformer",
+      "Action"
+    ],
+    "description": "Brutally challenging procedural cave exploration",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/418530/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/418530/Spelunky_2/",
+    "userRating": 4.5
+  },
+  {
+    "name": "Super Auto Pets",
+    "minMinutes": 5,
+    "maxMinutes": 10,
+    "emotionalGoals": [
+      "UNWIND",
+      "PROGRESS_ORIENTED"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "ANY"
+    ],
+    "socialPreferences": [
+      "SOLO",
+      "COMPETITIVE"
+    ],
+    "genres": [
+      "Auto Battler",
+      "Strategy"
+    ],
+    "description": "Adorable auto-battler with cute pets",
+    "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/1714040/header.jpg",
+    "storeUrl": "https://store.steampowered.com/app/1714040/Super_Auto_Pets/",
+    "userRating": 4.5
+  },
+  {
+    "name": "NYT Games (Wordle/Connections)",
+    "minMinutes": 5,
+    "maxMinutes": 10,
+    "emotionalGoals": [
+      "LOCKING_IN",
+      "RECHARGE"
+    ],
+    "interruptibility": "HIGH",
+    "energyRequired": "LOW",
+    "bestTimeOfDay": [
+      "MORNING",
+      "MIDDAY"
+    ],
+    "socialPreferences": [
+      "SOLO"
+    ],
+    "genres": [
+      "Word Game",
+      "Puzzle"
+    ],
+    "description": "Daily word puzzles - quick brain teasers",
+    "imageUrl": "https://www.nytimes.com/games-assets/v2/assets/wordle/wordle_og_1200x630.png",
+    "storeUrl": "https://www.nytimes.com/games",
+    "userRating": 4.5
   }
 ]

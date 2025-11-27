@@ -126,11 +126,13 @@ function applyFilters() {
         const matchesGenre = !selectedGenre || 
             (game.genres && game.genres.includes(selectedGenre));
         
-        // Mood filter
+        // Mood filter - handles both string arrays and object arrays
         const matchesMood = !selectedMood || 
-            (game.emotionalGoals && game.emotionalGoals.some(goal => 
-                goal.name === selectedMood
-            ));
+            (game.emotionalGoals && game.emotionalGoals.some(goal => {
+                // Handle both formats: strings like "UNWIND" or objects like {name: "UNWIND"}
+                const goalName = typeof goal === 'string' ? goal : goal.name;
+                return goalName === selectedMood;
+            }));
         
         // Time filter
         let matchesTime = true;
@@ -224,7 +226,9 @@ function getEmotionalGoalColor(goalName) {
  */
 function getGameGradient(game) {
     if (game.emotionalGoals && game.emotionalGoals.length > 0) {
-        const mood = game.emotionalGoals[0].name;
+        const firstGoal = game.emotionalGoals[0];
+        // Handle both formats: strings like "UNWIND" or objects like {name: "UNWIND"}
+        const mood = typeof firstGoal === 'string' ? firstGoal : firstGoal.name;
         const colors = {
             'UNWIND': '#667eea, #764ba2',
             'RECHARGE': '#f093fb, #f5576c',
@@ -273,8 +277,8 @@ function createGameCard(game) {
         overflow: hidden;
     `;
     
-    if (game.coverUrl) {
-        imageDiv.style.background = `url('${game.coverUrl}') center/cover`;
+    if (game.imageUrl || game.coverUrl) {
+        imageDiv.style.background = `url('${game.imageUrl || game.coverUrl}') center/cover`;
     } else {
         imageDiv.textContent = game.emoji || '🎮';
     }
@@ -369,10 +373,12 @@ function createGameCard(game) {
         `;
         
         game.emotionalGoals.slice(0, 3).forEach(goal => {
+            // Handle both formats: strings like "UNWIND" or objects like {name: "UNWIND"}
+            const goalName = typeof goal === 'string' ? goal : goal.name;
             const moodTag = document.createElement('span');
-            moodTag.textContent = `${getEmotionalGoalEmoji(goal.name)} ${goal.name}`;
+            moodTag.textContent = `${getEmotionalGoalEmoji(goalName)} ${goalName}`;
             moodTag.style.cssText = `
-                background: ${getEmotionalGoalColor(goal.name)};
+                background: ${getEmotionalGoalColor(goalName)};
                 color: white;
                 padding: 4px 10px;
                 border-radius: 12px;
@@ -439,7 +445,10 @@ function createGameCard(game) {
  */
 function showGameDetails(game) {
     // Reuse the existing maximized game overlay from recommendation.js
-    if (typeof showMaximizedGame === 'function') {
-        showMaximizedGame(game);
+    if (typeof openMaximizedGame === 'function') {
+        // Pass game with default reason and match percentage for library view
+        openMaximizedGame(game, 'From your game library', 100);
+    } else {
+        console.error('openMaximizedGame function not found');
     }
 }

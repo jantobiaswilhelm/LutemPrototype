@@ -37,7 +37,7 @@ function initTabNavigation() {
             }
             
             // Initialize calendar when calendar tab is clicked
-            if (button.dataset.page === 'calendar' && typeof initCalendar === 'function' && !window.calendar) {
+            if (button.dataset.page === 'calendar' && typeof initCalendar === 'function' && !window.calendarInstance) {
                 setTimeout(() => {
                     initCalendar();
                 }, 100);
