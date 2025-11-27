@@ -9,6 +9,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Frontend Refactoring (Nov 27, 2025)
+- **Complete Frontend Modularization**
+  - Split monolithic index.html (5,706 lines) into modular structure
+  - index.html now contains only 1,078 lines of pure HTML (81% reduction)
+  
+- **CSS Architecture**
+  - `css/variables.css` - CSS custom properties (319 lines)
+  - `css/themes.css` - Theme class definitions (19 lines)
+  - `css/base.css` - Reset and typography (150 lines)
+  - `css/components.css` - UI components (1,604 lines)
+  - `css/layout.css` - Layout utilities (161 lines)
+  - `css/pages/calendar.css` - Calendar-specific styles (121 lines)
+
+- **JavaScript Modules**
+  - `js/constants.js` - Configuration and quotes (30 lines)
+  - `js/state.js` - Global state management (25 lines)
+  - `js/utils.js` - Helper functions (50 lines)
+  - `js/theme.js` - Theme/palette switching (110 lines)
+  - `js/wizard.js` - Quick start wizard (150 lines)
+  - `js/form.js` - Form interactions (115 lines)
+  - `js/validation.js` - Input validation (90 lines)
+  - `js/api.js` - Backend API communication (147 lines)
+  - `js/recommendation.js` - Game recommendation display (530 lines)
+  - `js/tabs.js` - Tab navigation (59 lines)
+  - `js/games-library.js` - Games page functionality (389 lines)
+  - `js/profile.js` - Profile page functionality (140 lines)
+  - `js/calendar.js` - Calendar functionality (327 lines)
+  - `js/main.js` - Main initialization (56 lines)
+
+### Changed
+- Improved code organization with clear separation of concerns
+- Scripts load in dependency order for proper initialization
+- Easier debugging with focused, single-purpose modules
+
 ### Known Issues
 - Calendar not displaying on Calendar tab ([#1](docs/calendar-known-issues.md#1))
 - Game wizard not accessible from Calendar tab ([#2](docs/calendar-known-issues.md#2))

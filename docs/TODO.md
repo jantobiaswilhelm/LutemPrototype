@@ -106,6 +106,15 @@
 - ✅ Calendar utility functions
 - ✅ Event type differentiation (GAME vs TASK)
 
+### Frontend Refactoring (Nov 27, 2025)
+- ✅ CSS extracted to 6 modular files
+- ✅ JavaScript split into 14 focused modules
+- ✅ index.html reduced from 5,706 to 1,078 lines (81% reduction)
+- ✅ Clear separation of concerns
+- ✅ Proper script loading order with dependencies
+- [ ] Final testing of all 4 pages
+- [ ] Testing of all 8 theme combinations
+
 ---
 
 ## 🐛 Known Bugs
@@ -173,8 +182,9 @@
 - Then fix task creation
 - Finally implement full gaming session workflow
 - Don't add new features until calendar is stable
+- **Frontend refactoring completed Nov 27** - now easier to debug issues
 
 ---
 
-**Last Updated:** November 23, 2025  
-**Next Review:** After calendar issues are resolved
+**Last Updated:** November 27, 2025  
+**Next Review:** After frontend refactoring testing complete

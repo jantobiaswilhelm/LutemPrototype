@@ -1,18 +1,18 @@
 # Frontend Refactoring Plan: Splitting the Monolithic index.html
 
 **Created:** November 26, 2025  
-**Last Updated:** November 27, 2025 19:15  
-**Status:** 🔄 Phase 7 NEXT - Link JS Files & Remove Embedded Scripts  
+**Last Updated:** November 27, 2025 21:00  
+**Status:** ✅ Phase 7 COMPLETE - Phase 8 NEXT  
 **Original Lines:** 5,706  
-**Current Lines:** 3,124 (JS files created but not yet linked)  
+**Current Lines:** 1,078 (HTML only - all CSS/JS extracted)  
 
 ---
 
-## Current State (Updated Nov 27, 2025 19:15)
+## Current State (Updated Nov 27, 2025 21:00)
 
 | File | Lines | Status |
 |------|-------|--------|
-| `index.html` | 3,124 | CSS extracted, JS modules created but NOT linked yet |
+| `index.html` | 1,078 | ✅ Pure HTML - all CSS & JS extracted |
 | `index.html.backup` | 5,706 | Original backup (intact) |
 | `css/variables.css` | 319 | ✅ Linked |
 | `css/themes.css` | 19 | ✅ Linked |
@@ -22,20 +22,20 @@
 | `css/pages/calendar.css` | 121 | ✅ Linked |
 | `games-data.js` | 55 | ✅ Linked |
 | `demo-mode.js` | 298 | ✅ Linked |
-| `js/constants.js` | 30 | ✅ Created |
-| `js/state.js` | 25 | ✅ Created |
-| `js/utils.js` | 50 | ✅ Created |
-| `js/theme.js` | 110 | ✅ Created |
-| `js/wizard.js` | 150 | ✅ Created |
-| `js/form.js` | 115 | ✅ Created |
-| `js/validation.js` | 90 | ✅ Created |
-| `js/api.js` | 147 | ✅ Created |
-| `js/recommendation.js` | 530 | ✅ Created |
-| `js/tabs.js` | 59 | ✅ Created |
-| `js/games-library.js` | 389 | ✅ Created |
-| `js/profile.js` | 140 | ✅ Created |
-| `js/calendar.js` | 327 | ✅ Created |
-| `js/main.js` | 56 | ✅ Created |
+| `js/constants.js` | 30 | ✅ Linked |
+| `js/state.js` | 25 | ✅ Linked |
+| `js/utils.js` | 50 | ✅ Linked |
+| `js/theme.js` | 110 | ✅ Linked |
+| `js/wizard.js` | 150 | ✅ Linked |
+| `js/form.js` | 115 | ✅ Linked |
+| `js/validation.js` | 90 | ✅ Linked |
+| `js/api.js` | 147 | ✅ Linked |
+| `js/recommendation.js` | 530 | ✅ Linked |
+| `js/tabs.js` | 59 | ✅ Linked |
+| `js/games-library.js` | 389 | ✅ Linked |
+| `js/profile.js` | 140 | ✅ Linked |
+| `js/calendar.js` | 327 | ✅ Linked |
+| `js/main.js` | 56 | ✅ Linked |
 
 ---
 
@@ -86,25 +86,26 @@
 - [x] Create `js/calendar.js` (FullCalendar init, events, modals)
 - [x] Create `js/main.js` (initialization orchestration)
 
-### Phase 7: Link JS Files & Remove Embedded Scripts 🔄 NEXT
-- [ ] Add `<script>` tags for all JS modules in index.html `<head>`
-- [ ] Remove embedded `<script>` block 1 (lines 522-1636)
-- [ ] Remove embedded `<script>` block 2 (lines 2073-3022)
-- [ ] Test all pages work correctly
-- [ ] Fix any missing function references
+### Phase 7: Link JS Files & Remove Embedded Scripts ✅ COMPLETE (Nov 27)
+- [x] Add `<script>` tags for all JS modules in index.html
+- [x] Remove all embedded `<script>` blocks
+- [x] Verify scripts load in correct dependency order
+- [x] index.html reduced from 5,706 to 1,078 lines
 
-### Phase 8: Final Cleanup ⬜ NOT STARTED
-- [ ] Remove any remaining embedded JavaScript
-- [ ] Verify all external files linked correctly
-- [ ] Target: index.html should be ~500-600 lines (HTML only)
+### Phase 8: Final Cleanup & Testing 🔄 NEXT
+- [ ] Test all 4 pages (Home, Calendar, Games, Profile)
+- [ ] Test all 8 theme combinations (4 palettes × light/dark)
+- [ ] Test demo mode (GitHub Pages compatibility)
+- [ ] Test backend mode (local development with Spring Boot)
+- [ ] Fix any console errors or broken functionality
+- [ ] Remove any remaining inline styles that should be in CSS
 
-### Phase 9: Testing & Documentation ⬜ NOT STARTED
-- [ ] Test all theme combinations (8 total)
-- [ ] Test demo mode (GitHub Pages)
-- [ ] Test backend mode (local development)
+### Phase 9: Documentation & Commit ⬜ NOT STARTED
 - [ ] Update README with new file structure
-- [ ] Update CHANGELOG.md
-- [ ] Commit and push to GitHub
+- [ ] Update CHANGELOG.md with refactoring summary
+- [ ] Commit all changes to refactor branch
+- [ ] Create pull request or merge to main
+- [ ] Push to GitHub
 
 ---
 
@@ -119,39 +120,55 @@
 | 4 | Core State & Utilities | ✅ | Nov 27 |
 | 5 | Theme & UI Components | ✅ | Nov 27 |
 | 6 | API & Feature Modules | ✅ | Nov 27 |
-| 7 | Link JS & Remove Embedded | 🔄 | Next |
-| 8 | Final Cleanup | ⬜ | - |
-| 9 | Testing & Documentation | ⬜ | - |
+| 7 | Link JS & Remove Embedded | ✅ | Nov 27 |
+| 8 | Final Cleanup & Testing | 🔄 | Next |
+| 9 | Documentation & Commit | ⬜ | - |
 
 ---
 
-## JavaScript Module Structure (Complete)
+## Final File Structure
 
 ```
-frontend/js/
-├── constants.js      - Gaming quotes, time values (30 lines)
-├── state.js          - State management (25 lines)
-├── utils.js          - Utility functions (50 lines)
-├── theme.js          - Theme/palette functionality (110 lines)
-├── wizard.js         - Guided modal/wizard functions (150 lines)
-├── form.js           - Main form interactions (115 lines)
-├── validation.js     - Form validation (90 lines)
-├── api.js            - API communication (147 lines)
-├── recommendation.js - Recommendation display/handling (530 lines)
-├── tabs.js           - Tab navigation (59 lines)
-├── games-library.js  - Games page functionality (389 lines)
-├── profile.js        - Profile page functionality (140 lines)
-├── calendar.js       - Calendar functionality (327 lines)
-└── main.js           - Main initialization (56 lines)
-
-Total: ~2,218 lines of modular JavaScript
+frontend/
+├── index.html              (1,078 lines - pure HTML)
+├── index.html.backup       (5,706 lines - original)
+├── games-data.js           (55 lines - game data for demo)
+├── demo-mode.js            (298 lines - GitHub Pages support)
+├── lutem-logo.png
+├── css/
+│   ├── variables.css       (319 lines - CSS custom properties)
+│   ├── themes.css          (19 lines - theme class definitions)
+│   ├── base.css            (150 lines - reset, typography)
+│   ├── components.css      (1,604 lines - buttons, cards, modals)
+│   ├── layout.css          (161 lines - grid, containers)
+│   └── pages/
+│       └── calendar.css    (121 lines - FullCalendar overrides)
+└── js/
+    ├── constants.js        (30 lines - quotes, config values)
+    ├── state.js            (25 lines - global state)
+    ├── utils.js            (50 lines - helper functions)
+    ├── theme.js            (110 lines - theme switching)
+    ├── wizard.js           (150 lines - quick start wizard)
+    ├── form.js             (115 lines - form interactions)
+    ├── validation.js       (90 lines - input validation)
+    ├── api.js              (147 lines - backend API calls)
+    ├── recommendation.js   (530 lines - game recommendations)
+    ├── tabs.js             (59 lines - tab navigation)
+    ├── games-library.js    (389 lines - games page)
+    ├── profile.js          (140 lines - profile page)
+    ├── calendar.js         (327 lines - calendar page)
+    └── main.js             (56 lines - initialization)
 ```
+
+**Total CSS:** ~2,374 lines across 6 files  
+**Total JS:** ~2,218 lines across 14 modules  
+**HTML:** 1,078 lines (down from 5,706 - **81% reduction**)
 
 ---
 
-## Script Loading Order (for Phase 7)
+## Script Loading Order
 
-The scripts must be loaded in dependency order:
+Scripts are loaded in dependency order at the end of `<body>`:
 
 ```html
 <!-- Core modules (no dependencies) -->
@@ -182,32 +199,28 @@ The scripts must be loaded in dependency order:
 ## Rollback Plan
 
 ```bash
-# Restore from backup
+# Restore from backup if needed
 copy frontend\index.html.backup frontend\index.html
 ```
 
 ---
 
-## Session Summary (Nov 27, 2025)
+## Refactoring Summary
 
-**Earlier work (Phases 2-5):**
-- CSS fully extracted to external files
-- Core JS modules created (constants, state, utils, theme, wizard, form, validation, api, recommendation)
+### Before (Nov 26, 2025)
+- Single monolithic `index.html` with 5,706 lines
+- All CSS embedded in `<style>` tags
+- All JavaScript embedded in `<script>` tags
+- Difficult to maintain, debug, and extend
 
-**Phase 6 Work (current session):**
-1. Created `js/tabs.js` (59 lines) - Tab navigation functionality
-2. Created `js/games-library.js` (389 lines) - Full games page with filtering, cards, rendering
-3. Created `js/profile.js` (140 lines) - Profile save/load functionality  
-4. Created `js/calendar.js` (327 lines) - FullCalendar init, event management, modals
-5. Created `js/main.js` (56 lines) - Main initialization orchestrator
-
-**All 14 JS modules now created!**
-
-**Next step (Phase 7):**
-- Add `<script>` tags to index.html in correct order
-- Remove the two embedded `<script>` blocks
-- Test all functionality
+### After (Nov 27, 2025)
+- Clean `index.html` with only 1,078 lines of pure HTML
+- CSS organized into 6 logical files
+- JavaScript split into 14 focused modules
+- Clear separation of concerns
+- Easy to find and modify specific functionality
+- **81% reduction in index.html size**
 
 ---
 
-*Last updated: November 27, 2025 19:15 - Phase 6 COMPLETE, Phase 7 NEXT*
+*Last updated: November 27, 2025 21:00 - Phase 7 COMPLETE, Phase 8 NEXT*
