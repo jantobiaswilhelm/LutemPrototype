@@ -1,322 +1,275 @@
 # Frontend Refactoring Plan: Splitting the Monolithic index.html
 
 **Created:** November 26, 2025  
-**Status:** 🟡 IN PROGRESS  
-**Total Lines:** 5,706  
-**Estimated Effort:** 2-4 hours
+**Last Updated:** November 27, 2025 18:10  
+**Status:** 🔄 Phase 6 IN PROGRESS - JavaScript Extraction  
+**Original Lines:** 5,706  
+**Current Lines:** 3,124  
 
 ---
 
-## Current State Analysis
+## Current State (Updated Nov 27, 2025 18:10)
 
-The frontend is a single `index.html` file with embedded CSS and JavaScript. Here's the breakdown:
-
-| Section | Lines | Size | Description |
-|---------|-------|------|-------------|
-| HTML Head | 1-10 | 10 | DOCTYPE, meta, fonts |
-| **CSS Block** | 11-2552 | **2,541** | All styles, themes, components |
-| External Links | 2553-2562 | 10 | FullCalendar, demo scripts |
-| **HTML Body** | 2563-3054 | **491** | All page content, modals |
-| **Main JS** | 3055-4604 | **1,549** | Core app logic |
-| **Tab/Games JS** | 4605-5593 | **988** | Tab nav, games library, calendar |
-| ⚠️ Orphaned HTML | 5594-5706 | 112 | **BUG: Content after `</html>`** |
+| File | Lines | Status |
+|------|-------|--------|
+| `index.html` | 3,124 | CSS extracted, JS extraction in progress |
+| `index.html.backup` | 5,706 | Original backup (intact) |
+| `css/variables.css` | 319 | ✅ Linked |
+| `css/themes.css` | 19 | ✅ Linked |
+| `css/base.css` | 150 | ✅ Linked |
+| `css/components.css` | 1,604 | ✅ Linked |
+| `css/layout.css` | 161 | ✅ Linked |
+| `css/pages/calendar.css` | 121 | ✅ Linked |
+| `games-data.js` | 55 | ✅ Copied from docs/ |
+| `demo-mode.js` | 298 | ✅ Copied from docs/ |
+| `js/constants.js` | ~30 | ✅ Created |
+| `js/state.js` | ~25 | ✅ Created |
+| `js/utils.js` | ~50 | ✅ Created |
+| `js/theme.js` | ~110 | ✅ Created |
+| `js/wizard.js` | ~150 | ✅ Created |
+| `js/form.js` | ~115 | ✅ Created |
+| `js/validation.js` | ~90 | ✅ Created |
+| `js/api.js` | ~147 | ✅ Created |
+| `js/recommendation.js` | ~530 | ✅ Created |
 
 ---
 
-## Target Structure
+## JavaScript Analysis (Phase 4 Preparation)
+
+### Script Block 1 (lines 522-1636) - HOME PAGE FUNCTIONALITY
+| Section | Lines | Description |
+|---------|-------|-------------|
+| GAMING QUOTES | 523-555 | Loading screen quotes array |
+| STATE MANAGEMENT | 557-580 | Global state variables |
+| THEME & PALETTE TOGGLE | 581-690 | Theme switching functionality |
+| WIZARD TOGGLE | 691-707 | Show/hide wizard modal |
+| GUIDED MODAL FUNCTIONS | 708-857 | Step-by-step wizard flow |
+| TOUCH GRASS MODAL | 858-880 | Session time warning modal |
+| MAIN FORM INTERACTIONS | 881-995 | Sliders, mood buttons, input handling |
+| VALIDATION | 996-1082 | Form validation logic |
+| API COMMUNICATION | 1083-1456 | Backend API calls, recommendation display |
+| MAXIMIZED GAME VIEW | 1457-1622 | Full-screen game detail view |
+| INIT ON PAGE LOAD | 1623-1636 | DOMContentLoaded initialization |
+
+### Script Block 2 (lines 2073-3022) - TAB PAGES FUNCTIONALITY
+| Section | Lines | Description |
+|---------|-------|-------------|
+| TAB NAVIGATION | 2074-2112 | Tab switching logic |
+| GAMES LIBRARY FUNCTIONALITY | 2113-2523 | Game browsing, filtering, sorting |
+| PROFILE PAGE FUNCTIONALITY | 2524-2652 | User preferences, settings |
+| CALENDAR FUNCTIONALITY | 2653-2719 | FullCalendar initialization |
+| CALENDAR-WIZARD INTEGRATION | 2720-2779 | Calendar to recommendation flow |
+| EVENT MANAGEMENT FUNCTIONS | 2780-2955 | Add/edit/delete calendar events |
+| UTILITY FUNCTIONS | 2956-3022 | Toast notifications, helpers |
+
+---
+
+## Planned JavaScript Module Structure
 
 ```
-frontend/
-├── index.html              # HTML only (~250 lines)
-├── css/
-│   ├── variables.css       # CSS custom properties, theme definitions
-│   ├── base.css            # Reset, typography, body styles
-│   ├── components.css      # Cards, buttons, modals, inputs
-│   ├── layout.css          # Grid, navigation, responsive
-│   ├── pages/
-│   │   ├── home.css        # Home page specific
-│   │   ├── games.css       # Games library specific
-│   │   ├── profile.css     # Profile page specific
-│   │   └── calendar.css    # Calendar page specific
-│   └── themes.css          # All 4 palettes × 2 modes
-├── js/
-│   ├── app.js              # Entry point, initialization
-│   ├── state.js            # State management
-│   ├── api.js              # Backend communication
-│   ├── ui.js               # DOM manipulation helpers
-│   ├── themes.js           # Theme switching logic
-│   ├── pages/
-│   │   ├── home.js         # Home page logic, wizard
-│   │   ├── games.js        # Games library logic
-│   │   ├── profile.js      # Profile page logic
-│   │   └── calendar.js     # Calendar functionality
-│   └── navigation.js       # Tab navigation
-├── assets/
-│   └── lutem-logo.png
-├── games-data.js           # Demo mode data (existing)
-└── demo-mode.js            # Demo mode logic (existing)
+frontend/js/
+├── constants.js      - Gaming quotes, time values
+├── state.js          - State management
+├── theme.js          - Theme/palette functionality
+├── wizard.js         - Guided modal/wizard functions
+├── form.js           - Main form interactions
+├── validation.js     - Form validation
+├── api.js            - API communication
+├── recommendation.js - Recommendation display/handling
+├── tabs.js           - Tab navigation
+├── games-library.js  - Games page functionality
+├── profile.js        - Profile page functionality
+├── calendar.js       - Calendar functionality
+├── utils.js          - Utility functions (toast, date formatting)
+└── main.js           - Main initialization
 ```
+
+---
+
+## Completed Issues
+
+### Issue 1: Orphaned HTML after `</html>` ✅ FIXED
+- **Fixed:** Nov 27, 2025 15:00
+- Removed 12 lines of invalid HTML after closing tags
+
+### Issue 2: Missing Profile Page CSS ✅ FIXED
+- **Fixed:** Nov 27, 2025 15:02
+- Extracted ~300 lines of Profile CSS from backup → appended to `css/components.css`
+
+### Issue 3: Embedded calendar `<style>` block ✅ FIXED
+- **Fixed:** Nov 27, 2025 15:12
+- Moved to `css/pages/calendar.css` (already existed, just needed linking)
+- Added `<link>` tag to head
+- Removed 33 lines of embedded CSS
+
+### Issue 4: Missing JS files ✅ FIXED
+- **Fixed:** Nov 27, 2025 15:30
+- `games-data.js` and `demo-mode.js` were in `docs/` but referenced from `frontend/`
+- Copied both files to `frontend/` folder
+
+### Issue 5: `switchNav is not defined` error ✅ FIXED
+- **Fixed:** Nov 27, 2025 15:31
+- Pre-existing bug: calendar init code referenced non-existent `switchNav` function
+- Moved calendar initialization into the existing tab navigation event listener
+- Removed 11 lines of broken code, added 6 lines of working code
+
+### Known Remaining Issues (to address later)
+- Console still shows some errors (deferred to later phase)
 
 ---
 
 ## Execution Phases
 
+### Phase 0: Preparation
+**Status:** ✅ COMPLETE (Nov 26)
 
-### Phase 0: Preparation (5 min)
-**Status:** ✅ COMPLETE
-
-- [x] Create feature branch: `git checkout -b refactor/frontend-split`
-- [x] Create directory structure: `css/`, `css/pages/`, `js/`, `js/pages/`, `assets/`
-- [x] Fix orphaned HTML bug (lines 5594-5706 after `</html>`) - Removed 12 lines
-- [x] Verify app works before changes
+- [x] Create feature branch: `refactor/frontend-split`
+- [x] Create directory structure: `css/`, `css/pages/`
+- [x] Create backup: `index.html.backup`
 
 ---
 
-### Phase 1: Extract CSS Variables & Themes (30 min)
-**Status:** ✅ COMPLETE
+### Phase 1: Extract CSS Variables & Themes
+**Status:** ✅ COMPLETE (Nov 26)
 
-**Source:** Lines 11-350 (approximately)
-
-**Tasks:**
-- [x] Create `css/variables.css` - Extract all CSS custom properties
-  - Light mode defaults (:root)
-  - Café dark mode
-  - Lavender light/dark
-  - Earth light/dark  
-  - Ocean light/dark
-- [x] Create `css/themes.css` - Theme-specific component overrides
-- [x] Link both files in index.html
-- [ ] Test all 8 theme combinations work (manual verification needed)
-
-**Verification:** Toggle through all palettes + light/dark modes
+- [x] Create `css/variables.css` (319 lines)
+- [x] Create `css/themes.css` (19 lines)
 
 ---
 
-### Phase 2: Extract Base & Component CSS (30 min)
-**Status:** 🟡 IN PROGRESS
+### Phase 2: Extract Base & Component CSS
+**Status:** ✅ COMPLETE (Nov 27)
 
-**Source:** Lines 350-1500 (approximately)
-
-**Tasks:**
-- [x] Create `css/base.css` - Body, typography, reset, animations, header
-- [x] Create `css/components.css` - Extract buttons, cards (partial)
-- [x] Create `css/layout.css` - Navigation, grid, responsive
-- [x] Link all CSS files in index.html
-- [ ] Extract more component styles (modals, forms, loading spinners)
-- [ ] Remove duplicated embedded CSS from index.html
-
-**Notes:**
-- Files created and linked but embedded CSS still remains
-- This creates some duplication but app works
-- Next: gradually migrate more styles and remove embedded duplicates
-
-**Verification:** All UI elements render correctly
+- [x] Create `css/base.css` (150 lines)
+- [x] Create `css/components.css` (1,604 lines with Profile CSS)
+- [x] Create `css/layout.css` (161 lines)
+- [x] Add CSS `<link>` tags to index.html
+- [x] Remove main embedded `<style>` block (2,541 lines removed)
+- [x] Fix orphaned HTML after `</html>` (12 lines removed)
+- [x] Add Profile CSS to components.css (300 lines added)
+- [x] Test all pages render correctly ✅
+- [x] Test theme combinations ✅
 
 ---
 
-### Phase 3: Extract Page-Specific CSS (20 min)
+### Phase 3: Extract Page-Specific CSS
+**Status:** ✅ COMPLETE (Nov 27)
+
+- [x] Link `css/pages/calendar.css` (already existed)
+- [x] Remove embedded calendar `<style>` block (33 lines removed)
+- [x] Fix missing JS files (copied from docs/)
+- [x] Fix `switchNav is not defined` bug (pre-existing JS issue)
+- [x] Test calendar page renders correctly ✅
+
+---
+
+### Phase 4-7: JavaScript Extraction
+**Status:** 🔄 IN PROGRESS
+
+#### Phase 4: Core State & Utilities ✅ COMPLETE
+- [x] Create `js/` directory
+- [x] Create `js/constants.js` (gaming quotes, time values)
+- [x] Create `js/state.js` (global state variables)
+- [x] Create `js/utils.js` (toast notifications, helpers)
+
+#### Phase 5: Theme & UI Components ✅ COMPLETE
+- [x] Create `js/theme.js` (theme/palette switching)
+- [x] Create `js/wizard.js` (guided modal flow)
+- [x] Create `js/form.js` (slider, mood buttons)
+- [x] Create `js/validation.js` (form validation)
+
+#### Phase 6: API & Feature Modules 🔄 IN PROGRESS
+- [x] Create `js/api.js` (backend communication)
+- [x] Create `js/recommendation.js` (display logic, feedback, maximized view)
+- [ ] Create `js/tabs.js` (tab navigation)
+- [ ] Create `js/games-library.js` (games page)
+- [ ] Create `js/profile.js` (profile page)
+- [ ] Create `js/calendar.js` (calendar functionality)
+- [ ] Test all tabs work correctly
+
+#### Phase 7: Main Entry Point
+- [ ] Create `js/main.js` (initialization orchestration)
+- [ ] Update index.html with `<script>` tags
+- [ ] Remove embedded `<script>` blocks
+- [ ] Test full application
+
+---
+
+### Phase 8: Final index.html Cleanup
 **Status:** ⬜ NOT STARTED
 
-**Source:** Lines 1500-2552 + Lines 5550-5593 (calendar styles)
-
-**Tasks:**
-- [ ] Create `css/pages/home.css` - Wizard, recommendation display
-- [ ] Create `css/pages/games.css` - Games grid, filters
-- [ ] Create `css/pages/profile.css` - Profile settings
-- [ ] Create `css/pages/calendar.css` - FullCalendar overrides
-
-**Verification:** Each page tab displays correctly
+- [ ] Remove all embedded JavaScript
+- [ ] Verify all external files linked correctly
+- [ ] Final line count should be ~500-600 lines (HTML only)
 
 ---
 
-### Phase 4: Extract State & API JavaScript (30 min)
+### Phase 9: Testing & Documentation
 **Status:** ⬜ NOT STARTED
 
-**Source:** Lines 3055-3200 (approximately)
-
-**Tasks:**
-- [ ] Create `js/state.js` - Extract:
-  - `state` object
-  - `GAMING_QUOTES` array
-  - `TIME_VALUES` array
-  - State helper functions
-- [ ] Create `js/api.js` - Extract:
-  - `API_BASE` constant
-  - `isDemoMode()` function
-  - `getRecommendation()` function
-  - `submitFeedback()` function
-  - All fetch calls
-
-**Verification:** Recommendations and feedback still work
-
----
-
-### Phase 5: Extract UI Helpers JavaScript (20 min)
-**Status:** ⬜ NOT STARTED
-
-**Source:** Lines 3200-3600 (approximately)
-
-**Tasks:**
-- [ ] Create `js/ui.js` - Extract:
-  - `showResultWithFadeIn()` 
-  - `displayRecommendation()`
-  - `updateTimeDisplay()`
-  - `formatDuration()`
-  - Generic DOM helpers
-- [ ] Create `js/themes.js` - Extract:
-  - Palette switching logic
-  - Dark mode toggle
-  - `localStorage` persistence
-
-**Verification:** UI updates work, themes persist
-
----
-
-
-### Phase 6: Extract Page-Specific JavaScript (45 min)
-**Status:** ⬜ NOT STARTED
-
-**Source:** Lines 3600-5593
-
-**Tasks:**
-- [ ] Create `js/pages/home.js` - Extract:
-  - Wizard logic (guided modal)
-  - Quick start functions
-  - Advanced form handlers
-  - Recommendation request/display
-  - Feedback submission
-  - Touch Grass modal
-- [ ] Create `js/pages/games.js` - Extract:
-  - `loadGamesLibrary()`
-  - `filterGames()`
-  - `renderGameCard()`
-  - Search and filter handlers
-- [ ] Create `js/pages/profile.js` - Extract:
-  - Genre preference handlers
-  - Profile form logic
-- [ ] Create `js/pages/calendar.js` - Extract:
-  - FullCalendar initialization
-  - Event handling
-  - Add/edit/delete task modals
-
-**Verification:** All pages function correctly
-
----
-
-### Phase 7: Create Main Entry Point (15 min)
-**Status:** ⬜ NOT STARTED
-
-**Tasks:**
-- [ ] Create `js/app.js` - Main initialization:
-  - Import order management
-  - DOMContentLoaded handler
-  - Initialize theme from localStorage
-  - Set up event listeners
-  - Start on home page
-- [ ] Create `js/navigation.js` - Tab navigation logic
-
-**Verification:** App initializes and navigates correctly
-
----
-
-### Phase 8: Update index.html (15 min)
-**Status:** ⬜ NOT STARTED
-
-**Tasks:**
-- [ ] Remove all `<style>` blocks
-- [ ] Remove all `<script>` blocks (except external CDN)
-- [ ] Add CSS `<link>` tags in correct order:
-  ```html
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/themes.css">
-  <link rel="stylesheet" href="css/pages/home.css">
-  <link rel="stylesheet" href="css/pages/games.css">
-  <link rel="stylesheet" href="css/pages/profile.css">
-  <link rel="stylesheet" href="css/pages/calendar.css">
-  ```
-- [ ] Add JS `<script>` tags at end of body:
-  ```html
-  <script src="js/state.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/themes.js"></script>
-  <script src="js/navigation.js"></script>
-  <script src="js/pages/home.js"></script>
-  <script src="js/pages/games.js"></script>
-  <script src="js/pages/profile.js"></script>
-  <script src="js/pages/calendar.js"></script>
-  <script src="js/app.js"></script>
-  ```
-- [ ] Fix orphaned HTML (remove or integrate lines 5594-5706)
-
-**Verification:** App loads and all features work
-
----
-
-### Phase 9: Final Testing & Cleanup (15 min)
-**Status:** ⬜ NOT STARTED
-
-**Tasks:**
-- [ ] Test all 4 pages (Home, Calendar, Games, Profile)
-- [ ] Test all 8 theme combinations
-- [ ] Test wizard flow (quick start)
-- [ ] Test advanced form
-- [ ] Test games library filters
-- [ ] Test recommendations
-- [ ] Test feedback submission
-- [ ] Verify demo mode works (GitHub Pages)
-- [ ] Update `docs/ARCHITECTURE.md` with new structure
-- [ ] Commit with detailed message
+- [ ] Test all theme combinations (8 total)
+- [ ] Test demo mode (GitHub Pages)
+- [ ] Test backend mode (local development)
+- [ ] Update README with new file structure
+- [ ] Update CHANGELOG.md
 
 ---
 
 ## Progress Tracker
 
-| Phase | Description | Status | Completed By |
-|-------|-------------|--------|--------------|
-| 0 | Preparation | ✅ | Nov 26, 2025 |
-| 1 | CSS Variables & Themes | ✅ | Nov 26, 2025 |
-| 2 | Base & Component CSS | 🟡 | In Progress |
-| 3 | Page-Specific CSS | ⬜ | - |
-| 4 | State & API JS | ⬜ | - |
-| 5 | UI Helpers JS | ⬜ | - |
-| 6 | Page-Specific JS | ⬜ | - |
+| Phase | Description | Status | Notes |
+|-------|-------------|--------|-------|
+| 0 | Preparation | ✅ | Nov 26 |
+| 1 | CSS Variables & Themes | ✅ | Nov 26 |
+| 2 | Base & Component CSS | ✅ | Nov 27 |
+| 3 | Page-Specific CSS | ✅ | Nov 27 - Also fixed JS bugs |
+| 4 | Core State & Utilities | 🔄 | In Progress |
+| 5 | Theme & UI Components | ⬜ | - |
+| 6 | API & Feature Modules | ⬜ | - |
 | 7 | Main Entry Point | ⬜ | - |
 | 8 | Update index.html | ⬜ | - |
 | 9 | Testing & Cleanup | ⬜ | - |
 
 ---
 
-## Risk Mitigation
-
-1. **Global variable conflicts:** Use IIFE or namespace pattern
-2. **Load order issues:** Define dependencies clearly
-3. **Demo mode breaks:** Test on GitHub Pages after each phase
-4. **Theme persistence:** Verify localStorage works across files
-
----
-
 ## Rollback Plan
 
-If issues arise:
 ```bash
-git checkout main -- frontend/
+# Restore from backup
+copy frontend\index.html.backup frontend\index.html
 ```
 
-Original file preserved at `frontend/index.html.backup` before starting.
+---
+
+## Session Summary (Nov 27, 2025)
+
+**Phase 2 Work (earlier):**
+1. Fixed orphaned HTML after `</html>` - removed 12 lines
+2. Extracted Profile CSS from backup → `css/components.css` - added ~300 lines
+3. Tested all 4 tabs and themes working
+
+**Phase 3 Work:**
+1. Linked existing `css/pages/calendar.css` to `<head>`
+2. Removed embedded calendar `<style>` block (33 lines)
+3. Discovered and fixed pre-existing bugs:
+   - Missing `games-data.js` and `demo-mode.js` in frontend/ (copied from docs/)
+   - `switchNav is not defined` error (moved calendar init to tab navigation)
+4. Calendar now renders correctly
+
+**Phase 4 Work (current):**
+1. Analyzed JavaScript structure in index.html
+2. Identified two script blocks (lines 522-1636 and 2073-3022)
+3. Mapped all JavaScript sections to planned modules
+4. Beginning extraction...
+
+**Current file sizes:**
+- `index.html`: 3,124 lines (down from original 5,706 - reduced by 45%)
+- All CSS now in external files
+- Demo mode JS files now in correct location
+
+**Target after JS extraction:**
+- `index.html`: ~500-600 lines (HTML structure only)
 
 ---
 
-## Notes
-
-- Keep demo mode compatibility (games-data.js, demo-mode.js)
-- FullCalendar CDN links stay in HTML
-- Don't use ES modules (keep it simple for GitHub Pages)
-- Test after each phase before proceeding
-
----
-
-*Last updated: November 26, 2025 - Phase 1 validated and completed*
+*Last updated: November 27, 2025 17:00 - Phase 4 IN PROGRESS*

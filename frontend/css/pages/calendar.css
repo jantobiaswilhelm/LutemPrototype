@@ -1,0 +1,120 @@
+/* ============================================
+   CALENDAR.CSS - FullCalendar Overrides
+   Page-Specific Styles for Calendar Tab
+   ============================================ */
+
+/* Calendar Container */
+#calendar {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* ============================================
+   FULLCALENDAR CUSTOM STYLING
+   ============================================ */
+
+.fc-event {
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 4px 8px !important;
+    cursor: pointer !important;
+}
+
+.fc-event-game {
+    background: #7db5d4 !important;
+    color: white !important;
+}
+
+.fc-event-task {
+    background: #6c757d !important;
+    color: white !important;
+}
+
+.fc-button-primary {
+    background-color: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+.fc-button-primary:hover {
+    background-color: var(--accent-secondary) !important;
+}
+
+.fc-button-primary:disabled {
+    background-color: var(--border-color) !important;
+    border-color: var(--border-color) !important;
+}
+
+.fc-toolbar-title {
+    color: var(--text-primary) !important;
+    font-size: 1.5em !important;
+    font-weight: 700 !important;
+}
+
+.fc-col-header-cell-cushion,
+.fc-daygrid-day-number {
+    color: var(--text-primary) !important;
+}
+
+.fc-theme-standard td, 
+.fc-theme-standard th {
+    border-color: var(--border-color) !important;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+    border-color: var(--border-color) !important;
+}
+
+.fc-daygrid-day.fc-day-today {
+    background-color: rgba(200, 159, 126, 0.1) !important;
+}
+
+.fc-event-main-frame {
+    padding: 2px 4px;
+}
+
+.fc-event-title {
+    font-weight: 600;
+    font-size: 0.85em;
+}
+
+/* ============================================
+   CALENDAR ANIMATIONS
+   ============================================ */
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   CALENDAR RESPONSIVE STYLES
+   ============================================ */
+
+@media (max-width: 768px) {
+    .fc-toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .fc-toolbar-chunk {
+        display: flex;
+        justify-content: center;
+    }
+}
