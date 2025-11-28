@@ -1,82 +1,109 @@
 /* ============================================
    LAYOUT.CSS - Navigation, Grid, Responsive
    Phase 2 of Frontend Refactoring
+   Updated: Home Redesign - Bottom Navigation
    ============================================ */
 
 /* ============================================
-   TAB NAVIGATION
+   BOTTOM TAB NAVIGATION (Mobile-App Style)
    ============================================ */
 .tab-navigation {
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
+    top: auto; /* Override any top value */
     background: var(--bg-card);
-    border-bottom: 2px solid var(--border-color);
+    border-top: 2px solid var(--border-color);
+    border-bottom: none;
     z-index: 900;
-    box-shadow: 0 2px 10px var(--shadow);
-    padding: 20px 30px;
+    box-shadow: 0 -2px 10px var(--shadow);
+    padding: 8px 16px;
+    /* Safe area for mobile devices with home indicators */
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
 }
 
 .tab-container {
-    max-width: 800px;
+    max-width: 600px;
     margin: 0 auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 15px;
+    justify-content: space-around;
+    gap: 8px;
 }
 
+/* Logo removed from nav - will be in page header instead */
 .tab-logo {
-    font-size: 1.8em;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    display: none;
 }
 
 .tabs {
     display: flex;
-    gap: 15px;
-    justify-content: center;
+    gap: 8px;
+    justify-content: space-around;
+    width: 100%;
 }
 
 .tab-button {
-    padding: 14px 32px;
-    background: var(--bg-secondary);
-    border: 2px solid var(--border-color);
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
     border-radius: 12px;
     cursor: pointer;
     color: var(--text-secondary);
-    font-size: 1.05em;
+    font-size: 0.85em;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 2px 8px var(--shadow);
-    min-width: 140px;
+    gap: 4px;
+    box-shadow: none;
+    min-width: 70px;
     justify-content: center;
 }
 
 .tab-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px var(--shadow-hover);
-    border-color: var(--accent-primary);
-    background: var(--bg-card);
+    transform: none;
+    box-shadow: none;
+    background: var(--bg-secondary);
+    color: var(--accent-primary);
 }
 
 .tab-button.active {
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    color: var(--text-header);
-    border-color: var(--accent-primary);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px var(--shadow-hover);
+    background: var(--bg-secondary);
+    color: var(--accent-primary);
+    border: none;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Active indicator dot */
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+}
+
+.tab-button {
+    position: relative;
 }
 
 .tab-icon {
     font-size: 1.4em;
+}
+
+/* Tab label styling */
+.tab-button span:not(.tab-icon) {
+    font-size: 0.75em;
+    line-height: 1;
 }
 
 /* ============================================
@@ -84,7 +111,9 @@
    ============================================ */
 .page-content {
     display: none;
-    margin-top: 140px; /* Space for fixed nav */
+    margin-top: 0;
+    margin-bottom: 80px; /* Space for fixed bottom nav */
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .page-content.active {
@@ -92,7 +121,7 @@
 }
 
 /* ============================================
-   MAIN CONTENT GRID
+   MAIN CONTENT GRID (Legacy - to be updated)
    ============================================ */
 .main-content {
     display: grid;
@@ -118,43 +147,428 @@
 }
 
 /* ============================================
+   NEW: PAGE HEADER COMPONENT
+   For Lutem logo + tagline on home page
+   ============================================ */
+.page-header {
+    text-align: center;
+    padding: 32px 24px 24px;
+}
+
+.page-header-logo {
+    font-size: 2.2em;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.page-header-tagline {
+    color: var(--text-secondary);
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+/* ============================================
    RESPONSIVE STYLES
    ============================================ */
 @media (max-width: 768px) {
     .tab-navigation {
-        padding: 15px 15px;
+        padding: 6px 8px;
+        padding-bottom: max(6px, env(safe-area-inset-bottom));
     }
 
     .tab-container {
-        gap: 12px;
-    }
-
-    .tab-logo {
-        font-size: 1.5em;
+        gap: 4px;
     }
 
     .tabs {
-        flex-direction: row;
-        gap: 10px;
-        width: 100%;
+        gap: 4px;
     }
 
     .tab-button {
-        padding: 12px 20px;
-        font-size: 0.95em;
-        min-width: auto;
-        flex: 1;
+        padding: 8px 12px;
+        font-size: 0.8em;
+        min-width: 60px;
     }
 
+    .tab-icon {
+        font-size: 1.3em;
+    }
+
+    /* Show labels on mobile for bottom nav */
     .tab-button span:not(.tab-icon) {
-        display: none;
+        display: block;
+        font-size: 0.7em;
     }
 
     .page-content {
-        margin-top: 130px;
+        margin-bottom: 70px;
     }
     
     .main-content {
         grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        padding: 24px 16px 16px;
+    }
+
+    .page-header-logo {
+        font-size: 1.8em;
+    }
+
+    .page-header-tagline {
+        font-size: 1em;
+    }
+}
+
+/* Very small screens - icons only */
+@media (max-width: 360px) {
+    .tab-button span:not(.tab-icon) {
+        display: none;
+    }
+
+    .tab-button {
+        min-width: 50px;
+        padding: 10px 8px;
+    }
+}
+
+/* Desktop - larger screens */
+@media (min-width: 1024px) {
+    .tab-button {
+        padding: 10px 20px;
+        min-width: 90px;
+    }
+
+    .tab-icon {
+        font-size: 1.5em;
+    }
+}
+
+
+/* ============================================
+   NEW: HOME WIZARD LAYOUT
+   Single-column, centered wizard flow
+   ============================================ */
+.home-wizard {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px 32px;
+}
+
+.wizard-section {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow);
+    margin-bottom: 24px;
+}
+
+.wizard-question {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.wizard-question-sub {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin-top: 4px;
+}
+
+/* Energy Cards Grid */
+.energy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.energy-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.energy-card:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+}
+
+.energy-card.selected {
+    border-color: var(--accent-primary);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: var(--text-header);
+}
+
+.energy-card-icon {
+    font-size: 1.8em;
+}
+
+.energy-card-label {
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+/* Time Section */
+.time-section {
+    text-align: center;
+}
+
+.time-value-display {
+    font-size: 2em;
+    font-weight: 800;
+    color: var(--accent-primary);
+    background: var(--bg-secondary);
+    padding: 12px 32px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+/* Mood Grid */
+.mood-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.mood-chip {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.mood-chip:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+}
+
+.mood-chip.selected {
+    border-color: var(--accent-primary);
+    background: var(--accent-primary);
+    color: var(--text-header);
+}
+
+/* Interruptibility Grid */
+.interrupt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.interrupt-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.interrupt-card:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+}
+
+.interrupt-card.selected {
+    border-color: var(--accent-primary);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: var(--text-header);
+}
+
+.interrupt-card-icon {
+    font-size: 1.6em;
+}
+
+.interrupt-card-label {
+    font-weight: 700;
+    font-size: 0.95em;
+}
+
+.interrupt-card-sub {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+/* Wizard Submit Button */
+.wizard-submit {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    display: block;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: var(--text-header);
+    border: none;
+    padding: 18px 32px;
+    border-radius: 14px;
+    font-size: 1.15em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--shadow);
+}
+
+.wizard-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-hover);
+}
+
+.wizard-submit:active {
+    transform: translateY(0);
+}
+
+/* Advanced Options Section */
+.advanced-section {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Results Container */
+.results-container {
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow);
+    padding: 32px 24px;
+    margin-top: 32px;
+    display: none;
+}
+
+.results-container.show {
+    display: block;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   HOME WIZARD RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .home-wizard {
+        padding: 0 16px 24px;
+    }
+
+    .wizard-section {
+        padding: 20px 16px;
+    }
+
+    .energy-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .energy-card {
+        padding: 16px 8px;
+        min-height: 85px;
+    }
+
+    .energy-card-icon {
+        font-size: 1.5em;
+    }
+
+    .energy-card-label {
+        font-size: 0.85em;
+    }
+
+    .mood-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .mood-chip {
+        padding: 12px 10px;
+        font-size: 0.85em;
+    }
+
+    .interrupt-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .interrupt-card {
+        padding: 16px 8px;
+        min-height: 80px;
+    }
+
+    .interrupt-card-icon {
+        font-size: 1.4em;
+    }
+
+    .interrupt-card-label {
+        font-size: 0.85em;
+    }
+
+    .time-value-display {
+        font-size: 1.6em;
+        padding: 10px 24px;
+    }
+
+    .wizard-submit {
+        padding: 16px 24px;
+        font-size: 1.05em;
+    }
+}
+
+@media (max-width: 480px) {
+    .energy-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .energy-card {
+        padding: 14px 6px;
+        min-height: 75px;
+    }
+
+    .mood-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .interrupt-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
     }
 }

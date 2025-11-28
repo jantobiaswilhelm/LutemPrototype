@@ -26,10 +26,10 @@
     <script src="demo-mode.js"></script>
 </head>
 <body>
-    <!-- Tab Navigation -->
+    <!-- Tab Navigation (Bottom Bar) -->
     <nav class="tab-navigation">
         <div class="tab-container">
-            <div class="tab-logo">LUTEM</div>
+            <!-- Logo moved to page header -->
             <div class="tabs">
                 <button class="tab-button active" data-page="home">
                     <span class="tab-icon">🏠</span>
@@ -276,36 +276,45 @@
         </div>
     </div>
 
+    <!-- Page Header with Logo -->
+    <div class="page-header">
+        <div class="page-header-logo">LUTEM</div>
+        <div class="page-header-tagline">Find your perfect game for right now</div>
+    </div>
+
     <div class="container" id="mainContainer">
-        <header>
-            <img src="lutem-logo.png" alt="Lutem - Your AI-Powered Gaming Companion" class="logo">
-        </header>
 
-        <div class="main-content">
-            <!-- INPUT PANEL -->
-            <div class="input-panel">
-                <h2>What are you looking for?</h2>
-
-                <!-- SECTION 1: WHAT MATTERS MOST -->
-                <div class="section-header">🎯 What matters most?</div>
-
-                <!-- 1. Emotional Goals -->
-                <div class="input-group">
-                    <label>What do you want to feel? (Select all that apply)</label>
-                    <div class="chip-container" id="emotionalGoals">
-                        <div class="chip" data-value="UNWIND">😌 Unwind and relax</div>
-                        <div class="chip" data-value="PROGRESS_ORIENTED">🏆 Progress Oriented</div>
-                        <div class="chip" data-value="LOCKING_IN">🎯 Locking in</div>
-                        <div class="chip" data-value="ADVENTURE_TIME">🗺️ Adventure Time</div>
-                        <div class="chip" data-value="CHALLENGE">⚡ Challenge Myself</div>
-                        <div class="chip" data-value="RECHARGE">🔋 Recharge Energy</div>
+        <!-- NEW: Single-column Home Wizard -->
+        <div class="home-wizard">
+            
+            <!-- Section 1: Energy Level -->
+            <div class="wizard-section">
+                <div class="wizard-question">
+                    ⚡ How's your energy right now?
+                </div>
+                <div class="energy-grid" id="energyLevel">
+                    <div class="energy-card" data-value="LOW">
+                        <div class="energy-card-icon">🔋</div>
+                        <div class="energy-card-label">Low Energy</div>
+                    </div>
+                    <div class="energy-card" data-value="MEDIUM">
+                        <div class="energy-card-icon">🔋🔋</div>
+                        <div class="energy-card-label">Medium</div>
+                    </div>
+                    <div class="energy-card" data-value="HIGH">
+                        <div class="energy-card-icon">🔋🔋🔋</div>
+                        <div class="energy-card-label">High Energy</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 2. Time Slider -->
-                <div class="input-group">
-                    <label>How much time do you have?</label>
-                    <div class="time-display" id="timeDisplay">30 minutes</div>
+            <!-- Section 2: Time Available -->
+            <div class="wizard-section">
+                <div class="wizard-question">
+                    ⏱️ How much time do you have?
+                </div>
+                <div class="time-section">
+                    <div class="time-value-display" id="timeDisplay">30 min</div>
                     <input type="range" id="timeSlider" min="0" max="7" value="2" step="1" class="discrete-slider">
                     <div class="time-labels">
                         <span>5min</span>
@@ -318,141 +327,146 @@
                         <span>3hr+</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- SECTION 2: RIGHT NOW I'M FEELING -->
-                <div class="section-header">⚡ Right now I'm feeling...</div>
+            <!-- Section 3: Mood/Emotional Goals -->
+            <div class="wizard-section">
+                <div class="wizard-question">
+                    😊 What do you want to feel?
+                    <div class="wizard-question-sub">(select all that apply)</div>
+                </div>
+                <div class="mood-grid" id="emotionalGoals">
+                    <div class="mood-chip" data-value="UNWIND">😌 Unwind</div>
+                    <div class="mood-chip" data-value="PROGRESS_ORIENTED">🏆 Progress</div>
+                    <div class="mood-chip" data-value="LOCKING_IN">🎯 Focus</div>
+                    <div class="mood-chip" data-value="ADVENTURE_TIME">🗺️ Adventure</div>
+                    <div class="mood-chip" data-value="CHALLENGE">⚡ Challenge</div>
+                    <div class="mood-chip" data-value="RECHARGE">🔋 Recharge</div>
+                </div>
+            </div>
 
-                <!-- 3. Energy Level -->
-                <div class="input-group">
-                    <label>What's your energy level?</label>
-                    <div class="radio-group" id="energyLevel">
-                        <div class="radio-option" data-value="HIGH">
-                            <div style="font-size: 1.8em; margin-bottom: 8px;">🔋🔋🔋</div>
-                            <div>High Energy</div>
-                        </div>
-                        <div class="radio-option" data-value="MEDIUM">
-                            <div style="font-size: 1.8em; margin-bottom: 8px;">🔋🔋</div>
-                            <div>Medium</div>
-                        </div>
-                        <div class="radio-option" data-value="LOW">
-                            <div style="font-size: 1.8em; margin-bottom: 8px;">🔋</div>
-                            <div>Low Energy</div>
-                        </div>
+            <!-- Section 4: Interruptibility -->
+            <div class="wizard-section">
+                <div class="wizard-question">
+                    ⏸️ Can you pause anytime?
+                </div>
+                <div class="interrupt-grid" id="interruptibility">
+                    <div class="interrupt-card" data-value="HIGH">
+                        <div class="interrupt-card-icon">⏸️</div>
+                        <div class="interrupt-card-label">Yes</div>
+                        <div class="interrupt-card-sub">Flexible</div>
+                    </div>
+                    <div class="interrupt-card" data-value="MEDIUM">
+                        <div class="interrupt-card-icon">💾</div>
+                        <div class="interrupt-card-label">Some</div>
+                        <div class="interrupt-card-sub">Pauses OK</div>
+                    </div>
+                    <div class="interrupt-card" data-value="LOW">
+                        <div class="interrupt-card-icon">🔒</div>
+                        <div class="interrupt-card-label">No</div>
+                        <div class="interrupt-card-sub">Locked in</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 4. Interruptibility -->
-                <div class="input-group">
-                    <label>Can I pause anytime?</label>
-                    <div class="radio-group" id="interruptibility">
-                        <div class="radio-option" data-value="HIGH">
-                            <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 6px;">Yes</div>
-                            <div style="font-size: 0.85em; opacity: 0.8;">Total flexibility</div>
-                        </div>
-                        <div class="radio-option" data-value="MEDIUM">
-                            <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 6px;">Some pauses</div>
-                            <div style="font-size: 0.85em; opacity: 0.8;">are fine</div>
-                        </div>
-                        <div class="radio-option" data-value="LOW">
-                            <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 6px;">No</div>
-                            <div style="font-size: 0.85em; opacity: 0.8;">I'm locked in</div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Main CTA Button -->
+            <button class="wizard-submit" id="recommendBtn">
+                🎮 Get Recommendation
+            </button>
 
-                <!-- GENRE PREFERENCES TOGGLE -->
+            <!-- Advanced Options Toggles -->
+            <div class="advanced-section">
+                <!-- Genre Preferences Toggle -->
                 <div class="advanced-toggle" id="genreToggle">
                     <span class="advanced-toggle-text">
                         <span>🎯</span>
                         <span>Genre Preferences</span>
-                        <span style="font-size: 0.85em; font-weight: 400; color: var(--text-light);">(Optional - helps rank results)</span>
                     </span>
                     <span class="advanced-toggle-icon">▼</span>
                 </div>
 
-                <!-- GENRE PREFERENCES CONTENT -->
-                <div class="advanced-content" id="genreContent">
-                    <div class="input-group">
-                        <label>Select genres you enjoy (ranks them higher in results)</label>
-                        <div class="chip-container" id="genrePreferences">
-                            <div class="chip" data-genre="RPG">🗡️ RPG</div>
-                            <div class="chip" data-genre="Action">⚔️ Action</div>
-                            <div class="chip" data-genre="Strategy">♟️ Strategy</div>
-                            <div class="chip" data-genre="Puzzle">🧩 Puzzle</div>
-                            <div class="chip" data-genre="Adventure">🗺️ Adventure</div>
-                            <div class="chip" data-genre="Simulation">🎮 Simulation</div>
-                            <div class="chip" data-genre="Sports">⚽ Sports</div>
-                            <div class="chip" data-genre="Racing">🏎️ Racing</div>
-                            <div class="chip" data-genre="Roguelike">🎲 Roguelike</div>
-                            <div class="chip" data-genre="Card Game">🃏 Card Game</div>
-                            <div class="chip" data-genre="Battle Royale">🎯 Battle Royale</div>
-                            <div class="chip" data-genre="Tactical FPS">🔫 Tactical FPS</div>
-                            <div class="chip" data-genre="Horror">👻 Horror</div>
-                            <div class="chip" data-genre="Platformer">🦘 Platformer</div>
-                            <div class="chip" data-genre="Sandbox">🏗️ Sandbox</div>
-                            <div class="chip" data-genre="Party Game">🎉 Party Game</div>
-                            <div class="chip" data-genre="Board Game">🎲 Board Game</div>
-                            <div class="chip" data-genre="Management">📊 Management</div>
-                            <div class="chip" data-genre="Life Sim">🏡 Life Sim</div>
-                            <div class="chip" data-genre="Social Deduction">🕵️ Social Deduction</div>
-                            <div class="chip" data-genre="Survival">⛺ Survival</div>
-                            <div class="chip" data-genre="Co-op Adventure">🤝 Co-op Adventure</div>
-                            <div class="chip" data-genre="Arcade">👾 Arcade</div>
-                            <div class="chip" data-genre="Farming Sim">🚜 Farming Sim</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ADVANCED OPTIONS TOGGLE -->
+                <!-- Advanced Options Toggle -->
                 <div class="advanced-toggle" id="advancedToggle">
                     <span class="advanced-toggle-text">
                         <span>⚙️</span>
-                        <span>Advanced Options</span>
-                        <span style="font-size: 0.85em; font-weight: 400; color: var(--text-light);">(Optional)</span>
+                        <span>More Options</span>
                     </span>
                     <span class="advanced-toggle-icon">▼</span>
                 </div>
-
-                <!-- ADVANCED OPTIONS CONTENT -->
-                <div class="advanced-content" id="advancedContent">
-                    <!-- 5. Time of Day -->
-                    <div class="input-group">
-                        <label>Time of day?</label>
-                        <div class="radio-group" id="timeOfDay">
-                            <div class="radio-option" data-value="MORNING">Morning</div>
-                            <div class="radio-option" data-value="MIDDAY">Midday</div>
-                            <div class="radio-option" data-value="AFTERNOON">Afternoon</div>
-                            <div class="radio-option" data-value="EVENING">Evening</div>
-                            <div class="radio-option" data-value="LATE_NIGHT">Late Night</div>
-                        </div>
-                    </div>
-
-                    <!-- 6. Social Preference -->
-                    <div class="input-group">
-                        <label>How do you want to play?</label>
-                        <div class="radio-group" id="socialPreference">
-                            <div class="radio-option" data-value="SOLO">Solo</div>
-                            <div class="radio-option" data-value="COOP">Co-op</div>
-                            <div class="radio-option" data-value="COMPETITIVE">Competitive</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recommend Button -->
-                <button class="recommend-btn" id="recommendBtn">
-                    🎮 Get Recommendation
-                </button>
             </div>
 
-            <!-- RESULTS PANEL -->
-            <div class="results-panel" id="resultsPanel">
+            <!-- Genre Preferences Content (hidden by default) -->
+            <div class="advanced-content" id="genreContent">
+                <div class="wizard-section" style="margin-top: 16px;">
+                    <div class="wizard-question" style="font-size: 1em;">
+                        Select genres you enjoy
+                        <div class="wizard-question-sub">(ranks them higher in results)</div>
+                    </div>
+                    <div class="chip-container" id="genrePreferences">
+                        <div class="chip" data-genre="RPG">🗡️ RPG</div>
+                        <div class="chip" data-genre="Action">⚔️ Action</div>
+                        <div class="chip" data-genre="Strategy">♟️ Strategy</div>
+                        <div class="chip" data-genre="Puzzle">🧩 Puzzle</div>
+                        <div class="chip" data-genre="Adventure">🗺️ Adventure</div>
+                        <div class="chip" data-genre="Simulation">🎮 Simulation</div>
+                        <div class="chip" data-genre="Sports">⚽ Sports</div>
+                        <div class="chip" data-genre="Racing">🏎️ Racing</div>
+                        <div class="chip" data-genre="Roguelike">🎲 Roguelike</div>
+                        <div class="chip" data-genre="Card Game">🃏 Card Game</div>
+                        <div class="chip" data-genre="Battle Royale">🎯 Battle Royale</div>
+                        <div class="chip" data-genre="Tactical FPS">🔫 Tactical FPS</div>
+                        <div class="chip" data-genre="Horror">👻 Horror</div>
+                        <div class="chip" data-genre="Platformer">🦘 Platformer</div>
+                        <div class="chip" data-genre="Sandbox">🏗️ Sandbox</div>
+                        <div class="chip" data-genre="Party Game">🎉 Party Game</div>
+                        <div class="chip" data-genre="Board Game">🎲 Board Game</div>
+                        <div class="chip" data-genre="Management">📊 Management</div>
+                        <div class="chip" data-genre="Life Sim">🏡 Life Sim</div>
+                        <div class="chip" data-genre="Social Deduction">🕵️ Social Deduction</div>
+                        <div class="chip" data-genre="Survival">⛺ Survival</div>
+                        <div class="chip" data-genre="Co-op Adventure">🤝 Co-op Adventure</div>
+                        <div class="chip" data-genre="Arcade">👾 Arcade</div>
+                        <div class="chip" data-genre="Farming Sim">🚜 Farming Sim</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Options Content (hidden by default) -->
+            <div class="advanced-content" id="advancedContent">
+                <div class="wizard-section" style="margin-top: 16px;">
+                    <div class="wizard-question" style="font-size: 1em;">
+                        Time of day
+                    </div>
+                    <div class="radio-group" id="timeOfDay">
+                        <div class="radio-option" data-value="MORNING">Morning</div>
+                        <div class="radio-option" data-value="MIDDAY">Midday</div>
+                        <div class="radio-option" data-value="AFTERNOON">Afternoon</div>
+                        <div class="radio-option" data-value="EVENING">Evening</div>
+                        <div class="radio-option" data-value="LATE_NIGHT">Late Night</div>
+                    </div>
+                </div>
+                <div class="wizard-section" style="margin-top: 16px;">
+                    <div class="wizard-question" style="font-size: 1em;">
+                        How do you want to play?
+                    </div>
+                    <div class="radio-group" id="socialPreference">
+                        <div class="radio-option" data-value="SOLO">Solo</div>
+                        <div class="radio-option" data-value="COOP">Co-op</div>
+                        <div class="radio-option" data-value="COMPETITIVE">Competitive</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Container (shown after recommendation) -->
+            <div class="results-container" id="resultsPanel">
                 <div class="placeholder">
                     <div class="icon">🎮</div>
                     <p>Select your preferences and click "Get Recommendation"</p>
                     <p style="margin-top: 10px; font-size: 0.9em;">We'll find the perfect game for your mood and time!</p>
                 </div>
             </div>
-        </div>
+
+        </div> <!-- End home-wizard -->
     </div>
 
     </div> <!-- End of home-page -->

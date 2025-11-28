@@ -162,14 +162,15 @@
 
 /* ============================================
    FLOATING TOGGLE BUTTONS
+   (Adjusted for bottom navigation)
    ============================================ */
 
 .palette-toggle {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
+    bottom: 100px; /* Above bottom nav (80px) + margin */
+    right: 20px;
+    width: 50px;
+    height: 50px;
     background: var(--bg-card);
     border: 2px solid var(--border-color);
     border-radius: 50%;
@@ -177,7 +178,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1.5em;
+    font-size: 1.3em;
     box-shadow: 0 4px 15px var(--shadow);
     transition: all 0.3s;
     z-index: 1000;
@@ -197,10 +198,10 @@
 
 .wizard-toggle {
     position: fixed;
-    bottom: 110px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
+    bottom: 160px; /* Above palette toggle */
+    right: 20px;
+    width: 50px;
+    height: 50px;
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     border: 2px solid transparent;
     border-radius: 50%;
@@ -208,7 +209,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1.5em;
+    font-size: 1.3em;
     box-shadow: 0 4px 15px var(--shadow);
     transition: all 0.3s;
     z-index: 1000;
