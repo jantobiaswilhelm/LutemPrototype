@@ -34,6 +34,7 @@ function displayResults(data, isDemo = false) {
                 <p style="margin-top: 10px; font-size: 0.9em;">Try adjusting your preferences</p>
             </div>
         `;
+        resultsPanel.classList.add('show');
         return;
     }
 
@@ -42,63 +43,129 @@ function displayResults(data, isDemo = false) {
     html += `</div>`;
     
     resultsPanel.innerHTML = html;
+    
+    // Show the results container with animation
+    resultsPanel.classList.add('show');
+    
+    // Scroll to results
+    setTimeout(() => {
+        resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
 }
 
 /**
- * Build HTML for the top recommendation card
+ * Build HTML for the top recommendation card - HERO CARD STYLE
  */
 function buildTopRecommendationHTML(data, isDemo) {
     const game = data.topRecommendation;
     const reason = data.reason || 'Great match for you';
     const matchPercentage = data.topMatchPercentage || 95;
+    const matchClass = getMatchClass(matchPercentage);
+    const matchColor = getMatchColor(matchPercentage);
     
     return `
         ${isDemo ? buildDemoModeBanner() : ''}
         <div class="results-content" style="animation: fadeIn 0.5s;">
-            <!-- TOP RECOMMENDATION -->
-            <div class="result-card top-pick game-card-clickable" onclick='openMaximizedGame(${JSON.stringify(game)}, ${JSON.stringify(reason)}, ${matchPercentage})'>
-                <div class="top-pick-badge">
-                    <span class="badge-icon">👑</span>
-                    <span class="badge-text">Top Pick</span>
+            
+            <!-- Results Header -->
+            <div class="results-header">
+                <div class="results-header-title">
+                    <span>✨</span> YOUR PERFECT MATCH <span>✨</span>
                 </div>
-                
-                <div class="game-image-container">
-                    <img src="${getGameImageUrl(game)}" 
-                         alt="${game.name}"
-                         class="game-image"
-                         loading="eager"
-                         onerror="this.onerror=null; this.src='${getFallbackImageUrl('No Image')}';">
-                    <div class="match-percentage">${matchPercentage}% Match</div>
-                </div>
-                
-                <div class="result-content">
-                    <div class="game-title-header">
-                        <h3 class="game-title">${game.name}</h3>
-                        <div class="game-actions">
-                            ${game.storeUrl ? `
-                                <button class="action-btn store-btn" 
-                                        onclick="event.stopPropagation(); window.open('${game.storeUrl}', '_blank')" 
-                                        title="View in ${game.storePlatform || 'store'}">
-                                    🛒
-                                </button>
+            </div>
+            
+            <!-- HERO GAME CARD -->
+            <div class="hero-game-card game-card-clickable" onclick='openMaximizedGame(${JSON.stringify(game)}, ${JSON.stringify(reason)}, ${matchPercentage})'>
+                <div class="hero-game-layout">
+                    <!-- Game Image -->
+                    <div class="hero-game-image-container">
+                        <img src="${getGameImageUrl(game)}" 
+                             alt="${game.name}"
+                             class="hero-game-image"
+                             loading="eager"
+                             onerror="this.onerror=null; this.src='${getFallbackImageUrl('No Image')}';">
+                    </div>
+                    
+                    <!-- Game Content -->
+                    <div class="hero-game-content">
+                        <!-- Header with Title and Match -->
+                        <div class="hero-game-header">
+                            <div>
+                                <h2 class="hero-game-title">${game.name}</h2>
+                                <p class="hero-game-genre">${game.genre || 'Game'}</p>
+                            </div>
+                            <div class="hero-match-badge ${matchClass}">
+                                <span>${matchPercentage}% Match</span>
+                                <div class="hero-match-bar">
+                                    <div class="hero-match-fill" style="width: ${matchPercentage}%; background: ${matchColor};"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Meta Chips -->
+                        <div class="hero-meta-chips">
+                            ${game.userRating > 0 ? `
+                            <div class="hero-meta-chip rating-chip">
+                                <span class="chip-icon">⭐</span>
+                                <span>${game.userRating.toFixed(1)}</span>
+                            </div>
                             ` : ''}
-                            <button class="action-btn favorite" 
-                                    onclick="event.stopPropagation(); toggleFavorite(this, ${game.id})" 
-                                    title="Add to favorites">
-                                ♡
+                            <div class="hero-meta-chip">
+                                <span class="chip-icon">⏱️</span>
+                                <span>${game.minMinutes}-${game.maxMinutes} min</span>
+                            </div>
+                            <div class="hero-meta-chip">
+                                <span class="chip-icon">⚡</span>
+                                <span>${getEnergyLabel(game.energyRequired)}</span>
+                            </div>
+                            <div class="hero-meta-chip">
+                                <span class="chip-icon">⏸️</span>
+                                <span>${getInterruptibilityLabel(game.interruptibility)}</span>
+                            </div>
+                            ${game.moodTags && game.moodTags.length > 0 ? `
+                            <div class="hero-meta-chip">
+                                <span class="chip-icon">😊</span>
+                                <span>${getMoodLabel(game.moodTags[0])}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        
+                        <!-- Why This Game -->
+                        <div class="hero-reason-section">
+                            <div class="hero-reason-title">
+                                <span>💡</span> Why this game?
+                            </div>
+                            <p class="hero-reason-text">${reason}</p>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="hero-actions">
+                            ${game.storeUrl ? `
+                                <button class="hero-action-btn primary" onclick="event.stopPropagation(); window.open('${game.storeUrl}', '_blank')">
+                                    <span>▶️</span> Start Playing
+                                </button>
+                            ` : `
+                                <button class="hero-action-btn primary" onclick="event.stopPropagation(); alert('Game launch coming soon!')">
+                                    <span>▶️</span> Start Playing
+                                </button>
+                            `}
+                            <button class="hero-action-btn secondary" onclick="event.stopPropagation(); getAnotherRecommendation()">
+                                <span>🔄</span> Try Another
                             </button>
                         </div>
+                        
+                        <!-- Inline Rating -->
+                        <div class="hero-rating-section">
+                            <span class="hero-rating-label">Rate this pick:</span>
+                            <div class="hero-rating-buttons">
+                                ${[1,2,3,4,5].map(score => `
+                                    <button class="hero-rating-btn" data-score="${score}" onclick="event.stopPropagation(); submitHeroFeedback(this, ${game.id}, ${score}, ${data.sessionId || 'null'})">
+                                        ${score}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
                     </div>
-                    <p class="game-genre">${game.genre || 'Game'}</p>
-                    <p class="game-description">${game.description || ''}</p>
-                    
-                    ${buildGameMetaHTML(game)}
-                    
-                    <div class="match-reason">
-                        <strong>Why this works:</strong> ${reason}
-                    </div>
-                    
-                    ${buildFeedbackSectionHTML(game.id, data.sessionId)}
                 </div>
             </div>
     `;
@@ -114,6 +181,81 @@ function buildDemoModeBanner() {
             <span style="font-size: 1.2em;">✨</span> <strong>Demo Mode</strong> — Running without backend. Feedback saved locally.
             <a href="https://github.com/jantobiaswilhelm/LutemPrototype" target="_blank" style="color: white; margin-left: 10px; text-decoration: underline;">View on GitHub</a>
         </div>
+    `;
+}
+
+/**
+ * Get match percentage CSS class
+ */
+function getMatchClass(percentage) {
+    if (percentage >= 90) return 'excellent';
+    if (percentage >= 70) return 'good';
+    return 'okay';
+}
+
+/**
+ * Get match percentage color
+ */
+function getMatchColor(percentage) {
+    if (percentage >= 90) return 'var(--mood-achieve)';  // Green
+    if (percentage >= 70) return 'var(--mood-engage)';   // Orange
+    return 'var(--mood-challenge)';                       // Red
+}
+
+/**
+ * Get mood label from enum value
+ */
+function getMoodLabel(mood) {
+    const labels = {
+        'UNWIND': 'Unwind',
+        'RECHARGE': 'Recharge',
+        'ENGAGE': 'Engage',
+        'CHALLENGE': 'Challenge',
+        'EXPLORE': 'Explore',
+        'PROGRESS_ORIENTED': 'Progress'
+    };
+    return labels[mood] || mood;
+}
+
+/**
+ * Get another recommendation (re-submit form)
+ */
+function getAnotherRecommendation() {
+    // Scroll back to wizard and trigger submit
+    const wizard = document.querySelector('.home-wizard');
+    if (wizard) {
+        wizard.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Trigger the form submission after a brief delay
+    setTimeout(() => {
+        const submitBtn = document.querySelector('.wizard-submit');
+        if (submitBtn && !submitBtn.disabled) {
+            submitBtn.click();
+        }
+    }, 500);
+}
+
+/**
+ * Submit feedback from hero rating buttons
+ */
+async function submitHeroFeedback(button, gameId, score, sessionId = null) {
+    // Prevent double-submission
+    const ratingSection = button.closest('.hero-rating-section');
+    const buttons = ratingSection.querySelectorAll('.hero-rating-btn');
+    
+    // Mark selected
+    buttons.forEach(btn => btn.classList.remove('selected'));
+    button.classList.add('selected');
+    
+    // Submit the feedback
+    await submitFeedback({ target: button, stopPropagation: () => {} }, gameId, score, sessionId);
+    
+    // Update UI to show success
+    ratingSection.innerHTML = `
+        <span style="color: var(--mood-achieve); font-weight: 600; display: flex; align-items: center; gap: 8px;">
+            <span>✅</span> Thanks for rating ${score}/5!
+        </span>
     `;
 }
 
@@ -179,7 +321,7 @@ function buildFeedbackSectionHTML(gameId, sessionId) {
 }
 
 /**
- * Build alternatives section HTML
+ * Build alternatives section HTML - CAROUSEL STYLE
  */
 function buildAlternativesHTML(data) {
     if (!data.alternatives || data.alternatives.length === 0) {
@@ -188,20 +330,29 @@ function buildAlternativesHTML(data) {
     
     let html = `
         <div class="alternatives-section">
-            <h3 class="alternatives-title">Also Consider</h3>
-            <div class="alternatives-grid">
+            <div class="alternatives-header">
+                <h3 class="alternatives-title">Other great options for you:</h3>
+            </div>
+            <div class="alternatives-carousel">
     `;
 
     data.alternatives.forEach((game, index) => {
         const matchPercentage = data.alternativeMatchPercentages && data.alternativeMatchPercentages[index] 
             ? data.alternativeMatchPercentages[index] 
             : 85 - (index * 5);
-        const reason = data.alternativeReasons[index] || 'Great alternative';
+        const reason = data.alternativeReasons && data.alternativeReasons[index] 
+            ? data.alternativeReasons[index] 
+            : 'Great alternative';
         
-        html += buildAlternativeCardHTML(game, reason, matchPercentage);
+        html += buildAltCardHTML(game, reason, matchPercentage);
     });
 
     html += `
+            </div>
+            <div class="back-to-preferences">
+                <button class="back-to-preferences-btn" onclick="scrollToWizard()">
+                    <span>↑</span> Change your preferences
+                </button>
             </div>
         </div>
     `;
@@ -209,52 +360,38 @@ function buildAlternativesHTML(data) {
     return html;
 }
 
-
 /**
- * Build single alternative card HTML
+ * Build single alternative card HTML - CAROUSEL CARD STYLE
  */
-function buildAlternativeCardHTML(game, reason, matchPercentage) {
-    const fallbackUrl = `data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22140%22%3E%3Crect fill=%22%23764ba2%22 width=%22300%22 height=%22140%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2216%22 fill=%22white%22%3E🎮 ${encodeURIComponent(game.name)}%3C/text%3E%3C/svg%3E`;
+function buildAltCardHTML(game, reason, matchPercentage) {
+    const matchClass = getMatchClass(matchPercentage);
+    const fallbackUrl = getFallbackImageUrl(game.name, 200, 110);
     
     return `
-        <div class="alternative-card alternative-card-clickable" onclick='openMaximizedGame(${JSON.stringify(game)}, ${JSON.stringify(reason)}, ${matchPercentage})'>
-            <div style="position: relative;">
-                <img src="${game.imageUrl || fallbackUrl}" 
-                     alt="${game.name}"
-                     class="alternative-image"
-                     loading="lazy"
-                     onerror="this.onerror=null; this.src='${fallbackUrl}';">
-                <div class="match-percentage" style="position: absolute; bottom: 10px; left: 10px; font-size: 0.85em;">${matchPercentage}% Match</div>
-            </div>
-            <div class="alternative-content">
-                <div class="game-title-header" style="margin-bottom: 5px;">
-                    <h4 style="margin: 0;">${game.name}</h4>
-                    <div class="game-actions">
-                        ${game.storeUrl ? `
-                            <button class="action-btn store-btn" style="width: 32px; height: 32px; font-size: 1em;"
-                                    onclick="event.stopPropagation(); window.open('${game.storeUrl}', '_blank')" 
-                                    title="View in ${game.storePlatform || 'store'}">
-                                🛒
-                            </button>
-                        ` : ''}
-                        <button class="action-btn favorite" style="width: 32px; height: 32px; font-size: 1em;"
-                                onclick="event.stopPropagation(); toggleFavorite(this, ${game.id})" 
-                                title="Add to favorites">
-                            ♡
-                        </button>
-                    </div>
-                </div>
-                <p class="alternative-genre">${game.genre || 'Game'}</p>
-                <p class="alternative-reason">${reason}</p>
-                <div class="alternative-meta">
-                    <span>⏱️ ${game.minMinutes}-${game.maxMinutes}min</span>
-                    <span>⚡ ${getEnergyLabel(game.energyRequired)}</span>
-                    ${game.userRating > 0 ? `<span>⭐ ${game.userRating.toFixed(1)}</span>` : ''}
-                </div>
+        <div class="alt-card" onclick='openMaximizedGame(${JSON.stringify(game)}, ${JSON.stringify(reason)}, ${matchPercentage})'>
+            <img src="${game.imageUrl || fallbackUrl}" 
+                 alt="${game.name}"
+                 class="alt-card-image"
+                 loading="lazy"
+                 onerror="this.onerror=null; this.src='${fallbackUrl}';">
+            <div class="alt-card-content">
+                <div class="alt-card-title">${game.name}</div>
+                <span class="alt-card-match ${matchClass}">${matchPercentage}%</span>
             </div>
         </div>
     `;
 }
+
+/**
+ * Scroll to wizard section
+ */
+function scrollToWizard() {
+    const wizard = document.querySelector('.home-wizard');
+    if (wizard) {
+        wizard.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
 
 // ============================================
 // FEEDBACK FUNCTIONS

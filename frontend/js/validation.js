@@ -22,33 +22,51 @@ function validateForm() {
     });
 
     // 1. Validate Emotional Goals
-    const goalsGroup = document.querySelector('#emotionalGoals').closest('.input-group');
-    if (state.selectedGoals.length === 0) {
-        isValid = false;
-        errors.push('Please select at least one emotional goal');
-        markFieldAsError(goalsGroup, '⚠️ Pick what you want to feel');
-    } else if (validationEnabled) {
-        markFieldAsValid(goalsGroup, '✓ Got it!');
+    const goalsElement = document.querySelector('#emotionalGoals');
+    const goalsGroup = goalsElement ? goalsElement.closest('.input-group') : null;
+    
+    if (goalsGroup) {
+        if (state.selectedGoals.length === 0) {
+            isValid = false;
+            errors.push('Please select at least one emotional goal');
+            markFieldAsError(goalsGroup, '⚠️ Pick what you want to feel');
+        } else if (validationEnabled) {
+            markFieldAsValid(goalsGroup, '✓ Got it!');
+        }
+    } else {
+        console.warn('Validation: #emotionalGoals element or parent .input-group not found');
     }
 
     // 2. Validate Energy Level
-    const energyGroup = document.querySelector('#energyLevel').closest('.input-group');
-    if (!state.energyLevel) {
-        isValid = false;
-        errors.push('Please select your energy level');
-        markFieldAsError(energyGroup, '⚠️ How are you feeling?');
-    } else if (validationEnabled) {
-        markFieldAsValid(energyGroup, '✓ Perfect!');
+    const energyElement = document.querySelector('#energyLevel');
+    const energyGroup = energyElement ? energyElement.closest('.input-group') : null;
+    
+    if (energyGroup) {
+        if (!state.energyLevel) {
+            isValid = false;
+            errors.push('Please select your energy level');
+            markFieldAsError(energyGroup, '⚠️ How are you feeling?');
+        } else if (validationEnabled) {
+            markFieldAsValid(energyGroup, '✓ Perfect!');
+        }
+    } else {
+        console.warn('Validation: #energyLevel element or parent .input-group not found');
     }
 
     // 3. Validate Interruptibility
-    const interruptibilityGroup = document.querySelector('#interruptibility').closest('.input-group');
-    if (!state.interruptibility) {
-        isValid = false;
-        errors.push('Please select if you can pause anytime');
-        markFieldAsError(interruptibilityGroup, '⚠️ Can you pause anytime?');
-    } else if (validationEnabled) {
-        markFieldAsValid(interruptibilityGroup, '✓ Good to know!');
+    const interruptElement = document.querySelector('#interruptibility');
+    const interruptibilityGroup = interruptElement ? interruptElement.closest('.input-group') : null;
+    
+    if (interruptibilityGroup) {
+        if (!state.interruptibility) {
+            isValid = false;
+            errors.push('Please select if you can pause anytime');
+            markFieldAsError(interruptibilityGroup, '⚠️ Can you pause anytime?');
+        } else if (validationEnabled) {
+            markFieldAsValid(interruptibilityGroup, '✓ Good to know!');
+        }
+    } else {
+        console.warn('Validation: #interruptibility element or parent .input-group not found');
     }
 
     // If validation fails on first submit, enable live validation
@@ -71,6 +89,11 @@ function validateForm() {
  * @param {string} message - Error message to display
  */
 function markFieldAsError(groupElement, message) {
+    if (!groupElement) {
+        console.warn('markFieldAsError: groupElement is null');
+        return;
+    }
+    
     groupElement.classList.add('error', 'shake');
     groupElement.classList.remove('valid');
     
@@ -86,6 +109,11 @@ function markFieldAsError(groupElement, message) {
  * @param {string} message - Success message to display
  */
 function markFieldAsValid(groupElement, message) {
+    if (!groupElement) {
+        console.warn('markFieldAsValid: groupElement is null');
+        return;
+    }
+    
     groupElement.classList.add('valid');
     groupElement.classList.remove('error');
     
