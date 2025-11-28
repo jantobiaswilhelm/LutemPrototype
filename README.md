@@ -111,6 +111,7 @@ User Input → 8-Factor Scoring → Ranked Results → Feedback Loop
 **Last Updated:** November 2025
 
 ### Recent Completions
+- ✅ **Frontend modularization** - Split 5,706-line monolith into 20+ files (81% reduction)
 - ✅ Expanded game library to 57 titles (MOBAs, Fighting, JRPGs, Quick-session games)
 - ✅ Professional branding with Lutem logo
 - ✅ 8 theme combinations (4 palettes × 2 modes)
@@ -129,8 +130,38 @@ User Input → 8-Factor Scoring → Ranked Results → Feedback Loop
 ## Tech Stack
 
 - **Backend:** Spring Boot 3.2, Java 17, SQLite
-- **Frontend:** Vanilla HTML/CSS/JS (no framework)
+- **Frontend:** Vanilla HTML/CSS/JS (modular architecture)
 - **Build:** Maven (wrapper included)
+
+### Project Structure
+
+```
+LutemPrototype/
+├── backend/                    # Spring Boot application
+│   ├── src/main/java/         # Java source code
+│   ├── src/main/resources/    # Config & seed data
+│   └── pom.xml                # Maven config
+├── frontend/                   # Web application
+│   ├── index.html             # Main HTML (1,078 lines)
+│   ├── css/                   # Modular stylesheets
+│   │   ├── variables.css      # CSS custom properties
+│   │   ├── themes.css         # Theme definitions
+│   │   ├── base.css           # Reset & typography
+│   │   ├── components.css     # UI components
+│   │   ├── layout.css         # Layout utilities
+│   │   └── pages/             # Page-specific styles
+│   ├── js/                    # JavaScript modules
+│   │   ├── main.js            # Entry point
+│   │   ├── api.js             # Backend communication
+│   │   ├── recommendation.js  # Game recommendations
+│   │   ├── calendar.js        # Calendar functionality
+│   │   └── ...                # 10+ focused modules
+│   └── demo-mode.js           # GitHub Pages support
+├── docs/                       # Documentation
+├── start-backend.bat          # Backend launcher
+├── start-frontend.bat         # Frontend launcher
+└── start-lutem.bat            # Full app launcher
+```
 
 ---
 

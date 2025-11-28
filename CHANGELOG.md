@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [0.5.0] - 2025-11-28 (Frontend Modularization Complete)
 
-### Added - Frontend Refactoring (Nov 27, 2025)
+### Added - Frontend Refactoring
 - **Complete Frontend Modularization**
   - Split monolithic index.html (5,706 lines) into modular structure
   - index.html now contains only 1,078 lines of pure HTML (81% reduction)
@@ -39,9 +39,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `js/main.js` - Main initialization (56 lines)
 
 ### Changed
+- **Project Structure** - Frontend app now in `frontend/` folder, `docs/` contains only documentation
 - Improved code organization with clear separation of concerns
 - Scripts load in dependency order for proper initialization
 - Easier debugging with focused, single-purpose modules
+- Updated bat files to point to new frontend location
 
 ### Known Issues
 - Calendar not displaying on Calendar tab ([#1](docs/calendar-known-issues.md#1))
@@ -323,6 +325,8 @@ See [docs/calendar-known-issues.md](docs/calendar-known-issues.md) for detailed 
 
 ## Version History
 
+- **[0.5.0]** - Frontend modularization complete (81% reduction) - 2025-11-28
+- **[0.4.0]** - Theme system & calendar enhancement - 2025-11-23
 - **[0.3.0]** - Calendar integration (backend complete, frontend partial) - 2025-11-23
 - **[0.2.0]** - Combined theme selector & progressive display - 2025-11-23
 - **[0.1.5]** - Genre preferences with soft ranking - 2025-11-23
