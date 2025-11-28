@@ -162,14 +162,15 @@
 
 /* ============================================
    FLOATING TOGGLE BUTTONS
+   (Adjusted for bottom navigation)
    ============================================ */
 
 .palette-toggle {
     position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
+    bottom: 100px; /* Above bottom nav (80px) + margin */
+    right: 20px;
+    width: 56px;
+    height: 56px;
     background: var(--bg-card);
     border: 2px solid var(--border-color);
     border-radius: 50%;
@@ -177,7 +178,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1.5em;
+    font-size: 1.6em;
     box-shadow: 0 4px 15px var(--shadow);
     transition: all 0.3s;
     z-index: 1000;
@@ -196,19 +197,20 @@
 }
 
 .wizard-toggle {
+    /* DEPRECATED: Wizard is now inline, toggle button hidden */
+    display: none;
     position: fixed;
-    bottom: 110px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
+    bottom: 160px; /* Above palette toggle */
+    right: 20px;
+    width: 50px;
+    height: 50px;
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     border: 2px solid transparent;
     border-radius: 50%;
-    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1.5em;
+    font-size: 1.3em;
     box-shadow: 0 4px 15px var(--shadow);
     transition: all 0.3s;
     z-index: 1000;
@@ -1836,4 +1838,71 @@
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+
+/* ============================================
+   VALIDATION STYLES
+   ============================================ */
+
+.wizard-section.error,
+.input-group.error {
+    border: 2px solid #e74c3c !important;
+    border-radius: 16px;
+    padding: 15px;
+    background: rgba(231, 76, 60, 0.05);
+    margin-bottom: 20px;
+}
+
+.wizard-section.valid,
+.input-group.valid {
+    border: 2px solid #27ae60 !important;
+    border-radius: 16px;
+    padding: 15px;
+    background: rgba(39, 174, 96, 0.05);
+    margin-bottom: 20px;
+}
+
+.validation-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 0.95em;
+    font-weight: 600;
+    animation: slideDown 0.3s ease-out;
+}
+
+.validation-message.error {
+    color: #e74c3c;
+}
+
+.validation-message.success {
+    color: #27ae60;
+}
+
+.validation-icon {
+    font-size: 1.2em;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.wizard-section.error.shake,
+.input-group.error.shake {
+    animation: shake 0.5s;
 }

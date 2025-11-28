@@ -1,82 +1,109 @@
 /* ============================================
    LAYOUT.CSS - Navigation, Grid, Responsive
    Phase 2 of Frontend Refactoring
+   Updated: Home Redesign - Bottom Navigation
    ============================================ */
 
 /* ============================================
-   TAB NAVIGATION
+   BOTTOM TAB NAVIGATION (Mobile-App Style)
    ============================================ */
 .tab-navigation {
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
+    top: auto; /* Override any top value */
     background: var(--bg-card);
-    border-bottom: 2px solid var(--border-color);
+    border-top: 2px solid var(--border-color);
+    border-bottom: none;
     z-index: 900;
-    box-shadow: 0 2px 10px var(--shadow);
-    padding: 20px 30px;
+    box-shadow: 0 -2px 10px var(--shadow);
+    padding: 8px 16px;
+    /* Safe area for mobile devices with home indicators */
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
 }
 
 .tab-container {
-    max-width: 800px;
+    max-width: 600px;
     margin: 0 auto;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 15px;
+    justify-content: space-around;
+    gap: 8px;
 }
 
+/* Logo removed from nav - will be in page header instead */
 .tab-logo {
-    font-size: 1.8em;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    display: none;
 }
 
 .tabs {
     display: flex;
-    gap: 15px;
-    justify-content: center;
+    gap: 8px;
+    justify-content: space-around;
+    width: 100%;
 }
 
 .tab-button {
-    padding: 14px 32px;
-    background: var(--bg-secondary);
-    border: 2px solid var(--border-color);
+    padding: 8px 16px;
+    background: transparent;
+    border: none;
     border-radius: 12px;
     cursor: pointer;
     color: var(--text-secondary);
-    font-size: 1.05em;
+    font-size: 0.85em;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 2px 8px var(--shadow);
-    min-width: 140px;
+    gap: 4px;
+    box-shadow: none;
+    min-width: 70px;
     justify-content: center;
 }
 
 .tab-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px var(--shadow-hover);
-    border-color: var(--accent-primary);
-    background: var(--bg-card);
+    transform: none;
+    box-shadow: none;
+    background: var(--bg-secondary);
+    color: var(--accent-primary);
 }
 
 .tab-button.active {
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-    color: var(--text-header);
-    border-color: var(--accent-primary);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px var(--shadow-hover);
+    background: var(--bg-secondary);
+    color: var(--accent-primary);
+    border: none;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Active indicator dot */
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+}
+
+.tab-button {
+    position: relative;
 }
 
 .tab-icon {
     font-size: 1.4em;
+}
+
+/* Tab label styling */
+.tab-button span:not(.tab-icon) {
+    font-size: 0.75em;
+    line-height: 1;
 }
 
 /* ============================================
@@ -84,7 +111,9 @@
    ============================================ */
 .page-content {
     display: none;
-    margin-top: 140px; /* Space for fixed nav */
+    margin-top: 0;
+    margin-bottom: 80px; /* Space for fixed bottom nav */
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .page-content.active {
@@ -92,7 +121,7 @@
 }
 
 /* ============================================
-   MAIN CONTENT GRID
+   MAIN CONTENT GRID (Legacy - to be updated)
    ============================================ */
 .main-content {
     display: grid;
@@ -118,43 +147,1337 @@
 }
 
 /* ============================================
+   NEW: PAGE HEADER COMPONENT
+   For Lutem logo + tagline on home page
+   ============================================ */
+.page-header {
+    text-align: center;
+    padding: 32px 24px 24px;
+}
+
+.page-header-logo {
+    font-size: 2.2em;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.page-header-tagline {
+    color: var(--text-secondary);
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+/* ============================================
    RESPONSIVE STYLES
    ============================================ */
 @media (max-width: 768px) {
     .tab-navigation {
-        padding: 15px 15px;
+        padding: 6px 8px;
+        padding-bottom: max(6px, env(safe-area-inset-bottom));
     }
 
     .tab-container {
-        gap: 12px;
-    }
-
-    .tab-logo {
-        font-size: 1.5em;
+        gap: 4px;
     }
 
     .tabs {
-        flex-direction: row;
-        gap: 10px;
-        width: 100%;
+        gap: 4px;
     }
 
     .tab-button {
-        padding: 12px 20px;
-        font-size: 0.95em;
-        min-width: auto;
-        flex: 1;
+        padding: 8px 12px;
+        font-size: 0.8em;
+        min-width: 60px;
     }
 
+    .tab-icon {
+        font-size: 1.3em;
+    }
+
+    /* Show labels on mobile for bottom nav */
     .tab-button span:not(.tab-icon) {
-        display: none;
+        display: block;
+        font-size: 0.7em;
     }
 
     .page-content {
-        margin-top: 130px;
+        margin-bottom: 70px;
     }
     
     .main-content {
         grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        padding: 24px 16px 16px;
+    }
+
+    .page-header-logo {
+        font-size: 1.8em;
+    }
+
+    .page-header-tagline {
+        font-size: 1em;
+    }
+}
+
+/* Very small screens - icons only */
+@media (max-width: 360px) {
+    .tab-button span:not(.tab-icon) {
+        display: none;
+    }
+
+    .tab-button {
+        min-width: 50px;
+        padding: 10px 8px;
+    }
+}
+
+/* Desktop - larger screens */
+@media (min-width: 1024px) {
+    .tab-button {
+        padding: 10px 20px;
+        min-width: 90px;
+    }
+
+    .tab-icon {
+        font-size: 1.5em;
+    }
+}
+
+
+/* ============================================
+   NEW: HOME WIZARD LAYOUT
+   Single-column, centered wizard flow
+   ============================================ */
+.home-wizard {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px 32px;
+}
+
+.wizard-section {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow);
+    margin-bottom: 24px;
+}
+
+.wizard-question {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.wizard-question-sub {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin-top: 4px;
+}
+
+/* Energy Cards Grid */
+.energy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.energy-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.energy-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    transition: all 0.3s ease;
+    opacity: 0.15;
+    z-index: 0;
+}
+
+.energy-card:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* Energy Card - Low Energy Selected */
+.energy-card[data-value="LOW"].selected {
+    border-color: var(--energy-low);
+    background: linear-gradient(135deg, var(--energy-low), color-mix(in srgb, var(--energy-low) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--energy-low) 40%, transparent);
+}
+
+.energy-card[data-value="LOW"].selected::before {
+    background: var(--energy-low);
+    height: 33%;
+    opacity: 0.3;
+}
+
+/* Energy Card - Medium Energy Selected */
+.energy-card[data-value="MEDIUM"].selected {
+    border-color: var(--energy-medium);
+    background: linear-gradient(135deg, var(--energy-medium), color-mix(in srgb, var(--energy-medium) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--energy-medium) 40%, transparent);
+}
+
+.energy-card[data-value="MEDIUM"].selected::before {
+    background: var(--energy-medium);
+    height: 66%;
+    opacity: 0.3;
+}
+
+/* Energy Card - High Energy Selected */
+.energy-card[data-value="HIGH"].selected {
+    border-color: var(--energy-high);
+    background: linear-gradient(135deg, var(--energy-high), color-mix(in srgb, var(--energy-high) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--energy-high) 40%, transparent);
+}
+
+.energy-card[data-value="HIGH"].selected::before {
+    background: var(--energy-high);
+    height: 100%;
+    opacity: 0.3;
+}
+
+.energy-card-icon {
+    font-size: 2em;
+    position: relative;
+    z-index: 1;
+}
+
+/* Battery Fill Indicator */
+.energy-card-battery {
+    width: 28px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-radius: 4px;
+    position: relative;
+    background: var(--bg-card);
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+
+.energy-card-battery::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px 2px 0 0;
+    transition: background 0.3s ease;
+}
+
+.battery-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--text-light);
+    transition: all 0.3s ease;
+    border-radius: 1px;
+}
+
+/* Battery colors based on energy level */
+.energy-card[data-value="LOW"] .battery-fill {
+    background: var(--energy-low);
+}
+
+.energy-card[data-value="MEDIUM"] .battery-fill {
+    background: var(--energy-medium);
+}
+
+.energy-card[data-value="HIGH"] .battery-fill {
+    background: var(--energy-high);
+}
+
+/* Selected state - battery becomes white */
+.energy-card.selected .energy-card-battery {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.energy-card.selected .energy-card-battery::before {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.energy-card.selected .battery-fill {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.energy-card-label {
+    font-weight: 700;
+    font-size: 1em;
+    position: relative;
+    z-index: 1;
+}
+
+/* Time Section */
+.time-section {
+    text-align: center;
+}
+
+.time-value-display {
+    font-size: 2.2em;
+    font-weight: 800;
+    color: var(--accent-primary);
+    background: var(--bg-secondary);
+    padding: 14px 36px;
+    border-radius: 14px;
+    display: inline-block;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px var(--shadow);
+    min-width: 120px;
+}
+
+/* Time Slider - Enhanced */
+.time-section .discrete-slider {
+    width: 100%;
+    height: 10px;
+    border-radius: 6px;
+    background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.time-section .discrete-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--shadow-hover);
+    border: 3px solid var(--accent-primary);
+    transition: all 0.2s ease;
+}
+
+.time-section .discrete-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px var(--shadow-hover);
+}
+
+.time-section .discrete-slider::-moz-range-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--shadow-hover);
+    border: 3px solid var(--accent-primary);
+    transition: all 0.2s ease;
+}
+
+.time-section .discrete-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+
+/* Time Labels (tick marks) */
+.time-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    padding: 0 4px;
+    position: relative;
+}
+
+.time-labels span {
+    text-align: center;
+    min-width: 35px;
+    font-weight: 500;
+}
+
+/* Tick marks container */
+.time-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0 20px;
+}
+
+.time-tick {
+    width: 2px;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 1px;
+}
+
+/* Mood Grid - Enhanced Touch Targets */
+.mood-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.mood-chip {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-size: 0.95em;
+    font-weight: 600;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mood-chip:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px var(--shadow);
+}
+
+/* Mood Chip - Unwind Selected */
+.mood-chip[data-value="UNWIND"] {
+    border-color: color-mix(in srgb, var(--mood-unwind) 50%, var(--border-color));
+}
+.mood-chip[data-value="UNWIND"].selected {
+    background: var(--mood-unwind);
+    border-color: var(--mood-unwind);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-unwind) 40%, transparent);
+}
+
+/* Mood Chip - Progress Selected */
+.mood-chip[data-value="PROGRESS_ORIENTED"] {
+    border-color: color-mix(in srgb, var(--mood-achieve) 50%, var(--border-color));
+}
+.mood-chip[data-value="PROGRESS_ORIENTED"].selected {
+    background: var(--mood-achieve);
+    border-color: var(--mood-achieve);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-achieve) 40%, transparent);
+}
+
+/* Mood Chip - Focus/Locking In Selected */
+.mood-chip[data-value="LOCKING_IN"] {
+    border-color: color-mix(in srgb, var(--mood-engage) 50%, var(--border-color));
+}
+.mood-chip[data-value="LOCKING_IN"].selected {
+    background: var(--mood-engage);
+    border-color: var(--mood-engage);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-engage) 40%, transparent);
+}
+
+/* Mood Chip - Adventure Selected */
+.mood-chip[data-value="ADVENTURE_TIME"] {
+    border-color: color-mix(in srgb, var(--mood-explore) 50%, var(--border-color));
+}
+.mood-chip[data-value="ADVENTURE_TIME"].selected {
+    background: var(--mood-explore);
+    border-color: var(--mood-explore);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-explore) 40%, transparent);
+}
+
+/* Mood Chip - Challenge Selected */
+.mood-chip[data-value="CHALLENGE"] {
+    border-color: color-mix(in srgb, var(--mood-challenge) 50%, var(--border-color));
+}
+.mood-chip[data-value="CHALLENGE"].selected {
+    background: var(--mood-challenge);
+    border-color: var(--mood-challenge);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-challenge) 40%, transparent);
+}
+
+/* Mood Chip - Recharge Selected */
+.mood-chip[data-value="RECHARGE"] {
+    border-color: color-mix(in srgb, var(--mood-recharge) 50%, var(--border-color));
+}
+.mood-chip[data-value="RECHARGE"].selected {
+    background: var(--mood-recharge);
+    border-color: var(--mood-recharge);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-recharge) 40%, transparent);
+}
+
+/* Interruptibility Grid - Enhanced */
+.interrupt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.interrupt-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    padding: 22px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.interrupt-card:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* Interruptibility - High (Flexible) Selected */
+.interrupt-card[data-value="HIGH"] {
+    border-color: color-mix(in srgb, var(--interrupt-high) 50%, var(--border-color));
+}
+.interrupt-card[data-value="HIGH"].selected {
+    border-color: var(--interrupt-high);
+    background: linear-gradient(135deg, var(--interrupt-high), color-mix(in srgb, var(--interrupt-high) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--interrupt-high) 40%, transparent);
+}
+
+/* Interruptibility - Medium Selected */
+.interrupt-card[data-value="MEDIUM"] {
+    border-color: color-mix(in srgb, var(--interrupt-medium) 50%, var(--border-color));
+}
+.interrupt-card[data-value="MEDIUM"].selected {
+    border-color: var(--interrupt-medium);
+    background: linear-gradient(135deg, var(--interrupt-medium), color-mix(in srgb, var(--interrupt-medium) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--interrupt-medium) 40%, transparent);
+}
+
+/* Interruptibility - Low (Locked In) Selected */
+.interrupt-card[data-value="LOW"] {
+    border-color: color-mix(in srgb, var(--interrupt-low) 50%, var(--border-color));
+}
+.interrupt-card[data-value="LOW"].selected {
+    border-color: var(--interrupt-low);
+    background: linear-gradient(135deg, var(--interrupt-low), color-mix(in srgb, var(--interrupt-low) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--interrupt-low) 40%, transparent);
+}
+
+.interrupt-card-icon {
+    font-size: 1.8em;
+}
+
+.interrupt-card-label {
+    font-weight: 700;
+    font-size: 1em;
+}
+
+.interrupt-card-sub {
+    font-size: 0.85em;
+    opacity: 0.85;
+}
+
+/* Wizard Submit Button - Enhanced */
+.wizard-submit {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: var(--text-header);
+    border: none;
+    padding: 20px 36px;
+    border-radius: 16px;
+    font-size: 1.2em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 18px var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.wizard-submit:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px var(--shadow-hover);
+}
+
+.wizard-submit:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+/* Pulse animation when ready */
+.wizard-submit.ready {
+    animation: wizardPulse 2s ease-in-out infinite;
+}
+
+@keyframes wizardPulse {
+    0%, 100% {
+        box-shadow: 0 4px 18px var(--shadow);
+    }
+    50% {
+        box-shadow: 0 4px 30px var(--shadow-hover), 0 0 20px color-mix(in srgb, var(--accent-primary) 30%, transparent);
+    }
+}
+
+/* Disabled state */
+.wizard-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: none;
+}
+
+/* Loading state */
+.wizard-submit.loading {
+    pointer-events: none;
+    animation: none;
+}
+
+.wizard-submit.loading::after {
+    content: '';
+    width: 22px;
+    height: 22px;
+    border: 3px solid transparent;
+    border-top-color: var(--text-header);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 8px;
+}
+
+/* Advanced Options Section */
+.advanced-section {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Results Container */
+.results-container {
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow);
+    padding: 32px 24px;
+    margin-top: 32px;
+    display: none;
+}
+
+.results-container.show {
+    display: block;
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hero Result Header */
+.results-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.results-header-title {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--accent-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* ============================================
+   HERO GAME CARD (Primary Recommendation)
+   ============================================ */
+.hero-game-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px var(--shadow);
+    border: 2px solid var(--accent-primary);
+    position: relative;
+}
+
+.hero-game-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 400px) 1fr;
+    gap: 0;
+}
+
+@media (max-width: 900px) {
+    .hero-game-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.hero-game-image-container {
+    position: relative;
+    min-height: 250px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(139,107,183,0.1));
+}
+
+.hero-game-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 250px;
+    transition: transform 0.4s ease;
+}
+
+.hero-game-card:hover .hero-game-image {
+    transform: scale(1.03);
+}
+
+.hero-game-content {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.hero-game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.hero-game-title {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.hero-game-genre {
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    font-weight: 600;
+    margin-top: 6px;
+}
+
+/* Match Percentage Badge - Color coded */
+.hero-match-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+.hero-match-badge.excellent {
+    background: linear-gradient(135deg, rgba(136, 184, 138, 0.2), rgba(136, 184, 138, 0.1));
+    color: var(--mood-achieve);
+    border: 2px solid var(--mood-achieve);
+}
+
+.hero-match-badge.good {
+    background: linear-gradient(135deg, rgba(232, 168, 104, 0.2), rgba(232, 168, 104, 0.1));
+    color: var(--mood-engage);
+    border: 2px solid var(--mood-engage);
+}
+
+.hero-match-badge.okay {
+    background: linear-gradient(135deg, rgba(212, 123, 120, 0.2), rgba(212, 123, 120, 0.1));
+    color: var(--mood-challenge);
+    border: 2px solid var(--mood-challenge);
+}
+
+.hero-match-bar {
+    width: 80px;
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.hero-match-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+/* Meta Chips Grid */
+.hero-meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.hero-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--input-bg);
+    border-radius: 10px;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.hero-meta-chip .chip-icon {
+    font-size: 1.1em;
+}
+
+.hero-meta-chip.rating-chip {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.15));
+    color: #f5a623;
+    font-weight: 700;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+/* Why This Game Section */
+.hero-reason-section {
+    background: var(--input-bg);
+    border-left: 4px solid var(--accent-primary);
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin-top: 8px;
+}
+
+.hero-reason-title {
+    font-weight: 700;
+    color: var(--accent-primary);
+    font-size: 0.95em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hero-reason-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+/* Action Buttons */
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.hero-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    flex: 1;
+}
+
+.hero-action-btn.primary {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white;
+}
+
+.hero-action-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-hover);
+}
+
+.hero-action-btn.secondary {
+    background: var(--input-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.hero-action-btn.secondary:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* Rating Section - Prominent Style */
+.hero-rating-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px;
+    margin-top: 16px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(139,107,183,0.08));
+    border-radius: 16px;
+    border: 2px solid var(--border-color);
+}
+
+.hero-rating-label {
+    font-size: 1em;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.hero-rating-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.hero-rating-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-card);
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-rating-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    transform: scale(1.1);
+    background: var(--input-bg);
+}
+
+.hero-rating-btn.selected {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-color: var(--accent-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* ============================================
+   ALTERNATIVES CAROUSEL
+   ============================================ */
+.alternatives-section {
+    margin-top: 32px;
+}
+
+.alternatives-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.alternatives-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.alternatives-carousel {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.alternatives-carousel::-webkit-scrollbar {
+    height: 6px;
+}
+
+.alternatives-carousel::-webkit-scrollbar-track {
+    background: var(--input-bg);
+    border-radius: 3px;
+}
+
+.alternatives-carousel::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.alternatives-carousel::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+}
+
+.alt-card {
+    flex: 0 0 200px;
+    scroll-snap-align: start;
+    background: var(--bg-card);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.alt-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px var(--shadow);
+}
+
+.alt-card-image {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(139,107,183,0.1));
+}
+
+.alt-card-content {
+    padding: 12px;
+}
+
+.alt-card-title {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.alt-card-match {
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.alt-card-match.excellent {
+    background: rgba(136, 184, 138, 0.15);
+    color: var(--mood-achieve);
+}
+
+.alt-card-match.good {
+    background: rgba(232, 168, 104, 0.15);
+    color: var(--mood-engage);
+}
+
+.alt-card-match.okay {
+    background: rgba(212, 123, 120, 0.15);
+    color: var(--mood-challenge);
+}
+
+/* Back to Preferences Link */
+.back-to-preferences {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.back-to-preferences-btn {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.back-to-preferences-btn:hover {
+    color: var(--accent-primary);
+    background: var(--input-bg);
+}
+
+/* ============================================
+   HOME WIZARD RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .home-wizard {
+        padding: 0 16px 24px;
+    }
+
+    .wizard-section {
+        padding: 20px 16px;
+    }
+
+    .energy-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .energy-card {
+        padding: 18px 10px;
+        min-height: 95px;
+    }
+
+    .energy-card-icon {
+        font-size: 1.6em;
+    }
+
+    .energy-card-label {
+        font-size: 0.9em;
+    }
+
+    .mood-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .mood-chip {
+        padding: 14px 12px;
+        font-size: 0.9em;
+        min-height: 44px;
+    }
+
+    .interrupt-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .interrupt-card {
+        padding: 18px 10px;
+        min-height: 90px;
+    }
+
+    .interrupt-card-icon {
+        font-size: 1.5em;
+    }
+
+    .interrupt-card-label {
+        font-size: 0.9em;
+    }
+
+    .time-value-display {
+        font-size: 1.8em;
+        padding: 12px 28px;
+    }
+
+    .time-section .discrete-slider::-webkit-slider-thumb {
+        width: 40px;
+        height: 40px;
+    }
+
+    .time-section .discrete-slider::-moz-range-thumb {
+        width: 40px;
+        height: 40px;
+    }
+
+    .wizard-submit {
+        padding: 18px 28px;
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .energy-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .energy-card {
+        padding: 16px 8px;
+        min-height: 85px;
+    }
+
+    .energy-card-icon {
+        font-size: 1.4em;
+    }
+
+    .mood-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .mood-chip {
+        padding: 12px 10px;
+        min-height: 44px;
+    }
+
+    .interrupt-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .interrupt-card {
+        padding: 14px 8px;
+        min-height: 80px;
+    }
+
+    .time-section .discrete-slider::-webkit-slider-thumb {
+        width: 36px;
+        height: 36px;
+    }
+
+    .time-section .discrete-slider::-moz-range-thumb {
+        width: 36px;
+        height: 36px;
+    }
+
+    .wizard-submit {
+        padding: 16px 24px;
+        font-size: 1em;
+    }
+}
+
+
+/* ============================================
+   HERO CARD & RESULTS RESPONSIVE
+   ============================================ */
+@media (max-width: 900px) {
+    .hero-game-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-game-image-container {
+        max-height: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .results-container {
+        padding: 20px 16px;
+        margin-top: 24px;
+    }
+    
+    .hero-game-content {
+        padding: 20px;
+    }
+    
+    .hero-game-title {
+        font-size: 1.5em;
+    }
+    
+    .hero-game-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .hero-match-badge {
+        align-self: flex-start;
+        font-size: 1em;
+        padding: 10px 14px;
+    }
+    
+    .hero-meta-chips {
+        gap: 8px;
+    }
+    
+    .hero-meta-chip {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+    }
+    
+    .hero-action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .hero-rating-section {
+        padding: 16px 20px;
+    }
+    
+    .hero-rating-buttons {
+        width: 100%;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .hero-rating-btn {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .alternatives-carousel {
+        gap: 12px;
+    }
+    
+    .alt-card {
+        flex: 0 0 160px;
+    }
+    
+    .alt-card-image {
+        height: 90px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-game-content {
+        padding: 16px;
+    }
+    
+    .hero-game-title {
+        font-size: 1.3em;
+    }
+    
+    .hero-reason-section {
+        padding: 12px 14px;
+    }
+    
+    .hero-action-btn {
+        padding: 12px 20px;
+        font-size: 0.95em;
+    }
+    
+    .alt-card {
+        flex: 0 0 140px;
+    }
+    
+    .alt-card-content {
+        padding: 10px;
+    }
+    
+    .alt-card-title {
+        font-size: 0.9em;
     }
 }

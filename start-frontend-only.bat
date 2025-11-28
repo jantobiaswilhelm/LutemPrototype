@@ -7,5 +7,5 @@ echo.
 echo Frontend opened in browser!
 echo Backend must be started manually in IntelliJ
 echo.
-echo See: docs\CLAUDE_INSTRUCTIONS.md for details
+echo See: docs\development\CLAUDE_INSTRUCTIONS.md for details
 pause

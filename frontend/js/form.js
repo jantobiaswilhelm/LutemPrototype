@@ -1,7 +1,33 @@
 /**
  * Lutem - Form Module
  * Handles main form interactions: sliders, chips, toggles
+ * Updated for new wizard-style layout
  */
+
+/**
+ * Check if the wizard form is ready to submit
+ * @returns {boolean} - True if all required fields are filled
+ */
+function isWizardReady() {
+    return state.energyLevel && 
+           state.interruptibility && 
+           state.selectedGoals.length > 0;
+}
+
+/**
+ * Update the wizard submit button state
+ * Adds pulse animation when ready, removes when not
+ */
+function updateWizardButtonState() {
+    const submitBtn = document.getElementById('recommendBtn');
+    if (!submitBtn) return;
+    
+    if (isWizardReady()) {
+        submitBtn.classList.add('ready');
+    } else {
+        submitBtn.classList.remove('ready');
+    }
+}
 
 /**
  * Update time display text based on slider index
@@ -9,11 +35,13 @@
  */
 function updateTimeDisplay(index) {
     const timeDisplay = document.getElementById('timeDisplay');
-    timeDisplay.textContent = TIME_LABELS[index];
+    // Display shorter format for the wizard layout
+    const shortLabels = ['5 min', '15 min', '30 min', '45 min', '1 hr', '2 hr', '3 hr', '3+ hr'];
+    timeDisplay.textContent = shortLabels[index] || TIME_LABELS[index];
 }
 
 /**
- * Setup radio button group behavior
+ * Setup radio button group behavior (legacy, for advanced options)
  * @param {string} groupId - ID of the radio group container
  * @param {string} stateKey - State property to update
  */
@@ -36,26 +64,74 @@ function setupRadioGroup(groupId, stateKey) {
 }
 
 /**
- * Initialize main form functionality
+ * Setup card-style selection (single select)
+ * Used for energy cards, interrupt cards
+ * @param {string} groupId - ID of the card group container
+ * @param {string} cardClass - Class name of the card elements
+ * @param {string} stateKey - State property to update
  */
-function initForm() {
-    // Emotional Goals (multi-select chips)
-    document.querySelectorAll('#emotionalGoals .chip').forEach(chip => {
+function setupCardGroup(groupId, cardClass, stateKey) {
+    document.querySelectorAll(`#${groupId} .${cardClass}`).forEach(card => {
+        card.addEventListener('click', () => {
+            // Deselect all
+            document.querySelectorAll(`#${groupId} .${cardClass}`).forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            // Select this one
+            card.classList.add('selected');
+            state[stateKey] = card.getAttribute('data-value');
+            
+            // Trigger validation if enabled
+            triggerValidationIfEnabled();
+            
+            // Update wizard button state
+            updateWizardButtonState();
+        });
+    });
+}
+
+/**
+ * Setup chip-style selection (multi-select)
+ * @param {string} groupId - ID of the chip group container
+ * @param {string} chipClass - Class name of the chip elements
+ * @param {string} stateKey - State array property to update
+ * @param {string} dataAttr - Data attribute name (default: 'value')
+ */
+function setupChipGroup(groupId, chipClass, stateKey, dataAttr = 'value') {
+    document.querySelectorAll(`#${groupId} .${chipClass}`).forEach(chip => {
         chip.addEventListener('click', () => {
-            const value = chip.getAttribute('data-value');
+            const value = chip.getAttribute(`data-${dataAttr}`);
             
             if (chip.classList.contains('selected')) {
                 chip.classList.remove('selected');
-                state.selectedGoals = state.selectedGoals.filter(g => g !== value);
+                state[stateKey] = state[stateKey].filter(v => v !== value);
             } else {
                 chip.classList.add('selected');
-                state.selectedGoals.push(value);
+                state[stateKey].push(value);
             }
             
             // Trigger validation if enabled
             triggerValidationIfEnabled();
+            
+            // Update wizard button state
+            updateWizardButtonState();
         });
     });
+}
+
+/**
+ * Initialize main form functionality
+ */
+function initForm() {
+    // Energy Level Cards (single select)
+    setupCardGroup('energyLevel', 'energy-card', 'energyLevel');
+    
+    // Interruptibility Cards (single select)
+    setupCardGroup('interruptibility', 'interrupt-card', 'interruptibility');
+    
+    // Mood Chips - Emotional Goals (multi-select)
+    setupChipGroup('emotionalGoals', 'mood-chip', 'selectedGoals', 'value');
 
     // Time Slider
     const timeSlider = document.getElementById('timeSlider');
@@ -71,9 +147,7 @@ function initForm() {
         }
     });
 
-    // Setup radio groups
-    setupRadioGroup('energyLevel', 'energyLevel');
-    setupRadioGroup('interruptibility', 'interruptibility');
+    // Legacy radio groups for advanced options
     setupRadioGroup('timeOfDay', 'timeOfDay');
     setupRadioGroup('socialPreference', 'socialPreference');
 

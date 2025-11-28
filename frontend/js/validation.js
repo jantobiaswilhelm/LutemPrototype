@@ -14,8 +14,8 @@ function validateForm() {
     let isValid = true;
     const errors = [];
 
-    // Clear previous validation states
-    document.querySelectorAll('.input-group').forEach(group => {
+    // Clear previous validation states (check both old and new class names)
+    document.querySelectorAll('.input-group, .wizard-section').forEach(group => {
         group.classList.remove('error', 'valid', 'shake');
         const existingMessage = group.querySelector('.validation-message');
         if (existingMessage) existingMessage.remove();
@@ -23,7 +23,7 @@ function validateForm() {
 
     // 1. Validate Emotional Goals
     const goalsElement = document.querySelector('#emotionalGoals');
-    const goalsGroup = goalsElement ? goalsElement.closest('.input-group') : null;
+    const goalsGroup = goalsElement ? (goalsElement.closest('.wizard-section') || goalsElement.closest('.input-group')) : null;
     
     if (goalsGroup) {
         if (state.selectedGoals.length === 0) {
@@ -34,12 +34,12 @@ function validateForm() {
             markFieldAsValid(goalsGroup, '✓ Got it!');
         }
     } else {
-        console.warn('Validation: #emotionalGoals element or parent .input-group not found');
+        console.warn('Validation: #emotionalGoals element or parent section not found');
     }
 
     // 2. Validate Energy Level
     const energyElement = document.querySelector('#energyLevel');
-    const energyGroup = energyElement ? energyElement.closest('.input-group') : null;
+    const energyGroup = energyElement ? (energyElement.closest('.wizard-section') || energyElement.closest('.input-group')) : null;
     
     if (energyGroup) {
         if (!state.energyLevel) {
@@ -50,12 +50,12 @@ function validateForm() {
             markFieldAsValid(energyGroup, '✓ Perfect!');
         }
     } else {
-        console.warn('Validation: #energyLevel element or parent .input-group not found');
+        console.warn('Validation: #energyLevel element or parent section not found');
     }
 
     // 3. Validate Interruptibility
     const interruptElement = document.querySelector('#interruptibility');
-    const interruptibilityGroup = interruptElement ? interruptElement.closest('.input-group') : null;
+    const interruptibilityGroup = interruptElement ? (interruptElement.closest('.wizard-section') || interruptElement.closest('.input-group')) : null;
     
     if (interruptibilityGroup) {
         if (!state.interruptibility) {
@@ -66,7 +66,7 @@ function validateForm() {
             markFieldAsValid(interruptibilityGroup, '✓ Good to know!');
         }
     } else {
-        console.warn('Validation: #interruptibility element or parent .input-group not found');
+        console.warn('Validation: #interruptibility element or parent section not found');
     }
 
     // If validation fails on first submit, enable live validation
@@ -74,7 +74,7 @@ function validateForm() {
         validationEnabled = true;
         
         // Scroll to first error
-        const firstError = document.querySelector('.input-group.error');
+        const firstError = document.querySelector('.wizard-section.error, .input-group.error');
         if (firstError) {
             firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -96,11 +96,6 @@ function markFieldAsError(groupElement, message) {
     
     groupElement.classList.add('error', 'shake');
     groupElement.classList.remove('valid');
-    
-    const messageEl = document.createElement('div');
-    messageEl.className = 'validation-message error';
-    messageEl.innerHTML = `<span class="validation-icon">⚠️</span><span>${message}</span>`;
-    groupElement.appendChild(messageEl);
 }
 
 /**
@@ -116,11 +111,6 @@ function markFieldAsValid(groupElement, message) {
     
     groupElement.classList.add('valid');
     groupElement.classList.remove('error');
-    
-    const messageEl = document.createElement('div');
-    messageEl.className = 'validation-message success';
-    messageEl.innerHTML = `<span class="validation-icon">✓</span><span>${message}</span>`;
-    groupElement.appendChild(messageEl);
 }
 
 /**
