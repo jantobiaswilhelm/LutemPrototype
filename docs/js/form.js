@@ -5,6 +5,31 @@
  */
 
 /**
+ * Check if the wizard form is ready to submit
+ * @returns {boolean} - True if all required fields are filled
+ */
+function isWizardReady() {
+    return state.energyLevel && 
+           state.interruptibility && 
+           state.selectedGoals.length > 0;
+}
+
+/**
+ * Update the wizard submit button state
+ * Adds pulse animation when ready, removes when not
+ */
+function updateWizardButtonState() {
+    const submitBtn = document.getElementById('recommendBtn');
+    if (!submitBtn) return;
+    
+    if (isWizardReady()) {
+        submitBtn.classList.add('ready');
+    } else {
+        submitBtn.classList.remove('ready');
+    }
+}
+
+/**
  * Update time display text based on slider index
  * @param {number} index - Slider position index
  */
@@ -59,6 +84,9 @@ function setupCardGroup(groupId, cardClass, stateKey) {
             
             // Trigger validation if enabled
             triggerValidationIfEnabled();
+            
+            // Update wizard button state
+            updateWizardButtonState();
         });
     });
 }
@@ -85,6 +113,9 @@ function setupChipGroup(groupId, chipClass, stateKey, dataAttr = 'value') {
             
             // Trigger validation if enabled
             triggerValidationIfEnabled();
+            
+            // Update wizard button state
+            updateWizardButtonState();
         });
     });
 }

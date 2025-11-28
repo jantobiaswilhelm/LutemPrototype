@@ -44,6 +44,16 @@
     --mood-challenge: #d47b78;
     --mood-recharge: #6eb5b8;
     
+    /* Energy Level Colors (NEW) */
+    --energy-low: #7db5d4;     /* Cool blue - calm */
+    --energy-medium: #e8a868;  /* Warm orange - balanced */
+    --energy-high: #d47b78;    /* Warm red - energetic */
+    
+    /* Interruptibility Colors (NEW) */
+    --interrupt-high: #88b88a;   /* Green - flexible */
+    --interrupt-medium: #e8a868; /* Orange - moderate */
+    --interrupt-low: #d47b78;    /* Red - locked in */
+    
     /* UI Elements */
     --input-bg: #f9f4ed;
     --input-border: #e8dfd5;
@@ -83,6 +93,16 @@
     --mood-challenge: #c46868;
     --mood-recharge: #60a0a4;
     
+    /* Energy Level Colors (dark mode) */
+    --energy-low: #6a9fc0;
+    --energy-medium: #d89048;
+    --energy-high: #c46868;
+    
+    /* Interruptibility Colors (dark mode) */
+    --interrupt-high: #70a272;
+    --interrupt-medium: #d89048;
+    --interrupt-low: #c46868;
+    
     /* UI Elements */
     --input-bg: #362b26;
     --input-border: #3a2f25;
@@ -119,6 +139,16 @@
     --mood-explore: #b885ba;
     --mood-challenge: #c87b88;
     --mood-recharge: #78b8b8;
+    
+    /* Energy Level Colors */
+    --energy-low: #8db8d4;
+    --energy-medium: #d4a578;
+    --energy-high: #c87b88;
+    
+    /* Interruptibility Colors */
+    --interrupt-high: #88b89a;
+    --interrupt-medium: #d4a578;
+    --interrupt-low: #c87b88;
     
     /* UI Elements */
     --input-bg: #f5f0fa;
@@ -157,6 +187,16 @@
     --mood-challenge: #c86878;
     --mood-recharge: #68a8a8;
     
+    /* Energy Level Colors (dark mode) */
+    --energy-low: #6a98c8;
+    --energy-medium: #c89558;
+    --energy-high: #c86878;
+    
+    /* Interruptibility Colors (dark mode) */
+    --interrupt-high: #68a878;
+    --interrupt-medium: #c89558;
+    --interrupt-low: #c86878;
+    
     /* UI Elements */
     --input-bg: #362b40;
     --input-border: #3a2f45;
@@ -193,6 +233,16 @@
     --mood-explore: #a888b8;
     --mood-challenge: #c88878;
     --mood-recharge: #78b8a8;
+    
+    /* Energy Level Colors */
+    --energy-low: #78b8c8;
+    --energy-medium: #c8a878;
+    --energy-high: #c88878;
+    
+    /* Interruptibility Colors */
+    --interrupt-high: #88b88a;
+    --interrupt-medium: #c8a878;
+    --interrupt-low: #c88878;
     
     /* UI Elements */
     --input-bg: #f0f5f0;
@@ -231,6 +281,16 @@
     --mood-challenge: #a86858;
     --mood-recharge: #589888;
     
+    /* Energy Level Colors (dark mode) */
+    --energy-low: #5898a8;
+    --energy-medium: #a88858;
+    --energy-high: #a86858;
+    
+    /* Interruptibility Colors (dark mode) */
+    --interrupt-high: #689868;
+    --interrupt-medium: #a88858;
+    --interrupt-low: #a86858;
+    
     /* UI Elements */
     --input-bg: #2f3a2f;
     --input-border: #2f3a2f;
@@ -268,6 +328,16 @@
     --mood-challenge: #ef7b7b;
     --mood-recharge: #4dd0e1;
     
+    /* Energy Level Colors */
+    --energy-low: #64b5f6;
+    --energy-medium: #ffa870;
+    --energy-high: #ef7b7b;
+    
+    /* Interruptibility Colors */
+    --interrupt-high: #66bb88;
+    --interrupt-medium: #ffa870;
+    --interrupt-low: #ef7b7b;
+    
     /* UI Elements */
     --input-bg: #ebf5fb;
     --input-border: #d4e8f5;
@@ -304,6 +374,16 @@
     --mood-explore: #7d5e98;
     --mood-challenge: #cf5b5b;
     --mood-recharge: #3db0c1;
+    
+    /* Energy Level Colors (dark mode) */
+    --energy-low: #4a95d6;
+    --energy-medium: #df8850;
+    --energy-high: #cf5b5b;
+    
+    /* Interruptibility Colors (dark mode) */
+    --interrupt-high: #4a9b68;
+    --interrupt-medium: #df8850;
+    --interrupt-low: #cf5b5b;
     
     /* UI Elements */
     --input-bg: #2a3543;

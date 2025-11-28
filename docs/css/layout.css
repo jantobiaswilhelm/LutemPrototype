@@ -295,36 +295,153 @@
     background: var(--bg-secondary);
     border: 2px solid var(--border-color);
     border-radius: 16px;
-    padding: 20px 16px;
+    padding: 24px 16px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 100px;
+    transition: all 0.25s ease;
+    min-height: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.energy-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    transition: all 0.3s ease;
+    opacity: 0.15;
+    z-index: 0;
 }
 
 .energy-card:hover {
     border-color: var(--accent-primary);
     background: var(--bg-card);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
 }
 
-.energy-card.selected {
-    border-color: var(--accent-primary);
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+/* Energy Card - Low Energy Selected */
+.energy-card[data-value="LOW"].selected {
+    border-color: var(--energy-low);
+    background: linear-gradient(135deg, var(--energy-low), color-mix(in srgb, var(--energy-low) 70%, #fff));
     color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--energy-low) 40%, transparent);
+}
+
+.energy-card[data-value="LOW"].selected::before {
+    background: var(--energy-low);
+    height: 33%;
+    opacity: 0.3;
+}
+
+/* Energy Card - Medium Energy Selected */
+.energy-card[data-value="MEDIUM"].selected {
+    border-color: var(--energy-medium);
+    background: linear-gradient(135deg, var(--energy-medium), color-mix(in srgb, var(--energy-medium) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--energy-medium) 40%, transparent);
+}
+
+.energy-card[data-value="MEDIUM"].selected::before {
+    background: var(--energy-medium);
+    height: 66%;
+    opacity: 0.3;
+}
+
+/* Energy Card - High Energy Selected */
+.energy-card[data-value="HIGH"].selected {
+    border-color: var(--energy-high);
+    background: linear-gradient(135deg, var(--energy-high), color-mix(in srgb, var(--energy-high) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--energy-high) 40%, transparent);
+}
+
+.energy-card[data-value="HIGH"].selected::before {
+    background: var(--energy-high);
+    height: 100%;
+    opacity: 0.3;
 }
 
 .energy-card-icon {
-    font-size: 1.8em;
+    font-size: 2em;
+    position: relative;
+    z-index: 1;
+}
+
+/* Battery Fill Indicator */
+.energy-card-battery {
+    width: 28px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-radius: 4px;
+    position: relative;
+    background: var(--bg-card);
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+
+.energy-card-battery::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px 2px 0 0;
+    transition: background 0.3s ease;
+}
+
+.battery-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--text-light);
+    transition: all 0.3s ease;
+    border-radius: 1px;
+}
+
+/* Battery colors based on energy level */
+.energy-card[data-value="LOW"] .battery-fill {
+    background: var(--energy-low);
+}
+
+.energy-card[data-value="MEDIUM"] .battery-fill {
+    background: var(--energy-medium);
+}
+
+.energy-card[data-value="HIGH"] .battery-fill {
+    background: var(--energy-high);
+}
+
+/* Selected state - battery becomes white */
+.energy-card.selected .energy-card-battery {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.energy-card.selected .energy-card-battery::before {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.energy-card.selected .battery-fill {
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .energy-card-label {
-    font-weight: 600;
-    font-size: 0.95em;
+    font-weight: 700;
+    font-size: 1em;
+    position: relative;
+    z-index: 1;
 }
 
 /* Time Section */
@@ -333,17 +450,95 @@
 }
 
 .time-value-display {
-    font-size: 2em;
+    font-size: 2.2em;
     font-weight: 800;
     color: var(--accent-primary);
     background: var(--bg-secondary);
-    padding: 12px 32px;
-    border-radius: 12px;
+    padding: 14px 36px;
+    border-radius: 14px;
     display: inline-block;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px var(--shadow);
+    min-width: 120px;
 }
 
-/* Mood Grid */
+/* Time Slider - Enhanced */
+.time-section .discrete-slider {
+    width: 100%;
+    height: 10px;
+    border-radius: 6px;
+    background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.time-section .discrete-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--shadow-hover);
+    border: 3px solid var(--accent-primary);
+    transition: all 0.2s ease;
+}
+
+.time-section .discrete-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px var(--shadow-hover);
+}
+
+.time-section .discrete-slider::-moz-range-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--shadow-hover);
+    border: 3px solid var(--accent-primary);
+    transition: all 0.2s ease;
+}
+
+.time-section .discrete-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+
+/* Time Labels (tick marks) */
+.time-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    padding: 0 4px;
+    position: relative;
+}
+
+.time-labels span {
+    text-align: center;
+    min-width: 35px;
+    font-weight: 500;
+}
+
+/* Tick marks container */
+.time-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0 20px;
+}
+
+.time-tick {
+    width: 2px;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 1px;
+}
+
+/* Mood Grid - Enhanced Touch Targets */
 .mood-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -353,27 +548,93 @@
 .mood-chip {
     background: var(--bg-secondary);
     border: 2px solid var(--border-color);
-    border-radius: 12px;
-    padding: 14px 12px;
+    border-radius: 14px;
+    padding: 16px 14px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 0.9em;
+    transition: all 0.25s ease;
+    font-size: 0.95em;
     font-weight: 600;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .mood-chip:hover {
     border-color: var(--accent-primary);
     background: var(--bg-card);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px var(--shadow);
 }
 
-.mood-chip.selected {
-    border-color: var(--accent-primary);
-    background: var(--accent-primary);
+/* Mood Chip - Unwind Selected */
+.mood-chip[data-value="UNWIND"] {
+    border-color: color-mix(in srgb, var(--mood-unwind) 50%, var(--border-color));
+}
+.mood-chip[data-value="UNWIND"].selected {
+    background: var(--mood-unwind);
+    border-color: var(--mood-unwind);
     color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-unwind) 40%, transparent);
 }
 
-/* Interruptibility Grid */
+/* Mood Chip - Progress Selected */
+.mood-chip[data-value="PROGRESS_ORIENTED"] {
+    border-color: color-mix(in srgb, var(--mood-achieve) 50%, var(--border-color));
+}
+.mood-chip[data-value="PROGRESS_ORIENTED"].selected {
+    background: var(--mood-achieve);
+    border-color: var(--mood-achieve);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-achieve) 40%, transparent);
+}
+
+/* Mood Chip - Focus/Locking In Selected */
+.mood-chip[data-value="LOCKING_IN"] {
+    border-color: color-mix(in srgb, var(--mood-engage) 50%, var(--border-color));
+}
+.mood-chip[data-value="LOCKING_IN"].selected {
+    background: var(--mood-engage);
+    border-color: var(--mood-engage);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-engage) 40%, transparent);
+}
+
+/* Mood Chip - Adventure Selected */
+.mood-chip[data-value="ADVENTURE_TIME"] {
+    border-color: color-mix(in srgb, var(--mood-explore) 50%, var(--border-color));
+}
+.mood-chip[data-value="ADVENTURE_TIME"].selected {
+    background: var(--mood-explore);
+    border-color: var(--mood-explore);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-explore) 40%, transparent);
+}
+
+/* Mood Chip - Challenge Selected */
+.mood-chip[data-value="CHALLENGE"] {
+    border-color: color-mix(in srgb, var(--mood-challenge) 50%, var(--border-color));
+}
+.mood-chip[data-value="CHALLENGE"].selected {
+    background: var(--mood-challenge);
+    border-color: var(--mood-challenge);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-challenge) 40%, transparent);
+}
+
+/* Mood Chip - Recharge Selected */
+.mood-chip[data-value="RECHARGE"] {
+    border-color: color-mix(in srgb, var(--mood-recharge) 50%, var(--border-color));
+}
+.mood-chip[data-value="RECHARGE"].selected {
+    background: var(--mood-recharge);
+    border-color: var(--mood-recharge);
+    color: var(--text-header);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--mood-recharge) 40%, transparent);
+}
+
+/* Interruptibility Grid - Enhanced */
 .interrupt-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -384,68 +645,140 @@
     background: var(--bg-secondary);
     border: 2px solid var(--border-color);
     border-radius: 16px;
-    padding: 20px 12px;
+    padding: 22px 14px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 90px;
+    transition: all 0.25s ease;
+    min-height: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .interrupt-card:hover {
     border-color: var(--accent-primary);
     background: var(--bg-card);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
 }
 
-.interrupt-card.selected {
-    border-color: var(--accent-primary);
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+/* Interruptibility - High (Flexible) Selected */
+.interrupt-card[data-value="HIGH"] {
+    border-color: color-mix(in srgb, var(--interrupt-high) 50%, var(--border-color));
+}
+.interrupt-card[data-value="HIGH"].selected {
+    border-color: var(--interrupt-high);
+    background: linear-gradient(135deg, var(--interrupt-high), color-mix(in srgb, var(--interrupt-high) 70%, #fff));
     color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--interrupt-high) 40%, transparent);
+}
+
+/* Interruptibility - Medium Selected */
+.interrupt-card[data-value="MEDIUM"] {
+    border-color: color-mix(in srgb, var(--interrupt-medium) 50%, var(--border-color));
+}
+.interrupt-card[data-value="MEDIUM"].selected {
+    border-color: var(--interrupt-medium);
+    background: linear-gradient(135deg, var(--interrupt-medium), color-mix(in srgb, var(--interrupt-medium) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--interrupt-medium) 40%, transparent);
+}
+
+/* Interruptibility - Low (Locked In) Selected */
+.interrupt-card[data-value="LOW"] {
+    border-color: color-mix(in srgb, var(--interrupt-low) 50%, var(--border-color));
+}
+.interrupt-card[data-value="LOW"].selected {
+    border-color: var(--interrupt-low);
+    background: linear-gradient(135deg, var(--interrupt-low), color-mix(in srgb, var(--interrupt-low) 70%, #fff));
+    color: var(--text-header);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--interrupt-low) 40%, transparent);
 }
 
 .interrupt-card-icon {
-    font-size: 1.6em;
+    font-size: 1.8em;
 }
 
 .interrupt-card-label {
     font-weight: 700;
-    font-size: 0.95em;
+    font-size: 1em;
 }
 
 .interrupt-card-sub {
-    font-size: 0.8em;
-    opacity: 0.8;
+    font-size: 0.85em;
+    opacity: 0.85;
 }
 
-/* Wizard Submit Button */
+/* Wizard Submit Button - Enhanced */
 .wizard-submit {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     color: var(--text-header);
     border: none;
-    padding: 18px 32px;
-    border-radius: 14px;
-    font-size: 1.15em;
+    padding: 20px 36px;
+    border-radius: 16px;
+    font-size: 1.2em;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px var(--shadow);
+    box-shadow: 0 4px 18px var(--shadow);
+    position: relative;
+    overflow: hidden;
 }
 
-.wizard-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--shadow-hover);
+.wizard-submit:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px var(--shadow-hover);
 }
 
-.wizard-submit:active {
-    transform: translateY(0);
+.wizard-submit:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+/* Pulse animation when ready */
+.wizard-submit.ready {
+    animation: wizardPulse 2s ease-in-out infinite;
+}
+
+@keyframes wizardPulse {
+    0%, 100% {
+        box-shadow: 0 4px 18px var(--shadow);
+    }
+    50% {
+        box-shadow: 0 4px 30px var(--shadow-hover), 0 0 20px color-mix(in srgb, var(--accent-primary) 30%, transparent);
+    }
+}
+
+/* Disabled state */
+.wizard-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    animation: none;
+}
+
+/* Loading state */
+.wizard-submit.loading {
+    pointer-events: none;
+    animation: none;
+}
+
+.wizard-submit.loading::after {
+    content: '';
+    width: 22px;
+    height: 22px;
+    border: 3px solid transparent;
+    border-top-color: var(--text-header);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 8px;
 }
 
 /* Advanced Options Section */
@@ -501,16 +834,16 @@
     }
 
     .energy-card {
-        padding: 16px 8px;
-        min-height: 85px;
+        padding: 18px 10px;
+        min-height: 95px;
     }
 
     .energy-card-icon {
-        font-size: 1.5em;
+        font-size: 1.6em;
     }
 
     .energy-card-label {
-        font-size: 0.85em;
+        font-size: 0.9em;
     }
 
     .mood-grid {
@@ -519,8 +852,9 @@
     }
 
     .mood-chip {
-        padding: 12px 10px;
-        font-size: 0.85em;
+        padding: 14px 12px;
+        font-size: 0.9em;
+        min-height: 44px;
     }
 
     .interrupt-grid {
@@ -529,26 +863,36 @@
     }
 
     .interrupt-card {
-        padding: 16px 8px;
-        min-height: 80px;
+        padding: 18px 10px;
+        min-height: 90px;
     }
 
     .interrupt-card-icon {
-        font-size: 1.4em;
+        font-size: 1.5em;
     }
 
     .interrupt-card-label {
-        font-size: 0.85em;
+        font-size: 0.9em;
     }
 
     .time-value-display {
-        font-size: 1.6em;
-        padding: 10px 24px;
+        font-size: 1.8em;
+        padding: 12px 28px;
+    }
+
+    .time-section .discrete-slider::-webkit-slider-thumb {
+        width: 40px;
+        height: 40px;
+    }
+
+    .time-section .discrete-slider::-moz-range-thumb {
+        width: 40px;
+        height: 40px;
     }
 
     .wizard-submit {
-        padding: 16px 24px;
-        font-size: 1.05em;
+        padding: 18px 28px;
+        font-size: 1.1em;
     }
 }
 
@@ -559,16 +903,46 @@
     }
 
     .energy-card {
-        padding: 14px 6px;
-        min-height: 75px;
+        padding: 16px 8px;
+        min-height: 85px;
+    }
+
+    .energy-card-icon {
+        font-size: 1.4em;
     }
 
     .mood-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .mood-chip {
+        padding: 12px 10px;
+        min-height: 44px;
     }
 
     .interrupt-grid {
         grid-template-columns: repeat(3, 1fr);
         gap: 8px;
+    }
+
+    .interrupt-card {
+        padding: 14px 8px;
+        min-height: 80px;
+    }
+
+    .time-section .discrete-slider::-webkit-slider-thumb {
+        width: 36px;
+        height: 36px;
+    }
+
+    .time-section .discrete-slider::-moz-range-thumb {
+        width: 36px;
+        height: 36px;
+    }
+
+    .wizard-submit {
+        padding: 16px 24px;
+        font-size: 1em;
     }
 }
