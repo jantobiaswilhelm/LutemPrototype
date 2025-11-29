@@ -1,6 +1,6 @@
 # Lutem Deployment Plan
 
-**Goal:** Deploy Lutem to `lutem.3lands.ch` with continuous deployment from `main` branch.
+**Goal:** Deploy Lutem to `lutem.3lands.ch` with manual deployment (auto-deploy disabled).
 
 **Status:** ✅ ALL PHASES COMPLETE | Full Production Deployment
 
