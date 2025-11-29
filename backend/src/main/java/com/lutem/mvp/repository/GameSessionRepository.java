@@ -1,6 +1,7 @@
 package com.lutem.mvp.repository;
 
 import com.lutem.mvp.model.GameSession;
+import com.lutem.mvp.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,8 +13,11 @@ import java.util.List;
 @Repository
 public interface GameSessionRepository extends JpaRepository<GameSession, Long> {
     
-    // Find sessions by user
-    List<GameSession> findByUserId(String userId);
+    // Find sessions by legacy user id (IP or "anonymous")
+    List<GameSession> findByLegacyUserId(String legacyUserId);
+    
+    // Find sessions by User entity
+    List<GameSession> findByUser(User user);
     
     // Find sessions with feedback only
     List<GameSession> findBySatisfactionScoreIsNotNull();
@@ -32,13 +36,23 @@ public interface GameSessionRepository extends JpaRepository<GameSession, Long> 
            "WHERE s.game.id = :gameId AND s.satisfactionScore IS NOT NULL")
     Double getAverageSatisfactionForGame(@Param("gameId") Long gameId);
     
-    // Get recent sessions (for weekly recap)
+    // Get recent sessions by legacy user id (for weekly recap)
     @Query("SELECT s FROM GameSession s " +
-           "WHERE s.userId = :userId " +
+           "WHERE s.legacyUserId = :legacyUserId " +
            "AND s.recommendedAt >= :since " +
            "ORDER BY s.recommendedAt DESC")
     List<GameSession> getRecentSessions(
-        @Param("userId") String userId,
+        @Param("legacyUserId") String legacyUserId,
+        @Param("since") LocalDateTime since
+    );
+    
+    // Get recent sessions by User entity (for authenticated users)
+    @Query("SELECT s FROM GameSession s " +
+           "WHERE s.user = :user " +
+           "AND s.recommendedAt >= :since " +
+           "ORDER BY s.recommendedAt DESC")
+    List<GameSession> getRecentSessionsForUser(
+        @Param("user") User user,
         @Param("since") LocalDateTime since
     );
 }

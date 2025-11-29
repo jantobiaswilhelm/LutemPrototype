@@ -13,6 +13,17 @@ function initTabNavigation() {
 
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
+            // Check if this is a locked tab (requires auth)
+            const page = button.dataset.page;
+            if ((page === 'calendar' || page === 'profile') && 
+                window.authState && !window.authState.isAuthenticated) {
+                // Show auth modal instead of switching tab
+                if (typeof openAuthModal === 'function') {
+                    openAuthModal('signin');
+                }
+                return;
+            }
+            
             // Remove active class from all tabs and pages
             tabButtons.forEach(btn => btn.classList.remove('active'));
             pages.forEach(page => page.classList.remove('active'));

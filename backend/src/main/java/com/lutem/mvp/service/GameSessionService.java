@@ -53,11 +53,11 @@ public class GameSessionService {
     }
     
     /**
-     * Get recent sessions for a user (for weekly recap)
+     * Get recent sessions for a user by legacy userId (for weekly recap)
      */
-    public List<GameSession> getRecentSessions(String userId, int days) {
+    public List<GameSession> getRecentSessions(String legacyUserId, int days) {
         LocalDateTime since = LocalDateTime.now().minusDays(days);
-        return repository.getRecentSessions(userId, since);
+        return repository.getRecentSessions(legacyUserId, since);
     }
     
     /**

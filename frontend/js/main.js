@@ -5,8 +5,19 @@
 /**
  * Initialize all application components when DOM is ready
  */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('🎮 Lutem initializing...');
+    
+    // Initialize Firebase Authentication (async - don't block other init)
+    if (typeof initAuth === 'function') {
+        initAuth().then(() => {
+            console.log('✅ Firebase Auth initialized');
+        }).catch(err => {
+            console.error('❌ Firebase Auth failed:', err);
+        });
+    } else {
+        console.warn('⚠️ initAuth not found - auth disabled');
+    }
     
     // Initialize tab navigation
     if (typeof initTabNavigation === 'function') {

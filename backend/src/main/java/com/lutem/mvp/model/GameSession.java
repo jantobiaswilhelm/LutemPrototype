@@ -15,9 +15,14 @@ public class GameSession {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
     
-    // User tracking (can be IP address or "anonymous" for MVP)
+    // User reference (optional - null for anonymous users)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id_fk")
+    private User user;
+    
+    // Legacy user tracking (IP or "anonymous" for backward compatibility)
     @Column(name = "user_id")
-    private String userId;
+    private String legacyUserId;
     
     // Context when recommendation was made
     @Column(name = "available_minutes")
@@ -39,7 +44,7 @@ public class GameSession {
     // Constructors
     public GameSession() {
         this.recommendedAt = LocalDateTime.now();
-        this.userId = "anonymous"; // Default for MVP
+        this.legacyUserId = "anonymous"; // Default for anonymous users
     }
     
     public GameSession(Game game, Integer availableMinutes, String desiredMood) {
@@ -49,6 +54,12 @@ public class GameSession {
         this.desiredMood = desiredMood;
     }
     
+    public GameSession(Game game, Integer availableMinutes, String desiredMood, User user) {
+        this(game, availableMinutes, desiredMood);
+        this.user = user;
+        this.legacyUserId = user != null ? user.getFirebaseUid() : "anonymous";
+    }
+    
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -56,8 +67,17 @@ public class GameSession {
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }
     
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public User getUser() { return user; }
+    public void setUser(User user) { 
+        this.user = user;
+        if (user != null) {
+            this.legacyUserId = user.getFirebaseUid();
+        }
+    }
+    
+    // Legacy getter/setter for backward compatibility
+    public String getUserId() { return legacyUserId; }
+    public void setUserId(String userId) { this.legacyUserId = userId; }
     
     public Integer getAvailableMinutes() { return availableMinutes; }
     public void setAvailableMinutes(Integer availableMinutes) { 
