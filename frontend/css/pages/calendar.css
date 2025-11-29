@@ -16,18 +16,65 @@
 .fc-event {
     border: none !important;
     border-radius: 6px !important;
-    padding: 4px 8px !important;
     cursor: pointer !important;
 }
 
-.fc-event-game {
-    background: #7db5d4 !important;
-    color: white !important;
+/* Task events - themed with secondary color */
+.fc-event-task {
+    background-color: var(--bg-secondary) !important;
+    border: 2px solid var(--text-muted, #6c757d) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
 }
 
-.fc-event-task {
-    background: #6c757d !important;
-    color: white !important;
+/* Override FullCalendar inline styles for task events */
+.fc-event.fc-event-task {
+    background-color: var(--bg-secondary) !important;
+}
+
+.fc-event-task .fc-event-main {
+    padding: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.fc-event-task .fc-event-main-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+}
+
+.fc-event-task .fc-event-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.fc-event-task .fc-event-title {
+    font-weight: 600;
+    font-size: 0.85em;
+    color: var(--text-primary) !important;
+    text-align: center;
+}
+
+.fc-event-task .fc-event-title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.fc-event-task .fc-event-duration {
+    font-weight: 500;
+    font-size: 0.75em;
+    color: var(--text-secondary);
 }
 
 .fc-button-primary {
@@ -78,6 +125,72 @@
 }
 
 /* ============================================
+   GAME EVENT WITH BACKGROUND IMAGE
+   ============================================ */
+
+/* Game events - themed border, no padding */
+.fc-event-gaming {
+    border: 2px solid var(--accent-primary) !important;
+    background: transparent !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+.fc-event-gaming .fc-event-main {
+    padding: 0 !important;
+    height: 100% !important;
+}
+
+.fc-event-game {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fc-event-game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.fc-event-game-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4px;
+}
+
+.fc-event-game-title {
+    font-weight: 700;
+    font-size: 0.85em;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    line-height: 1.2;
+}
+
+.fc-event-game-duration {
+    font-weight: 500;
+    font-size: 0.75em;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* ============================================
    CALENDAR ANIMATIONS
    ============================================ */
 
@@ -116,5 +229,60 @@
     .fc-toolbar-chunk {
         display: flex;
         justify-content: center;
+    }
+}
+
+
+/* ============================================
+   CALENDAR HEADER BUTTONS (Bug #5 & #6)
+   ============================================ */
+
+.calendar-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+}
+
+.calendar-add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.calendar-add-btn:active {
+    transform: translateY(0);
+}
+
+.calendar-add-btn.gaming-btn {
+    background: var(--accent-primary);
+}
+
+.calendar-add-btn.gaming-btn:hover {
+    background: var(--accent-secondary);
+}
+
+.calendar-add-btn.task-btn {
+    background: #6c757d;
+}
+
+.calendar-add-btn.task-btn:hover {
+    background: #5a6268;
+}
+
+/* Responsive - stack buttons on mobile */
+@media (max-width: 600px) {
+    .calendar-add-btn span:last-child {
+        display: none;
+    }
+    
+    .calendar-add-btn {
+        padding: 10px 14px;
     }
 }

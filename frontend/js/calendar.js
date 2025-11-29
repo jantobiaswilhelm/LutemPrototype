@@ -53,12 +53,43 @@ function initCalendar() {
             updateEventTimes(info.event);
         },
         
-        // Custom event rendering
+        // Custom event rendering with game images
         eventContent: function(arg) {
+            const isGame = arg.event.extendedProps.type === 'GAME';
+            const imageUrl = arg.event.extendedProps.imageUrl;
+            
+            // Calculate duration
+            const start = arg.event.start;
+            const end = arg.event.end;
+            let durationText = '';
+            if (start && end) {
+                const mins = Math.round((end - start) / (1000 * 60));
+                if (mins >= 60) {
+                    const hours = Math.floor(mins / 60);
+                    const remainMins = mins % 60;
+                    durationText = remainMins > 0 ? `${hours}h ${remainMins}m` : `${hours}h`;
+                } else {
+                    durationText = `${mins}m`;
+                }
+            }
+            
+            if (isGame && imageUrl) {
+                return {
+                    html: `<div class="fc-event-game" style="background-image: url('${imageUrl}')">
+                        <div class="fc-event-game-overlay"></div>
+                        <div class="fc-event-game-content">
+                            <span class="fc-event-game-title">${arg.event.title}</span>
+                            <span class="fc-event-game-duration">(${durationText})</span>
+                        </div>
+                    </div>`
+                };
+            }
+            
             return {
                 html: `<div class="fc-event-main-frame">
                     <div class="fc-event-title-container">
                         <div class="fc-event-title fc-sticky">${arg.event.title}</div>
+                        ${durationText ? `<div class="fc-event-duration">(${durationText})</div>` : ''}
                     </div>
                 </div>`
             };
@@ -108,9 +139,9 @@ function setupCalendarRecommendationIntegration() {
             // If called from calendar, create calendar event after game selection
             if (selectedTimeSlot && typeof currentRecommendedGame !== 'undefined' && currentRecommendedGame) {
                 const gameEvent = {
-                    title: `🎮 ${currentRecommendedGame.name}`,
-                    start: selectedTimeSlot.start.toISOString(),
-                    end: selectedTimeSlot.end.toISOString(),
+                    title: `Gaming: ${currentRecommendedGame.name}`,
+                    startTime: selectedTimeSlot.start.toISOString(),
+                    endTime: selectedTimeSlot.end.toISOString(),
                     type: 'GAME',
                     gameId: currentRecommendedGame.id,
                     gameName: currentRecommendedGame.name
@@ -148,27 +179,44 @@ async function loadCalendarEvents() {
     if (!window.calendarInstance) return;
     
     try {
-        const response = await fetch(`${API_BASE_URL}/calendar/events`);
-        if (response.ok) {
-            const events = await response.json();
+        // Fetch events and games in parallel
+        const [eventsResponse, gamesResponse] = await Promise.all([
+            fetch(`${API_BASE_URL}/calendar/events`),
+            fetch(`${API_BASE_URL}/games`)
+        ]);
+        
+        if (eventsResponse.ok) {
+            const events = await eventsResponse.json();
+            const games = gamesResponse.ok ? await gamesResponse.json() : [];
+            
+            // Create a map of gameId -> imageUrl for quick lookup
+            const gameImageMap = {};
+            games.forEach(game => {
+                gameImageMap[game.id] = game.imageUrl;
+            });
             
             // Clear existing events
             window.calendarInstance.removeAllEvents();
             
-            // Add events with proper colors
+            // Add events with proper colors and images
             events.forEach(event => {
+                const imageUrl = event.gameId ? gameImageMap[event.gameId] : null;
+                const isGame = event.type === 'GAME';
+                
                 window.calendarInstance.addEvent({
                     id: event.id,
                     title: event.title,
-                    start: event.start,
-                    end: event.end,
-                    backgroundColor: event.type === 'GAME' ? '#7db5d4' : '#6c757d',
-                    borderColor: event.type === 'GAME' ? '#7db5d4' : '#6c757d',
+                    start: event.startTime,
+                    end: event.endTime,
+                    backgroundColor: isGame ? 'transparent' : '',
+                    borderColor: isGame ? 'var(--accent-primary)' : '',
+                    classNames: isGame ? ['fc-event-gaming'] : ['fc-event-task'],
                     extendedProps: {
                         type: event.type,
                         gameId: event.gameId,
                         gameName: event.gameName,
-                        description: event.description
+                        description: event.description,
+                        imageUrl: imageUrl
                     }
                 });
             });
@@ -239,8 +287,8 @@ async function updateEventTimes(event) {
     try {
         const updatedEvent = {
             title: event.title,
-            start: event.start.toISOString(),
-            end: event.end.toISOString(),
+            startTime: event.start.toISOString(),
+            endTime: event.end.toISOString(),
             type: event.extendedProps.type,
             gameId: event.extendedProps.gameId,
             gameName: event.extendedProps.gameName,
@@ -422,8 +470,11 @@ let allGamesForModal = [];
 
 /**
  * Open the enhanced Add Event Modal
+ * @param {Date} startTime - Optional start time
+ * @param {Date} endTime - Optional end time
+ * @param {string} defaultTab - Optional default tab ('task' or 'gaming')
  */
-function openAddEventModal(startTime = null, endTime = null) {
+function openAddEventModal(startTime = null, endTime = null, defaultTab = 'gaming') {
     const modal = document.getElementById('addEventModal');
     
     // Set default times if not provided
@@ -443,8 +494,8 @@ function openAddEventModal(startTime = null, endTime = null) {
     // Update duration display
     updateDurationDisplay();
     
-    // Reset to task tab
-    switchEventTab('task');
+    // Switch to the specified tab (default: gaming for Bug #4)
+    switchEventTab(defaultTab);
     
     // Clear any previous selections
     clearGameSelection();
@@ -457,9 +508,14 @@ function openAddEventModal(startTime = null, endTime = null) {
     // Show modal
     modal.style.display = 'flex';
     
-    // Focus on title field
+    // Focus on appropriate field based on tab
     setTimeout(() => {
-        document.getElementById('eventTaskTitle').focus();
+        if (defaultTab === 'task') {
+            document.getElementById('eventTaskTitle').focus();
+        } else {
+            const searchInput = document.getElementById('eventGameSearch');
+            if (searchInput) searchInput.focus();
+        }
     }, 100);
 }
 
@@ -491,8 +547,10 @@ function switchEventTab(type) {
     document.getElementById('gamingTabContent').style.display = type === 'gaming' ? 'block' : 'none';
     
     // Update save button text
-    const btnText = document.getElementById('saveEventBtnText');
-    btnText.textContent = type === 'task' ? '✓ Add Task' : '✓ Schedule Gaming';
+    const btnText = document.querySelector('#addEventModal .btn-save span');
+    if (btnText) {
+        btnText.textContent = type === 'task' ? 'Add Task' : 'Schedule Gaming';
+    }
 }
 
 /**
@@ -539,6 +597,7 @@ async function loadGamesForModal() {
 
 /**
  * Render the game list in the modal
+ * Bug #3 fix: Use imageUrl instead of coverImageUrl
  */
 function renderGameList(games) {
     const gameList = document.getElementById('eventGameList');
@@ -552,9 +611,10 @@ function renderGameList(games) {
         <div class="game-list-item ${selectedGame && selectedGame.id === game.id ? 'selected' : ''}" 
              onclick="selectGameForEvent(${game.id})"
              data-game-id="${game.id}">
-            <img src="${game.coverImageUrl || 'https://via.placeholder.com/40x40?text=?'}" 
-                 alt="${game.name}"
-                 onerror="this.src='https://via.placeholder.com/40x40?text=?'">
+            ${game.imageUrl 
+                ? `<img src="${game.imageUrl}" alt="${game.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="game-list-item-placeholder" style="display:none">🎮</div>`
+                : `<div class="game-list-item-placeholder">🎮</div>`
+            }
             <div class="game-list-item-info">
                 <div class="game-list-item-name">${game.name}</div>
                 <div class="game-list-item-duration">${game.minMinutes || '?'}-${game.maxMinutes || '?'} min</div>
@@ -576,6 +636,7 @@ function filterEventGames() {
 
 /**
  * Select a game for the gaming session
+ * Bug #3 fix: Use imageUrl instead of coverImageUrl
  */
 function selectGameForEvent(gameId) {
     selectedGame = allGamesForModal.find(g => g.id === gameId);
@@ -589,7 +650,13 @@ function selectGameForEvent(gameId) {
         // Show selected game display
         const display = document.getElementById('selectedGameDisplay');
         display.style.display = 'block';
-        document.getElementById('selectedGameCover').src = selectedGame.coverImageUrl || 'https://via.placeholder.com/36x36?text=?';
+        const coverImg = document.getElementById('selectedGameCover');
+        if (selectedGame.imageUrl) {
+            coverImg.src = selectedGame.imageUrl;
+            coverImg.style.display = 'block';
+        } else {
+            coverImg.style.display = 'none';
+        }
         document.getElementById('selectedGameName').textContent = selectedGame.name;
     }
 }
@@ -599,7 +666,10 @@ function selectGameForEvent(gameId) {
  */
 function clearGameSelection() {
     selectedGame = null;
-    document.getElementById('selectedGameDisplay').style.display = 'none';
+    const display = document.getElementById('selectedGameDisplay');
+    if (display) {
+        display.style.display = 'none';
+    }
     document.querySelectorAll('.game-list-item').forEach(item => {
         item.classList.remove('selected');
     });
@@ -661,8 +731,8 @@ async function saveCalendarEvent() {
         eventData = {
             title: title,
             description: document.getElementById('eventTaskDescription').value.trim(),
-            start: start.toISOString(),
-            end: end.toISOString(),
+            startTime: start.toISOString(),
+            endTime: end.toISOString(),
             type: 'TASK'
         };
     } else {
@@ -673,9 +743,9 @@ async function saveCalendarEvent() {
         }
         
         eventData = {
-            title: `🎮 ${selectedGame.name}`,
-            start: start.toISOString(),
-            end: end.toISOString(),
+            title: selectedGame.name,
+            startTime: start.toISOString(),
+            endTime: end.toISOString(),
             type: 'GAME',
             gameId: selectedGame.id,
             gameName: selectedGame.name
