@@ -2,7 +2,7 @@
 
 **Goal:** Deploy Lutem to `lutem.3lands.ch` with continuous deployment from `main` branch.
 
-**Status:** ✅ PHASES 1-3 COMPLETE | Frontend + Backend LIVE
+**Status:** ✅ ALL PHASES COMPLETE | Full Production Deployment
 
 ## Production URLs
 
@@ -11,7 +11,7 @@
 | **Frontend** | https://lutembeta.netlify.app | ✅ LIVE |
 | **Backend API** | https://lutemprototype-production.up.railway.app | ✅ LIVE |
 | **Games Endpoint** | https://lutemprototype-production.up.railway.app/games | ✅ 57 games |
-| **Custom Domain** | https://lutem.3lands.ch | ⬜ Phase 4 |
+| **Custom Domain** | https://lutem.3lands.ch | ✅ LIVE |
 
 ## Architecture
 
@@ -138,26 +138,16 @@ File: `backend/src/main/java/com/lutem/mvp/config/WebConfig.java`
 
 ---
 
-## Phase 4: Custom Domain Setup ⬜ NOT STARTED
+## Phase 4: Custom Domain Setup ✅ COMPLETE
 
-**Target URL:** https://lutem.3lands.ch
+**Completed:** 2025-11-29  
+**URL:** https://lutem.3lands.ch
 
-### Steps
-1. **Netlify:** Site settings → Domain management → Add custom domain
-2. **Enter:** `lutem.3lands.ch`
-3. **DNS:** Add CNAME record in 3lands.ch DNS settings
-   ```
-   Type: CNAME
-   Name: lutem
-   Value: lutembeta.netlify.app
-   TTL: 3600
-   ```
-4. **Wait:** DNS propagation (usually 15-30 min, up to 48h)
-5. **HTTPS:** Netlify auto-provisions SSL certificate
-
-### Post-Setup
-- CORS already configured for `lutem.3lands.ch` ✅
-- No backend changes needed
+### What Was Done
+- Added custom domain in Netlify site settings
+- Configured DNS CNAME record at 3lands.ch
+- SSL certificate auto-provisioned by Netlify
+- CORS already configured in backend
 
 ---
 

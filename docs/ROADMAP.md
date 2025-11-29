@@ -1,7 +1,7 @@
 # LUTEM MVP - Project Roadmap
 
 **Last Updated:** 2025-11-29  
-**Current Phase:** Phase 6 (Deployment in Progress)
+**Current Phase:** Phase 6 Complete, Calendar Features Next
 
 ---
 
@@ -131,21 +131,18 @@
 - ✅ Match percentage display
 - ✅ Store links for each game
 
-### 🔄 IN PROGRESS: Tab Navigation Structure
-**Goal:** Organize Lutem into three navigable sections
+### 🔄 IN PROGRESS: Calendar Integration
+**Goal:** Full calendar functionality with Google Calendar import and event creation
 
-**Three Pages:**
-1. **🏠 Home** - Current recommendation interface (unchanged)
-2. **🎮 Games** - Browse all games with filters (search, genre, time, platform)
-3. **👤 Profile** - User stats and settings (primitive for now, expand later)
+**Features:**
+1. **Event Creation** - Add tasks and gaming sessions to calendar
+2. **Game Selection** - Browse library, wizard recommendation, or random pick
+3. **Google Calendar Import** - OAuth integration for importing existing events
+4. **ICS File Import** - Alternative import via .ics file upload
 
-**Status:** Phase 1 Complete ✅ - Basic tab structure working  
-**Remaining:** Phase 2 (Games library), Phase 3 (Profile page)  
-**Effort:** 2-3 hours remaining  
-**Documentation:** See `docs/features/TAB_NAVIGATION_*.md`
-
-**Current Implementation:** Single-page app with show/hide (fast, simple)  
-**Future Consideration:** Split into separate HTML pages when features grow (better organization, bookmarkable URLs)
+**Status:** Phase 1 partial (modal UI exists, basic task/gaming creation works)
+**Next:** Google Calendar OAuth integration
+**Documentation:** See `docs/CALENDAR_IMPLEMENTATION_PLAN.md`
 
 ### Next MVP-Focused Priorities
 
@@ -184,19 +181,19 @@ Both are high-value, MVP-appropriate features that don't add excessive complexit
 
 ## 📋 UPCOMING PHASES
 
-### PHASE 6 - Persistence & Deployment (IN PROGRESS)
+### PHASE 6 - Persistence & Deployment ✅ COMPLETE
+**Completed:** 2025-11-29
+
 **Goals:**
 - ✅ Phase 1: Environment configuration complete
-- 🔄 Phase 2: Deploy backend to Railway
-- ⬜ Phase 3: Deploy frontend to Netlify
-- ⬜ Phase 4: Custom domain (lutem.3lands.ch)
+- ✅ Phase 2: Deploy backend to Railway
+- ✅ Phase 3: Deploy frontend to Netlify
+- ✅ Phase 4: Custom domain (lutem.3lands.ch)
 
-**Status:** Environment detection implemented, awaiting Railway deployment
-
-**Prerequisites:**
-- ✅ Environment configuration
-- ✅ Production build setup
-- ✅ CORS configuration prepared
+**Production URLs:**
+- Frontend: https://lutem.3lands.ch (also https://lutembeta.netlify.app)
+- Backend: https://lutemprototype-production.up.railway.app
+- 57 games loaded, full functionality working
 
 ---
 

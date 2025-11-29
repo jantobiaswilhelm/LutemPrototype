@@ -1,6 +1,7 @@
 # Calendar Implementation Plan
 
 **Created:** November 28, 2025  
+**Updated:** November 29, 2025  
 **Goal:** Import Google Calendar, plan tasks & gaming sessions with game selection options
 
 ---
@@ -18,47 +19,47 @@
 ---
 
 ## Phase 1: Enhanced Event Creation Modal
-**Status:** 🔴 Not Started  
-**Estimated:** 1 session
+**Status:** ✅ COMPLETE  
+**Completed:** November 28-29, 2025
 
 ### Step 1.1: Create Modal HTML Structure
-- [ ] Add new modal `#addEventModal` to index.html
-- [ ] Two tabs/modes: "📋 Task" and "🎮 Gaming Session"
-- [ ] Shared fields: start time, end time
-- [ ] Task-specific: title, description
-- [ ] Gaming-specific: game selection area (placeholder)
+- [x] Add new modal `#addEventModal` to index.html
+- [x] Two tabs/modes: "📋 Task" and "🎮 Gaming Session"
+- [x] Shared fields: start time, end time
+- [x] Task-specific: title, description
+- [x] Gaming-specific: game selection area
 
-**Checkpoint:** Modal opens, tabs switch, forms display correctly
+**Checkpoint:** ✅ Modal opens, tabs switch, forms display correctly
 
 ### Step 1.2: Task Creation Flow
-- [ ] Wire up task form submission
-- [ ] Call existing `/calendar/events` API with type=TASK
-- [ ] Close modal, refresh calendar
-- [ ] Show success toast
+- [x] Wire up task form submission
+- [x] Call existing `/calendar/events` API with type=TASK
+- [x] Close modal, refresh calendar
+- [x] Show success toast
 
-**Checkpoint:** Can create tasks from new modal
+**Checkpoint:** ✅ Can create tasks from new modal
 
 ### Step 1.3: Gaming Session - Basic Flow
-- [ ] Add game selection placeholder (dropdown of all games)
-- [ ] Fetch games from `/games` API on modal open
-- [ ] Create event with type=GAME and gameId
-- [ ] Display game name in calendar event
+- [x] Add game selection (browse library mode)
+- [x] Fetch games from `/games` API on modal open
+- [x] Create event with type=GAME and gameId
+- [x] Display game name in calendar event
 
-**Checkpoint:** Can create gaming sessions with game selection
+**Checkpoint:** ✅ Can create gaming sessions with game selection
 
 ---
 
 ## Phase 2: Game Selection Modes
-**Status:** 🔴 Not Started  
+**Status:** 🟡 Partial (Browse works, Wizard/Random are placeholders)  
 **Estimated:** 1 session
 
-### Step 2.1: Browse Library Mode
-- [ ] Searchable game list in modal
-- [ ] Show game cover thumbnail, name, duration
-- [ ] Click to select, highlight selected game
-- [ ] Optional: filter by genre
+### Step 2.1: Browse Library Mode ✅ COMPLETE
+- [x] Searchable game list in modal
+- [x] Show game cover thumbnail, name, duration
+- [x] Click to select, highlight selected game
+- [ ] Optional: filter by genre (deferred)
 
-**Checkpoint:** Can search and browse games in modal
+**Checkpoint:** ✅ Can search and browse games in modal
 
 ### Step 2.2: Wizard Recommendation Mode
 - [ ] Mini-wizard UI: mood selector, energy level
@@ -171,11 +172,11 @@
 
 | Phase | Status | Notes |
 |-------|--------|-------|
-| Phase 1 | 🔴 Not Started | Start here |
-| Phase 2 | 🔴 Not Started | |
-| Phase 3 | 🔴 Not Started | |
-| Phase 4 | 🔴 Not Started | |
-| Phase 5 | 🔴 Not Started | |
+| Phase 1 | ✅ Complete | Modal, tasks, gaming sessions all work |
+| Phase 2 | 🟡 Partial | Browse works; Wizard/Random are placeholders |
+| Phase 3 | 🔴 Not Started | ICS Import |
+| Phase 4 | 🔴 Not Started | Google Calendar OAuth - **NEXT PRIORITY** |
+| Phase 5 | 🔴 Not Started | Polish |
 
 ---
 
@@ -188,11 +189,11 @@
 ```
 I'm working on the Lutem project calendar features. 
 
-Project location: D:\Lutem\LutemPrototype-refactor
+Project location: D:\Lutem\LutemPrototype
 GitHub: https://github.com/jantobiaswilhelm/LutemPrototype
 
 Please read the implementation plan:
-D:\Lutem\LutemPrototype-refactor\docs\CALENDAR_IMPLEMENTATION_PLAN.md
+D:\Lutem\LutemPrototype\docs\CALENDAR_IMPLEMENTATION_PLAN.md
 
 Check the "Current Progress" section to see where we left off, then continue with the next uncompleted step. After completing each step, update the checkboxes in the plan file.
 
@@ -201,7 +202,7 @@ Key files:
 - Backend: backend/src/main/java/com/lutem/mvp/controller/CalendarController.java
 - Styles: frontend/css/components.css
 
-Start the backend with: D:\Lutem\ProjectFiles\lutem-mvp\start-backend.bat
+Start the backend with: D:\Lutem\LutemPrototype\start-backend.bat
 ```
 
 ### After Each Step:
@@ -243,4 +244,4 @@ Start the backend with: D:\Lutem\ProjectFiles\lutem-mvp\start-backend.bat
 
 ---
 
-**Last Updated:** November 28, 2025
+**Last Updated:** November 29, 2025
