@@ -8,9 +8,22 @@
 
 **AI-powered game recommendation system that matches games to your mood, time, and energy level.**
 
-[![Status](https://img.shields.io/badge/Status-Fully%20Functional-brightgreen)]()
+[![Live Demo](https://img.shields.io/badge/Demo-lutembeta.netlify.app-00C7B7?logo=netlify)](https://lutembeta.netlify.app)
+[![Status](https://img.shields.io/badge/Status-Deployed-brightgreen)]()
 [![Games](https://img.shields.io/badge/Games-57%20titles-blue)]()
 [![Themes](https://img.shields.io/badge/Themes-8%20combinations-purple)]()
+
+---
+
+## 🌐 Live Demo
+
+**Try it now:** [https://lutembeta.netlify.app](https://lutembeta.netlify.app)
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | https://lutembeta.netlify.app |
+| **Backend API** | https://lutemprototype-production.up.railway.app |
+| **Games API** | https://lutemprototype-production.up.railway.app/games |
 
 ---
 
@@ -23,7 +36,7 @@ Lutem is a satisfaction-driven game recommendation engine. Unlike platforms that
 
 ---
 
-## Quick Start
+## Quick Start (Local Development)
 
 ### 🚀 Start the Application
 
@@ -69,9 +82,9 @@ start-lutem.bat
 |----------|-------------|
 | **[Architecture](docs/ARCHITECTURE.md)** | System design, scoring algorithm, project structure |
 | **[API Reference](docs/API.md)** | Complete endpoint documentation with examples |
+| **[Deployment](docs/DEPLOYMENT_PLAN.md)** | Production deployment guide (Netlify + Railway) |
 | **[Psychology](docs/PSYCHOLOGY.md)** | Research basis, emotional goals, wellness features |
 | **[Contributing](docs/CONTRIBUTING.md)** | Development workflow, troubleshooting, code style |
-| **[Structural Issues](docs/development/STRUCTURAL_ISSUES.md)** | Technical debt tracking |
 
 ---
 
@@ -105,25 +118,38 @@ User Input → 8-Factor Scoring → Ranked Results → Feedback Loop
 
 ---
 
+## Deployment
+
+Lutem is deployed with continuous deployment:
+
+| Service | Platform | Auto-Deploy |
+|---------|----------|-------------|
+| Frontend | Netlify | ✅ On push to `main` |
+| Backend | Railway | ✅ On push to `main` |
+
+**Push to `main` → Live in 2-3 minutes**
+
+See [DEPLOYMENT_PLAN.md](docs/DEPLOYMENT_PLAN.md) for full deployment documentation.
+
+---
+
 ## Project Status
 
-**Phase:** ✅ Fully Functional MVP  
+**Phase:** ✅ Deployed MVP  
 **Last Updated:** November 2025
 
 ### Recent Completions
+- ✅ **Production deployment** - Live at lutembeta.netlify.app
 - ✅ **Frontend modularization** - Split 5,706-line monolith into 20+ files (81% reduction)
-- ✅ Expanded game library to 57 titles (MOBAs, Fighting, JRPGs, Quick-session games)
+- ✅ Expanded game library to 57 titles
 - ✅ Professional branding with Lutem logo
 - ✅ 8 theme combinations (4 palettes × 2 modes)
-- ✅ Loading spinner with 24 gaming quotes
-- ✅ Smart input validation with friendly errors
-- ✅ Genre preference soft ranking
-- ✅ Progressive recommendations display
+- ✅ Environment-aware configuration (auto-detects dev vs prod)
 
 ### Up Next
-- Calendar integration (in progress)
+- Custom domain (lutem.3lands.ch)
+- Calendar integration
 - Session history tracking
-- Weekly satisfaction dashboard
 
 ---
 
@@ -131,7 +157,9 @@ User Input → 8-Factor Scoring → Ranked Results → Feedback Loop
 
 - **Backend:** Spring Boot 3.2, Java 17, SQLite
 - **Frontend:** Vanilla HTML/CSS/JS (modular architecture)
+- **Hosting:** Netlify (frontend) + Railway (backend)
 - **Build:** Maven (wrapper included)
+
 
 ### Project Structure
 
@@ -142,22 +170,16 @@ LutemPrototype/
 │   ├── src/main/resources/    # Config & seed data
 │   └── pom.xml                # Maven config
 ├── frontend/                   # Web application
-│   ├── index.html             # Main HTML (1,078 lines)
+│   ├── index.html             # Main HTML
 │   ├── css/                   # Modular stylesheets
-│   │   ├── variables.css      # CSS custom properties
-│   │   ├── themes.css         # Theme definitions
-│   │   ├── base.css           # Reset & typography
-│   │   ├── components.css     # UI components
-│   │   ├── layout.css         # Layout utilities
-│   │   └── pages/             # Page-specific styles
 │   ├── js/                    # JavaScript modules
-│   │   ├── main.js            # Entry point
+│   │   ├── config.js          # Environment detection
 │   │   ├── api.js             # Backend communication
-│   │   ├── recommendation.js  # Game recommendations
-│   │   ├── calendar.js        # Calendar functionality
-│   │   └── ...                # 10+ focused modules
-│   └── demo-mode.js           # GitHub Pages support
+│   │   └── ...                # Feature modules
+│   └── demo-mode.js           # Offline fallback
 ├── docs/                       # Documentation
+│   ├── DEPLOYMENT_PLAN.md     # Deployment guide
+│   └── sessions/              # Session handoffs
 ├── start-backend.bat          # Backend launcher
 ├── start-frontend.bat         # Frontend launcher
 └── start-lutem.bat            # Full app launcher

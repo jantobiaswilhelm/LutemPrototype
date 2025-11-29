@@ -2,9 +2,22 @@
 
 **Goal:** Deploy Lutem to `lutem.3lands.ch` with continuous deployment from `main` branch.
 
-**Architecture:**
+**Status:** ✅ PHASES 1-3 COMPLETE | Frontend + Backend LIVE
+
+## Production URLs
+
+| Service | URL | Status |
+|---------|-----|--------|
+| **Frontend** | https://lutembeta.netlify.app | ✅ LIVE |
+| **Backend API** | https://lutemprototype-production.up.railway.app | ✅ LIVE |
+| **Games Endpoint** | https://lutemprototype-production.up.railway.app/games | ✅ 57 games |
+| **Custom Domain** | https://lutem.3lands.ch | ⬜ Phase 4 |
+
+## Architecture
+
 ```
-lutem.3lands.ch (your domain)
+lutembeta.netlify.app (current)
+lutem.3lands.ch (planned - Phase 4)
         │
         ▼
    ┌─────────────┐
@@ -14,42 +27,38 @@ lutem.3lands.ch (your domain)
         │
         │ API calls
         ▼
-┌──────────────────┐
-│     Railway      │  ← Backend (Spring Boot + SQLite)
-│     (FREE)       │     Auto-deploys on push to main
-│  [api subdomain] │
-└──────────────────┘
+┌──────────────────────────────────────────┐
+│              Railway                      │
+│  lutemprototype-production.up.railway.app │
+│  Backend (Spring Boot + SQLite)           │
+│  Auto-deploys on push to main             │
+└──────────────────────────────────────────┘
 ```
 
 ---
 
-## Phase 1: Environment Configuration (Frontend)
+## Phase 1: Environment Configuration ✅ COMPLETE
 
-**Status:** ✅ COMPLETE (2025-11-29)
+**Completed:** 2025-11-29
 
-### 1.1 Create API Configuration Module
+### What Was Done
 
-Create `frontend/js/config.js` with runtime environment detection:
+- Created `frontend/js/config.js` with runtime environment detection
+- Updated `frontend/js/api.js` to use Config module
+- Updated `frontend/js/demo-mode.js` for production detection
+- Updated `frontend/index.html` script loading order (config.js loads first)
 
+### Key File: config.js
 ```javascript
-/**
- * Lutem - Configuration Module
- * Auto-detects environment and sets appropriate API URL
- */
-
 const Config = (function() {
-    // Detect environment based on hostname
-    const isProduction = !window.location.hostname.includes('localhost') 
-                        && !window.location.hostname.includes('127.0.0.1');
+    const hostname = window.location.hostname;
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+    const isProduction = !isLocalhost;
     
-    // API URLs
-    const PRODUCTION_API_URL = 'https://YOUR-RAILWAY-URL.up.railway.app';
+    const PRODUCTION_API_URL = 'https://lutemprototype-production.up.railway.app';
     const DEVELOPMENT_API_URL = 'http://localhost:8080';
     
     const API_URL = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
-    
-    console.log(`[Lutem] Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
-    console.log(`[Lutem] API URL: ${API_URL}`);
     
     return {
         API_URL,
@@ -60,299 +69,141 @@ const Config = (function() {
 })();
 ```
 
-### 1.2 Update api.js to Use Config
-
-Replace hardcoded URLs in `frontend/js/api.js`:
-
-```javascript
-// OLD:
-const API_URL = 'http://localhost:8080';
-const API_BASE_URL = 'http://localhost:8080';
-
-// NEW:
-const API_URL = Config.API_URL;
-const API_BASE_URL = Config.API_BASE_URL;
-```
-
-### 1.3 Update demo-mode.js
-
-Replace hardcoded localhost check with Config-aware check.
-
-### 1.4 Update index.html Script Loading Order
-
-Ensure `config.js` loads BEFORE `api.js`:
-
-```html
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
-```
-
-### 1.5 Test Locally
-
-- [ ] Start backend with `start-backend.bat`
-- [ ] Open frontend - should detect `localhost` and use local API
-- [ ] Verify recommendations work
-
 ---
 
-## Phase 2: Backend Deployment (Railway)
+## Phase 2: Railway Backend Deployment ✅ COMPLETE
 
-**Status:** ⬜ Not Started
+**Completed:** 2025-11-29  
+**URL:** https://lutemprototype-production.up.railway.app
 
-### 2.1 Railway Account Setup
+### What Was Done
+- Created Railway account and connected GitHub repo
+- Deployed from `jantobiaswilhelm/LutemPrototype`
+- Root directory: `/backend`
+- Created centralized CORS configuration in `WebConfig.java`
+- Removed `@CrossOrigin` annotations from controllers
+- Fixed `mvnw` execute permissions for Linux build environment
+- Reduced logging verbosity for production
 
-1. Go to [railway.app](https://railway.app)
-2. Sign up with GitHub
-3. Create new project → "Deploy from GitHub repo"
-4. Select `jantobiaswilhelm/LutemPrototype`
-5. Select branch: `main` (or `refactor` if that's your working branch)
-6. Set root directory: `/backend`
+### Railway Build Settings
+- **Build Command:** `./mvnw clean package -DskipTests`
+- **Start Command:** `java -jar target/lutem-mvp-0.0.1-SNAPSHOT.jar`
 
-### 2.2 Railway Configuration
-
-Railway should auto-detect Spring Boot. If not, add these settings:
-
-**Build Command:**
-```bash
-./mvnw clean package -DskipTests
-```
-
-**Start Command:**
-```bash
-java -jar target/lutem-mvp-0.0.1-SNAPSHOT.jar
-```
-
-**Environment Variables:**
-```
-PORT=8080
-SPRING_PROFILES_ACTIVE=production
-```
-
-### 2.3 Database Consideration
-
-Current setup uses SQLite file (`lutem.db`). For Railway:
-
-**Option A: Keep SQLite (Simpler, fine for MVP)**
-- SQLite file will reset on each deploy
+### Database
+- SQLite file resets on each deploy
 - Games reload from `GameDataLoader.java` on startup (57 games)
-- Session/feedback data will NOT persist between deploys
-- ✅ Good enough for demo/coursework
+- Session/feedback data does NOT persist between deploys
+- Acceptable for MVP/coursework demo
 
-**Option B: Railway PostgreSQL (Production-ready)**
-- Add Railway PostgreSQL addon
-- Update `application.properties` for PostgreSQL
-- Data persists across deploys
-- ⬜ Consider for future if needed
-
-### 2.4 CORS Configuration
-
-Update `backend/src/main/java/com/lutem/mvp/config/WebConfig.java` (or create if missing):
-
+### CORS Configuration
+File: `backend/src/main/java/com/lutem/mvp/config/WebConfig.java`
 ```java
-@Configuration
-public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-            .allowedOrigins(
-                "http://localhost:5500",      // VS Code Live Server
-                "http://localhost:3000",       // Local dev
-                "http://127.0.0.1:5500",
-                "https://lutem.3lands.ch",     // Production domain
-                "https://lutem-prototype.netlify.app"  // Netlify default
-            )
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-            .allowedHeaders("*");
-    }
-}
+.allowedOrigins(
+    "http://localhost:5500",
+    "http://localhost:3000",
+    "http://127.0.0.1:5500",
+    "http://127.0.0.1:3000",
+    "https://lutem.3lands.ch",
+    "https://lutembeta.netlify.app",
+    "https://lutemprototype-production.up.railway.app"
+)
 ```
-
-### 2.5 Get Railway URL
-
-After deployment, Railway provides URL like:
-`https://lutemprototype-production.up.railway.app`
-
-Copy this URL for Phase 1 config update.
-
-### 2.6 Test Backend
-
-- [ ] Visit `https://YOUR-RAILWAY-URL.up.railway.app/games` 
-- [ ] Should return JSON list of 57 games
-- [ ] Test `/recommendations` endpoint with POST request
 
 ---
 
-## Phase 3: Frontend Deployment (Netlify)
+## Phase 3: Netlify Frontend Deployment ✅ COMPLETE
 
-**Status:** ⬜ Not Started
+**Completed:** 2025-11-29  
+**URL:** https://lutembeta.netlify.app
 
-### 3.1 Update Config with Railway URL
+### What Was Done
+- Created Netlify account and connected GitHub repo
+- Deployed from `jantobiaswilhelm/LutemPrototype`
+- Configured build settings for static site
+- Updated CORS on Railway to allow Netlify domain
+- Verified full app functionality
 
-In `frontend/js/config.js`, replace placeholder:
+### Netlify Build Settings
+- **Base directory:** `frontend`
+- **Build command:** *(empty - static site)*
+- **Publish directory:** `frontend`
 
-```javascript
-const PRODUCTION_API_URL = 'https://YOUR-ACTUAL-RAILWAY-URL.up.railway.app';
-```
+### Verification
+- [x] Site loads at https://lutembeta.netlify.app
+- [x] Console shows `🌐 PRODUCTION` environment
+- [x] API calls reach Railway backend
+- [x] 57 games load correctly
+- [x] Recommendation wizard works
+- [x] Feedback submission works
 
-### 3.2 Commit and Push Changes
+---
 
+## Phase 4: Custom Domain Setup ⬜ NOT STARTED
+
+**Target URL:** https://lutem.3lands.ch
+
+### Steps
+1. **Netlify:** Site settings → Domain management → Add custom domain
+2. **Enter:** `lutem.3lands.ch`
+3. **DNS:** Add CNAME record in 3lands.ch DNS settings
+   ```
+   Type: CNAME
+   Name: lutem
+   Value: lutembeta.netlify.app
+   TTL: 3600
+   ```
+4. **Wait:** DNS propagation (usually 15-30 min, up to 48h)
+5. **HTTPS:** Netlify auto-provisions SSL certificate
+
+### Post-Setup
+- CORS already configured for `lutem.3lands.ch` ✅
+- No backend changes needed
+
+---
+
+## Continuous Deployment ✅ ACTIVE
+
+Both services auto-deploy when you push to `main`:
+
+1. **Push to GitHub** → `main` branch
+2. **Railway** auto-deploys backend (2-3 min)
+3. **Netlify** auto-deploys frontend (30 sec - 1 min)
+4. **Live** at production URLs
+
+---
+
+## Quick Reference
+
+### Local Development
 ```bash
-git add .
-git commit -m "Add production config for Railway + Netlify deployment"
-git push origin main
+# Start backend
+D:\Lutem\LutemPrototype\start-backend.bat
+
+# Start frontend
+D:\Lutem\LutemPrototype\start-frontend.bat
+
+# Or both
+D:\Lutem\LutemPrototype\start-lutem.bat
 ```
 
-### 3.3 Netlify Account Setup
+### Production Endpoints
+| Endpoint | URL |
+|----------|-----|
+| Frontend | https://lutembeta.netlify.app |
+| Games API | https://lutemprototype-production.up.railway.app/games |
+| Recommendations | https://lutemprototype-production.up.railway.app/recommendations |
+| Feedback | https://lutemprototype-production.up.railway.app/sessions/feedback |
 
-1. Go to [netlify.com](https://netlify.com)
-2. Sign up with GitHub
-3. "Add new site" → "Import an existing project"
-4. Connect GitHub → Select `LutemPrototype`
-5. Configure build settings:
-
-**Build Settings:**
+### Key Files
 ```
-Base directory: frontend
-Build command: (leave empty - static site)
-Publish directory: frontend
+frontend/js/config.js           # Environment detection + API URL
+frontend/js/api.js              # API client (uses Config)
+backend/.../config/WebConfig.java  # CORS configuration
 ```
-
-### 3.4 Netlify Deployment
-
-- Netlify will deploy automatically
-- Get URL like `https://lutem-prototype.netlify.app`
-- Test that it works and calls Railway backend
-
-### 3.5 Test Production
-
-- [ ] Open Netlify URL
-- [ ] Check browser console for "Environment: PRODUCTION"
-- [ ] Verify API calls go to Railway URL
-- [ ] Test full recommendation flow
-- [ ] Test demo mode fallback (if backend unreachable)
 
 ---
 
-## Phase 4: Custom Domain Setup
-
-**Status:** ⬜ Not Started
-
-### 4.1 Add Domain in Netlify
-
-1. Netlify Dashboard → Your site → Domain settings
-2. "Add custom domain"
-3. Enter: `lutem.3lands.ch`
-
-### 4.2 Configure DNS
-
-In your domain provider's DNS settings for `3lands.ch`, add:
-
-**Option A: CNAME Record (Recommended)**
-```
-Type: CNAME
-Name: lutem
-Value: lutem-prototype.netlify.app
-TTL: 3600 (or Auto)
-```
-
-**Option B: If CNAME doesn't work (root domain)**
-```
-Type: A
-Name: lutem
-Value: 75.2.60.5 (Netlify load balancer)
-TTL: 3600
-```
-
-### 4.3 Enable HTTPS
-
-1. Netlify automatically provisions SSL certificate
-2. Wait 5-15 minutes after DNS propagation
-3. Force HTTPS in Netlify settings
-
-### 4.4 Verify
-
-- [ ] Visit `https://lutem.3lands.ch`
-- [ ] Verify HTTPS (padlock icon)
-- [ ] Test full app functionality
-- [ ] Check API calls work correctly
-
----
-
-## Phase 5: Continuous Deployment Setup
-
-**Status:** ⬜ Automatic (once Phases 2-3 complete)
-
-### How It Works
-
-Once set up, the workflow is:
-
-1. **You make changes** on `main` branch
-2. **Push to GitHub**
-3. **Railway auto-deploys** backend (2-3 min)
-4. **Netlify auto-deploys** frontend (30 sec - 1 min)
-5. **Live at** `lutem.3lands.ch`
-
-### Deploy Hooks (Optional)
-
-Both services support webhooks if you want notifications.
-
----
-
-## Checklist Summary
-
-### Phase 1: Environment Config
-- [x] Create `frontend/js/config.js`
-- [x] Update `frontend/js/api.js` to use Config
-- [x] Update `frontend/demo-mode.js`
-- [x] Update `frontend/index.html` script order
-- [ ] Test locally (backend + frontend - User to verify)
-
-### Phase 2: Railway Backend
-- [ ] Create Railway account
-- [ ] Deploy from GitHub
-- [ ] Configure build settings
-- [ ] Verify CORS config
-- [ ] Get Railway URL
-- [ ] Test API endpoints
-
-### Phase 3: Netlify Frontend
-- [ ] Update config with Railway URL
-- [ ] Commit and push
-- [ ] Create Netlify account
-- [ ] Deploy from GitHub
-- [ ] Test production build
-
-### Phase 4: Custom Domain
-- [ ] Add domain in Netlify
-- [ ] Configure DNS (CNAME)
-- [ ] Enable HTTPS
-- [ ] Verify everything works
-
----
-
-## Troubleshooting
-
-### "CORS error" in browser console
-- Check `WebConfig.java` includes your domain
-- Redeploy backend after CORS changes
-
-### "Failed to fetch" API errors
-- Verify Railway backend is running
-- Check Railway logs for errors
-- Verify `config.js` has correct Railway URL
-
-### Demo mode activating on production
-- Check console for which API URL is being used
-- Verify `isProduction` detection is working
-
-### DNS not resolving
-- Wait up to 24-48 hours for propagation
-- Use `dig lutem.3lands.ch` to check DNS
-- Verify CNAME record is correct
-
----
-
-## Cost Estimate
+## Cost
 
 | Service | Tier | Monthly Cost |
 |---------|------|--------------|
@@ -361,28 +212,24 @@ Both services support webhooks if you want notifications.
 | Domain | Already owned | $0 |
 | **Total** | | **$0** |
 
-Note: Railway free tier is 500 hours/month. If your app runs 24/7, that's ~21 days. For a demo/coursework app with occasional use, this is plenty. Upgrade to $5/month if needed.
+---
+
+## Troubleshooting
+
+### CORS Error
+- Verify domain is in `WebConfig.java`
+- Push changes and wait for Railway redeploy (2-3 min)
+
+### API Errors / Demo Mode Activating
+- Check browser console for API URL being used
+- Verify Railway is running (check dashboard)
+- Test: https://lutemprototype-production.up.railway.app/games
+
+### Netlify Not Updating
+- Check GitHub push was successful
+- Check Netlify deploy logs in dashboard
 
 ---
 
-## Files Changed
-
-After completing this plan, these files will be modified:
-
-```
-frontend/
-├── js/
-│   ├── config.js      (NEW - environment detection)
-│   └── api.js         (MODIFIED - use Config)
-├── demo-mode.js       (MODIFIED - use Config)  
-└── index.html         (MODIFIED - script order)
-
-backend/
-└── src/main/java/com/lutem/mvp/config/
-    └── WebConfig.java (MODIFIED - CORS origins)
-```
-
----
-
-*Last Updated: 2025-01-29*
-*Plan Version: 1.0*
+*Last Updated: 2025-11-29*  
+*Deployment Status: ✅ LIVE*
