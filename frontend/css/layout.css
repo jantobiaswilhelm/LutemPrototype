@@ -1481,3 +1481,33 @@
         font-size: 0.9em;
     }
 }
+
+
+/* ============================================
+   SITE FOOTER
+   ============================================ */
+
+.site-footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    border-top: 1px solid var(--border);
+}
+
+.site-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.site-footer a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.footer-divider {
+    margin: 0 10px;
+    opacity: 0.5;
+}
