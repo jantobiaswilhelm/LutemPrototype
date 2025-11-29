@@ -14,10 +14,11 @@
 ## Current State (2025-11-29)
 - ✅ Phase 1 COMPLETE - Environment config created
 - ✅ Phase 2 COMPLETE - Railway backend deployed
-- ⬜ Phase 3 - Netlify frontend deployment (NEXT)
-- ⬜ Phase 4 - Custom domain setup
+- ✅ Phase 3 COMPLETE - Netlify frontend deployed
+- ⬜ Phase 4 - Custom domain setup (lutem.3lands.ch)
 
 ## Production URLs
+- **Frontend:** https://lutembeta.netlify.app
 - **Backend API:** https://lutemprototype-production.up.railway.app
 - **Test endpoint:** https://lutemprototype-production.up.railway.app/games (returns 57 games)
 
@@ -53,17 +54,18 @@ Railway backend deployment:
 - Backend live at: https://lutemprototype-production.up.railway.app
 - `/games` endpoint returns 57 games ✅
 
-## Next: Phase 3 - Netlify Deployment
-1. Create Netlify account at netlify.com
-2. "Add new site" → "Import an existing project"
-3. Connect GitHub → Select `jantobiaswilhelm/LutemPrototype`
-4. Build settings:
-   - Base directory: `frontend`
-   - Build command: (leave empty - static site)
-   - Publish directory: `frontend`
-5. Deploy and get Netlify URL
-6. Test full app functionality
-7. Update CORS if Netlify domain differs from `lutem-prototype.netlify.app`
+## Next: Phase 3 - Netlify Deployment ✅ COMPLETE
+- Site deployed to: https://lutembeta.netlify.app
+- CORS updated to allow lutembeta.netlify.app
+- Railway auto-redeployed with new CORS config
+
+## Next: Phase 4 - Custom Domain Setup
+1. In Netlify: Site settings → Domain management → Add custom domain
+2. Enter: lutem.3lands.ch
+3. Netlify will provide DNS records to add
+4. In 3lands.ch DNS settings, add CNAME or A record as instructed
+5. Wait for DNS propagation (can take up to 48h, usually 15-30min)
+6. Enable HTTPS in Netlify (automatic with Let's Encrypt)
 
 ## Key Files
 ```
@@ -87,5 +89,5 @@ D:\Lutem\LutemPrototype\
 Configured in `WebConfig.java`:
 - localhost:5500, localhost:3000, 127.0.0.1:5500, 127.0.0.1:3000
 - https://lutem.3lands.ch
-- https://lutem-prototype.netlify.app
+- https://lutembeta.netlify.app
 - https://lutemprototype-production.up.railway.app
