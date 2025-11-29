@@ -266,7 +266,10 @@ async function checkBackendAvailable() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 2000);
         
-        const response = await fetch('http://localhost:8080/games', {
+        // Use Config if available, otherwise fall back to localhost
+        const apiUrl = (typeof Config !== 'undefined') ? Config.API_URL : 'http://localhost:8080';
+        
+        const response = await fetch(`${apiUrl}/games`, {
             method: 'GET',
             signal: controller.signal
         });

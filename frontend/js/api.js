@@ -1,11 +1,13 @@
 /**
  * Lutem - API Module
  * Handles backend API communication and recommendation display
+ * 
+ * REQUIRES: config.js must be loaded BEFORE this module
  */
 
-// API Configuration
-const API_URL = 'http://localhost:8080';
-const API_BASE_URL = 'http://localhost:8080'; // For calendar functions
+// API Configuration - now uses Config module for environment detection
+const API_URL = Config.API_URL;
+const API_BASE_URL = Config.API_BASE_URL;
 
 // State for API interactions
 let currentRecommendedGame = null; // Track currently recommended game for calendar integration

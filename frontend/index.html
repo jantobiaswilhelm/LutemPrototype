@@ -487,11 +487,11 @@
                         <p style="text-align: left; color: var(--text-secondary); margin-top: 10px;">Plan your gaming sessions and tasks</p>
                     </div>
                     <button style="background: var(--accent-primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px;" 
-                            onclick="addTaskEvent()"
+                            onclick="openAddEventModal()"
                             onmouseover="this.style.background='var(--accent-secondary)'; this.style.transform='translateY(-2px)'"
                             onmouseout="this.style.background='var(--accent-primary)'; this.style.transform='translateY(0)'">
                         <span style="font-size: 1.2em;">➕</span>
-                        <span>Add Task</span>
+                        <span>Add Event</span>
                     </button>
                 </div>
             </header>
@@ -952,7 +952,118 @@
         </div>
     </div>
 
-    <!-- ADD TASK MODAL -->
+    <!-- ENHANCED ADD EVENT MODAL (Task + Gaming Session) -->
+    <div id="addEventModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 550px; width: 95%;">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h2 style="color: var(--text-primary); font-size: 1.6em; margin: 0;">Add to Calendar</h2>
+                <button onclick="closeAddEventModal()" class="modal-close-btn">✕</button>
+            </div>
+            
+            <!-- Tab Switcher -->
+            <div class="event-type-tabs">
+                <button class="event-tab active" data-type="task" onclick="switchEventTab('task')">
+                    <span class="tab-icon">📋</span>
+                    <span>Task</span>
+                </button>
+                <button class="event-tab" data-type="gaming" onclick="switchEventTab('gaming')">
+                    <span class="tab-icon">🎮</span>
+                    <span>Gaming Session</span>
+                </button>
+            </div>
+            
+            <!-- Shared Time Fields -->
+            <div class="event-time-fields">
+                <div class="time-field-row">
+                    <div class="time-field">
+                        <label>🕐 Start Time</label>
+                        <input type="datetime-local" id="eventStartTime" required>
+                    </div>
+                    <div class="time-field">
+                        <label>🕐 End Time</label>
+                        <input type="datetime-local" id="eventEndTime" required>
+                    </div>
+                </div>
+                <div class="duration-display" id="eventDurationDisplay">Duration: --</div>
+            </div>
+            
+            <!-- TASK TAB CONTENT -->
+            <div id="taskTabContent" class="event-tab-content active">
+                <div class="form-field">
+                    <label>📋 Task Title</label>
+                    <input type="text" id="eventTaskTitle" placeholder="e.g., Team Meeting, Exercise, Study Session" required>
+                </div>
+                <div class="form-field">
+                    <label>📝 Description (optional)</label>
+                    <textarea id="eventTaskDescription" rows="3" placeholder="Add details about your task..."></textarea>
+                </div>
+            </div>
+            
+            <!-- GAMING SESSION TAB CONTENT -->
+            <div id="gamingTabContent" class="event-tab-content" style="display: none;">
+                <!-- Game Selection Mode Tabs -->
+                <div class="game-selection-modes">
+                    <button class="game-mode-btn active" data-mode="browse" onclick="switchGameMode('browse')">
+                        📚 Browse Library
+                    </button>
+                    <button class="game-mode-btn" data-mode="wizard" onclick="switchGameMode('wizard')">
+                        🧙 Let Lutem Choose
+                    </button>
+                    <button class="game-mode-btn" data-mode="random" onclick="switchGameMode('random')">
+                        🎲 Surprise Me
+                    </button>
+                </div>
+                
+                <!-- Browse Library Mode -->
+                <div id="gameBrowseMode" class="game-mode-content active">
+                    <div class="game-search-container">
+                        <input type="text" id="eventGameSearch" placeholder="🔍 Search your games..." oninput="filterEventGames()">
+                    </div>
+                    <div class="game-list-container" id="eventGameList">
+                        <!-- Games will be loaded here dynamically -->
+                        <div class="loading-games">Loading games...</div>
+                    </div>
+                    <div class="selected-game-display" id="selectedGameDisplay" style="display: none;">
+                        <div class="selected-game-label">Selected:</div>
+                        <div class="selected-game-info">
+                            <img id="selectedGameCover" src="" alt="">
+                            <span id="selectedGameName"></span>
+                            <button class="clear-selection-btn" onclick="clearGameSelection()">✕</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Wizard Mode (placeholder for Phase 2) -->
+                <div id="gameWizardMode" class="game-mode-content" style="display: none;">
+                    <div class="wizard-mode-placeholder">
+                        <div class="placeholder-icon">🧙</div>
+                        <p>Wizard recommendation coming in Phase 2!</p>
+                        <p style="font-size: 0.9em; color: var(--text-secondary);">Will use your mood & energy to suggest the perfect game.</p>
+                    </div>
+                </div>
+                
+                <!-- Random Mode (placeholder for Phase 2) -->
+                <div id="gameRandomMode" class="game-mode-content" style="display: none;">
+                    <div class="random-mode-placeholder">
+                        <div class="placeholder-icon">🎲</div>
+                        <p>Random selection coming in Phase 2!</p>
+                        <p style="font-size: 0.9em; color: var(--text-secondary);">Will pick a random game from your library.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" onclick="closeAddEventModal()" class="btn-secondary">Cancel</button>
+                <button type="button" onclick="saveCalendarEvent()" class="btn-primary" id="saveEventBtn">
+                    <span id="saveEventBtnText">✓ Add Task</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD TASK MODAL (Legacy - kept for reference) -->
     <div id="addTaskModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center;">
         <div style="background: var(--surface); border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -1016,7 +1127,10 @@
     </div>
 
     <!-- External JavaScript Modules (loaded in dependency order) -->
-    <!-- Core modules (no dependencies) -->
+    <!-- Config module (MUST load first - provides API_URL for all other modules) -->
+    <script src="js/config.js"></script>
+    
+    <!-- Core modules (no dependencies except config) -->
     <script src="js/constants.js"></script>
     <script src="js/state.js"></script>
     <script src="js/utils.js"></script>

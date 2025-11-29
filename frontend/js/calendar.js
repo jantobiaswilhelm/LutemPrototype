@@ -39,10 +39,10 @@ function initCalendar() {
             showEventDetails(info.event);
         },
         
-        // Time slot selection handler - open game wizard
+        // Time slot selection handler - open enhanced event modal
         select: function(info) {
-            const duration = (info.end - info.start) / (1000 * 60); // minutes
-            showGameWizardForCalendar(info.start, info.end, duration);
+            selectedTimeSlot = { start: info.start, end: info.end };
+            openAddEventModal(info.start, info.end);
         },
         
         // Event drag/resize handlers
@@ -408,3 +408,311 @@ function showToast(message, type = 'info') {
         }, 300);
     }, 3000);
 }
+
+
+// ============================================
+// ENHANCED ADD EVENT MODAL
+// ============================================
+
+// State for the new event modal
+let currentEventType = 'task'; // 'task' or 'gaming'
+let currentGameMode = 'browse'; // 'browse', 'wizard', 'random'
+let selectedGame = null;
+let allGamesForModal = [];
+
+/**
+ * Open the enhanced Add Event Modal
+ */
+function openAddEventModal(startTime = null, endTime = null) {
+    const modal = document.getElementById('addEventModal');
+    
+    // Set default times if not provided
+    if (!startTime) {
+        startTime = new Date();
+        startTime.setMinutes(0, 0, 0);
+    }
+    if (!endTime) {
+        endTime = new Date(startTime);
+        endTime.setHours(endTime.getHours() + 1);
+    }
+    
+    // Populate time fields
+    document.getElementById('eventStartTime').value = formatDateTimeLocal(startTime);
+    document.getElementById('eventEndTime').value = formatDateTimeLocal(endTime);
+    
+    // Update duration display
+    updateDurationDisplay();
+    
+    // Reset to task tab
+    switchEventTab('task');
+    
+    // Clear any previous selections
+    clearGameSelection();
+    document.getElementById('eventTaskTitle').value = '';
+    document.getElementById('eventTaskDescription').value = '';
+    
+    // Load games for the modal
+    loadGamesForModal();
+    
+    // Show modal
+    modal.style.display = 'flex';
+    
+    // Focus on title field
+    setTimeout(() => {
+        document.getElementById('eventTaskTitle').focus();
+    }, 100);
+}
+
+/**
+ * Close the Add Event Modal
+ */
+function closeAddEventModal() {
+    document.getElementById('addEventModal').style.display = 'none';
+    selectedGame = null;
+    selectedTimeSlot = null;
+}
+
+
+/**
+ * Switch between Task and Gaming Session tabs
+ */
+function switchEventTab(type) {
+    currentEventType = type;
+    
+    // Update tab buttons
+    document.querySelectorAll('.event-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.type === type);
+    });
+    
+    // Update tab content
+    document.getElementById('taskTabContent').classList.toggle('active', type === 'task');
+    document.getElementById('taskTabContent').style.display = type === 'task' ? 'block' : 'none';
+    document.getElementById('gamingTabContent').classList.toggle('active', type === 'gaming');
+    document.getElementById('gamingTabContent').style.display = type === 'gaming' ? 'block' : 'none';
+    
+    // Update save button text
+    const btnText = document.getElementById('saveEventBtnText');
+    btnText.textContent = type === 'task' ? '✓ Add Task' : '✓ Schedule Gaming';
+}
+
+/**
+ * Switch between game selection modes
+ */
+function switchGameMode(mode) {
+    currentGameMode = mode;
+    
+    // Update mode buttons
+    document.querySelectorAll('.game-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    
+    // Update mode content
+    document.getElementById('gameBrowseMode').classList.toggle('active', mode === 'browse');
+    document.getElementById('gameBrowseMode').style.display = mode === 'browse' ? 'block' : 'none';
+    document.getElementById('gameWizardMode').classList.toggle('active', mode === 'wizard');
+    document.getElementById('gameWizardMode').style.display = mode === 'wizard' ? 'block' : 'none';
+    document.getElementById('gameRandomMode').classList.toggle('active', mode === 'random');
+    document.getElementById('gameRandomMode').style.display = mode === 'random' ? 'block' : 'none';
+}
+
+/**
+ * Load games for the modal game list
+ */
+async function loadGamesForModal() {
+    const gameList = document.getElementById('eventGameList');
+    gameList.innerHTML = '<div class="loading-games">Loading games...</div>';
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/games`);
+        if (response.ok) {
+            allGamesForModal = await response.json();
+            renderGameList(allGamesForModal);
+        } else {
+            gameList.innerHTML = '<div class="loading-games">Failed to load games</div>';
+        }
+    } catch (error) {
+        console.error('Error loading games:', error);
+        gameList.innerHTML = '<div class="loading-games">Failed to load games</div>';
+    }
+}
+
+
+/**
+ * Render the game list in the modal
+ */
+function renderGameList(games) {
+    const gameList = document.getElementById('eventGameList');
+    
+    if (!games || games.length === 0) {
+        gameList.innerHTML = '<div class="loading-games">No games found</div>';
+        return;
+    }
+    
+    gameList.innerHTML = games.map(game => `
+        <div class="game-list-item ${selectedGame && selectedGame.id === game.id ? 'selected' : ''}" 
+             onclick="selectGameForEvent(${game.id})"
+             data-game-id="${game.id}">
+            <img src="${game.coverImageUrl || 'https://via.placeholder.com/40x40?text=?'}" 
+                 alt="${game.name}"
+                 onerror="this.src='https://via.placeholder.com/40x40?text=?'">
+            <div class="game-list-item-info">
+                <div class="game-list-item-name">${game.name}</div>
+                <div class="game-list-item-duration">${game.minMinutes || '?'}-${game.maxMinutes || '?'} min</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+/**
+ * Filter games based on search input
+ */
+function filterEventGames() {
+    const searchTerm = document.getElementById('eventGameSearch').value.toLowerCase();
+    const filteredGames = allGamesForModal.filter(game => 
+        game.name.toLowerCase().includes(searchTerm)
+    );
+    renderGameList(filteredGames);
+}
+
+/**
+ * Select a game for the gaming session
+ */
+function selectGameForEvent(gameId) {
+    selectedGame = allGamesForModal.find(g => g.id === gameId);
+    
+    if (selectedGame) {
+        // Update visual selection in list
+        document.querySelectorAll('.game-list-item').forEach(item => {
+            item.classList.toggle('selected', parseInt(item.dataset.gameId) === gameId);
+        });
+        
+        // Show selected game display
+        const display = document.getElementById('selectedGameDisplay');
+        display.style.display = 'block';
+        document.getElementById('selectedGameCover').src = selectedGame.coverImageUrl || 'https://via.placeholder.com/36x36?text=?';
+        document.getElementById('selectedGameName').textContent = selectedGame.name;
+    }
+}
+
+/**
+ * Clear game selection
+ */
+function clearGameSelection() {
+    selectedGame = null;
+    document.getElementById('selectedGameDisplay').style.display = 'none';
+    document.querySelectorAll('.game-list-item').forEach(item => {
+        item.classList.remove('selected');
+    });
+}
+
+
+/**
+ * Update the duration display based on selected times
+ */
+function updateDurationDisplay() {
+    const startInput = document.getElementById('eventStartTime');
+    const endInput = document.getElementById('eventEndTime');
+    const display = document.getElementById('eventDurationDisplay');
+    
+    if (startInput.value && endInput.value) {
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+        const minutes = (end - start) / (1000 * 60);
+        
+        if (minutes > 0) {
+            display.textContent = `Duration: ${calculateDuration(start, end)}`;
+        } else {
+            display.textContent = 'Duration: Invalid (end must be after start)';
+        }
+    } else {
+        display.textContent = 'Duration: --';
+    }
+}
+
+/**
+ * Save the calendar event (Task or Gaming Session)
+ */
+async function saveCalendarEvent() {
+    const startTime = document.getElementById('eventStartTime').value;
+    const endTime = document.getElementById('eventEndTime').value;
+    
+    if (!startTime || !endTime) {
+        showToast('Please set start and end times', 'error');
+        return;
+    }
+    
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    
+    if (end <= start) {
+        showToast('End time must be after start time', 'error');
+        return;
+    }
+    
+    let eventData;
+    
+    if (currentEventType === 'task') {
+        const title = document.getElementById('eventTaskTitle').value.trim();
+        if (!title) {
+            showToast('Please enter a task title', 'error');
+            return;
+        }
+        
+        eventData = {
+            title: title,
+            description: document.getElementById('eventTaskDescription').value.trim(),
+            start: start.toISOString(),
+            end: end.toISOString(),
+            type: 'TASK'
+        };
+    } else {
+        // Gaming session
+        if (!selectedGame) {
+            showToast('Please select a game', 'error');
+            return;
+        }
+        
+        eventData = {
+            title: `🎮 ${selectedGame.name}`,
+            start: start.toISOString(),
+            end: end.toISOString(),
+            type: 'GAME',
+            gameId: selectedGame.id,
+            gameName: selectedGame.name
+        };
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/calendar/events`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(eventData)
+        });
+        
+        if (response.ok) {
+            showToast(currentEventType === 'task' ? 'Task added!' : 'Gaming session scheduled!', 'success');
+            closeAddEventModal();
+            loadCalendarEvents();
+        } else {
+            const errorText = await response.text();
+            console.error('Error response:', errorText);
+            showToast('Failed to create event', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving event:', error);
+        showToast('Failed to create event', 'error');
+    }
+}
+
+// Add event listeners for time field changes
+document.addEventListener('DOMContentLoaded', function() {
+    const startInput = document.getElementById('eventStartTime');
+    const endInput = document.getElementById('eventEndTime');
+    
+    if (startInput) {
+        startInput.addEventListener('change', updateDurationDisplay);
+    }
+    if (endInput) {
+        endInput.addEventListener('change', updateDurationDisplay);
+    }
+});
