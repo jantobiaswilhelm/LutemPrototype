@@ -144,6 +144,8 @@
     margin-top: 0;
     margin-bottom: 80px; /* Space for fixed bottom nav */
     padding-bottom: env(safe-area-inset-bottom);
+    position: relative; /* For locked overlay positioning */
+    min-height: calc(100vh - 130px); /* Ensure full height for overlay */
 }
 
 .page-content.active {

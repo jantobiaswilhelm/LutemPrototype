@@ -12,11 +12,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typeof initAuth === 'function') {
         initAuth().then(() => {
             console.log('✅ Firebase Auth initialized');
+            // Update tab gating after auth state is determined
+            if (typeof updateTabGating === 'function') {
+                updateTabGating();
+            }
         }).catch(err => {
             console.error('❌ Firebase Auth failed:', err);
+            // Still update tab gating to show locked state
+            if (typeof updateTabGating === 'function') {
+                window.authState.isLoading = false;
+                updateTabGating();
+            }
         });
     } else {
         console.warn('⚠️ initAuth not found - auth disabled');
+        // Show locked state if auth is disabled
+        if (typeof updateTabGating === 'function') {
+            window.authState = window.authState || { isAuthenticated: false, isLoading: false };
+            window.authState.isLoading = false;
+            updateTabGating();
+        }
     }
     
     // Initialize tab navigation

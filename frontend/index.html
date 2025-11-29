@@ -515,6 +515,13 @@
 
     <!-- CALENDAR PAGE -->
     <div id="calendar-page" class="page-content">
+        <!-- Locked Overlay (shown when not authenticated) -->
+        <div id="calendarLockedOverlay" class="locked-page-overlay" style="display: none;">
+            <span class="lock-icon">🔒</span>
+            <h2>Calendar Locked</h2>
+            <p>Schedule your gaming sessions and track your play time. Sign in to unlock this feature.</p>
+            <button class="unlock-btn" onclick="openAuthModal('signin')">Sign in to unlock</button>
+        </div>
         <div class="container">
             <header style="margin-top: 40px; margin-bottom: 30px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -669,6 +676,13 @@
 
     <!-- PROFILE PAGE -->
     <div id="profile-page" class="page-content">
+        <!-- Locked Overlay (shown when not authenticated) -->
+        <div id="profileLockedOverlay" class="locked-page-overlay" style="display: none;">
+            <span class="lock-icon">🔒</span>
+            <h2>Profile Locked</h2>
+            <p>Customize your gaming preferences and view your stats. Sign in to unlock this feature.</p>
+            <button class="unlock-btn" onclick="openAuthModal('signin')">Sign in to unlock</button>
+        </div>
         <div class="container">
             <header style="margin-top: 40px;">
                 <h1 style="text-align: center; color: var(--text-primary); font-size: 2.5em;">Your Profile</h1>

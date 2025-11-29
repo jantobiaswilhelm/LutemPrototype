@@ -271,15 +271,32 @@ function updateAuthUI() {
 function updateTabGating() {
     const calendarTab = document.querySelector('[data-page="calendar"]');
     const profileTab = document.querySelector('[data-page="profile"]');
+    const calendarOverlay = document.getElementById('calendarLockedOverlay');
+    const profileOverlay = document.getElementById('profileLockedOverlay');
+    
+    // While loading, keep tabs locked but don't show overlay yet
+    if (window.authState.isLoading) {
+        if (calendarTab) calendarTab.classList.add('tab-locked');
+        if (profileTab) profileTab.classList.add('tab-locked');
+        if (calendarOverlay) calendarOverlay.style.display = 'none';
+        if (profileOverlay) profileOverlay.style.display = 'none';
+        return;
+    }
     
     if (window.authState.isAuthenticated) {
         // Unlock tabs
         if (calendarTab) calendarTab.classList.remove('tab-locked');
         if (profileTab) profileTab.classList.remove('tab-locked');
+        // Hide overlays
+        if (calendarOverlay) calendarOverlay.style.display = 'none';
+        if (profileOverlay) profileOverlay.style.display = 'none';
     } else {
         // Lock tabs
         if (calendarTab) calendarTab.classList.add('tab-locked');
         if (profileTab) profileTab.classList.add('tab-locked');
+        // Show overlays
+        if (calendarOverlay) calendarOverlay.style.display = 'flex';
+        if (profileOverlay) profileOverlay.style.display = 'flex';
     }
 }
 

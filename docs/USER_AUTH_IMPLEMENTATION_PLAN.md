@@ -143,12 +143,14 @@ Demo mode becomes a **fallback**, not a user state:
 
 ### Phase 3: Gated Features UI (30 min)
 
+**Status:** ✅ COMPLETE
+
 **Frontend Tasks:**
-- [ ] Update tab visibility based on auth state:
+- [x] Update tab visibility based on auth state:
   ```javascript
-  function updateTabVisibility() {
-      const calendarTab = document.querySelector('[data-tab="calendar"]');
-      const profileTab = document.querySelector('[data-tab="profile"]');
+  function updateTabGating() {
+      const calendarTab = document.querySelector('[data-page="calendar"]');
+      const profileTab = document.querySelector('[data-page="profile"]');
       
       if (!authState.isAuthenticated) {
           calendarTab.classList.add('locked');
@@ -159,16 +161,18 @@ Demo mode becomes a **fallback**, not a user state:
       }
   }
   ```
-- [ ] Create "Sign in to unlock" overlay for locked tabs
-- [ ] Add lock icon to locked tab buttons
-- [ ] Show user info in header when logged in (avatar, name, sign out button)
-- [ ] Redirect to sign-in modal when clicking locked tabs
+- [x] Create "Sign in to unlock" overlay for locked tabs
+- [x] Add lock icon to locked tab buttons
+- [x] Show user info in header when logged in (avatar, name, sign out button)
+- [x] Redirect to sign-in modal when clicking locked tabs
 
-**Files to Modify:**
+**Files Modified:**
 - `frontend/js/tabs.js` (gating logic)
-- `frontend/js/auth.js` (trigger UI updates on auth change)
-- `frontend/index.html` (add locked tab overlay, user header section)
-- `frontend/css/components.css` (locked tab styles, user header styles)
+- `frontend/js/auth.js` (trigger UI updates on auth change, overlay visibility)
+- `frontend/js/main.js` (initialize tab gating after auth)
+- `frontend/index.html` (added locked tab overlays to calendar-page and profile-page)
+- `frontend/css/layout.css` (added position:relative and min-height to page-content)
+- `frontend/css/components.css` (already had locked tab and overlay styles)
 
 ---
 
