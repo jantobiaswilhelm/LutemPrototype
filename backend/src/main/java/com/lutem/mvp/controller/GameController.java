@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "*")
 public class GameController {
     
     @Autowired

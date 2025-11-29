@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/calendar")
-@CrossOrigin(origins = "*")
 public class CalendarController {
     
     private final Map<Long, CalendarEvent> events = new ConcurrentHashMap<>();
