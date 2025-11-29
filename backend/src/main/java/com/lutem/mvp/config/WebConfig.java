@@ -19,7 +19,9 @@ public class WebConfig implements WebMvcConfigurer {
                 // Production domain
                 "https://lutem.3lands.ch",
                 // Netlify default domain (update after deployment)
-                "https://lutem-prototype.netlify.app"
+                "https://lutem-prototype.netlify.app",
+                // Railway backend (for direct API access)
+                "https://lutemprototype-production.up.railway.app"
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("*")

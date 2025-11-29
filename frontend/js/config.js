@@ -12,8 +12,7 @@ const Config = (function() {
     const isProduction = !isLocalhost;
     
     // API URLs
-    // TODO: Update PRODUCTION_API_URL after Railway deployment (Phase 2)
-    const PRODUCTION_API_URL = 'https://YOUR-RAILWAY-URL.up.railway.app';
+    const PRODUCTION_API_URL = 'https://lutemprototype-production.up.railway.app';
     const DEVELOPMENT_API_URL = 'http://localhost:8080';
     
     const API_URL = isProduction ? PRODUCTION_API_URL : DEVELOPMENT_API_URL;
