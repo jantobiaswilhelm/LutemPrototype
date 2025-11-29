@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.1] - 2025-11-29 (Documentation Update & Deployment Prep)
+
+### Changed
+- **Game Library:** Expanded from 41 to 57 games (MOBAs, Fighting, JRPGs, Quick-session titles)
+- **Documentation:** Updated all docs to reflect 57 game count
+- **Deployment:** Phase 1 complete - environment configuration ready
+
+### Fixed
+- Corrected game counts across all documentation files (ROADMAP, ARCHITECTURE, TODO)
+- Updated project structure documentation to reflect modular frontend
+
+---
+
 ## [0.5.0] - 2025-11-28 (Frontend Modularization Complete)
 
 ### Added - Frontend Refactoring
@@ -325,6 +338,7 @@ See [docs/calendar-known-issues.md](docs/calendar-known-issues.md) for detailed 
 
 ## Version History
 
+- **[0.5.1]** - Documentation update & deployment prep - 2025-11-29
 - **[0.5.0]** - Frontend modularization complete (81% reduction) - 2025-11-28
 - **[0.4.0]** - Theme system & calendar enhancement - 2025-11-23
 - **[0.3.0]** - Calendar integration (backend complete, frontend partial) - 2025-11-23

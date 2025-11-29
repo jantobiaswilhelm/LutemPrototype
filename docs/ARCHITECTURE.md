@@ -31,7 +31,7 @@ lutem-mvp/
 │   ├── src/main/java/com/lutem/mvp/
 │   │   ├── LutemMvpApplication.java      # Main entry point
 │   │   ├── config/
-│   │   │   └── GameDataLoader.java       # Seeds 41 games on startup
+│   │   │   └── GameDataLoader.java       # Seeds 57 games on startup
 │   │   ├── controller/
 │   │   │   ├── GameController.java       # Recommendations API
 │   │   │   ├── GameAdminController.java  # CRUD operations
@@ -54,7 +54,31 @@ lutem-mvp/
 │   ├── pom.xml
 │   └── mvnw / mvnw.cmd          # Maven wrapper
 ├── frontend/
-│   ├── index.html               # Complete frontend (HTML+CSS+JS)
+│   ├── index.html               # Main HTML structure (~1,157 lines)
+│   ├── css/                     # Modular stylesheets
+│   │   ├── variables.css        # CSS custom properties
+│   │   ├── themes.css           # Theme definitions
+│   │   ├── base.css             # Reset & typography
+│   │   ├── components.css       # UI components
+│   │   ├── layout.css           # Layout utilities
+│   │   └── pages/calendar.css   # Calendar-specific styles
+│   ├── js/                      # JavaScript modules
+│   │   ├── main.js              # Entry point
+│   │   ├── config.js            # Environment detection
+│   │   ├── api.js               # Backend communication
+│   │   ├── state.js             # Global state management
+│   │   ├── constants.js         # Configuration values
+│   │   ├── utils.js             # Helper functions
+│   │   ├── theme.js             # Theme/palette switching
+│   │   ├── wizard.js            # Quick start wizard
+│   │   ├── form.js              # Form interactions
+│   │   ├── validation.js        # Input validation
+│   │   ├── recommendation.js    # Game recommendation display
+│   │   ├── tabs.js              # Tab navigation
+│   │   ├── games-library.js     # Games page functionality
+│   │   ├── profile.js           # Profile page functionality
+│   │   └── calendar.js          # Calendar functionality
+│   ├── demo-mode.js             # GitHub Pages demo support
 │   └── lutem-logo.png           # Branding
 ├── docs/                        # Documentation
 ├── start-backend.bat            # Primary startup method
@@ -199,7 +223,7 @@ Palettes: Warm Café, Soft Lavender, Natural Earth, Ocean Breeze
 ```
 1. User fills form → Frontend validates
 2. Frontend sends POST /recommendations
-3. Backend scores all 41 games
+3. Backend scores all 57 games
 4. Backend sorts by score descending
 5. Backend returns top 10 with reasons
 6. Frontend displays top 1 + 3 alternatives
@@ -234,7 +258,7 @@ CREATE TABLE games (
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/games` | GET | List all 41 games |
+| `/games` | GET | List all 57 games |
 | `/recommendations` | POST | Get personalized recommendations |
 | `/sessions/feedback` | POST | Submit satisfaction rating |
 | `/admin/games` | POST/PUT/DELETE | CRUD operations |

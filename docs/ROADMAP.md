@@ -1,7 +1,7 @@
 # LUTEM MVP - Project Roadmap
 
-**Last Updated:** 2025-01-15  
-**Current Phase:** Phase 5 (Enhanced MVP with UI Polish)
+**Last Updated:** 2025-11-29  
+**Current Phase:** Phase 6 (Deployment in Progress)
 
 ---
 
@@ -11,7 +11,7 @@
 **Goal:** Create the smallest but real version of Lutem for one persona (Sam)
 
 **Completed Features:**
-- ✅ Manually entered/mocked list of games (41 games)
+- ✅ Manually entered/mocked list of games (57 games)
 - ✅ Input: Available time (minutes)
 - ✅ Input: Desired mood (8 dimensions: Unwind, Recharge, Engage, Challenge, Explore, Achieve, Social, Chill)
 - ✅ System outputs best game recommendations
@@ -184,17 +184,19 @@ Both are high-value, MVP-appropriate features that don't add excessive complexit
 
 ## 📋 UPCOMING PHASES
 
-### PHASE 6 - Persistence & Deployment (NEXT)
+### PHASE 6 - Persistence & Deployment (IN PROGRESS)
 **Goals:**
-- 🔄 Enhance H2 database or migrate to PostgreSQL
-- 🔄 Deploy backend (Render/Railway)
-- 🔄 Deploy frontend (Netlify/Vercel)
-- 🔄 Update API URLs for production
+- ✅ Phase 1: Environment configuration complete
+- 🔄 Phase 2: Deploy backend to Railway
+- ⬜ Phase 3: Deploy frontend to Netlify
+- ⬜ Phase 4: Custom domain (lutem.3lands.ch)
+
+**Status:** Environment detection implemented, awaiting Railway deployment
 
 **Prerequisites:**
-- Environment configuration
-- Production build setup
-- CORS configuration for deployment
+- ✅ Environment configuration
+- ✅ Production build setup
+- ✅ CORS configuration prepared
 
 ---
 
@@ -240,13 +242,13 @@ Both are high-value, MVP-appropriate features that don't add excessive complexit
 ## 📊 PROJECT METRICS
 
 ### Current State
-- **Games in Database:** 41
-- **API Endpoints:** 3 (Games, Recommendations, Feedback)
+- **Games in Database:** 57
+- **API Endpoints:** 3 core + Calendar CRUD + Admin CRUD
 - **Scoring Dimensions:** 8 moods + 5 context factors
 - **Max Match Score:** 115 points
-- **Frontend:** Single-page application
-- **Backend:** Spring Boot with H2
-- **Deployment:** Local only
+- **Frontend:** Single-page application (modularized)
+- **Backend:** Spring Boot with SQLite
+- **Deployment:** Phase 1 complete, Phase 2 (Railway) next
 
 ### Technical Debt
 - None critical
@@ -276,13 +278,16 @@ Both are high-value, MVP-appropriate features that don't add excessive complexit
 
 ### Recent Achievements
 - Successfully implemented 8-tier emotional scoring system
-- Created comprehensive game database with rich metadata
+- Created comprehensive game database with rich metadata (57 games)
 - Built dual-mode UI (Quick Start + Advanced)
 - Added visual polish with mood colors and game covers
 - Implemented loading states with educational content
 - Added validation for all user inputs
-- **NEW:** Tab navigation structure (Home, Games, Profile)
-- **NEW:** Centered button-style tabs with gradient active states
+- Tab navigation structure (Home, Games, Profile)
+- Centered button-style tabs with gradient active states
+- **COMPLETE:** Frontend modularization (81% reduction in index.html)
+- **COMPLETE:** Deployment environment configuration
+- **DEFERRED:** Calendar interactive features
 
 ### Lessons Learned
 - Discrete sliders work better than free-form mood input

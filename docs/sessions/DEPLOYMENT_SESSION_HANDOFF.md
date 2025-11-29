@@ -13,9 +13,14 @@
 
 ## Current State (2025-11-29)
 - ✅ Phase 1 COMPLETE - Environment config created
-- ⬜ Phase 2 - Railway backend deployment
+- ⬜ Phase 2 - Railway backend deployment (NEXT)
 - ⬜ Phase 3 - Netlify frontend deployment
 - ⬜ Phase 4 - Custom domain setup
+
+## Project Metrics
+- **Games in Database:** 57
+- **Frontend:** Modularized (14 JS modules, 6 CSS files)
+- **Calendar:** Display works, interactions deferred
 
 ## Quick Start Commands
 ```bash
