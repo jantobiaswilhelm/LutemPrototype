@@ -17,7 +17,7 @@
 
 ```
 lutembeta.netlify.app (current)
-lutem.3lands.ch (planned - Phase 4)
+lutem.3lands.ch (custom domain)
         │
         ▼
    ┌─────────────┐
@@ -32,6 +32,15 @@ lutem.3lands.ch (planned - Phase 4)
 │  lutemprototype-production.up.railway.app │
 │  Backend (Spring Boot + SQLite)           │
 │  Auto-deploys on push to main             │
+│  Firebase Admin SDK for auth validation   │
+└──────────────────────────────────────────┘
+        │
+        │ Token validation
+        ▼
+┌──────────────────────────────────────────┐
+│            Firebase Auth                  │
+│  Project: lutem-68f3a                     │
+│  Google Sign-in + Email/Password          │
 └──────────────────────────────────────────┘
 ```
 
@@ -151,6 +160,71 @@ File: `backend/src/main/java/com/lutem/mvp/config/WebConfig.java`
 
 ---
 
+## Phase 5: Firebase Authentication ✅ COMPLETE
+
+**Completed:** 2025-11-30
+
+### Firebase Project
+- **Project ID:** `lutem-68f3a`
+- **Console:** https://console.firebase.google.com/project/lutem-68f3a
+
+### Authentication Setup
+
+#### Frontend (Firebase Client SDK)
+- Firebase SDK loaded via CDN in `index.html`
+- Configuration in `frontend/js/auth.js`
+- Supports Google Sign-in and Email/Password
+
+#### Backend (Firebase Admin SDK)
+- Validates Firebase ID tokens on protected endpoints
+- Credentials loaded from environment variable (production) or file (development)
+
+### Authorized Domains
+In Firebase Console → Authentication → Settings → Authorized domains:
+- `localhost`
+- `lutembeta.netlify.app`
+- `lutem.3lands.ch`
+
+### Railway Environment Variable
+**CRITICAL:** The backend requires Firebase credentials to validate tokens.
+
+| Variable | Value |
+|----------|-------|
+| `FIREBASE_CREDENTIALS` | Full JSON content of service account file |
+
+To set up:
+1. Firebase Console → Project Settings → Service Accounts
+2. Generate new private key (downloads JSON file)
+3. Railway Dashboard → Variables → Add `FIREBASE_CREDENTIALS`
+4. Paste entire JSON content as value
+
+### Key Files
+```
+frontend/js/auth.js                           # Firebase client SDK integration
+backend/.../config/FirebaseConfig.java        # Loads credentials from env or file
+backend/.../security/FirebaseAuthFilter.java  # Token validation filter
+```
+
+### FirebaseConfig.java Logic
+```java
+// 1. Try environment variable (production/Railway)
+String envCredentials = System.getenv("FIREBASE_CREDENTIALS");
+if (envCredentials != null) {
+    // Parse JSON from env var
+}
+
+// 2. Fall back to file (local development)
+// Looks for firebase-service-account.json
+```
+
+### Local Development
+For local development with Firebase auth:
+1. Download service account JSON from Firebase Console
+2. Save as `backend/firebase-service-account.json`
+3. File is gitignored - never commit credentials!
+
+---
+
 ## Continuous Deployment ✅ ACTIVE
 
 Both services auto-deploy when you push to `main`:
@@ -186,9 +260,11 @@ D:\Lutem\LutemPrototype\start-lutem.bat
 
 ### Key Files
 ```
-frontend/js/config.js           # Environment detection + API URL
-frontend/js/api.js              # API client (uses Config)
+frontend/js/config.js              # Environment detection + API URL
+frontend/js/api.js                 # API client (uses Config)
+frontend/js/auth.js                # Firebase authentication
 backend/.../config/WebConfig.java  # CORS configuration
+backend/.../config/FirebaseConfig.java  # Firebase Admin SDK setup
 ```
 
 ---
@@ -199,6 +275,7 @@ backend/.../config/WebConfig.java  # CORS configuration
 |---------|------|--------------|
 | Railway | Free (Hobby) | $0 (500 hrs/month) |
 | Netlify | Free | $0 |
+| Firebase | Spark (Free) | $0 |
 | Domain | Already owned | $0 |
 | **Total** | | **$0** |
 
@@ -219,7 +296,21 @@ backend/.../config/WebConfig.java  # CORS configuration
 - Check GitHub push was successful
 - Check Netlify deploy logs in dashboard
 
+### Firebase Auth Errors
+
+**"auth/unauthorized-domain"**
+- Add your domain to Firebase Console → Authentication → Settings → Authorized domains
+
+**Backend crashes with "FirebaseAuth bean not found"**
+- Check Railway Variables for `FIREBASE_CREDENTIALS`
+- Ensure JSON is complete (copy entire file content)
+- Check Railway logs for `✅ Loading Firebase credentials from environment variable`
+
+**"localhost:8080" errors in production**
+- Ensure `auth.js` uses `window.LutemConfig?.API_URL`
+- Clear browser cache / hard refresh
+
 ---
 
-*Last Updated: 2025-11-29*  
+*Last Updated: 2025-11-30*  
 *Deployment Status: ✅ LIVE*

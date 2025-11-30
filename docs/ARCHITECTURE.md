@@ -6,19 +6,26 @@
 
 ## System Overview
 
-Lutem is a Spring Boot backend with a vanilla HTML/CSS/JS frontend. The architecture prioritizes simplicity while maintaining clean separation of concerns.
+Lutem is a Spring Boot backend with a vanilla HTML/CSS/JS frontend, using Firebase for authentication. The architecture prioritizes simplicity while maintaining clean separation of concerns.
 
 ```
-┌─────────────────┐     HTTP/JSON     ┌─────────────────┐
-│    Frontend     │ ◄──────────────► │     Backend     │
-│  (index.html)   │    REST API       │  (Spring Boot)  │
-└─────────────────┘                   └─────────────────┘
-                                              │
-                                              ▼
-                                      ┌─────────────────┐
-                                      │    SQLite DB    │
-                                      │   (lutem.db)    │
-                                      └─────────────────┘
+┌─────────────────┐                          ┌─────────────────┐
+│    Frontend     │ ◄────── HTTP/JSON ─────► │     Backend     │
+│  (Netlify)      │       REST API           │   (Railway)     │
+└─────────────────┘                          └─────────────────┘
+        │                                            │
+        │ Firebase Client SDK                        │ Firebase Admin SDK
+        ▼                                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Firebase Auth                            │
+│              (Google Sign-in, Email/Password)                │
+└─────────────────────────────────────────────────────────────┘
+                                                     │
+                                                     ▼
+                                             ┌─────────────────┐
+                                             │    SQLite DB    │
+                                             │   (lutem.db)    │
+                                             └─────────────────┘
 ```
 
 ---
@@ -31,13 +38,18 @@ lutem-mvp/
 │   ├── src/main/java/com/lutem/mvp/
 │   │   ├── LutemMvpApplication.java      # Main entry point
 │   │   ├── config/
-│   │   │   └── GameDataLoader.java       # Seeds 57 games on startup
+│   │   │   ├── FirebaseConfig.java       # Firebase Admin SDK setup
+│   │   │   ├── GameDataLoader.java       # Seeds 57 games on startup
+│   │   │   └── WebConfig.java            # CORS configuration
 │   │   ├── controller/
+│   │   │   ├── AuthController.java       # User authentication endpoints
+│   │   │   ├── CalendarController.java   # Calendar events
 │   │   │   ├── GameController.java       # Recommendations API
-│   │   │   ├── GameAdminController.java  # CRUD operations
-│   │   │   └── CalendarController.java   # Calendar events
+│   │   │   └── GameAdminController.java  # CRUD operations
 │   │   ├── model/
 │   │   │   ├── Game.java                 # Game entity
+│   │   │   ├── User.java                 # User entity
+│   │   │   ├── CalendarEvent.java        # Calendar event entity
 │   │   │   ├── EmotionalGoal.java        # 6 mood types
 │   │   │   ├── Interruptibility.java     # Pause flexibility
 │   │   │   ├── EnergyLevel.java          # Mental energy
@@ -48,13 +60,18 @@ lutem-mvp/
 │   │   │   ├── RecommendationResponse.java
 │   │   │   └── SessionFeedback.java
 │   │   ├── repository/
-│   │   │   └── GameRepository.java       # JPA data access
+│   │   │   ├── GameRepository.java       # JPA data access
+│   │   │   ├── UserRepository.java
+│   │   │   └── GameSessionRepository.java
+│   │   ├── security/
+│   │   │   └── FirebaseAuthFilter.java   # Token validation filter
 │   │   └── service/
-│   │       └── GameSessionService.java   # Business logic
+│   │       ├── GameSessionService.java   # Business logic
+│   │       └── UserService.java          # User management
 │   ├── pom.xml
 │   └── mvnw / mvnw.cmd          # Maven wrapper
 ├── frontend/
-│   ├── index.html               # Main HTML structure (~1,157 lines)
+│   ├── index.html               # Main HTML structure
 │   ├── css/                     # Modular stylesheets
 │   │   ├── variables.css        # CSS custom properties
 │   │   ├── themes.css           # Theme definitions
@@ -64,8 +81,9 @@ lutem-mvp/
 │   │   └── pages/calendar.css   # Calendar-specific styles
 │   ├── js/                      # JavaScript modules
 │   │   ├── main.js              # Entry point
-│   │   ├── config.js            # Environment detection
+│   │   ├── config.js            # Environment detection & API URL
 │   │   ├── api.js               # Backend communication
+│   │   ├── auth.js              # Firebase authentication
 │   │   ├── state.js             # Global state management
 │   │   ├── constants.js         # Configuration values
 │   │   ├── utils.js             # Helper functions
@@ -88,6 +106,71 @@ lutem-mvp/
 
 ---
 
+## Authentication Architecture
+
+### Overview
+
+Lutem uses Firebase Authentication with a client-server validation flow:
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                        Authentication Flow                        │
+└──────────────────────────────────────────────────────────────────┘
+
+1. User clicks "Sign in with Google"
+         │
+         ▼
+2. Frontend (auth.js) → Firebase Client SDK → Google OAuth popup
+         │
+         ▼
+3. Firebase returns ID token to frontend
+         │
+         ▼
+4. Frontend stores token, calls backend with Authorization header
+         │
+         ▼
+5. Backend (FirebaseAuthFilter) validates token with Firebase Admin SDK
+         │
+         ▼
+6. If valid: request proceeds with user info attached
+   If invalid: 401 Unauthorized response
+```
+
+### Key Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `auth.js` | Frontend | Firebase Client SDK, sign-in UI, token management |
+| `FirebaseConfig.java` | Backend | Initialize Firebase Admin SDK |
+| `FirebaseAuthFilter.java` | Backend | Validate tokens on protected endpoints |
+| `AuthController.java` | Backend | User sync and profile endpoints |
+
+### Credential Management
+
+**Production (Railway):**
+```java
+// FirebaseConfig.java reads from environment variable
+String envCredentials = System.getenv("FIREBASE_CREDENTIALS");
+// Contains full JSON of service account file
+```
+
+**Development (Local):**
+```java
+// Falls back to file
+Resource resource = new FileSystemResource("firebase-service-account.json");
+```
+
+### Protected vs Public Endpoints
+
+| Endpoint Pattern | Auth Required | Description |
+|------------------|---------------|-------------|
+| `/auth/**` | ✅ Yes | User profile, sync |
+| `/games` | ❌ No | Public game list |
+| `/recommendations` | ❌ No | Anonymous recommendations |
+| `/calendar/**` | ✅ Yes | User's calendar events |
+
+---
+
 ## Backend Architecture
 
 ### Technology Stack
@@ -95,6 +178,7 @@ lutem-mvp/
 - **Framework:** Spring Boot 3.2.0
 - **Language:** Java 17+
 - **Database:** SQLite with JPA/Hibernate
+- **Auth:** Firebase Admin SDK
 - **Build:** Maven 3.9+ (wrapper included)
 - **API Style:** RESTful JSON
 
@@ -102,11 +186,12 @@ lutem-mvp/
 
 | Package | Purpose |
 |---------|---------|
-| `config` | Application configuration, data seeding |
+| `config` | Application configuration, Firebase setup, CORS, data seeding |
 | `controller` | REST endpoints, request handling |
 | `model` | Entities, enums, domain objects |
 | `dto` | Request/response data transfer objects |
 | `repository` | JPA data access interfaces |
+| `security` | Authentication filters |
 | `service` | Business logic, scoring algorithm |
 
 ### Enum System (5 Enums)
@@ -182,6 +267,21 @@ score *= (1 + genreBoost);
 - **Styling:** CSS custom properties for theming
 - **State:** Simple JavaScript object
 - **API:** Fetch with async/await
+- **Auth:** Firebase Client SDK (v10.12.0)
+
+### Module Loading Order
+
+Critical: `config.js` must load before other modules that use API URLs.
+
+```html
+<!-- Load order in index.html -->
+<script src="js/config.js"></script>    <!-- First: environment detection -->
+<script src="js/state.js"></script>
+<script src="js/api.js"></script>       <!-- Uses Config.API_URL -->
+<script src="js/auth.js"></script>      <!-- Uses Config.API_URL -->
+<!-- ... other modules ... -->
+<script src="js/main.js"></script>      <!-- Last: initialization -->
+```
 
 ### State Management
 
@@ -194,6 +294,13 @@ const state = {
     timeOfDay: null,
     socialPreference: null,
     selectedGenres: []
+};
+
+// Auth state (managed by auth.js)
+window.authState = {
+    user: null,
+    isAuthenticated: false,
+    isLoading: true
 };
 ```
 
@@ -231,38 +338,30 @@ Palettes: Warm Café, Soft Lavender, Natural Earth, Ocean Breeze
 8. User submits feedback → Updates satisfaction
 ```
 
-### Database Schema
+### Authentication Flow
 
-```sql
--- Games table (seeded from GameDataLoader)
-CREATE TABLE games (
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(255),
-    min_minutes INT,
-    max_minutes INT,
-    genre VARCHAR(100),
-    description TEXT,
-    image_url VARCHAR(500),
-    store_url VARCHAR(500),
-    average_satisfaction DOUBLE,
-    session_count INT
-);
-
--- Many-to-many relationships via join tables
--- games_emotional_goals, games_time_of_day, etc.
+```
+1. User clicks Sign In → auth.js opens modal
+2. Google popup → Firebase validates OAuth
+3. Firebase returns user + ID token
+4. Frontend stores auth state
+5. API calls include Authorization: Bearer <token>
+6. Backend validates token via Firebase Admin SDK
+7. Protected resources accessible
 ```
 
 ---
 
 ## API Overview
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/games` | GET | List all 57 games |
-| `/recommendations` | POST | Get personalized recommendations |
-| `/sessions/feedback` | POST | Submit satisfaction rating |
-| `/admin/games` | POST/PUT/DELETE | CRUD operations |
-| `/calendar/events` | GET/POST/PUT/DELETE | Calendar management |
+| Endpoint | Method | Auth | Purpose |
+|----------|--------|------|---------|
+| `/games` | GET | ❌ | List all 57 games |
+| `/recommendations` | POST | ❌ | Get personalized recommendations |
+| `/sessions/feedback` | POST | ❌ | Submit satisfaction rating |
+| `/admin/games` | POST/PUT/DELETE | ❌ | CRUD operations |
+| `/auth/me` | GET | ✅ | Get/sync current user |
+| `/calendar/events` | GET/POST/PUT/DELETE | ✅ | Calendar management |
 
 👉 **See [API.md](API.md) for complete endpoint documentation**
 
@@ -278,18 +377,27 @@ start-backend.bat   # Windows
 ./mvnw spring-boot:run  # Direct Maven
 
 # Frontend
-start-frontend.bat  # Opens in browser
-# Or: Open frontend/index.html directly
+start-frontend.bat  # Starts Python HTTP server
+# Access at http://localhost:5500
 ```
 
-### Production Considerations
+### Production Stack
 
-- Replace SQLite with PostgreSQL
-- Add authentication (Clerk/Firebase)
-- Enable API rate limiting
-- Configure CORS for production domain
-- Set up CI/CD pipeline
+| Service | Platform | Purpose |
+|---------|----------|---------|
+| Frontend | Netlify | Static file hosting |
+| Backend | Railway | Spring Boot API |
+| Auth | Firebase | User authentication |
+| Database | SQLite (embedded) | Data storage |
+
+### Environment Variables (Railway)
+
+| Variable | Purpose |
+|----------|---------|
+| `FIREBASE_CREDENTIALS` | Service account JSON for token validation |
+
+👉 **See [DEPLOYMENT_PLAN.md](DEPLOYMENT_PLAN.md) for detailed deployment guide**
 
 ---
 
-*See also: [API.md](API.md) | [PSYCHOLOGY.md](PSYCHOLOGY.md) | [CONTRIBUTING.md](CONTRIBUTING.md)*
+*See also: [API.md](API.md) | [PSYCHOLOGY.md](PSYCHOLOGY.md) | [DEPLOYMENT_PLAN.md](DEPLOYMENT_PLAN.md)*

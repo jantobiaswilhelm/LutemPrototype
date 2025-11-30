@@ -1,97 +1,56 @@
 # Lutem Bugs Tracking
 
-## 🔴 Active Bugs - Production (November 30, 2025)
-
-### Critical: Railway Backend CORS Issues
-
-**Symptoms:**
-All API calls from `lutembeta.netlify.app` to `lutemprototype-production.up.railway.app` are failing with CORS errors.
+## ✅ All Production Bugs Resolved (November 30, 2025)
 
 ---
 
-### Bug #7: CORS Policy Blocking All Backend Requests
-**Priority:** CRITICAL
-**Status:** 🔴 Open
+### Bug #7: CORS Policy Blocking All Backend Requests ✅ FIXED
+**Priority:** CRITICAL → RESOLVED
 
-**Error Messages:**
-```
-Access to fetch at 'https://lutemprototype-production.up.railway.app/games' from origin 'https://lutembeta.netlify.app' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-```
+**Issue:** Railway backend was crash-looping because Firebase credentials weren't available.
 
-**Affected Endpoints:**
-- `/games` - Game library loading
-- `/calendar/events` - Calendar events loading
-- All other backend endpoints
+**Root Cause:** 
+- `FirebaseAuthFilter` required `FirebaseAuth` bean via constructor injection
+- `FirebaseConfig` returned null when no credentials file found
+- Spring couldn't inject null, causing startup failure
+- No running backend = no CORS headers = CORS errors
 
-**Root Cause Analysis:**
-The CORS configuration in `WebConfig.java` IS correct - it includes `lutembeta.netlify.app`.
+**Fix Applied:**
+1. Made `FirebaseAuthFilter` use `@Autowired(required = false)` for optional injection
+2. Updated `FirebaseConfig` to read credentials from `FIREBASE_CREDENTIALS` env variable
+3. Added service account JSON to Railway environment variables
 
-**The REAL issue is likely:**
-1. **Railway backend is NOT RUNNING** - The application may have crashed on startup
-2. Railway free tier may have put the service to sleep
-3. Railway deployment may have failed
-
-**Investigation Needed:**
-- Check Railway dashboard for deployment status
-- Check Railway logs for startup errors
-- Verify the service is actually running and healthy
-
-**Fix Required:**
-1. Go to Railway dashboard
-2. Check if the service is running (green status)
-3. Check deployment logs for errors
-4. If crashed, redeploy or fix the startup issue
+**Files Changed:**
+- `backend/.../security/FirebaseAuthFilter.java`
+- `backend/.../config/FirebaseConfig.java`
 
 ---
 
-### Bug #8: Firebase Auth - Unauthorized Domain
-**Priority:** HIGH
-**Status:** 🔴 Open
+### Bug #8: Firebase Auth - Unauthorized Domain ✅ FIXED
+**Priority:** HIGH → RESOLVED
 
-**Error Messages:**
-```
-Firebase: Error (auth/unauthorized-domain)
-Info: The current domain is not authorized for OAuth operations.
-Add your domain (lutembeta.netlify.app) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> Authorized domains tab.
-```
+**Issue:** Google sign-in failed with `auth/unauthorized-domain` error.
 
-**Root Cause:**
-The domain `lutembeta.netlify.app` is not added to Firebase's authorized domains list.
+**Root Cause:** Domain `lutembeta.netlify.app` was not in Firebase's authorized domains list.
 
-**Fix Required:**
-1. Go to Firebase Console: https://console.firebase.google.com/
-2. Select project: `lutem-68f3a`
-3. Navigate to Authentication → Settings → Authorized domains
-4. Add `lutembeta.netlify.app` to the list
-5. Save changes
+**Fix Applied:**
+1. Added `lutembeta.netlify.app` to Firebase Console
+2. Path: Authentication → Settings → Authorized domains
 
 ---
 
-### Bug #9: Auth Module Using Wrong API URL Variable
-**Priority:** MEDIUM  
-**Status:** 🔴 Open
+### Bug #9: Auth.js Using Wrong API Variable ✅ FIXED
+**Priority:** MEDIUM → RESOLVED
 
-**Error Messages:**
-```
-localhost:8080/auth/me: Failed to load resource: net::ERR_CONNECTION_REFUSED
-Backend sync error (server may be offline): Failed to fetch
-```
+**Issue:** `auth.js` was calling `localhost:8080` in production.
 
-**Root Cause:**
-In `auth.js` line 92:
-```javascript
-const response = await fetch(`${window.API_URL || 'http://localhost:8080'}/auth/me`, {
-```
+**Root Cause:** 
+- Code used `window.API_URL` which was undefined
+- Fell back to `'http://localhost:8080'`
+- `config.js` sets `window.LutemConfig.API_URL`, not `window.API_URL`
 
-But `config.js` sets:
-```javascript
-window.LutemConfig.API_URL  // NOT window.API_URL
-```
-
-The auth module falls back to `localhost:8080` because `window.API_URL` is undefined.
-
-**Fix Required:**
-Change in `auth.js`:
+**Fix Applied:**
+Changed in `auth.js` line 99:
 ```javascript
 // FROM:
 ${window.API_URL || 'http://localhost:8080'}
@@ -100,32 +59,22 @@ ${window.API_URL || 'http://localhost:8080'}
 ${window.LutemConfig?.API_URL || 'http://localhost:8080'}
 ```
 
-Or add to `config.js`:
-```javascript
-window.API_URL = API_URL;  // Backwards compatibility
-```
+**Files Changed:**
+- `frontend/js/auth.js`
 
 ---
 
-## Analysis Summary
+## Summary
 
-| Bug | Type | Severity | Root Cause | Fix Location |
-|-----|------|----------|------------|--------------|
-| #7 | CORS | CRITICAL | Railway backend likely not running | Railway Dashboard |
-| #8 | Firebase | HIGH | Domain not in authorized list | Firebase Console |
-| #9 | Config | MEDIUM | Wrong variable name in auth.js | auth.js line 92 |
-
----
-
-## Investigation Order
-
-1. **First**: Check Railway - if backend isn't running, CORS errors are a symptom, not the cause
-2. **Second**: Add domain to Firebase Console
-3. **Third**: Fix the API URL variable in auth.js
+| Bug | Type | Root Cause | Fix |
+|-----|------|------------|-----|
+| #7 | Backend Crash | Firebase credentials not in Railway | Added env var + optional injection |
+| #8 | Firebase | Domain not authorized | Added to Firebase Console |
+| #9 | Config | Wrong variable name | Updated auth.js to use LutemConfig |
 
 ---
 
-## Previous Bugs (Resolved)
+## Previous Bugs (UI/Calendar - November 29, 2025)
 
 ### 1. ✅ Corrupted emoji in gaming session titles (FIXED)
 ### 2. ✅ Corrupted emoji on create task button (FIXED)
@@ -136,4 +85,21 @@ window.API_URL = API_URL;  // Backwards compatibility
 
 ---
 
+## Known Non-Issues (Can Ignore)
+
+These appear in console but are harmless:
+
+**Cross-Origin-Opener-Policy warnings (popup.ts)**
+- Browser security policy with Firebase popup
+- Sign-in still works correctly
+- No fix needed
+
+**"message channel closed" error**
+- Caused by browser extensions (password managers, ad blockers)
+- Not our code
+- No fix needed
+
+---
+
 **Last Updated:** November 30, 2025
+**Status:** ✅ All bugs resolved
