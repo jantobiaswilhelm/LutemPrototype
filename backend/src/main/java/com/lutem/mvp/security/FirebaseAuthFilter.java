@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -15,14 +16,21 @@ import java.io.IOException;
 /**
  * Filter to validate Firebase ID tokens on protected endpoints.
  * Extracts user info from token and adds to request attributes.
+ * 
+ * When Firebase is not configured (no credentials), this filter
+ * allows all requests through without authentication.
  */
 @Component
 public class FirebaseAuthFilter extends OncePerRequestFilter {
     
     private final FirebaseAuth firebaseAuth;
     
-    public FirebaseAuthFilter(FirebaseAuth firebaseAuth) {
+    @Autowired(required = false)  // Make injection optional
+    public FirebaseAuthFilter(@Autowired(required = false) FirebaseAuth firebaseAuth) {
         this.firebaseAuth = firebaseAuth;
+        if (firebaseAuth == null) {
+            System.out.println("⚠️ FirebaseAuthFilter: Firebase not configured, auth will be bypassed");
+        }
     }
     
     @Override
@@ -40,7 +48,6 @@ public class FirebaseAuthFilter extends OncePerRequestFilter {
         
         // Firebase not configured - allow through (for dev/testing)
         if (firebaseAuth == null) {
-            System.out.println("⚠️ Firebase Auth not configured, skipping token validation");
             filterChain.doFilter(request, response);
             return;
         }

@@ -96,7 +96,7 @@ async function syncUserWithBackend() {
             return;
         }
         
-        const response = await fetch(`${window.API_URL || 'http://localhost:8080'}/auth/me`, {
+        const response = await fetch(`${window.LutemConfig?.API_URL || 'http://localhost:8080'}/auth/me`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
