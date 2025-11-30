@@ -79,31 +79,34 @@
 ---
 
 ## Phase 3: ICS File Import
-**Status:** 🔴 Not Started  
-**Estimated:** 1 session
+**Status:** ✅ COMPLETE  
+**Completed:** November 30, 2025
 
 ### Step 3.1: Frontend File Upload
-- [ ] Add "📥 Import Calendar" button to calendar header
-- [ ] File input accepting .ics files
-- [ ] Read file content client-side
+- [x] Add "📥 Import Calendar" button to calendar header
+- [x] File input accepting .ics files
+- [x] Read file content client-side
+- [x] Drag & drop support
 
-**Checkpoint:** Can select and read .ics file
+**Checkpoint:** ✅ Can select and read .ics file
 
 ### Step 3.2: ICS Parsing (Client-Side)
-- [ ] Parse VEVENT components from ICS
-- [ ] Extract: summary (title), dtstart, dtend, description
-- [ ] Convert to Lutem event format
-- [ ] Handle timezone issues
+- [x] Parse VEVENT components from ICS
+- [x] Extract: summary (title), dtstart, dtend, description
+- [x] Convert to Lutem event format
+- [x] Handle timezone issues (UTC and local)
+- [x] Handle line folding in ICS format
 
-**Checkpoint:** ICS events parsed correctly
+**Checkpoint:** ✅ ICS events parsed correctly
 
 ### Step 3.3: Bulk Import to Backend
-- [ ] Create `/calendar/events/bulk` endpoint (POST array of events)
-- [ ] Skip duplicates (same title + start time)
-- [ ] Return import summary
-- [ ] Frontend shows "Imported X events, Y skipped"
+- [x] Create `/calendar/events/bulk` endpoint (POST array of events)
+- [x] Skip duplicates (same externalId/UID)
+- [x] Return import summary
+- [x] Frontend shows "Imported X events, Y skipped"
+- [x] Persist events to SQLite database
 
-**Checkpoint:** ICS import works end-to-end
+**Checkpoint:** ✅ ICS import works end-to-end
 
 ---
 
@@ -174,7 +177,7 @@
 |-------|--------|-------|
 | Phase 1 | ✅ Complete | Modal, tasks, gaming sessions all work |
 | Phase 2 | 🟡 Partial | Browse works; Wizard/Random are placeholders |
-| Phase 3 | 🔴 Not Started | ICS Import |
+| Phase 3 | ✅ Complete | ICS Import with persistence |
 | Phase 4 | 🔴 Not Started | Google Calendar OAuth - **NEXT PRIORITY** |
 | Phase 5 | 🔴 Not Started | Polish |
 

@@ -786,3 +786,387 @@ document.addEventListener('DOMContentLoaded', function() {
         endInput.addEventListener('change', updateDurationDisplay);
     }
 });
+
+
+// ============================================
+// ICS IMPORT FUNCTIONALITY
+// ============================================
+
+let parsedIcsEvents = [];
+
+/**
+ * Open the import modal
+ */
+function openImportModal() {
+    const modal = document.getElementById('importModal');
+    modal.style.display = 'flex';
+    
+    // Reset state
+    parsedIcsEvents = [];
+    document.getElementById('importPreview').style.display = 'none';
+    document.getElementById('importStatus').style.display = 'none';
+    document.getElementById('importConfirmBtn').disabled = true;
+    document.getElementById('importConfirmBtn').innerHTML = '<span>📥</span><span>Import Events</span>';
+    
+    // Reset drop zone appearance
+    const dropZone = document.getElementById('importDropZone');
+    dropZone.innerHTML = `
+        <input type="file" id="icsFileInput" accept=".ics" style="display: none;">
+        <span style="font-size: 3em;">📁</span>
+        <p style="color: var(--text-primary); font-weight: 600; margin: 10px 0 5px;">Drop .ics file here</p>
+        <p style="color: var(--text-secondary); font-size: 0.9em; margin: 0;">or click to browse</p>
+    `;
+    
+    // Re-attach the file input change handler (since we rebuilt the DOM)
+    const fileInput = document.getElementById('icsFileInput');
+    fileInput.value = ''; // Clear any previous selection
+    fileInput.onchange = handleFileSelect;
+}
+
+/**
+ * Close the import modal
+ */
+function closeImportModal() {
+    document.getElementById('importModal').style.display = 'none';
+    parsedIcsEvents = [];
+}
+
+/**
+ * Handle drag over event
+ */
+function handleDragOver(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    document.getElementById('importDropZone').classList.add('drag-over');
+}
+
+/**
+ * Handle drag leave event
+ */
+function handleDragLeave(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    document.getElementById('importDropZone').classList.remove('drag-over');
+}
+
+/**
+ * Handle file drop
+ */
+function handleFileDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    document.getElementById('importDropZone').classList.remove('drag-over');
+    
+    const files = event.dataTransfer.files;
+    if (files.length > 0) {
+        processIcsFile(files[0]);
+    }
+}
+
+/**
+ * Handle file select from input
+ */
+function handleFileSelect(event) {
+    const files = event.target.files;
+    if (files.length > 0) {
+        processIcsFile(files[0]);
+    }
+}
+
+/**
+ * Process the ICS file
+ */
+function processIcsFile(file) {
+    if (!file.name.toLowerCase().endsWith('.ics')) {
+        showImportStatus('Please select a valid .ics file', 'error');
+        return;
+    }
+    
+    // Update drop zone to show file name
+    const dropZone = document.getElementById('importDropZone');
+    dropZone.innerHTML = `
+        <span style="font-size: 3em;">📄</span>
+        <p style="color: var(--text-primary); font-weight: 600; margin: 10px 0 5px;">${file.name}</p>
+        <p style="color: var(--text-secondary); font-size: 0.9em; margin: 0;">Parsing...</p>
+    `;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const icsContent = e.target.result;
+            parsedIcsEvents = parseIcsContent(icsContent);
+            
+            if (parsedIcsEvents.length === 0) {
+                showImportStatus('No events found in this file', 'error');
+                dropZone.innerHTML = `
+                    <input type="file" id="icsFileInput" accept=".ics" style="display: none;" onchange="handleFileSelect(event)">
+                    <span style="font-size: 3em;">📁</span>
+                    <p style="color: var(--text-primary); font-weight: 600; margin: 10px 0 5px;">Drop .ics file here</p>
+                    <p style="color: var(--text-secondary); font-size: 0.9em; margin: 0;">or click to browse</p>
+                `;
+                return;
+            }
+            
+            // Update drop zone with success
+            dropZone.innerHTML = `
+                <span style="font-size: 3em;">✅</span>
+                <p style="color: var(--text-primary); font-weight: 600; margin: 10px 0 5px;">${file.name}</p>
+                <p style="color: var(--accent-primary); font-size: 0.9em; margin: 0;">${parsedIcsEvents.length} events ready to import</p>
+            `;
+            
+            // Show preview
+            showImportPreview(parsedIcsEvents);
+            document.getElementById('importConfirmBtn').disabled = false;
+            
+        } catch (error) {
+            console.error('Error parsing ICS:', error);
+            showImportStatus('Failed to parse ICS file: ' + error.message, 'error');
+        }
+    };
+    reader.readAsText(file);
+}
+
+/**
+ * Parse ICS file content - simple parser without external library
+ */
+function parseIcsContent(icsText) {
+    const events = [];
+    const lines = icsText.split(/\r?\n/);
+    
+    let currentEvent = null;
+    let currentKey = null;
+    let currentValue = '';
+    
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+        
+        // Handle line folding (lines starting with space/tab are continuations)
+        if (line.startsWith(' ') || line.startsWith('\t')) {
+            currentValue += line.substring(1);
+            continue;
+        }
+        
+        // Process the previous key-value pair
+        if (currentKey && currentEvent) {
+            processIcsProperty(currentEvent, currentKey, currentValue);
+        }
+        
+        // Parse new line
+        const colonIndex = line.indexOf(':');
+        if (colonIndex === -1) continue;
+        
+        currentKey = line.substring(0, colonIndex);
+        currentValue = line.substring(colonIndex + 1);
+        
+        // Handle BEGIN/END
+        if (currentKey === 'BEGIN' && currentValue === 'VEVENT') {
+            currentEvent = { title: '', startTime: null, endTime: null, description: '', uid: '' };
+        } else if (currentKey === 'END' && currentValue === 'VEVENT') {
+            if (currentEvent && currentEvent.title && currentEvent.startTime) {
+                // If no end time, default to 1 hour after start
+                if (!currentEvent.endTime) {
+                    const start = new Date(currentEvent.startTime);
+                    start.setHours(start.getHours() + 1);
+                    currentEvent.endTime = start.toISOString();
+                }
+                events.push(currentEvent);
+            }
+            currentEvent = null;
+            currentKey = null;
+            currentValue = '';
+        }
+    }
+    
+    // Process last property if any
+    if (currentKey && currentEvent) {
+        processIcsProperty(currentEvent, currentKey, currentValue);
+    }
+    
+    return events;
+}
+
+/**
+ * Process a single ICS property
+ */
+function processIcsProperty(event, key, value) {
+    // Remove parameters from key (e.g., DTSTART;TZID=... becomes DTSTART)
+    const baseKey = key.split(';')[0];
+    
+    switch (baseKey) {
+        case 'SUMMARY':
+            event.title = unescapeIcsText(value);
+            break;
+        case 'DESCRIPTION':
+            event.description = unescapeIcsText(value);
+            break;
+        case 'DTSTART':
+            event.startTime = parseIcsDateTime(value, key);
+            break;
+        case 'DTEND':
+            event.endTime = parseIcsDateTime(value, key);
+            break;
+        case 'UID':
+            event.uid = value;
+            break;
+    }
+}
+
+/**
+ * Parse ICS datetime format
+ */
+function parseIcsDateTime(value, fullKey) {
+    // Handle different formats:
+    // 20231215T140000Z (UTC)
+    // 20231215T140000 (local)
+    // 20231215 (all-day)
+    
+    try {
+        // Remove any VALUE= prefix
+        value = value.replace(/^VALUE=[^:]+:/, '');
+        
+        // All-day event (YYYYMMDD)
+        if (value.length === 8) {
+            const year = parseInt(value.substring(0, 4));
+            const month = parseInt(value.substring(4, 6)) - 1;
+            const day = parseInt(value.substring(6, 8));
+            return new Date(year, month, day).toISOString();
+        }
+        
+        // DateTime format (YYYYMMDDTHHmmss or YYYYMMDDTHHmmssZ)
+        const isUtc = value.endsWith('Z');
+        const cleanValue = value.replace('Z', '').replace('T', '');
+        
+        const year = parseInt(cleanValue.substring(0, 4));
+        const month = parseInt(cleanValue.substring(4, 6)) - 1;
+        const day = parseInt(cleanValue.substring(6, 8));
+        const hour = parseInt(cleanValue.substring(8, 10)) || 0;
+        const minute = parseInt(cleanValue.substring(10, 12)) || 0;
+        const second = parseInt(cleanValue.substring(12, 14)) || 0;
+        
+        if (isUtc) {
+            return new Date(Date.UTC(year, month, day, hour, minute, second)).toISOString();
+        } else {
+            return new Date(year, month, day, hour, minute, second).toISOString();
+        }
+    } catch (e) {
+        console.warn('Failed to parse date:', value, e);
+        return null;
+    }
+}
+
+/**
+ * Unescape ICS text (handle escaped chars)
+ */
+function unescapeIcsText(text) {
+    return text
+        .replace(/\\n/g, '\n')
+        .replace(/\\,/g, ',')
+        .replace(/\\;/g, ';')
+        .replace(/\\\\/g, '\\');
+}
+
+/**
+ * Show import preview
+ */
+function showImportPreview(events) {
+    const preview = document.getElementById('importPreview');
+    const count = document.getElementById('importCount');
+    const list = document.getElementById('importEventsList');
+    
+    count.textContent = events.length;
+    
+    // Show first 10 events
+    const displayEvents = events.slice(0, 10);
+    list.innerHTML = displayEvents.map(event => {
+        const start = new Date(event.startTime);
+        const dateStr = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const timeStr = start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        
+        return `
+            <div class="import-event-item">
+                <span class="event-icon">📅</span>
+                <div class="event-info">
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-time">${dateStr} at ${timeStr}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    if (events.length > 10) {
+        list.innerHTML += `<div style="text-align: center; padding: 10px; color: var(--text-secondary);">
+            ... and ${events.length - 10} more events
+        </div>`;
+    }
+    
+    preview.style.display = 'block';
+}
+
+/**
+ * Show import status message
+ */
+function showImportStatus(message, type) {
+    const status = document.getElementById('importStatus');
+    status.textContent = message;
+    status.className = `import-status-${type}`;
+    status.style.display = 'block';
+}
+
+/**
+ * Confirm and execute the import
+ */
+async function confirmImport() {
+    if (parsedIcsEvents.length === 0) return;
+    
+    const confirmBtn = document.getElementById('importConfirmBtn');
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<span>⏳</span><span>Importing...</span>';
+    
+    showImportStatus('Importing events...', 'loading');
+    
+    // Convert parsed events to backend format
+    const eventsToImport = parsedIcsEvents.map(event => ({
+        title: event.title,
+        startTime: event.startTime,
+        endTime: event.endTime,
+        description: event.description || '',
+        type: 'TASK',
+        sourceType: 'ICS_IMPORT',
+        externalId: event.uid || `ics_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    }));
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/calendar/events/bulk`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(eventsToImport)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showImportStatus(
+                `✅ Successfully imported ${result.imported} events` + 
+                (result.skipped > 0 ? ` (${result.skipped} duplicates skipped)` : ''),
+                'success'
+            );
+            
+            // Refresh calendar
+            loadCalendarEvents();
+            
+            // Close modal after short delay
+            setTimeout(() => {
+                closeImportModal();
+                showToast(`Imported ${result.imported} events!`, 'success');
+            }, 1500);
+            
+        } else {
+            const errorText = await response.text();
+            throw new Error(errorText || 'Server error');
+        }
+    } catch (error) {
+        console.error('Import error:', error);
+        showImportStatus('❌ Import failed: ' + error.message, 'error');
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<span>📥</span><span>Import Events</span>';
+    }
+}

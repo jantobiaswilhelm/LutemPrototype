@@ -184,22 +184,22 @@
    ============================================ */
 .page-header {
     text-align: center;
-    padding: 32px 24px 24px;
+    padding: 16px 24px 16px;
 }
 
 .page-header-logo {
-    font-size: 2.2em;
+    font-size: 2em;
     font-weight: 800;
     background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .page-header-tagline {
     color: var(--text-secondary);
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: 500;
 }
 
@@ -245,15 +245,15 @@
     }
 
     .page-header {
-        padding: 24px 16px 16px;
+        padding: 16px 16px 12px;
     }
 
     .page-header-logo {
-        font-size: 1.8em;
+        font-size: 1.6em;
     }
 
     .page-header-tagline {
-        font-size: 1em;
+        font-size: 0.9em;
     }
 }
 
@@ -1634,23 +1634,28 @@
 
     /* Auth header offset */
     .auth-header {
-        margin-left: 110px;
+        display: none;
+    }
+
+    /* Remove body top padding on desktop since auth-header is hidden */
+    body {
+        padding-top: 0 !important;
     }
 
     /* ==========================================
        EXPANDED HEADER
        ========================================== */
     .page-header {
-        padding: 48px 24px 40px;
+        padding: 8px 24px 8px;
     }
 
     .page-header-logo {
-        font-size: 3.2em;
+        font-size: 2.4em;
     }
 
     .page-header-tagline {
-        font-size: 1.4em;
-        margin-top: 8px;
+        font-size: 1.1em;
+        margin-top: 4px;
     }
 
 

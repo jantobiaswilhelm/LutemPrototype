@@ -2826,3 +2826,98 @@
 body {
     padding-top: 50px !important;
 }
+
+
+/* ============================================
+   ICS IMPORT MODAL STYLES
+   ============================================ */
+
+/* Import button in calendar header */
+.calendar-add-btn.import-btn {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    color: var(--text-primary);
+}
+
+.calendar-add-btn.import-btn:hover {
+    background: var(--bg-main);
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+/* Drop zone for file upload */
+.import-drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 16px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-main);
+}
+
+.import-drop-zone:hover,
+.import-drop-zone.drag-over {
+    border-color: var(--accent-primary);
+    background: rgba(var(--accent-primary-rgb), 0.05);
+}
+
+.import-drop-zone.drag-over {
+    transform: scale(1.02);
+}
+
+
+/* Import event list items */
+.import-event-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.import-event-item:last-child {
+    border-bottom: none;
+}
+
+.import-event-item .event-icon {
+    font-size: 1.2em;
+}
+
+.import-event-item .event-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.import-event-item .event-title {
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.95em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.import-event-item .event-time {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+}
+
+/* Import status messages */
+.import-status-success {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.import-status-error {
+    background: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.import-status-loading {
+    background: rgba(33, 150, 243, 0.1);
+    color: #2196f3;
+    border: 1px solid rgba(33, 150, 243, 0.3);
+}
