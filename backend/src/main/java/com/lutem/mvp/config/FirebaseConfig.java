@@ -12,12 +12,18 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import jakarta.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Firebase Admin SDK configuration.
  * Initializes Firebase for server-side token validation.
+ * 
+ * Supports two modes:
+ * 1. Production (Railway): Reads from FIREBASE_CREDENTIALS environment variable
+ * 2. Development (local): Reads from firebase-service-account.json file
  */
 @Configuration
 public class FirebaseConfig {
@@ -29,26 +35,13 @@ public class FirebaseConfig {
     public void initialize() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
-                Resource resource;
+                InputStream serviceAccount = getCredentialsStream();
                 
-                // Try file system path first (for local dev)
-                if (credentialsPath.startsWith("/") || credentialsPath.contains(":")) {
-                    resource = new FileSystemResource(credentialsPath);
-                } else {
-                    // Try classpath, then relative file path
-                    resource = new ClassPathResource(credentialsPath);
-                    if (!resource.exists()) {
-                        resource = new FileSystemResource(credentialsPath);
-                    }
-                }
-                
-                if (!resource.exists()) {
-                    System.err.println("⚠️ Firebase credentials not found at: " + credentialsPath);
+                if (serviceAccount == null) {
+                    System.err.println("⚠️ Firebase credentials not found");
                     System.err.println("⚠️ Authentication will be disabled");
                     return;
                 }
-                
-                InputStream serviceAccount = resource.getInputStream();
                 
                 FirebaseOptions options = FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
@@ -60,6 +53,41 @@ public class FirebaseConfig {
         } catch (IOException e) {
             System.err.println("❌ Failed to initialize Firebase: " + e.getMessage());
         }
+    }
+    
+    /**
+     * Get credentials from environment variable (production) or file (development)
+     */
+    private InputStream getCredentialsStream() {
+        // First, try environment variable (for Railway/production)
+        String envCredentials = System.getenv("FIREBASE_CREDENTIALS");
+        if (envCredentials != null && !envCredentials.isEmpty()) {
+            System.out.println("✅ Loading Firebase credentials from environment variable");
+            return new ByteArrayInputStream(envCredentials.getBytes(StandardCharsets.UTF_8));
+        }
+        
+        // Fall back to file (for local development)
+        try {
+            Resource resource;
+            
+            if (credentialsPath.startsWith("/") || credentialsPath.contains(":")) {
+                resource = new FileSystemResource(credentialsPath);
+            } else {
+                resource = new ClassPathResource(credentialsPath);
+                if (!resource.exists()) {
+                    resource = new FileSystemResource(credentialsPath);
+                }
+            }
+            
+            if (resource.exists()) {
+                System.out.println("✅ Loading Firebase credentials from file: " + credentialsPath);
+                return resource.getInputStream();
+            }
+        } catch (IOException e) {
+            System.err.println("⚠️ Could not read credentials file: " + e.getMessage());
+        }
+        
+        return null;
     }
     
     @Bean
