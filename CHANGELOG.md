@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0] - 2025-11-30 (Desktop Responsive Layout)
+
+### Added - Desktop Layout
+- **Responsive Breakpoints**
+  - Tablet (768px-1023px): 2-column grid for wizard inputs
+  - Desktop (1024px+): Full 2x2 grid with sidebar navigation
+  - Large Desktop (1400px+): Extra spacious layout
+
+- **Sidebar Navigation (Desktop)**
+  - Fixed left sidebar (110px wide) replaces bottom navigation
+  - Vertical tab layout with icons and labels
+  - Auth/Sign-in section integrated into sidebar
+  - Accent-colored border and subtle background tint (8% accent mix)
+  - Proper flexbox stacking for tabs, auth, and credits
+
+- **Desktop UX Improvements**
+  - Advanced options (Genre Preferences, More Options) expanded by default
+  - "Optional Preferences" header above advanced sections
+  - Expanded header with larger logo and tagline
+  - Page content offset to accommodate sidebar
+
+### Changed
+- Top auth header hidden on desktop (moved to sidebar)
+- Wizard inputs use CSS Grid for responsive 2-column/2x2 layouts
+- Submit button centered with max-width constraint on desktop
+
+### Technical
+- Added `.wizard-inputs-grid` wrapper for responsive grid
+- Added `.wizard-submit-row` wrapper for button centering
+- Added `.advanced-sections-grid` wrapper for side-by-side advanced options
+- Added `.optional-section-header` for desktop-only labeling
+- Added `.sidebar-auth` section with dropdown support
+- New JS functions: `toggleSidebarUserDropdown()`, `updateSidebarAuthUI()`
+
+---
+
 ## [0.5.1] - 2025-11-29 (Documentation Update & Deployment Prep)
 
 ### Changed

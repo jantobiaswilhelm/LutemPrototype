@@ -260,6 +260,12 @@ function updateAuthUI() {
         if (userHeader) userHeader.style.display = 'none';
     }
     
+    // Update sidebar auth UI (desktop)
+    updateSidebarAuthUI(
+        window.authState.isAuthenticated, 
+        window.authState.user?.displayName || 'Player'
+    );
+    
     // Update tab visibility (for Phase 3 gating)
     updateTabGating();
 }
@@ -556,3 +562,50 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
+
+/**
+ * Toggle sidebar user dropdown menu (desktop)
+ */
+function toggleSidebarUserDropdown() {
+    const dropdown = document.getElementById('sidebarUserDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+/**
+ * Close sidebar dropdown when clicking outside
+ */
+document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('sidebarUserDropdown');
+    const avatar = document.querySelector('.sidebar-avatar');
+    
+    if (dropdown && avatar) {
+        if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    }
+});
+
+/**
+ * Sync sidebar auth UI with header auth UI
+ */
+function updateSidebarAuthUI(isLoggedIn, username = 'Player') {
+    const sidebarSignInBtn = document.getElementById('sidebarSignInBtn');
+    const sidebarUserSection = document.getElementById('sidebarUserSection');
+    const sidebarUserName = document.getElementById('sidebarUserName');
+    
+    if (sidebarSignInBtn && sidebarUserSection) {
+        if (isLoggedIn) {
+            sidebarSignInBtn.style.display = 'none';
+            sidebarUserSection.classList.add('show');
+            if (sidebarUserName) {
+                sidebarUserName.textContent = username;
+            }
+        } else {
+            sidebarSignInBtn.style.display = 'flex';
+            sidebarUserSection.classList.remove('show');
+        }
+    }
+}

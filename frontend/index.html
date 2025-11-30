@@ -76,6 +76,31 @@
                     <span>Profile</span>
                 </button>
             </div>
+            
+            <!-- Sidebar Auth Section (visible on desktop only) -->
+            <div class="sidebar-auth">
+                <!-- Sign In Button (shown when logged out) -->
+                <button class="sidebar-auth-btn" id="sidebarSignInBtn" onclick="openAuthModal('signin')">
+                    <span class="tab-icon">🔐</span>
+                    <span>Sign In</span>
+                </button>
+                
+                <!-- User Section (shown when logged in) -->
+                <div class="sidebar-user" id="sidebarUserSection">
+                    <div class="sidebar-avatar" onclick="toggleSidebarUserDropdown()">👤</div>
+                    <span class="sidebar-username" id="sidebarUserName">Player</span>
+                    <div class="sidebar-user-dropdown" id="sidebarUserDropdown">
+                        <div class="user-dropdown-item" onclick="openAuthModal('signin'); toggleSidebarUserDropdown();">
+                            <span>👤</span> Profile
+                        </div>
+                        <div class="user-dropdown-divider"></div>
+                        <div class="user-dropdown-item" onclick="signOut(); toggleSidebarUserDropdown();">
+                            <span>🚪</span> Sign Out
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="nav-credits">
                 <span>Jan Wilhelm</span>
                 <a href="https://github.com/jantobiaswilhelm/LutemPrototype" target="_blank" rel="noopener" title="View on GitHub">
@@ -323,8 +348,11 @@
         <!-- NEW: Single-column Home Wizard -->
         <div class="home-wizard">
             
-            <!-- Section 1: Energy Level -->
-            <div class="wizard-section">
+            <!-- NEW: Grid wrapper for desktop 2x2 layout -->
+            <div class="wizard-inputs-grid">
+            
+            <!-- Section 1: Energy Level (Top-Left on desktop) -->
+            <div class="wizard-section" data-section="energy">
                 <div class="wizard-question">
                     ⚡ How's your energy right now?
                 </div>
@@ -350,8 +378,8 @@
                 </div>
             </div>
 
-            <!-- Section 2: Time Available -->
-            <div class="wizard-section">
+            <!-- Section 2: Time Available (Top-Right on desktop) -->
+            <div class="wizard-section" data-section="time">
                 <div class="wizard-question">
                     ⏱️ How much time do you have?
                 </div>
@@ -371,8 +399,8 @@
                 </div>
             </div>
 
-            <!-- Section 3: Mood/Emotional Goals -->
-            <div class="wizard-section">
+            <!-- Section 3: Mood/Emotional Goals (Bottom-Left on desktop) -->
+            <div class="wizard-section" data-section="mood">
                 <div class="wizard-question">
                     😊 What do you want to feel?
                     <div class="wizard-question-sub">(select all that apply)</div>
@@ -387,8 +415,8 @@
                 </div>
             </div>
 
-            <!-- Section 4: Interruptibility -->
-            <div class="wizard-section">
+            <!-- Section 4: Interruptibility (Bottom-Right on desktop) -->
+            <div class="wizard-section" data-section="interrupt">
                 <div class="wizard-question">
                     ⏸️ Can you pause anytime?
                 </div>
@@ -411,10 +439,14 @@
                 </div>
             </div>
 
-            <!-- Main CTA Button -->
-            <button class="wizard-submit" id="recommendBtn">
-                🎮 Get Recommendation
-            </button>
+            </div> <!-- End wizard-inputs-grid -->
+
+            <!-- Submit Button Row (full width, centered) -->
+            <div class="wizard-submit-row">
+                <button class="wizard-submit" id="recommendBtn">
+                    🎮 Get Recommendation
+                </button>
+            </div>
 
             <!-- Advanced Options Toggles -->
             <div class="advanced-section">
@@ -438,6 +470,14 @@
             </div>
 
             <!-- Genre Preferences Content (hidden by default) -->
+            <!-- NEW: Grid wrapper for desktop side-by-side advanced sections -->
+            <div class="advanced-sections-grid">
+            
+            <!-- Optional section header - visible on desktop only -->
+            <div class="optional-section-header">
+                <span class="optional-label">✨ Optional Preferences</span>
+                <span class="optional-hint">Fine-tune your recommendations</span>
+            </div>
             <div class="advanced-content" id="genreContent">
                 <div class="wizard-section" style="margin-top: 16px;">
                     <div class="wizard-question" style="font-size: 1em;">
@@ -498,6 +538,7 @@
                     </div>
                 </div>
             </div>
+            </div> <!-- End advanced-sections-grid -->
 
             <!-- Results Container (shown after recommendation) -->
             <div class="results-container" id="resultsPanel">
