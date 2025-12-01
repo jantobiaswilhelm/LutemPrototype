@@ -352,8 +352,8 @@ async function saveTask(event) {
     const taskEvent = {
         title: title,
         description: description,
-        start: new Date(start).toISOString(),
-        end: new Date(end).toISOString(),
+        startTime: new Date(start).toISOString(),
+        endTime: new Date(end).toISOString(),
         type: 'TASK'
     };
     
@@ -758,7 +758,7 @@ async function saveCalendarEvent() {
             endTime: end.toISOString(),
             type: 'GAME',
             gameId: selectedGame.id,
-            gameName: selectedGame.name
+            description: `Gaming session: ${selectedGame.name}`
         };
     }
     

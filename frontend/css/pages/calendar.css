@@ -1,11 +1,19 @@
 /* ============================================
    CALENDAR.CSS - FullCalendar Overrides
    Page-Specific Styles for Calendar Tab
+   
+   Design: Cozy & warm, gaming events pop
+   Theme: All 4 themes supported from start
    ============================================ */
 
 /* ============================================
    CALENDAR PAGE LAYOUT
    ============================================ */
+
+#calendar-page .container {
+    max-width: 1200px;
+    padding: 0 20px;
+}
 
 /* Calendar Header */
 .calendar-header {
@@ -26,51 +34,125 @@
     color: var(--text-primary);
     font-size: 2.5em;
     margin: 0;
+    font-weight: 700;
 }
 
 .calendar-header-text p {
     text-align: left;
     color: var(--text-secondary);
-    margin-top: 10px;
+    margin-top: 8px;
     margin-bottom: 0;
+    font-size: 1.1em;
 }
 
 .calendar-header-actions {
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
 }
 
-/* Calendar Card (FullCalendar wrapper) */
+/* ============================================
+   CALENDAR HEADER BUTTONS - Cozy Style
+   ============================================ */
+
+.calendar-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: white;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.calendar-add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--shadow-hover);
+}
+
+.calendar-add-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+/* Gaming Session Button - Primary action */
+.calendar-add-btn.gaming-btn {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+}
+
+.calendar-add-btn.gaming-btn:hover {
+    background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+}
+
+/* Import Button - Secondary/outline style */
+.calendar-add-btn.import-btn {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.calendar-add-btn.import-btn:hover {
+    background: var(--bg-secondary);
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+}
+
+/* Task Button - Secondary solid */
+.calendar-add-btn.task-btn {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.calendar-add-btn.task-btn:hover {
+    background: var(--surface);
+    border-color: var(--text-secondary);
+}
+
+/* ============================================
+   CALENDAR CARD - Cozy Container
+   ============================================ */
+
 .calendar-card {
     background: var(--surface);
-    border-radius: 16px;
-    padding: 25px;
-    box-shadow: 0 4px 16px var(--shadow);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 20px var(--shadow);
     margin-bottom: 30px;
     transition: box-shadow 0.3s ease;
+    border: 1px solid var(--border-color);
 }
 
 .calendar-card:hover {
-    box-shadow: 0 6px 20px var(--shadow-hover);
+    box-shadow: 0 8px 32px var(--shadow-hover);
 }
 
-/* Calendar Container */
 #calendar {
     max-width: 100%;
     margin: 0 auto;
 }
 
 /* ============================================
-   CALENDAR LEGEND
+   CALENDAR LEGEND - Theme Colors
    ============================================ */
 
 .calendar-legend {
     display: flex;
-    gap: 25px;
+    gap: 30px;
     justify-content: center;
     margin-bottom: 30px;
     flex-wrap: wrap;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-radius: 14px;
+    box-shadow: 0 2px 12px var(--shadow);
+    border: 1px solid var(--border-color);
 }
 
 .calendar-legend-item {
@@ -80,152 +162,233 @@
 }
 
 .calendar-legend-color {
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
     display: inline-block;
-    box-shadow: 0 2px 4px var(--shadow);
+    box-shadow: 0 2px 6px var(--shadow);
 }
 
+/* Gaming uses accent color - pops! */
 .calendar-legend-color.gaming {
-    background: var(--mood-unwind);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
 }
 
+/* Tasks use muted color */
 .calendar-legend-color.task {
-    background: var(--text-muted, var(--text-secondary));
+    background: var(--text-light);
 }
 
 .calendar-legend-text {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-weight: 600;
     font-size: 0.95em;
 }
 
+
 /* ============================================
-   FULLCALENDAR CUSTOM STYLING
+   FULLCALENDAR TOOLBAR - Cozy Buttons
    ============================================ */
 
-.fc-event {
-    border: none !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
+/* Toolbar layout */
+.fc .fc-toolbar {
+    margin-bottom: 20px;
+    gap: 16px;
 }
 
-/* Task events - themed with secondary color */
-.fc-event-task {
-    background-color: var(--bg-secondary) !important;
-    border: 2px solid var(--text-muted, #6c757d) !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-}
-
-/* Override FullCalendar inline styles for task events */
-.fc-event.fc-event-task {
-    background-color: var(--bg-secondary) !important;
-}
-
-.fc-event-task .fc-event-main {
-    padding: 0 !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.fc-event-task .fc-event-main-frame {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: 4px;
-}
-
-.fc-event-task .fc-event-title-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.fc-event-task .fc-event-title {
-    font-weight: 600;
-    font-size: 0.85em;
+.fc .fc-toolbar-title {
     color: var(--text-primary) !important;
-    text-align: center;
-}
-
-.fc-event-task .fc-event-title-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.fc-event-task .fc-event-duration {
-    font-weight: 500;
-    font-size: 0.75em;
-    color: var(--text-secondary);
-}
-
-.fc-button-primary {
-    background-color: var(--accent-primary) !important;
-    border-color: var(--accent-primary) !important;
-}
-
-.fc-button-primary:hover {
-    background-color: var(--accent-secondary) !important;
-}
-
-.fc-button-primary:disabled {
-    background-color: var(--border-color) !important;
-    border-color: var(--border-color) !important;
-}
-
-.fc-toolbar-title {
-    color: var(--text-primary) !important;
-    font-size: 1.5em !important;
+    font-size: 1.6em !important;
     font-weight: 700 !important;
 }
 
-.fc-col-header-cell-cushion,
-.fc-daygrid-day-number {
+/* All FullCalendar buttons - base cozy style */
+.fc .fc-button {
+    background: var(--surface) !important;
+    border: 2px solid var(--border-color) !important;
     color: var(--text-primary) !important;
+    border-radius: 10px !important;
+    padding: 8px 14px !important;
+    font-weight: 600 !important;
+    font-size: 0.9em !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 6px var(--shadow) !important;
 }
 
-.fc-theme-standard td, 
-.fc-theme-standard th {
+.fc .fc-button:hover {
+    background: var(--bg-secondary) !important;
+    border-color: var(--accent-primary) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px var(--shadow-hover) !important;
+}
+
+.fc .fc-button:active {
+    transform: translateY(0) !important;
+}
+
+/* Active/selected state for view buttons */
+.fc .fc-button-active,
+.fc .fc-button.fc-button-active {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+    color: white !important;
+}
+
+.fc .fc-button-active:hover {
+    background: var(--accent-secondary) !important;
+    border-color: var(--accent-secondary) !important;
+}
+
+/* Today button special styling */
+.fc .fc-today-button {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
+    border: none !important;
+    color: white !important;
+}
+
+.fc .fc-today-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary)) !important;
+}
+
+.fc .fc-today-button:disabled {
+    background: var(--text-light) !important;
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+/* Navigation arrows */
+.fc .fc-prev-button,
+.fc .fc-next-button {
+    padding: 8px 12px !important;
+}
+
+/* View toggle button group */
+.fc .fc-button-group {
+    gap: 4px !important;
+}
+
+.fc .fc-button-group .fc-button {
+    border-radius: 8px !important;
+}
+
+/* ============================================
+   FULLCALENDAR GRID - Cozy Feel
+   ============================================ */
+
+/* Calendar borders */
+.fc .fc-theme-standard td,
+.fc .fc-theme-standard th {
     border-color: var(--border-color) !important;
 }
 
-.fc-theme-standard .fc-scrollgrid {
+.fc .fc-theme-standard .fc-scrollgrid {
     border-color: var(--border-color) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
 }
 
-.fc-daygrid-day.fc-day-today {
-    background-color: rgba(200, 159, 126, 0.1) !important;
+/* Day headers (Mon, Tue, etc.) */
+.fc .fc-col-header {
+    background: var(--bg-secondary);
 }
 
-.fc-event-main-frame {
-    padding: 2px 4px;
+.fc .fc-col-header-cell {
+    padding: 12px 8px !important;
+    border-bottom: 2px solid var(--border-color) !important;
 }
 
-.fc-event-title {
+.fc .fc-col-header-cell-cushion {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+    font-size: 0.9em !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Day number in month view */
+.fc .fc-daygrid-day-number {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    padding: 8px 10px !important;
+}
+
+/* Today highlight - warm glow */
+.fc .fc-daygrid-day.fc-day-today,
+.fc .fc-timegrid-col.fc-day-today {
+    background: color-mix(in srgb, var(--accent-primary) 12%, transparent) !important;
+}
+
+.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+    background: var(--accent-primary);
+    color: white !important;
+    border-radius: 8px;
+    padding: 4px 8px !important;
+}
+
+/* Day cell hover */
+.fc .fc-daygrid-day:hover {
+    background: color-mix(in srgb, var(--accent-primary) 6%, transparent);
+}
+
+/* Time column styling */
+.fc .fc-timegrid-slot-label-cushion {
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+    font-size: 0.85em !important;
+}
+
+/* Time grid lines */
+.fc .fc-timegrid-slot {
+    height: 48px !important;
+}
+
+.fc .fc-timegrid-slot-minor {
+    border-color: color-mix(in srgb, var(--border-color) 50%, transparent) !important;
+}
+
+
+/* ============================================
+   EVENT CARDS - Gaming Events POP!
+   ============================================ */
+
+/* Base event styling */
+.fc .fc-event {
+    border: none !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.fc .fc-event:hover {
+    transform: scale(1.02);
+    z-index: 10 !important;
+}
+
+/* Event main frame */
+.fc .fc-event-main-frame {
+    padding: 4px 6px;
+}
+
+.fc .fc-event-title {
     font-weight: 600;
     font-size: 0.85em;
 }
 
 /* ============================================
-   GAME EVENT WITH BACKGROUND IMAGE
+   GAMING EVENTS - Visually Dominant
    ============================================ */
 
-/* Game events - themed border, no padding */
 .fc-event-gaming {
-    border: 2px solid var(--accent-primary) !important;
-    background: transparent !important;
+    position: relative !important;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
+    border: 3px solid var(--accent-secondary) !important;
     overflow: hidden !important;
     padding: 0 !important;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-primary) 40%, transparent) !important;
+}
+
+.fc-event-gaming:hover {
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--accent-primary) 50%, transparent) !important;
 }
 
 .fc-event-gaming .fc-event-main {
@@ -233,6 +396,7 @@
     height: 100% !important;
 }
 
+/* Game event with background image */
 .fc-event-game {
     position: absolute;
     top: 0;
@@ -253,7 +417,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.55);
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.3) 0%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
 }
 
 .fc-event-game-content {
@@ -264,14 +432,14 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 4px;
+    padding: 6px;
 }
 
 .fc-event-game-title {
     font-weight: 700;
-    font-size: 0.85em;
+    font-size: 0.9em;
     color: white;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
     line-height: 1.2;
 }
 
@@ -279,11 +447,253 @@
     font-weight: 500;
     font-size: 0.75em;
     color: rgba(255, 255, 255, 0.9);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    margin-top: 2px;
+}
+
+/* Gaming icon badge */
+.fc-event-gaming::before {
+    content: '🎮';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 0.8em;
+    z-index: 2;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
 }
 
 /* ============================================
-   CALENDAR ANIMATIONS
+   TASK EVENTS - Visually Distinct
+   ============================================ */
+
+.fc-event-task {
+    position: relative !important;
+    background: color-mix(in srgb, var(--text-light) 15%, var(--surface)) !important;
+    border: 2px solid var(--text-light) !important;
+    border-left: 5px solid var(--text-secondary) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px var(--shadow), inset 0 0 0 1px color-mix(in srgb, var(--text-light) 20%, transparent) !important;
+}
+
+.fc-event-task:hover {
+    border-color: var(--accent-primary) !important;
+    border-left-color: var(--accent-primary) !important;
+    box-shadow: 0 4px 14px var(--shadow-hover), inset 0 0 0 1px color-mix(in srgb, var(--accent-primary) 30%, transparent) !important;
+    background: color-mix(in srgb, var(--accent-primary) 10%, var(--surface)) !important;
+}
+
+/* Override FullCalendar inline background for tasks */
+.fc-event.fc-event-task {
+    background: color-mix(in srgb, var(--text-light) 15%, var(--surface)) !important;
+}
+
+.fc-event-task .fc-event-main {
+    padding: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.fc-event-task .fc-event-main-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 6px 8px;
+}
+
+.fc-event-task .fc-event-title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.fc-event-task .fc-event-title {
+    font-weight: 600;
+    font-size: 0.85em;
+    color: var(--text-primary) !important;
+    text-align: center;
+}
+
+.fc-event-task .fc-event-duration {
+    font-weight: 500;
+    font-size: 0.75em;
+    color: var(--text-secondary);
+}
+
+/* Task icon */
+.fc-event-task::before {
+    content: '📋';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 0.7em;
+    z-index: 2;
+}
+
+
+/* ============================================
+   IMPORTED EVENTS (from ICS)
+   ============================================ */
+
+.fc-event-imported {
+    background: var(--mood-explore) !important;
+    border: 2px solid color-mix(in srgb, var(--mood-explore) 80%, black) !important;
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--mood-explore) 30%, transparent) !important;
+}
+
+.fc-event-imported .fc-event-title {
+    color: white !important;
+}
+
+/* ============================================
+   RESPONSIVE STYLES
+   ============================================ */
+
+@media (max-width: 768px) {
+    .calendar-header-content {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .calendar-header-text h1 {
+        text-align: center;
+        font-size: 2em;
+    }
+    
+    .calendar-header-text p {
+        text-align: center;
+    }
+    
+    .calendar-header-actions {
+        justify-content: center;
+    }
+    
+    /* Stack toolbar on mobile */
+    .fc .fc-toolbar {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .fc .fc-toolbar-chunk {
+        display: flex;
+        justify-content: center;
+    }
+    
+    /* Smaller buttons on mobile */
+    .fc .fc-button {
+        padding: 6px 10px !important;
+        font-size: 0.85em !important;
+    }
+    
+    .calendar-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+    
+    .calendar-legend {
+        gap: 16px;
+        padding: 12px 16px;
+    }
+}
+
+/* Hide button text on small screens, show icon only */
+@media (max-width: 500px) {
+    .calendar-add-btn span:last-child {
+        display: none;
+    }
+    
+    .calendar-add-btn {
+        padding: 12px 14px;
+    }
+    
+    /* Smaller view buttons */
+    .fc .fc-button-group .fc-button {
+        padding: 6px 8px !important;
+    }
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+
+.calendar-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.calendar-empty-state-icon {
+    font-size: 4em;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
+.calendar-empty-state h3 {
+    color: var(--text-primary);
+    font-size: 1.4em;
+    margin-bottom: 8px;
+}
+
+.calendar-empty-state p {
+    margin-bottom: 20px;
+    font-size: 1em;
+}
+
+.calendar-empty-state-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.calendar-empty-state-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-hover);
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.calendar-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.calendar-loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   ANIMATIONS
    ============================================ */
 
 @keyframes slideIn {
@@ -308,83 +718,18 @@
     }
 }
 
-/* ============================================
-   CALENDAR RESPONSIVE STYLES
-   ============================================ */
-
-@media (max-width: 768px) {
-    .fc-toolbar {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .fc-toolbar-chunk {
-        display: flex;
-        justify-content: center;
-    }
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-
-/* ============================================
-   CALENDAR HEADER BUTTONS (Bug #5 & #6)
-   ============================================ */
-
-.calendar-add-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.95em;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: white;
+/* Smooth transition when switching calendar views */
+.fc-view-harness {
+    transition: height 0.3s ease;
 }
 
-.calendar-add-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* Event appear animation */
+.fc-event {
+    animation: fadeIn 0.2s ease;
 }
 
-.calendar-add-btn:active {
-    transform: translateY(0);
-}
-
-.calendar-add-btn.gaming-btn {
-    background: var(--accent-primary);
-}
-
-.calendar-add-btn.gaming-btn:hover {
-    background: var(--accent-secondary);
-}
-
-.calendar-add-btn.task-btn {
-    background: var(--text-muted, var(--text-secondary));
-}
-
-.calendar-add-btn.task-btn:hover {
-    background: var(--text-light);
-}
-
-/* Responsive - stack buttons on mobile */
-@media (max-width: 600px) {
-    .calendar-add-btn span:last-child {
-        display: none;
-    }
-    
-    .calendar-add-btn {
-        padding: 10px 14px;
-    }
-}
-
-
-/* Import Button Styles */
-.calendar-add-btn.import-btn {
-    background: var(--accent-primary);
-}
-
-.calendar-add-btn.import-btn:hover {
-    background: var(--accent-secondary);
-}
