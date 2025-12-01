@@ -73,24 +73,34 @@ function initCalendar() {
                 }
             }
             
+            // Gaming events with background image
             if (isGame && imageUrl) {
                 return {
-                    html: `<div class="fc-event-game" style="background-image: url('${imageUrl}')">
+                    html: `<div class="fc-event-game-wrapper" style="background-image: url('${imageUrl}')">
                         <div class="fc-event-game-overlay"></div>
-                        <div class="fc-event-game-content">
-                            <span class="fc-event-game-title">${arg.event.title}</span>
-                            <span class="fc-event-game-duration">(${durationText})</span>
+                        <div class="fc-event-game-text">
+                            <span class="fc-event-game-title">🎮 ${arg.event.title}</span>
+                            <span class="fc-event-game-duration">${durationText}</span>
                         </div>
                     </div>`
                 };
             }
             
+            // Gaming events without image
+            if (isGame) {
+                return {
+                    html: `<div class="fc-event-game-simple">
+                        <span class="fc-event-game-title">🎮 ${arg.event.title}</span>
+                        <span class="fc-event-game-duration">${durationText}</span>
+                    </div>`
+                };
+            }
+            
+            // Task events
             return {
-                html: `<div class="fc-event-main-frame">
-                    <div class="fc-event-title-container">
-                        <div class="fc-event-title fc-sticky">${arg.event.title}</div>
-                        ${durationText ? `<div class="fc-event-duration">(${durationText})</div>` : ''}
-                    </div>
+                html: `<div class="fc-event-task-content">
+                    <span class="fc-event-task-title">📋 ${arg.event.title}</span>
+                    <span class="fc-event-task-duration">${durationText}</span>
                 </div>`
             };
         }
@@ -140,8 +150,8 @@ function setupCalendarRecommendationIntegration() {
             if (selectedTimeSlot && typeof currentRecommendedGame !== 'undefined' && currentRecommendedGame) {
                 const gameEvent = {
                     title: `Gaming: ${currentRecommendedGame.name}`,
-                    startTime: selectedTimeSlot.start.toISOString(),
-                    endTime: selectedTimeSlot.end.toISOString(),
+                    startTime: toLocalISOString(selectedTimeSlot.start),
+                    endTime: toLocalISOString(selectedTimeSlot.end),
                     type: 'GAME',
                     gameId: currentRecommendedGame.id,
                     gameName: currentRecommendedGame.name
@@ -203,13 +213,17 @@ async function loadCalendarEvents() {
                 const imageUrl = event.gameId ? gameImageMap[event.gameId] : null;
                 const isGame = event.type === 'GAME';
                 
+                // Ensure dates are valid for FullCalendar
+                const startDate = new Date(event.startTime);
+                const endDate = new Date(event.endTime);
+                
                 window.calendarInstance.addEvent({
                     id: event.id,
                     title: event.title,
-                    start: event.startTime,
-                    end: event.endTime,
-                    backgroundColor: isGame ? 'transparent' : '',
-                    borderColor: isGame ? 'var(--accent-primary)' : '',
+                    start: startDate,
+                    end: endDate,
+                    backgroundColor: isGame ? 'var(--accent-primary)' : 'var(--text-light)',
+                    borderColor: isGame ? 'var(--accent-secondary)' : 'var(--text-light)',
                     classNames: isGame ? ['fc-event-gaming'] : ['fc-event-task'],
                     extendedProps: {
                         type: event.type,
@@ -287,8 +301,8 @@ async function updateEventTimes(event) {
     try {
         const updatedEvent = {
             title: event.title,
-            startTime: event.start.toISOString(),
-            endTime: event.end.toISOString(),
+            startTime: toLocalISOString(event.start),
+            endTime: toLocalISOString(event.end),
             type: event.extendedProps.type,
             gameId: event.extendedProps.gameId,
             gameName: event.extendedProps.gameName,
@@ -352,8 +366,8 @@ async function saveTask(event) {
     const taskEvent = {
         title: title,
         description: description,
-        startTime: new Date(start).toISOString(),
-        endTime: new Date(end).toISOString(),
+        startTime: toLocalISOString(new Date(start)),
+        endTime: toLocalISOString(new Date(end)),
         type: 'TASK'
     };
     
@@ -380,6 +394,29 @@ async function saveTask(event) {
 // ============================================
 // UTILITY FUNCTIONS FOR CALENDAR
 // ============================================
+
+/**
+ * Format date as LOCAL ISO string for backend storage.
+ * 
+ * IMPORTANT: Unlike toISOString() which converts to UTC, this preserves
+ * the local time. This fixes the timezone bug where events would appear
+ * at the wrong time because:
+ * - toISOString() converts 3PM local to 2PM UTC (in UTC+1 timezone)
+ * - Backend stores 2PM
+ * - When loaded back, the time appears 1 hour off
+ * 
+ * By sending local time directly, what you see is what you get.
+ */
+function toLocalISOString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+}
 
 /**
  * Format date for datetime-local input
@@ -741,8 +778,8 @@ async function saveCalendarEvent() {
         eventData = {
             title: title,
             description: document.getElementById('eventTaskDescription').value.trim(),
-            startTime: start.toISOString(),
-            endTime: end.toISOString(),
+            startTime: toLocalISOString(start),
+            endTime: toLocalISOString(end),
             type: 'TASK'
         };
     } else {
@@ -754,8 +791,8 @@ async function saveCalendarEvent() {
         
         eventData = {
             title: selectedGame.name,
-            startTime: start.toISOString(),
-            endTime: end.toISOString(),
+            startTime: toLocalISOString(start),
+            endTime: toLocalISOString(end),
             type: 'GAME',
             gameId: selectedGame.id,
             description: `Gaming session: ${selectedGame.name}`

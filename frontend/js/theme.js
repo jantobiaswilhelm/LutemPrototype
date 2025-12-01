@@ -12,6 +12,7 @@ function applyTheme(palette, mode) {
     const root = document.documentElement;
     const paletteIcon = document.getElementById('paletteIcon');
     const paletteToggle = document.getElementById('paletteToggle');
+    const navPaletteIcon = document.getElementById('navPaletteIcon');
     
     // Apply palette
     if (palette === 'cafe') {
@@ -23,14 +24,31 @@ function applyTheme(palette, mode) {
     // Apply theme mode
     root.setAttribute('data-theme', mode);
     
-    // Update button icon
+    // Update button icons (old floating button if exists)
     const info = PALETTE_INFO[palette];
-    if (mode === 'dark') {
-        paletteIcon.textContent = '🌙';
-    } else {
-        paletteIcon.textContent = info.icon;
+    if (paletteIcon) {
+        if (mode === 'dark') {
+            paletteIcon.textContent = '🌙';
+        } else {
+            paletteIcon.textContent = info.icon;
+        }
     }
-    paletteToggle.title = info.label + (mode === 'dark' ? ' (Dark)' : ' (Light)');
+    if (paletteToggle) {
+        paletteToggle.title = info.label + (mode === 'dark' ? ' (Dark)' : ' (Light)');
+    }
+    
+    // Update nav icon
+    if (navPaletteIcon) {
+        if (mode === 'dark') {
+            navPaletteIcon.textContent = '🌙';
+        } else {
+            navPaletteIcon.textContent = info.icon;
+        }
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('palette', palette);
+    localStorage.setItem('theme', mode);
     
     // Save to localStorage
     localStorage.setItem('palette', palette);
@@ -48,7 +66,7 @@ function applyTheme(palette, mode) {
  * Update palette selector UI to reflect current selection
  */
 function updateSelectorUI() {
-    // Update mode toggle buttons
+    // Update mode toggle buttons (both old floating selector and nav menu)
     document.querySelectorAll('.mode-toggle-btn').forEach(btn => {
         const btnMode = btn.getAttribute('data-mode');
         if (btnMode === currentMode) {
@@ -58,7 +76,7 @@ function updateSelectorUI() {
         }
     });
 
-    // Update color options
+    // Update color options (both old floating selector and nav menu)
     document.querySelectorAll('.palette-color-option').forEach(option => {
         const optionPalette = option.getAttribute('data-palette');
         if (optionPalette === currentPalette) {
@@ -80,14 +98,24 @@ function initTheme() {
     // Apply saved theme on load
     applyTheme(currentPalette, currentMode);
     
-    // Toggle palette selector on button click
-    paletteToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        paletteSelector.classList.toggle('active');
-        paletteToggle.classList.toggle('active');
-    });
+    // Toggle palette selector on button click (old floating button)
+    if (paletteToggle && paletteSelector) {
+        paletteToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            paletteSelector.classList.toggle('active');
+            paletteToggle.classList.toggle('active');
+        });
+        
+        // Close palette selector when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!paletteToggle.contains(e.target) && !paletteSelector.contains(e.target)) {
+                paletteSelector.classList.remove('active');
+                paletteToggle.classList.remove('active');
+            }
+        });
+    }
 
-    // Handle mode toggle clicks (Light/Dark)
+    // Handle mode toggle clicks (Light/Dark) - old selector
     document.querySelectorAll('.mode-toggle-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -96,7 +124,7 @@ function initTheme() {
         });
     });
 
-    // Handle color palette clicks
+    // Handle color palette clicks - old selector
     document.querySelectorAll('.palette-color-option').forEach(option => {
         option.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -104,12 +132,42 @@ function initTheme() {
             applyTheme(palette, currentMode);
         });
     });
-
-    // Close palette selector when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!paletteToggle.contains(e.target) && !paletteSelector.contains(e.target)) {
-            paletteSelector.classList.remove('active');
-            paletteToggle.classList.remove('active');
-        }
-    });
 }
+
+
+/**
+ * Toggle nav palette menu visibility
+ */
+function toggleNavPaletteMenu() {
+    const menu = document.getElementById('navPaletteMenu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+/**
+ * Set theme mode from nav controls
+ * @param {string} mode - 'light' or 'dark'
+ */
+function setNavMode(mode) {
+    applyTheme(currentPalette, mode);
+}
+
+/**
+ * Set theme palette from nav controls
+ * @param {string} palette - 'cafe', 'lavender', 'earth', 'ocean'
+ */
+function setNavPalette(palette) {
+    applyTheme(palette, currentMode);
+}
+
+// Close nav palette menu when clicking outside
+document.addEventListener('click', (e) => {
+    const menu = document.getElementById('navPaletteMenu');
+    const themeBtn = document.getElementById('navThemeBtn');
+    if (menu && themeBtn) {
+        if (!themeBtn.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.remove('show');
+        }
+    }
+});

@@ -1,0 +1,140 @@
+/* ============================================
+   NAV CONTROLS (Wizard & Theme)
+   Integrated into sidebar navigation
+   ============================================ */
+
+/* Hidden on mobile - only shown on desktop sidebar */
+.nav-controls {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .nav-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 8px 16px;
+        border-top: 1px solid var(--border-color);
+        margin-top: auto;
+        position: relative;
+    }
+    
+    .nav-control-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 10px 8px;
+        background: transparent;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        color: var(--text-secondary);
+        font-size: 0.7em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+    
+    .nav-control-btn:hover {
+        border-color: var(--accent-primary);
+        color: var(--accent-primary);
+        background: var(--bg-secondary);
+        transform: translateY(-2px);
+    }
+    
+    .nav-control-icon {
+        font-size: 1.6em;
+    }
+    
+    .nav-control-label {
+        font-size: 0.9em;
+    }
+    
+    /* Inline Theme Menu - Uses palette-selector styling from components.css */
+    .nav-palette-menu {
+        display: none;
+        position: absolute;
+        left: 100%;
+        bottom: 0;
+        margin-left: 8px;
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 8px 32px var(--shadow);
+        z-index: 1001;
+        min-width: 240px;
+    }
+    
+    .nav-palette-menu.show {
+        display: block;
+    }
+    
+    /* Uses .palette-selector-header, .mode-toggle-container, .mode-toggle-btn,
+       .palette-colors, .palette-color-option from components.css */
+}
+
+/* Mobile: Show controls in header */
+@media (max-width: 1023px) {
+    .nav-controls {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        position: fixed;
+        bottom: 90px;
+        right: 12px;
+        z-index: 1000;
+    }
+    
+    .nav-control-btn {
+        width: 48px;
+        height: 48px;
+        padding: 0;
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 15px var(--shadow);
+        transition: all 0.2s;
+    }
+    
+    .nav-control-btn:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 6px 20px var(--shadow-hover);
+    }
+    
+    .nav-control-icon {
+        font-size: 1.4em;
+    }
+    
+    .nav-control-label {
+        display: none; /* Hide labels on mobile */
+    }
+    
+    /* Mobile theme menu - Uses palette-selector styling from components.css */
+    .nav-palette-menu {
+        display: none;
+        position: fixed;
+        bottom: 150px;
+        right: 12px;
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 8px 32px var(--shadow);
+        z-index: 1001;
+        min-width: 240px;
+    }
+    
+    .nav-palette-menu.show {
+        display: block;
+    }
+    
+    /* Uses .palette-selector-header, .mode-toggle-container, .mode-toggle-btn,
+       .palette-colors, .palette-color-option from components.css */
+}

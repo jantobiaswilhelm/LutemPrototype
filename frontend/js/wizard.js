@@ -199,32 +199,54 @@ function closeTouchGrassModal(keepSelection) {
 }
 
 /**
+ * Open guided modal (called from nav bar button)
+ */
+function openGuidedModal() {
+    // Reset wizard to welcome screen
+    document.querySelectorAll('.guided-question').forEach(q => q.classList.remove('active'));
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    if (welcomeScreen) {
+        welcomeScreen.classList.add('active');
+    }
+    const modalHeader = document.getElementById('modalHeaderText');
+    if (modalHeader) {
+        modalHeader.textContent = "Let's find your perfect game!";
+    }
+    
+    // Show the modal
+    const overlay = document.getElementById('guidedModalOverlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        document.body.classList.add('modal-open');
+        const mainContainer = document.getElementById('mainContainer');
+        if (mainContainer) {
+            mainContainer.classList.add('blurred');
+        }
+    }
+}
+
+/**
  * Initialize wizard functionality
  */
 function initWizard() {
+    // Legacy support: If wizardToggle exists (old floating button), add listener
     const wizardToggle = document.getElementById('wizardToggle');
-    
-    wizardToggle.addEventListener('click', () => {
-        // Reset wizard to welcome screen
-        document.querySelectorAll('.guided-question').forEach(q => q.classList.remove('active'));
-        document.getElementById('welcomeScreen').classList.add('active');
-        document.getElementById('modalHeaderText').textContent = "Let's find your perfect game!";
-        
-        // Show the modal
-        document.getElementById('guidedModalOverlay').style.display = 'flex';
-        document.body.classList.add('modal-open');
-        document.getElementById('mainContainer').classList.add('blurred');
-    });
+    if (wizardToggle) {
+        wizardToggle.addEventListener('click', openGuidedModal);
+    }
     
     // Guided Time Slider
-    document.getElementById('guidedTimeSlider').addEventListener('input', (e) => {
-        const index = parseInt(e.target.value);
-        state.guidedTime = TIME_VALUES[index];
-        document.getElementById('guidedTimeDisplay').textContent = TIME_LABELS[index];
-        
-        // Show Touch Grass modal for 3+ hours
-        if (index === 7) {
-            document.getElementById('touchGrassModal').style.display = 'flex';
-        }
-    });
+    const guidedTimeSlider = document.getElementById('guidedTimeSlider');
+    if (guidedTimeSlider) {
+        guidedTimeSlider.addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            state.guidedTime = TIME_VALUES[index];
+            document.getElementById('guidedTimeDisplay').textContent = TIME_LABELS[index];
+            
+            // Show Touch Grass modal for 3+ hours
+            if (index === 7) {
+                document.getElementById('touchGrassModal').style.display = 'flex';
+            }
+        });
+    }
 }

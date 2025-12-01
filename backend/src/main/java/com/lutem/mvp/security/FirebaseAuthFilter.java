@@ -39,6 +39,13 @@ public class FirebaseAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) 
             throws ServletException, IOException {
         
+        // Handle CORS preflight requests
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         // Skip auth for non-protected paths
         String path = request.getRequestURI();
         if (!requiresAuth(path)) {

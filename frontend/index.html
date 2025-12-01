@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/nav-controls.css">
     <link rel="stylesheet" href="css/pages/calendar.css">
     
     <!-- CSS moved to external files: variables.css, themes.css, base.css, components.css, layout.css -->
@@ -77,6 +78,49 @@
                 </button>
             </div>
             
+            <!-- Nav Controls (Wizard & Theme) -->
+            <div class="nav-controls">
+                <button class="nav-control-btn" id="navWizardBtn" onclick="openGuidedModal()" title="Quick Start Wizard">
+                    <span class="nav-control-icon">🧙</span>
+                    <span class="nav-control-label">Wizard</span>
+                </button>
+                <button class="nav-control-btn" id="navThemeBtn" onclick="toggleNavPaletteMenu()" title="Change Theme">
+                    <span class="nav-control-icon" id="navPaletteIcon">🎨</span>
+                    <span class="nav-control-label">Theme</span>
+                </button>
+                
+                <!-- Inline Theme Menu (appears beside theme button) -->
+                <div class="nav-palette-menu" id="navPaletteMenu">
+                    <div class="palette-selector-header">🎨 Theme</div>
+                    <div class="mode-toggle-container">
+                        <button class="mode-toggle-btn active" data-mode="light" onclick="setNavMode('light')">
+                            <span>☀️</span> Light
+                        </button>
+                        <button class="mode-toggle-btn" data-mode="dark" onclick="setNavMode('dark')">
+                            <span>🌙</span> Dark
+                        </button>
+                    </div>
+                    <div class="palette-colors">
+                        <div class="palette-color-option active" data-palette="cafe" onclick="setNavPalette('cafe')">
+                            <span class="palette-color-icon">☕</span>
+                            <span class="palette-color-label">Warm Café</span>
+                        </div>
+                        <div class="palette-color-option" data-palette="lavender" onclick="setNavPalette('lavender')">
+                            <span class="palette-color-icon">💜</span>
+                            <span class="palette-color-label">Soft Lavender</span>
+                        </div>
+                        <div class="palette-color-option" data-palette="earth" onclick="setNavPalette('earth')">
+                            <span class="palette-color-icon">🌿</span>
+                            <span class="palette-color-label">Natural Earth</span>
+                        </div>
+                        <div class="palette-color-option" data-palette="ocean" onclick="setNavPalette('ocean')">
+                            <span class="palette-color-icon">🌊</span>
+                            <span class="palette-color-label">Ocean Breeze</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Sidebar Auth Section (visible on desktop only) -->
             <div class="sidebar-auth">
                 <!-- Sign In Button (shown when logged out) -->
@@ -111,53 +155,6 @@
             </div>
         </div>
     </nav>
-
-    <!-- Color Palette Toggle Button -->
-    <div class="palette-toggle" id="paletteToggle" title="Change Color Palette">
-        <span id="paletteIcon">🎨</span>
-    </div>
-
-    <!-- Palette Selector Menu -->
-    <div class="palette-selector" id="paletteSelector">
-        <div class="palette-selector-header">Choose Theme</div>
-        
-        <!-- Light/Dark Mode Toggle -->
-        <div class="mode-toggle-container">
-            <div class="mode-toggle-btn active" data-mode="light">
-                <span>☀️</span>
-                <span>Light</span>
-            </div>
-            <div class="mode-toggle-btn" data-mode="dark">
-                <span>🌙</span>
-                <span>Dark</span>
-            </div>
-        </div>
-
-        <!-- Color Palette Options -->
-        <div class="palette-colors">
-            <div class="palette-color-option" data-palette="cafe">
-                <div class="palette-color-icon">☕</div>
-                <div class="palette-color-label">Warm Café</div>
-            </div>
-            <div class="palette-color-option" data-palette="lavender">
-                <div class="palette-color-icon">💜</div>
-                <div class="palette-color-label">Soft Lavender</div>
-            </div>
-            <div class="palette-color-option" data-palette="earth">
-                <div class="palette-color-icon">🌿</div>
-                <div class="palette-color-label">Natural Earth</div>
-            </div>
-            <div class="palette-color-option" data-palette="ocean">
-                <div class="palette-color-icon">🌊</div>
-                <div class="palette-color-label">Ocean Breeze</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Wizard Toggle Button -->
-    <div class="wizard-toggle" id="wizardToggle" title="Quick Start Wizard">
-        <span>🧙</span>
-    </div>
 
     <!-- HOME PAGE (existing content) -->
     <div id="home-page" class="page-content active">
