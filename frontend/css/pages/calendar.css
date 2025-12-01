@@ -3,10 +3,102 @@
    Page-Specific Styles for Calendar Tab
    ============================================ */
 
+/* ============================================
+   CALENDAR PAGE LAYOUT
+   ============================================ */
+
+/* Calendar Header */
+.calendar-header {
+    margin-top: 40px;
+    margin-bottom: 30px;
+}
+
+.calendar-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.calendar-header-text h1 {
+    text-align: left;
+    color: var(--text-primary);
+    font-size: 2.5em;
+    margin: 0;
+}
+
+.calendar-header-text p {
+    text-align: left;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.calendar-header-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Calendar Card (FullCalendar wrapper) */
+.calendar-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 16px var(--shadow);
+    margin-bottom: 30px;
+    transition: box-shadow 0.3s ease;
+}
+
+.calendar-card:hover {
+    box-shadow: 0 6px 20px var(--shadow-hover);
+}
+
 /* Calendar Container */
 #calendar {
     max-width: 100%;
     margin: 0 auto;
+}
+
+/* ============================================
+   CALENDAR LEGEND
+   ============================================ */
+
+.calendar-legend {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.calendar-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.calendar-legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    display: inline-block;
+    box-shadow: 0 2px 4px var(--shadow);
+}
+
+.calendar-legend-color.gaming {
+    background: var(--mood-unwind);
+}
+
+.calendar-legend-color.task {
+    background: var(--text-muted, var(--text-secondary));
+}
+
+.calendar-legend-text {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95em;
 }
 
 /* ============================================
@@ -269,11 +361,11 @@
 }
 
 .calendar-add-btn.task-btn {
-    background: #6c757d;
+    background: var(--text-muted, var(--text-secondary));
 }
 
 .calendar-add-btn.task-btn:hover {
-    background: #5a6268;
+    background: var(--text-light);
 }
 
 /* Responsive - stack buttons on mobile */
@@ -285,4 +377,14 @@
     .calendar-add-btn {
         padding: 10px 14px;
     }
+}
+
+
+/* Import Button Styles */
+.calendar-add-btn.import-btn {
+    background: var(--accent-primary);
+}
+
+.calendar-add-btn.import-btn:hover {
+    background: var(--accent-secondary);
 }

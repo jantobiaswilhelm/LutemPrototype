@@ -571,6 +571,16 @@ function switchGameMode(mode) {
     document.getElementById('gameWizardMode').style.display = mode === 'wizard' ? 'block' : 'none';
     document.getElementById('gameRandomMode').classList.toggle('active', mode === 'random');
     document.getElementById('gameRandomMode').style.display = mode === 'random' ? 'block' : 'none';
+    
+    // Reset wizard when switching to it
+    if (mode === 'wizard') {
+        resetCalendarWizard();
+    }
+    
+    // Reset random mode when switching to it
+    if (mode === 'random') {
+        resetRandomMode();
+    }
 }
 
 /**
@@ -1168,5 +1178,419 @@ async function confirmImport() {
         showImportStatus('❌ Import failed: ' + error.message, 'error');
         confirmBtn.disabled = false;
         confirmBtn.innerHTML = '<span>📥</span><span>Import Events</span>';
+    }
+}
+
+
+
+// ============================================
+// CALENDAR WIZARD MODE (Phase 2.2)
+// ============================================
+
+// State for calendar wizard
+let calendarWizardState = {
+    selectedMoods: [],
+    energyLevel: 'MEDIUM',
+    recommendations: []
+};
+
+/**
+ * Toggle mood chip selection in calendar wizard
+ */
+function toggleCalendarMood(element) {
+    const mood = element.dataset.mood;
+    
+    if (element.classList.contains('selected')) {
+        element.classList.remove('selected');
+        calendarWizardState.selectedMoods = calendarWizardState.selectedMoods.filter(m => m !== mood);
+    } else {
+        element.classList.add('selected');
+        calendarWizardState.selectedMoods.push(mood);
+    }
+    
+    console.log('Selected moods:', calendarWizardState.selectedMoods);
+}
+
+/**
+ * Select energy level in calendar wizard
+ */
+function selectCalendarEnergy(element) {
+    // Deselect all
+    document.querySelectorAll('.wizard-energy-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Select this one
+    element.classList.add('selected');
+    calendarWizardState.energyLevel = element.dataset.energy;
+    
+    console.log('Selected energy:', calendarWizardState.energyLevel);
+}
+
+
+/**
+ * Get recommendations for calendar wizard
+ */
+async function getCalendarRecommendations() {
+    // Show step 2 with loading
+    document.getElementById('wizardStep1').style.display = 'none';
+    document.getElementById('wizardStep2').style.display = 'block';
+    document.getElementById('wizardLoading').style.display = 'block';
+    document.getElementById('wizardResults').innerHTML = '';
+    
+    // Calculate duration from time slot
+    const startInput = document.getElementById('eventStartTime');
+    const endInput = document.getElementById('eventEndTime');
+    let availableMinutes = 60; // default
+    
+    if (startInput.value && endInput.value) {
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+        availableMinutes = Math.round((end - start) / (1000 * 60));
+    }
+    
+    // Build request
+    const requestBody = {
+        availableMinutes: availableMinutes,
+        desiredEmotionalGoals: calendarWizardState.selectedMoods.length > 0 
+            ? calendarWizardState.selectedMoods 
+            : ['UNWIND'], // default if none selected
+        currentEnergyLevel: calendarWizardState.energyLevel,
+        requiredInterruptibility: 'MEDIUM'
+    };
+    
+    console.log('Calendar wizard request:', requestBody);
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/recommendations`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Calendar wizard response:', data);
+        
+        // Build list of top 5 recommendations
+        const recommendations = [];
+        
+        if (data.topRecommendation && data.topRecommendation.id !== 0) {
+            recommendations.push({
+                game: data.topRecommendation,
+                matchPercentage: data.topMatchPercentage || 95,
+                reason: data.reason
+            });
+        }
+        
+        if (data.alternatives) {
+            data.alternatives.slice(0, 4).forEach((game, index) => {
+                recommendations.push({
+                    game: game,
+                    matchPercentage: data.alternativeMatchPercentages?.[index] || (85 - index * 5),
+                    reason: data.alternativeReasons?.[index] || 'Great alternative'
+                });
+            });
+        }
+        
+        calendarWizardState.recommendations = recommendations;
+        renderWizardResults(recommendations);
+        
+    } catch (error) {
+        console.error('Calendar wizard error:', error);
+        document.getElementById('wizardResults').innerHTML = `
+            <div class="wizard-no-results">
+                <div class="no-results-icon">😕</div>
+                <p>Couldn't get recommendations</p>
+                <p style="font-size: 0.9em; margin-top: 8px;">${error.message}</p>
+            </div>
+        `;
+    } finally {
+        document.getElementById('wizardLoading').style.display = 'none';
+    }
+}
+
+
+/**
+ * Render wizard recommendation results
+ */
+function renderWizardResults(recommendations) {
+    const container = document.getElementById('wizardResults');
+    
+    if (!recommendations || recommendations.length === 0) {
+        container.innerHTML = `
+            <div class="wizard-no-results">
+                <div class="no-results-icon">🤔</div>
+                <p>No games found for your criteria</p>
+                <p style="font-size: 0.9em; margin-top: 8px;">Try adjusting your mood or time</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = recommendations.map((rec, index) => {
+        const game = rec.game;
+        const imageUrl = game.imageUrl || getFallbackImageUrl(game.name, 70, 70);
+        const isSelected = selectedGame && selectedGame.id === game.id;
+        
+        return `
+            <div class="wizard-rec-card ${isSelected ? 'selected' : ''}" 
+                 onclick="selectWizardGame(${index})"
+                 data-index="${index}">
+                <img class="wizard-rec-image" 
+                     src="${imageUrl}" 
+                     alt="${game.name}"
+                     onerror="this.src='${getFallbackImageUrl(game.name, 70, 70)}'">
+                <div class="wizard-rec-info">
+                    <div class="wizard-rec-name">${game.name}</div>
+                    <div class="wizard-rec-meta">
+                        <span>⏱️ ${game.minMinutes}-${game.maxMinutes}m</span>
+                        <span>⚡ ${getEnergyLabel(game.energyRequired)}</span>
+                    </div>
+                </div>
+                <span class="wizard-rec-match">${rec.matchPercentage}%</span>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Select a game from wizard results
+ */
+function selectWizardGame(index) {
+    const rec = calendarWizardState.recommendations[index];
+    if (!rec) return;
+    
+    selectedGame = rec.game;
+    
+    // Update visual selection in wizard
+    document.querySelectorAll('.wizard-rec-card').forEach((card, i) => {
+        card.classList.toggle('selected', i === index);
+    });
+    
+    // Also update the selected game display (shared with browse mode)
+    const display = document.getElementById('selectedGameDisplay');
+    display.style.display = 'block';
+    
+    const coverImg = document.getElementById('selectedGameCover');
+    if (selectedGame.imageUrl) {
+        coverImg.src = selectedGame.imageUrl;
+        coverImg.style.display = 'block';
+    } else {
+        coverImg.style.display = 'none';
+    }
+    document.getElementById('selectedGameName').textContent = selectedGame.name;
+    
+    console.log('Selected wizard game:', selectedGame);
+}
+
+/**
+ * Go back to wizard step 1
+ */
+function showWizardStep1() {
+    document.getElementById('wizardStep2').style.display = 'none';
+    document.getElementById('wizardStep1').style.display = 'block';
+}
+
+/**
+ * Reset wizard state when switching modes
+ */
+function resetCalendarWizard() {
+    calendarWizardState.selectedMoods = [];
+    calendarWizardState.energyLevel = 'MEDIUM';
+    calendarWizardState.recommendations = [];
+    
+    // Reset UI
+    document.querySelectorAll('.wizard-mood-chip').forEach(chip => {
+        chip.classList.remove('selected');
+    });
+    document.querySelectorAll('.wizard-energy-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.energy === 'MEDIUM');
+    });
+    
+    // Show step 1
+    showWizardStep1();
+}
+
+
+
+// ============================================
+// RANDOM GAME MODE (Phase 2.3)
+// ============================================
+
+// State for random game selection
+let randomSelectedGame = null;
+let filteredGamesForRandom = [];
+
+/**
+ * Roll a random game from the library
+ * Filters by time slot duration if available
+ */
+function rollRandomGame() {
+    // Get available minutes from time slot
+    const startInput = document.getElementById('eventStartTime');
+    const endInput = document.getElementById('eventEndTime');
+    let availableMinutes = null;
+    
+    if (startInput && startInput.value && endInput && endInput.value) {
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+        availableMinutes = Math.round((end - start) / (1000 * 60));
+    }
+    
+    // Filter games by time if we have a time constraint
+    if (availableMinutes && availableMinutes > 0) {
+        filteredGamesForRandom = allGamesForModal.filter(game => {
+            // Game fits if minMinutes is less than or equal to available time
+            return game.minMinutes <= availableMinutes;
+        });
+        
+        // Update hint text
+        const hintEl = document.getElementById('randomTimeHint');
+        if (hintEl) {
+            hintEl.textContent = `Filtering to games under ${availableMinutes} minutes`;
+        }
+    } else {
+        filteredGamesForRandom = [...allGamesForModal];
+        const hintEl = document.getElementById('randomTimeHint');
+        if (hintEl) {
+            hintEl.textContent = 'All games available';
+        }
+    }
+    
+    // Check if we have games to choose from
+    if (filteredGamesForRandom.length === 0) {
+        showToast('No games match the time slot duration', 'error');
+        return;
+    }
+    
+    // Add rolling animation
+    const container = document.getElementById('randomInitialState');
+    if (container) {
+        container.classList.add('random-rolling');
+    }
+    
+    // Pick a random game
+    const randomIndex = Math.floor(Math.random() * filteredGamesForRandom.length);
+    randomSelectedGame = filteredGamesForRandom[randomIndex];
+    
+    // Show result after brief animation delay
+    setTimeout(() => {
+        displayRandomResult(randomSelectedGame);
+        if (container) {
+            container.classList.remove('random-rolling');
+        }
+    }, 500);
+}
+
+/**
+ * Display the random game result
+ */
+function displayRandomResult(game) {
+    // Hide initial state, show result state
+    document.getElementById('randomInitialState').style.display = 'none';
+    document.getElementById('randomResultState').style.display = 'block';
+    
+    // Populate game details
+    const imageEl = document.getElementById('randomGameImage');
+    const nameEl = document.getElementById('randomGameName');
+    const genreEl = document.getElementById('randomGameGenre');
+    const timeEl = document.getElementById('randomGameTime');
+    const energyEl = document.getElementById('randomGameEnergy');
+    
+    // Set image (with fallback)
+    if (game.imageUrl) {
+        imageEl.src = game.imageUrl;
+        imageEl.style.display = 'block';
+    } else {
+        imageEl.src = getFallbackImageUrl(game.name, 100, 100);
+        imageEl.style.display = 'block';
+    }
+    imageEl.onerror = function() {
+        this.src = getFallbackImageUrl(game.name, 100, 100);
+    };
+    
+    // Set text details
+    nameEl.textContent = game.name;
+    genreEl.textContent = game.genre || 'Game';
+    timeEl.textContent = `⏱️ ${game.minMinutes}-${game.maxMinutes} min`;
+    energyEl.textContent = `⚡ ${getEnergyLabel(game.energyRequired)}`;
+    
+    console.log('Random game selected:', game);
+}
+
+/**
+ * Accept the random game and set it as selected
+ */
+function acceptRandomGame() {
+    if (!randomSelectedGame) {
+        showToast('No game selected', 'error');
+        return;
+    }
+    
+    // Set as the selected game (shared with other modes)
+    selectedGame = randomSelectedGame;
+    
+    // Update the shared selected game display
+    const display = document.getElementById('selectedGameDisplay');
+    display.style.display = 'block';
+    
+    const coverImg = document.getElementById('selectedGameCover');
+    if (selectedGame.imageUrl) {
+        coverImg.src = selectedGame.imageUrl;
+        coverImg.style.display = 'block';
+    } else {
+        coverImg.style.display = 'none';
+    }
+    document.getElementById('selectedGameName').textContent = selectedGame.name;
+    
+    showToast(`${selectedGame.name} selected!`, 'success');
+    console.log('Accepted random game:', selectedGame);
+}
+
+/**
+ * Reset random mode UI when switching to it
+ */
+function resetRandomMode() {
+    randomSelectedGame = null;
+    
+    // Show initial state, hide result state
+    const initialState = document.getElementById('randomInitialState');
+    const resultState = document.getElementById('randomResultState');
+    
+    if (initialState) initialState.style.display = 'block';
+    if (resultState) resultState.style.display = 'none';
+    
+    // Update hint based on current time slot
+    updateRandomTimeHint();
+}
+
+/**
+ * Update the random mode hint text based on current time slot
+ */
+function updateRandomTimeHint() {
+    const startInput = document.getElementById('eventStartTime');
+    const endInput = document.getElementById('eventEndTime');
+    const hintEl = document.getElementById('randomTimeHint');
+    
+    if (!hintEl) return;
+    
+    if (startInput && startInput.value && endInput && endInput.value) {
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+        const availableMinutes = Math.round((end - start) / (1000 * 60));
+        
+        if (availableMinutes > 0) {
+            // Count how many games fit
+            const matchingCount = allGamesForModal.filter(g => g.minMinutes <= availableMinutes).length;
+            hintEl.textContent = `${matchingCount} games fit in your ${availableMinutes}-minute slot`;
+        } else {
+            hintEl.textContent = '';
+        }
+    } else {
+        hintEl.textContent = `${allGamesForModal.length} games available`;
     }
 }

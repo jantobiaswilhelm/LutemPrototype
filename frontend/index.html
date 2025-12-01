@@ -564,13 +564,13 @@
             <button class="unlock-btn" onclick="openAuthModal('signin')">Sign in to unlock</button>
         </div>
         <div class="container">
-            <header style="margin-top: 40px; margin-bottom: 30px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h1 style="text-align: left; color: var(--text-primary); font-size: 2.5em;">My Calendar</h1>
-                        <p style="text-align: left; color: var(--text-secondary); margin-top: 10px;">Plan your gaming sessions and tasks</p>
+            <header class="calendar-header">
+                <div class="calendar-header-content">
+                    <div class="calendar-header-text">
+                        <h1>My Calendar</h1>
+                        <p>Plan your gaming sessions and tasks</p>
                     </div>
-                    <div style="display: flex; gap: 12px;">
+                    <div class="calendar-header-actions">
                         <button class="calendar-add-btn import-btn" 
                                 onclick="openImportModal()"
                                 title="Import calendar from ICS file">
@@ -594,19 +594,19 @@
             </header>
             
             <!-- Calendar Container -->
-            <div style="background: var(--surface); border-radius: 16px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 30px;">
+            <div class="calendar-card">
                 <div id="calendar"></div>
             </div>
             
             <!-- Calendar Legend -->
-            <div style="display: flex; gap: 25px; justify-content: center; margin-bottom: 30px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="width: 20px; height: 20px; background: #7db5d4; border-radius: 6px; display: inline-block;"></span>
-                    <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.95em;">🎮 Gaming Session</span>
+            <div class="calendar-legend">
+                <div class="calendar-legend-item">
+                    <span class="calendar-legend-color gaming"></span>
+                    <span class="calendar-legend-text">🎮 Gaming Session</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="width: 20px; height: 20px; background: #6c757d; border-radius: 6px; display: inline-block;"></span>
-                    <span style="color: var(--text-secondary); font-weight: 600; font-size: 0.95em;">📋 Task/Event</span>
+                <div class="calendar-legend-item">
+                    <span class="calendar-legend-color task"></span>
+                    <span class="calendar-legend-text">📋 Task/Event</span>
                 </div>
             </div>
         </div>
@@ -1195,21 +1195,127 @@
                     </div>
                 </div>
                 
-                <!-- Wizard Mode (placeholder for Phase 2) -->
+                <!-- Wizard Mode -->
                 <div id="gameWizardMode" class="game-mode-content" style="display: none;">
-                    <div class="wizard-mode-placeholder">
-                        <div class="placeholder-icon">🧙</div>
-                        <p>Wizard recommendation coming in Phase 2!</p>
-                        <p style="font-size: 0.9em; color: var(--text-secondary);">Will use your mood & energy to suggest the perfect game.</p>
+                    <!-- Step 1: Quick Preferences -->
+                    <div id="wizardStep1" class="wizard-step active">
+                        <div class="wizard-step-header">
+                            <span class="wizard-step-icon">🎯</span>
+                            <span class="wizard-step-title">What are you in the mood for?</span>
+                        </div>
+                        
+                        <!-- Mood Selection -->
+                        <div class="wizard-mood-grid">
+                            <button type="button" class="wizard-mood-chip" data-mood="UNWIND" onclick="toggleCalendarMood(this)">
+                                <span class="mood-emoji">😌</span>
+                                <span class="mood-label">Unwind</span>
+                            </button>
+                            <button type="button" class="wizard-mood-chip" data-mood="RECHARGE" onclick="toggleCalendarMood(this)">
+                                <span class="mood-emoji">🔋</span>
+                                <span class="mood-label">Recharge</span>
+                            </button>
+                            <button type="button" class="wizard-mood-chip" data-mood="ENGAGE" onclick="toggleCalendarMood(this)">
+                                <span class="mood-emoji">🔥</span>
+                                <span class="mood-label">Engage</span>
+                            </button>
+                            <button type="button" class="wizard-mood-chip" data-mood="CHALLENGE" onclick="toggleCalendarMood(this)">
+                                <span class="mood-emoji">🎯</span>
+                                <span class="mood-label">Challenge</span>
+                            </button>
+                            <button type="button" class="wizard-mood-chip" data-mood="EXPLORE" onclick="toggleCalendarMood(this)">
+                                <span class="mood-emoji">🌍</span>
+                                <span class="mood-label">Explore</span>
+                            </button>
+                            <button type="button" class="wizard-mood-chip" data-mood="PROGRESS_ORIENTED" onclick="toggleCalendarMood(this)">
+                                <span class="mood-emoji">📈</span>
+                                <span class="mood-label">Progress</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Energy Level -->
+                        <div class="wizard-energy-section">
+                            <span class="wizard-field-label">⚡ Energy Level</span>
+                            <div class="wizard-energy-options">
+                                <button type="button" class="wizard-energy-btn" data-energy="LOW" onclick="selectCalendarEnergy(this)">
+                                    🪫 Low
+                                </button>
+                                <button type="button" class="wizard-energy-btn selected" data-energy="MEDIUM" onclick="selectCalendarEnergy(this)">
+                                    ⚡ Medium
+                                </button>
+                                <button type="button" class="wizard-energy-btn" data-energy="HIGH" onclick="selectCalendarEnergy(this)">
+                                    🔋 High
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Get Recommendations Button -->
+                        <button type="button" class="wizard-recommend-btn" onclick="getCalendarRecommendations()">
+                            <span>🧙</span> Find Games for This Session
+                        </button>
+                    </div>
+                    
+                    <!-- Step 2: Results -->
+                    <div id="wizardStep2" class="wizard-step" style="display: none;">
+                        <div class="wizard-step-header">
+                            <button type="button" class="wizard-back-btn" onclick="showWizardStep1()">← Back</button>
+                            <span class="wizard-step-title">Pick a game</span>
+                        </div>
+                        
+                        <!-- Loading State -->
+                        <div id="wizardLoading" class="wizard-loading" style="display: none;">
+                            <div class="wizard-spinner"></div>
+                            <p>Finding perfect games...</p>
+                        </div>
+                        
+                        <!-- Results Grid -->
+                        <div id="wizardResults" class="wizard-results-grid">
+                            <!-- Recommendation cards will be inserted here -->
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Random Mode (placeholder for Phase 2) -->
+                <!-- Random Mode -->
                 <div id="gameRandomMode" class="game-mode-content" style="display: none;">
-                    <div class="random-mode-placeholder">
-                        <div class="placeholder-icon">🎲</div>
-                        <p>Random selection coming in Phase 2!</p>
-                        <p style="font-size: 0.9em; color: var(--text-secondary);">Will pick a random game from your library.</p>
+                    <!-- Initial State: Roll Button -->
+                    <div id="randomInitialState" class="random-roll-container">
+                        <div class="random-dice-icon">🎲</div>
+                        <h3 class="random-title">Feeling Lucky?</h3>
+                        <p class="random-subtitle">Let fate decide your next gaming adventure!</p>
+                        <button type="button" class="random-roll-btn" onclick="rollRandomGame()">
+                            <span class="roll-btn-icon">🎲</span>
+                            <span>Roll the Dice!</span>
+                        </button>
+                        <p class="random-hint" id="randomTimeHint"></p>
+                    </div>
+                    
+                    <!-- Result State: Show Selected Game -->
+                    <div id="randomResultState" class="random-result-container" style="display: none;">
+                        <div class="random-result-header">
+                            <span class="sparkle">✨</span>
+                            <span>Your Random Pick!</span>
+                            <span class="sparkle">✨</span>
+                        </div>
+                        <div class="random-game-card">
+                            <img id="randomGameImage" class="random-game-image" src="" alt="Game cover">
+                            <div class="random-game-info">
+                                <div id="randomGameName" class="random-game-name"></div>
+                                <div id="randomGameGenre" class="random-game-genre"></div>
+                                <div class="random-game-meta">
+                                    <span id="randomGameTime">⏱️ --</span>
+                                    <span id="randomGameEnergy">⚡ --</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="random-actions">
+                            <button type="button" class="random-reroll-btn" onclick="rollRandomGame()">
+                                <span>🔄</span>
+                                <span>Re-roll</span>
+                            </button>
+                            <button type="button" class="random-accept-btn" onclick="acceptRandomGame()">
+                                <span>✓</span>
+                                <span>Use This Game</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
