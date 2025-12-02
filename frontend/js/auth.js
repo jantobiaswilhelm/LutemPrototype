@@ -43,6 +43,11 @@ async function initAuth() {
         firebaseApp = initializeApp(firebaseConfig);
         firebaseAuth = getAuth(firebaseApp);
         
+        // Initialize Firestore
+        if (window.LutemFirestore) {
+            await window.LutemFirestore.init(firebaseApp);
+        }
+        
         // Store auth functions for later use
         window._firebaseAuthFunctions = {
             signInWithPopup,
@@ -68,7 +73,7 @@ async function initAuth() {
 /**
  * Handle auth state changes
  */
-function handleAuthStateChange(user) {
+async function handleAuthStateChange(user) {
     console.log('🔐 Auth state changed:', user ? user.email : 'signed out');
     
     window.authState.user = user;
@@ -78,10 +83,47 @@ function handleAuthStateChange(user) {
     // Update UI based on auth state
     updateAuthUI();
     
-    // If user just signed in, sync with backend and check for pending session
+    // If user just signed in, load/create Firestore profile and sync with backend
     if (user) {
+        await loadOrCreateFirestoreProfile(user);
         syncUserWithBackend();
         migratePendingSession();
+    } else {
+        // Clear cached profile on sign out
+        window.userProfile = null;
+    }
+}
+
+/**
+ * Load existing profile or create new one for user
+ */
+async function loadOrCreateFirestoreProfile(user) {
+    if (!window.LutemFirestore || !window.LutemFirestore.isReady()) {
+        console.warn('⚠️ Firestore not ready, skipping profile load');
+        window.userProfile = {};
+        return;
+    }
+    
+    try {
+        let profile = await window.LutemFirestore.getUserProfile(user.uid);
+        
+        if (!profile) {
+            // First-time user - create profile
+            console.log('📝 Creating new Firestore profile for user...');
+            profile = await window.LutemFirestore.createUserProfile(user.uid, {
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL
+            });
+        }
+        
+        // Cache profile in memory
+        window.userProfile = profile;
+        console.log('✅ User profile loaded:', profile);
+        
+    } catch (error) {
+        console.error('❌ Error loading/creating profile:', error);
+        window.userProfile = {};
     }
 }
 
