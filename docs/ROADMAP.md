@@ -1,328 +1,441 @@
-# LUTEM MVP - Project Roadmap
+# LUTEM - Project Roadmap
 
-**Last Updated:** 2025-11-29  
-**Current Phase:** Phase 6 Complete, Calendar Features Next
-
----
-
-## ✅ COMPLETED PHASES
-
-### PHASE 0 - Lock in MVP ✅ COMPLETE
-**Goal:** Create the smallest but real version of Lutem for one persona (Sam)
-
-**Completed Features:**
-- ✅ Manually entered/mocked list of games (57 games)
-- ✅ Input: Available time (minutes)
-- ✅ Input: Desired mood (8 dimensions: Unwind, Recharge, Engage, Challenge, Explore, Achieve, Social, Chill)
-- ✅ System outputs best game recommendations
-- ✅ Simple feedback loop (1-5 satisfaction rating)
-
-**Excluded (as planned):**
-- ❌ Calendar sync
-- ❌ Steam/Xbox/PS APIs
-- ❌ Authentication
-- ❌ Dashboards
-- ❌ Multi-persona support
+**Last Updated:** December 2, 2025  
+**Project Type:** Side Project → Potential Startup  
+**Goal:** Real users, scalable architecture, satisfaction-driven gaming discovery
 
 ---
 
-### PHASE 1 - Set Up the Playground ✅ COMPLETE
-**Goal:** Development environment and repo ready
+## Project Vision
 
-**Completed:**
-- ✅ Git repo "lutem-mvp" created
-- ✅ backend/ (Spring Boot) - Full implementation
-- ✅ frontend/ (HTML/JS/CSS) - Modern UI
-- ✅ IntelliJ Spring Boot project setup
-- ✅ API Endpoints:
-  - GET /games
-  - POST /recommendations
-  - POST /sessions/feedback
-- ✅ In-memory storage with H2 database
+Lutem is an AI-powered gaming recommendation platform that matches games to users based on mood, available time, energy levels, and context. Unlike engagement-optimized platforms, Lutem focuses on **satisfaction** — helping users have fulfilling gaming experiences.
+
+### Core Value Proposition
+1. Personalized recommendations that **learn and improve** over time
+2. **Emotional feedback loop** with satisfaction tracking
+3. **Calendar integration** with automatic free slot detection
+4. **User profiles** with preferences, goals, and satisfaction history
+5. **Weekly summaries** with session stats and satisfaction trends
+6. **Platform integrations** (Steam, Xbox, PlayStation — future)
 
 ---
 
-### PHASE 2 - Core Domain Modeling ✅ COMPLETE
-**Backend Entities Implemented:**
+## Technical Architecture
 
-**Game:**
-- ✅ id, name, description
-- ✅ minMinutes, maxMinutes, avgPlaytime
-- ✅ genre, subgenre
-- ✅ moodTags (8-dimensional emotional scoring)
-- ✅ interruptibility, socialLevel, difficultyLevel, energyLevel
-- ✅ platforms, cover image, store links
+### Current Stack
+- **Frontend:** Vanilla HTML/CSS/JS → Netlify
+- **Backend:** Spring Boot + SQLite → Railway
+- **Auth:** Firebase Authentication
 
-**RecommendationRequest:**
-- ✅ availableMinutes, desiredMood
-- ✅ energyLevel, timeOfDay, socialPreference
+### Target Stack (Scalable)
+- **Frontend:** Vanilla JS → Netlify (CDN)
+- **Backend:** Spring Boot + **PostgreSQL** → Railway
+- **User Data:** **Firestore** (profiles, preferences, sessions, feedback)
+- **Auth:** Firebase Authentication
+- **Cache:** Redis (future, when needed)
 
-**RecommendationResponse:**
-- ✅ game, matchPercentage, reason
-- ✅ alternatives (top 3)
+### Data Architecture
 
-**SessionFeedback:**
-- ✅ gameId, satisfactionScore, timestamp
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         FRONTEND                                │
+│                    (Netlify - Static)                           │
+└─────────────────────┬───────────────────────┬───────────────────┘
+                      │                       │
+                      ▼                       ▼
+┌─────────────────────────────┐   ┌───────────────────────────────┐
+│      SPRING BOOT API        │   │         FIRESTORE             │
+│        (Railway)            │   │    (Firebase - Google)        │
+│                             │   │                               │
+│  • Game catalog             │   │  • User profiles              │
+│  • Recommendation engine    │   │  • Preferences                │
+│  • Calendar events          │   │  • Session history            │
+│  • Game metadata            │   │  • Satisfaction feedback      │
+│                             │   │  • Weekly stats cache         │
+└──────────────┬──────────────┘   └───────────────────────────────┘
+               │
+               ▼
+┌─────────────────────────────┐
+│        POSTGRESQL           │
+│     (Railway - Managed)     │
+│                             │
+│  • games                    │
+│  • calendar_events          │
+│  • (game content only)      │
+└─────────────────────────────┘
+```
 
----
+### Why This Split?
 
-### PHASE 3 - Recommendation Engine v0 ✅ COMPLETE
-**Multi-Dimensional Scoring Algorithm:**
-- ✅ Time fit scoring (45 points max)
-- ✅ 8-dimensional mood matching (48 points max)
-- ✅ Energy level matching (8 points)
-- ✅ Social preference matching (6 points)
-- ✅ Time of day matching (4 points)
-- ✅ Interruptibility bonus (4 points)
-- ✅ **Total: 115 points maximum**
+| Data Type | Storage | Reason |
+|-----------|---------|--------|
+| Games catalog | PostgreSQL | Relational, queryable, shared across all users |
+| Calendar events | PostgreSQL | Relational, needs joins with games |
+| User profiles | Firestore | Per-user, real-time sync, scales infinitely |
+| Session history | Firestore | Per-user, append-heavy, time-series |
+| Feedback | Firestore | Per-user, needs to be fast |
 
-**Advanced Features:**
-- ✅ Soft ranking with genre preferences
-- ✅ "Touch Grass" wellness feature (3+ hour sessions)
-- ✅ Alternative recommendations (top 3)
-
----
-
-### PHASE 4 - Minimal UI ✅ COMPLETE
-**Frontend Implementation:**
-- ✅ Modern HTML/CSS/JavaScript (no framework)
-- ✅ Two interaction modes:
-  - Quick Start wizard (guided)
-  - Advanced options (direct access)
-- ✅ Input fields for minutes + 8-dimensional mood
-- ✅ Energy slider, time of day, social preference
-- ✅ "Get Recommendation" button
-- ✅ Display recommended game with alternatives
-- ✅ Feedback buttons: 1-5 satisfaction rating
-- ✅ Loading spinner with rotating gaming tips
-- ✅ Match percentage display
-- ✅ Mood-based color coding
-- ✅ Game cover images
-- ✅ Store links integration
-
-**UI Polish:**
-- ✅ Visual enhancements with color-coded moods
-- ✅ Game cards with cover art
-- ✅ Smooth transitions and animations
-- ✅ Responsive design
-- ✅ Input validation with helpful error messages
+**Key insight:** Game data is shared/static. User data is personal/dynamic. Different access patterns = different storage.
 
 ---
 
-### PHASE 5 - Satisfaction Learning ✅ COMPLETE (Basic)
-**Simple Learning Implemented:**
-- ✅ Store feedback in H2 database
-- ✅ Track satisfaction per game
-- ✅ API endpoint for feedback submission
+## ✅ COMPLETED
 
-**Pending Enhancement:**
-- 🔄 Compute average satisfaction per game
-- 🔄 Use satisfaction to improve ranking
+### Core MVP
+- [x] Spring Boot backend with SQLite (will migrate to PostgreSQL)
+- [x] 57 curated games with 8-dimensional mood scoring
+- [x] Multi-factor recommendation engine (time, mood, energy, social, interruptibility)
+- [x] Progressive disclosure wizard UI
+- [x] Alternative recommendations (top 3)
+- [x] "Touch Grass" wellness feature
+- [x] Game library with filtering and search
+- [x] Store links for each game
 
----
+### Authentication & Deployment
+- [x] Firebase authentication with Google sign-in
+- [x] Locked tabs requiring auth (Calendar, Profile)
+- [x] Frontend deployed to Netlify
+- [x] Backend deployed to Railway
+- [x] Custom domain option (lutem.3lands.ch)
 
-## 🚀 CURRENT PRIORITIES
+### Calendar System
+- [x] ICS file import with duplicate detection
+- [x] Manual task creation
+- [x] Gaming session scheduling with game selection
+- [x] Three game selection modes: Browse, Wizard, Random
+- [x] FullCalendar integration with themed styling
+- [x] Visual overhaul complete
 
-### Quick Wins Completed
-- ✅ Alternative recommendations (show top 3 games)
-- ✅ Input validation and error handling
-- ✅ Loading spinner with gaming tips
-- ✅ Visual polish (colors, images, layout)
-- ✅ Match percentage display
-- ✅ Store links for each game
-
-### 🔄 IN PROGRESS: Calendar Integration
-**Goal:** Full calendar functionality with Google Calendar import and event creation
-
-**Features:**
-1. **Event Creation** - Add tasks and gaming sessions to calendar
-2. **Game Selection** - Browse library, wizard recommendation, or random pick
-3. **Google Calendar Import** - OAuth integration for importing existing events
-4. **ICS File Import** - Alternative import via .ics file upload
-
-**Status:** Phase 1 partial (modal UI exists, basic task/gaming creation works)
-**Next:** Google Calendar OAuth integration
-**Documentation:** See `docs/CALENDAR_IMPLEMENTATION_PLAN.md`
-
-### Next MVP-Focused Priorities
-
-**Option A: Session History & Statistics (Small)**
-- Show user's past recommendations
-- Display satisfaction trends over time
-- Track favorite moods/games
-- **Effort:** 1 session (4-6 hours)
-- **Value:** Helps users see their patterns
-
-**Option B: Deploy to Production (Medium)**
-- Get Lutem online for real user testing
-- Deploy backend (Render/Railway/Heroku)
-- Deploy frontend (Netlify/Vercel)
-- **Effort:** 1-2 sessions (6-10 hours)
-- **Value:** Real user feedback, portfolio piece
-
-**Option C: Expand Game Library Manually (Small)**
-- Add 10-20 more high-quality curated games
-- Focus on filling gaps (more casual/indie games)
-- Maintain quality over quantity
-- **Effort:** 1 session (3-4 hours)
-- **Value:** More variety without complexity
-
-**Option D: Enhanced Feedback System (Small)**
-- Optional feedback notes ("What did you like?")
-- Show feedback history to users
-- Better feedback UI/UX
-- **Effort:** 1 session (4-5 hours)
-- **Value:** Better data for future improvements
-
-**Recommendation:** Start with **Option A (Session History)** or **Option B (Deployment)**  
-Both are high-value, MVP-appropriate features that don't add excessive complexity.
+### UI/UX
+- [x] 4 color themes (Café, Lavender, Earth, Ocean)
+- [x] Light/dark mode with persistence
+- [x] Responsive desktop layout
+- [x] Frontend modularization (81% HTML reduction)
 
 ---
 
-## 📋 UPCOMING PHASES
+## 🔴 PHASE 7: Database Migration (FOUNDATION)
+**Priority:** CRITICAL — Do before any new features  
+**Estimated:** 1-2 sessions (4-6 hours)
 
-### PHASE 6 - Persistence & Deployment ✅ COMPLETE
-**Completed:** 2025-11-29
+### Why First?
+SQLite is fine for development but doesn't scale. PostgreSQL is free on Railway and production-ready. Do this migration before adding more data dependencies.
 
-**Goals:**
-- ✅ Phase 1: Environment configuration complete
-- ✅ Phase 2: Deploy backend to Railway
-- ✅ Phase 3: Deploy frontend to Netlify
-- ✅ Phase 4: Custom domain (lutem.3lands.ch)
+### 7.1 PostgreSQL Setup on Railway
+- [ ] Create PostgreSQL database on Railway (free tier)
+- [ ] Get connection string
+- [ ] Update `application.properties` with PostgreSQL config
+- [ ] Add PostgreSQL driver to `pom.xml`
 
-**Production URLs:**
-- Frontend: https://lutem.3lands.ch (also https://lutembeta.netlify.app)
-- Backend: https://lutemprototype-production.up.railway.app
-- 57 games loaded, full functionality working
+### 7.2 Schema Migration
+- [ ] Export current SQLite data (games, calendar events)
+- [ ] Create PostgreSQL schema (Hibernate auto-create or manual)
+- [ ] Import data to PostgreSQL
+- [ ] Test all existing functionality
 
----
+### 7.3 Remove SQLite
+- [ ] Remove SQLite dependency from `pom.xml`
+- [ ] Delete SQLite file from repo
+- [ ] Update documentation
 
-### PHASE 7 - Add One Integration (POSTPONED)
-**Choose One:**
-- Option A: Google Calendar (manual → real OAuth)
-- Option B: RAWG API (add real game data search)
-
-**Status:** Postponed - Too complex for MVP stage  
-**Reason:** RAWG integration requires significant development effort (~30-40 hours) and might be premature before validating core value proposition with users
-
-**Alternative Approach:** Manually curate additional high-quality games as needed
+**Checkpoint:** Backend runs on PostgreSQL, all features work, deployed to Railway.
 
 ---
 
-### PHASE 8 - Weekly Recap
-**Backend:**
-- GET /summary/weekly endpoint
-- Aggregate user statistics
-- Calculate trends and insights
+## 🔴 PHASE 8: Firestore Integration (FOUNDATION)
+**Priority:** CRITICAL — Enables user data at scale  
+**Estimated:** 2-3 sessions (8-12 hours)
 
-**Frontend:**
-- Dashboard card with:
-  - Total sessions
-  - Average satisfaction
-  - Top games played
-  - Mood trends
+### Why Firestore?
+- Already using Firebase Auth
+- Scales infinitely (Google infrastructure)
+- Real-time sync built-in
+- Perfect for user-specific data
+- Free tier: 50K reads, 20K writes per day
 
----
+### 8.1 Firestore Setup
+- [ ] Enable Firestore in Firebase Console
+- [ ] Choose database location (europe-west for you)
+- [ ] Set up security rules (authenticated users only)
+- [ ] Add Firebase JS SDK to frontend (if not already)
 
-### PHASE 9 - Later Enhancements
-**Future Features:**
-- Authentication (Clerk/Firebase)
-- Real calendar sync integration
-- Steam/Xbox/PS game imports
-- Multi-persona support (Mark, Emma, Lisa, Jake)
-- Subscription model & analytics
-- Improved dashboards & UX
-- Mobile app (React Native/Flutter)
+### 8.2 Data Model Design
 
----
+```
+firestore/
+├── users/
+│   └── {firebaseUid}/
+│       ├── profile: {
+│       │     displayName: string,
+│       │     preferredGenres: string[],
+│       │     typicalSessionLength: string,
+│       │     engagementLevel: string,
+│       │     preferredGamingTimes: string[],
+│       │     primaryGoal: string,
+│       │     emotionalGoals: string[],
+│       │     createdAt: timestamp,
+│       │     updatedAt: timestamp
+│       │   }
+│       │
+│       ├── sessions/ (subcollection)
+│       │   └── {sessionId}/
+│       │       ├── gameId: number,
+│       │       ├── gameName: string,
+│       │       ├── startTime: timestamp,
+│       │       ├── endTime: timestamp,
+│       │       ├── source: string ("WIZARD" | "CALENDAR" | "LIBRARY"),
+│       │       ├── satisfaction: number (1-5),
+│       │       ├── moodTag: string,
+│       │       └── createdAt: timestamp
+│       │
+│       └── stats/ (subcollection)
+│           └── weekly/
+│               └── {weekId}/
+│                   ├── sessionsCount: number,
+│                   ├── totalMinutes: number,
+│                   ├── avgSatisfaction: number,
+│                   ├── topGames: array,
+│                   └── calculatedAt: timestamp
+```
 
-## 📊 PROJECT METRICS
+### 8.3 Frontend Firestore Integration
+- [ ] Create `firestore.js` module
+- [ ] Initialize Firestore client
+- [ ] Create CRUD functions for user profiles
+- [ ] Create functions for session logging
+- [ ] Handle offline persistence (Firestore built-in)
 
-### Current State
-- **Games in Database:** 57
-- **API Endpoints:** 3 core + Calendar CRUD + Admin CRUD
-- **Scoring Dimensions:** 8 moods + 5 context factors
-- **Max Match Score:** 115 points
-- **Frontend:** Single-page application (modularized)
-- **Backend:** Spring Boot with SQLite
-- **Deployment:** Phase 1 complete, Phase 2 (Railway) next
+### 8.4 Security Rules
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      match /sessions/{sessionId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      match /stats/{statId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow write: if false; // Only cloud functions write stats
+      }
+    }
+  }
+}
+```
 
-### Technical Debt
-- None critical
-- Consider migration to PostgreSQL for production
-- Add comprehensive testing suite
-- Implement proper logging
-
----
-
-## 🎯 SUCCESS CRITERIA
-
-### MVP Success (Current Phase)
-- ✅ Users can get personalized game recommendations
-- ✅ Recommendations consider time, mood, and context
-- ✅ Users can provide feedback
-- ✅ System is visually appealing and easy to use
-
-### Next Milestone Success
-- 🔄 Feedback influences future recommendations
-- 🔄 User can view their gaming history
-- 🔄 System deployed and accessible online
-- 🔄 Performance metrics tracked and optimized
-
----
-
-## 📝 NOTES
-
-### Recent Achievements
-- Successfully implemented 8-tier emotional scoring system
-- Created comprehensive game database with rich metadata (57 games)
-- Built dual-mode UI (Quick Start + Advanced)
-- Added visual polish with mood colors and game covers
-- Implemented loading states with educational content
-- Added validation for all user inputs
-- Tab navigation structure (Home, Games, Profile)
-- Centered button-style tabs with gradient active states
-- **COMPLETE:** Frontend modularization (81% reduction in index.html)
-- **COMPLETE:** Deployment environment configuration
-- **DEFERRED:** Calendar interactive features
-
-### Lessons Learned
-- Discrete sliders work better than free-form mood input
-- Visual feedback (colors, images) significantly improves UX
-- Loading spinners with content reduce perceived wait time
-- Alternative recommendations provide user choice without overwhelming
-- Match percentages help users understand recommendations
-
-### Next Steps Discussion Needed
-1. **Should we prioritize deployment or more features?**
-   - Lean toward deployment - get MVP online for user testing
-   
-2. **What's the minimum viable feature set before deployment?**
-   - Current features may be sufficient
-   - Consider adding simple session history first
-   
-3. **Do we need authentication before deployment?**
-   - Not essential for MVP
-   - Can launch with anonymous usage
-   
-4. **What analytics/metrics do we want to track?**
-   - Recommendation acceptance rate
-   - User satisfaction trends
-   - Most popular moods/games
-
-### Deferred for Post-MVP
-- ❌ RAWG API Integration (documentation available in docs/features/)
-- ❌ Calendar sync
-- ❌ Steam/Xbox/PS library integration
-- ❌ Authentication system
-- ❌ **Multi-page architecture** (currently single-page show/hide, consider splitting later when:
-  - Games/Profile pages have substantial functionality
-  - File size becomes unwieldy (>5000 lines)
-  - Need bookmarkable URLs for sharing
-  - Want separate page-specific JavaScript/CSS)
+**Checkpoint:** Can read/write user data to Firestore from frontend.
 
 ---
 
-**Owner:** Jan Wilhelm  
-**Project:** Strategic Business Innovation 2025  
+## 🟡 PHASE 9: User Profiles (CORE FEATURE)
+**Priority:** HIGH — Enables personalization  
+**Estimated:** 1-2 sessions (4-6 hours)  
+**Depends on:** Phase 8 (Firestore)
+
+### 9.1 Profile Save/Load
+- [ ] Update `profile.js` to use Firestore instead of localStorage
+- [ ] Save profile on form submit
+- [ ] Load profile on page load (if authenticated)
+- [ ] Handle first-time users (empty profile)
+- [ ] Add loading states
+
+### 9.2 Profile UI Polish
+- [ ] Show save status ("Saved" / "Saving..." / "Error")
+- [ ] Show last updated timestamp
+- [ ] Add profile completion indicator
+- [ ] Remove "Coming Soon" placeholders
+
+### 9.3 Backend Integration (for recommendations)
+- [ ] Backend needs to read user preferences for personalized recommendations
+- [ ] Option A: Frontend passes preferences with each recommendation request
+- [ ] Option B: Backend calls Firestore Admin SDK (more complex)
+- [ ] **Decision:** Option A for MVP — simpler, no backend changes
+
+**Checkpoint:** User preferences persist across devices, influence recommendation requests.
+
+---
+
+## 🟡 PHASE 10: Session Tracking & Feedback (CORE FEATURE)
+**Priority:** HIGH — Enables learning  
+**Estimated:** 2-3 sessions (8-12 hours)  
+**Depends on:** Phase 8 (Firestore)
+
+### 10.1 Session Logging
+- [ ] Log session when user accepts a recommendation
+- [ ] Log session when user schedules game via calendar
+- [ ] Store: gameId, gameName, startTime, source
+
+### 10.2 Feedback Collection UI
+- [ ] After recommendation: "Did you play? How was it?"
+- [ ] Simple satisfaction rating (1-5 stars or emoji scale)
+- [ ] Optional mood tag selection
+- [ ] Non-intrusive — don't ask every time
+
+### 10.3 Session History View
+- [ ] Add "History" section to Profile tab
+- [ ] Show recent sessions with games, ratings
+- [ ] Basic filtering (last 7 days, last 30 days)
+
+### 10.4 Connect Feedback to Recommendations
+- [ ] Include past satisfaction data in recommendation request
+- [ ] Backend boosts games user rated highly
+- [ ] Backend slightly penalizes games rated poorly
+
+**Checkpoint:** Users can rate sessions, history is visible, recommendations consider past satisfaction.
+
+---
+
+## 🟡 PHASE 11: Weekly Dashboard (DIFFERENTIATOR)
+**Priority:** MEDIUM-HIGH — Key feature from paper  
+**Estimated:** 2 sessions (6-8 hours)  
+**Depends on:** Phase 10 (Session Tracking)
+
+### 11.1 Stats Calculation
+- [ ] Calculate weekly stats from session data
+- [ ] Sessions completed, total time played
+- [ ] Average satisfaction
+- [ ] Most played games
+- [ ] Store in Firestore `stats/weekly/{weekId}`
+
+### 11.2 Dashboard UI
+- [ ] Weekly recap card on Home tab
+- [ ] Visual indicators (up/down arrows for trends)
+- [ ] Highlight: "Your most satisfying game this week"
+- [ ] Upcoming scheduled sessions
+
+### 11.3 Insights
+- [ ] Pattern detection: "You enjoy puzzle games in the evening"
+- [ ] Suggestions: "Try scheduling shorter sessions on weekdays"
+
+**Checkpoint:** Users see their gaming patterns, feel value in tracking.
+
+---
+
+## 🟢 PHASE 12: Google Calendar OAuth
+**Priority:** MEDIUM — Nice to have, ICS import works  
+**Estimated:** 3-4 sessions (10-15 hours)  
+**Documentation:** See `docs/CALENDAR_IMPLEMENTATION_PLAN.md` Phase 4
+
+Already planned in detail. Lower priority now that we have ICS import.
+
+---
+
+## 🔵 FUTURE PHASES (Backlog)
+
+### Phase 13: Steam Integration
+- Steam Web API for library import
+- Match Steam games to Lutem database
+- Fetch playtime data
+
+### Phase 14: Expanded Game Library
+- RAWG API integration OR
+- Manual curation of 100+ more games
+
+### Phase 15: Mobile PWA
+- Responsive mobile layout
+- Add to Home Screen support
+- Push notifications (Firebase Cloud Messaging)
+
+### Phase 16: Advanced Features
+- Xbox/PlayStation integration (limited APIs)
+- Health app integration (mood inference)
+- Two-way calendar sync
+- Social features (share recommendations)
+
+---
+
+## Priority Matrix
+
+| Phase | Effort | Impact | Priority | Status |
+|-------|--------|--------|----------|--------|
+| 7: PostgreSQL Migration | Low | High | 🔴 Critical | Not Started |
+| 8: Firestore Setup | Medium | High | 🔴 Critical | Not Started |
+| 9: User Profiles | Low | High | 🟡 High | Not Started |
+| 10: Session Tracking | Medium | High | 🟡 High | Not Started |
+| 11: Weekly Dashboard | Medium | Medium | 🟡 High | Not Started |
+| 12: Google OAuth | High | Medium | 🟢 Medium | Not Started |
+| 13-16: Future | High | Variable | 🔵 Low | Backlog |
+
+---
+
+## Realistic Timeline
+
+### December 2025
+**Focus:** Foundation
+
+- Week 1: Phase 7 (PostgreSQL migration)
+- Week 2: Phase 8 (Firestore setup)
+- Week 3-4: Phase 9 (User profiles working)
+
+### January 2026
+**Focus:** Core loop
+
+- Week 1-2: Phase 10 (Session tracking & feedback)
+- Week 3-4: Phase 11 (Weekly dashboard)
+
+### February 2026+
+**Focus:** Growth features
+
+- Google Calendar OAuth
+- Steam integration
+- Mobile optimization
+- Marketing / user acquisition
+
+---
+
+## Success Metrics
+
+### Technical
+- [ ] Backend runs on PostgreSQL
+- [ ] User data in Firestore
+- [ ] < 500ms recommendation response time
+- [ ] 99% uptime
+
+### Product
+- [ ] Users can save preferences (persist across devices)
+- [ ] Users can rate sessions
+- [ ] Recommendations improve with feedback
+- [ ] Weekly summary provides value
+
+### Growth (Future)
+- [ ] 100 registered users
+- [ ] 50% weekly active rate
+- [ ] 4+ average satisfaction rating
+- [ ] Positive user feedback
+
+---
+
+## Production URLs
+
+- **Frontend:** https://lutembeta.netlify.app
+- **Backend:** https://lutemprototype-production.up.railway.app
+- **Custom Domain:** https://lutem.3lands.ch (optional)
+
+---
+
+## Quick Reference
+
+### Start Development
+```bash
+# Backend
+D:\Lutem\LutemPrototype\start-backend.bat
+
+# Frontend  
+cd D:\Lutem\LutemPrototype\frontend
+python -m http.server 5500
+# Access: http://localhost:5500
+```
+
+### Key Documentation
+- `docs/CALENDAR_IMPLEMENTATION_PLAN.md` — Calendar phases
+- `docs/USER_PROFILE_IMPLEMENTATION_PLAN.md` — Profile system (needs update for Firestore)
+- `docs/API.md` — API reference
+- `docs/ARCHITECTURE.md` — System design
+
+---
+
+**Owner:** Patrick  
 **Repository:** https://github.com/jantobiaswilhelm/LutemPrototype
