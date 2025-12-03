@@ -30,7 +30,7 @@ lutem.3lands.ch (custom domain)
 ┌──────────────────────────────────────────┐
 │              Railway                      │
 │  lutemprototype-production.up.railway.app │
-│  Backend (Spring Boot + SQLite)           │
+│  Backend (Spring Boot + PostgreSQL)       │
 │  Auto-deploys on push to main             │
 │  Firebase Admin SDK for auth validation   │
 └──────────────────────────────────────────┘
@@ -99,10 +99,10 @@ const Config = (function() {
 - **Start Command:** `java -jar target/lutem-mvp-0.0.1-SNAPSHOT.jar`
 
 ### Database
-- SQLite file resets on each deploy
-- Games reload from `GameDataLoader.java` on startup (57 games)
-- Session/feedback data does NOT persist between deploys
-- Acceptable for MVP/coursework demo
+- **Production:** PostgreSQL on Railway (persistent)
+- **Local Dev:** H2 in-memory database (use `application-local.properties`)
+- Games loaded from `GameDataLoader.java` on startup (57 games)
+- All data persists between deploys on PostgreSQL
 
 ### CORS Configuration
 File: `backend/src/main/java/com/lutem/mvp/config/WebConfig.java`

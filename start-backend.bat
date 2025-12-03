@@ -1,5 +1,5 @@
 @echo off
-echo Starting Lutem Backend...
+echo Starting Lutem Backend (Local Development)...
 cd /d "%~dp0backend"
 
 REM Verify JAVA_HOME is set
@@ -11,11 +11,12 @@ if "%JAVA_HOME%"=="" (
 )
 
 echo Using JAVA_HOME: %JAVA_HOME%
+echo Using Profile: local (H2 database)
 
 REM Try Maven wrapper
 if exist mvnw.cmd (
     echo Using Maven wrapper...
-    call mvnw.cmd spring-boot:run
+    call mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
     goto :end
 )
 
@@ -23,7 +24,7 @@ REM Try mvn
 where mvn >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
     echo Found Maven, starting...
-    mvn spring-boot:run
+    mvn spring-boot:run -Dspring-boot.run.profiles=local
     goto :end
 )
 

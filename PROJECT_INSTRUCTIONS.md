@@ -63,19 +63,19 @@ D:\Lutem\LutemPrototype\
 
 ## Key Technical Details
 
-- **Backend:** Spring Boot 3.2 + SQLite + Java 17+
+- **Backend:** Spring Boot 3.2 + Java 17+
 - **Frontend:** Vanilla HTML/CSS/JS (no framework)
-- **Database:** SQLite file, games loaded from `games-seed.json` on startup
+- **Database:** PostgreSQL (prod on Railway) / H2 (local dev), games loaded from `games-seed.json` on startup
 - **Environment:** `config.js` auto-detects localhost vs production
 
 ## Deployment Status
 
-- **Target:** `lutem.3lands.ch`
-- **Architecture:** Netlify (frontend) + Railway (backend)
+- **Live:** `lutem.3lands.ch`
+- **Architecture:** Netlify (frontend) + Railway (backend + PostgreSQL)
 - **Phase 1:** ✅ Environment config complete
-- **Phase 2:** ⬜ Railway backend deployment
-- **Phase 3:** ⬜ Netlify frontend deployment
-- **Phase 4:** ⬜ Custom domain setup
+- **Phase 2:** ✅ Railway backend deployment
+- **Phase 3:** ✅ Netlify frontend deployment
+- **Phase 4:** ✅ Custom domain setup
 
 See `docs/DEPLOYMENT_PLAN.md` for full deployment guide.
 

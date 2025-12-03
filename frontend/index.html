@@ -599,7 +599,19 @@
             <div class="calendar-legend">
                 <div class="calendar-legend-item">
                     <span class="calendar-legend-color gaming"></span>
-                    <span class="calendar-legend-text">🎮 Gaming Session</span>
+                    <span class="calendar-legend-text">🎮 Gaming (Calendar)</span>
+                </div>
+                <div class="calendar-legend-item">
+                    <span class="calendar-legend-color session-pending"></span>
+                    <span class="calendar-legend-text">⏳ Scheduled Session</span>
+                </div>
+                <div class="calendar-legend-item">
+                    <span class="calendar-legend-color session-completed"></span>
+                    <span class="calendar-legend-text">✅ Completed</span>
+                </div>
+                <div class="calendar-legend-item">
+                    <span class="calendar-legend-color session-skipped"></span>
+                    <span class="calendar-legend-text">⏭️ Skipped</span>
                 </div>
                 <div class="calendar-legend-item">
                     <span class="calendar-legend-color task"></span>
@@ -1045,11 +1057,151 @@
         </div>
     </div>
 
+    <!-- SESSION DETAILS MODAL (Phase C: Calendar Session Display) -->
+    <div id="sessionDetailsModal" class="modal-overlay" style="display: none;">
+        <div class="session-details-modal">
+            <!-- Header with Game Image Background -->
+            <div id="sessionDetailsHeader" class="session-details-header">
+                <button class="session-close-btn" onclick="closeSessionDetailsModal()">✕</button>
+                <div class="session-details-header-content">
+                    <h2 id="sessionDetailsTitle" class="session-details-title">🎮 Game Session</h2>
+                    <p id="sessionDetailsTime" class="session-details-time">Time info</p>
+                </div>
+            </div>
+            
+            <div class="session-details-body">
+                <!-- Status Badge -->
+                <div id="sessionStatusBadge" class="session-status-badge pending">
+                    <span id="sessionStatusIcon">⏳</span>
+                    <span id="sessionStatusText">Pending</span>
+                </div>
+                
+                <!-- Session Info Grid -->
+                <div class="session-info-grid">
+                    <div class="session-info-item">
+                        <div class="session-info-label">📊 Match Score</div>
+                        <div id="sessionMatchPercent" class="session-info-value">--</div>
+                    </div>
+                    <div class="session-info-item">
+                        <div class="session-info-label">⏱️ Duration</div>
+                        <div id="sessionDuration" class="session-info-value">--</div>
+                    </div>
+                    <div class="session-info-item">
+                        <div class="session-info-label">🎭 Mood</div>
+                        <div id="sessionMood" class="session-info-value">--</div>
+                    </div>
+                    <div class="session-info-item">
+                        <div class="session-info-label">⚡ Energy</div>
+                        <div id="sessionEnergy" class="session-info-value">--</div>
+                    </div>
+                </div>
+                
+                <!-- Feedback Prompt (shown for past PENDING sessions) -->
+                <div id="sessionFeedbackPrompt" class="session-feedback-prompt" style="display: none;">
+                    <div class="session-feedback-prompt-icon">📝</div>
+                    <p class="session-feedback-prompt-text">How was your session?</p>
+                    <p class="session-feedback-prompt-subtext">Your feedback helps improve future recommendations</p>
+                </div>
+                
+                <!-- Feedback Display (shown for COMPLETED sessions) -->
+                <div id="sessionFeedbackDisplay" class="session-feedback-display" style="display: none;">
+                    <div class="session-info-label" style="margin-bottom: 8px;">📊 Your Feedback</div>
+                    <div id="sessionRatingDisplay" class="session-rating-display"></div>
+                    <div id="sessionEmotionalTags" class="session-emotional-tags"></div>
+                </div>
+                
+                <!-- Notes (if any) -->
+                <div id="sessionNotesSection" class="session-notes" style="display: none;">
+                    <div class="session-notes-label">💭 Notes</div>
+                    <p id="sessionNotesText" class="session-notes-text"></p>
+                </div>
+                
+                <!-- Actions -->
+                <div class="session-details-actions">
+                    <button id="sessionDeleteBtn" class="session-action-btn danger" onclick="deleteSessionFromCalendar()">
+                        🗑️ Delete
+                    </button>
+                    <button id="sessionFeedbackBtn" class="session-action-btn primary" onclick="openFeedbackForSession()" style="display: none;">
+                        📝 Add Feedback
+                    </button>
+                    <button class="session-action-btn secondary" onclick="closeSessionDetailsModal()">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MAXIMIZED GAME MODAL (Global - works from all tabs) -->
     <div id="gameMaximizedOverlay" class="modal-overlay" style="display: none;">
         <div class="game-maximized-modal">
             <button class="modal-close-maximized" onclick="closeMaximizedGame()">✕</button>
             <div id="maximizedGameContent"></div>
+        </div>
+    </div>
+
+    <!-- SCHEDULE SESSION MODAL (Phase B: Schedule from Home) -->
+    <div id="scheduleSessionModal" class="modal-overlay" style="display: none;">
+        <div class="schedule-modal">
+            <button class="modal-close-btn" onclick="closeScheduleModal()">✕</button>
+            
+            <!-- Modal Header -->
+            <div class="schedule-modal-header">
+                <h2>📅 Schedule Gaming Session</h2>
+                <p id="scheduleGameName" class="schedule-game-subtitle">Game Name</p>
+            </div>
+            
+            <!-- Game Preview -->
+            <div class="schedule-game-preview">
+                <img id="scheduleGameImage" src="" alt="Game cover" class="schedule-game-image">
+                <div class="schedule-game-info">
+                    <span id="scheduleGameGenre" class="schedule-genre-badge">Genre</span>
+                    <span id="scheduleMatchPercent" class="schedule-match-badge">95% Match</span>
+                </div>
+            </div>
+            
+            <!-- Schedule Form -->
+            <div class="schedule-form">
+                <!-- Date Picker -->
+                <div class="schedule-field">
+                    <label for="scheduleDate">📆 Date</label>
+                    <input type="date" id="scheduleDate" required>
+                </div>
+                
+                <!-- Time Picker -->
+                <div class="schedule-field">
+                    <label for="scheduleTime">🕐 Start Time</label>
+                    <input type="time" id="scheduleTime" required>
+                </div>
+                
+                <!-- Duration -->
+                <div class="schedule-field">
+                    <label for="scheduleDuration">⏱️ Duration (minutes)</label>
+                    <input type="number" id="scheduleDuration" min="5" max="480" value="30" required>
+                    <span class="schedule-duration-hint" id="scheduleDurationHint">Typical: 30-60 min</span>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="schedule-quick-actions">
+                    <button type="button" class="schedule-quick-btn" onclick="schedulePlayNow()">
+                        <span>▶️</span> Play Now
+                    </button>
+                    <button type="button" class="schedule-quick-btn" onclick="scheduleNextHour()">
+                        <span>⏰</span> Next Hour
+                    </button>
+                    <button type="button" class="schedule-quick-btn" onclick="scheduleTomorrow()">
+                        <span>📅</span> Tomorrow
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="schedule-modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeScheduleModal()">Cancel</button>
+                <button type="button" class="btn-primary schedule-confirm-btn" onclick="confirmScheduleSession()">
+                    <span>✓</span> Schedule Session
+                </button>
+            </div>
         </div>
     </div>
 

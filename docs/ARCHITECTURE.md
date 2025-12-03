@@ -9,14 +9,14 @@
 
 ## System Overview
 
-### Current Architecture
+### Current Architecture (Deployed)
 ```
 ┌─────────────────┐                          ┌─────────────────┐
 │    Frontend     │ ◄────── HTTP/JSON ─────► │     Backend     │
 │  (Netlify)      │       REST API           │   (Railway)     │
 └─────────────────┘                          └─────────────────┘
         │                                            │
-        │ Firebase Client SDK                        │ (Firebase Admin SDK)
+        │ Firebase Client SDK                        │ Firebase Admin SDK
         ▼                                            ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                     Firebase Auth                            │
@@ -24,8 +24,13 @@
                                                      │
                                                      ▼
                                              ┌─────────────────┐
-                                             │  SQLite (temp)  │
+                                             │   PostgreSQL    │
+                                             │   (Railway)     │
                                              └─────────────────┘
+
+Local Development:
+- Backend: H2 in-memory database (application-local.properties)
+- Frontend: python -m http.server 5500
 ```
 
 ### Target Architecture (Scalable)
@@ -360,14 +365,14 @@ SPRING_PROFILES_ACTIVE=prod
 
 ### Current → Target
 
-1. ✅ SQLite working
-2. ⬜ Migrate to PostgreSQL (1-2 hours)
+1. ✅ SQLite working (legacy)
+2. ✅ Migrated to PostgreSQL (Railway) + H2 (local dev)
 3. ⬜ Add Firestore for user data (2-3 hours)
 4. ⬜ Update frontend for Firestore (2-3 hours)
 5. ⬜ Connect preferences to recommendations (2 hours)
 
 See:
-- `docs/POSTGRESQL_MIGRATION_PLAN.md`
+- `docs/POSTGRESQL_MIGRATION_PLAN.md` (completed)
 - `docs/USER_PROFILE_IMPLEMENTATION_PLAN.md`
 
 ---

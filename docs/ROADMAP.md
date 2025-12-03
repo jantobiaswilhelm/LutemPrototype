@@ -83,7 +83,7 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 ## ✅ COMPLETED
 
 ### Core MVP
-- [x] Spring Boot backend with SQLite (will migrate to PostgreSQL)
+- [x] Spring Boot backend with PostgreSQL (prod) / H2 (local)
 - [x] 57 curated games with 8-dimensional mood scoring
 - [x] Multi-factor recommendation engine (time, mood, energy, social, interruptibility)
 - [x] Progressive disclosure wizard UI

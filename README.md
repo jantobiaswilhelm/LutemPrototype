@@ -169,7 +169,7 @@ See [DEPLOYMENT_PLAN.md](docs/DEPLOYMENT_PLAN.md) for full deployment documentat
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | Spring Boot 3.2, Java 17, SQLite |
+| **Backend** | Spring Boot 3.2, Java 17, PostgreSQL (prod) / H2 (local) |
 | **Frontend** | Vanilla HTML/CSS/JS (modular) |
 | **Auth** | Firebase Authentication |
 | **Hosting** | Netlify (frontend) + Railway (backend) |

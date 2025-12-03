@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.0] - 2025-12-03 (Feedback Flow Phase A: Data Foundation)
+
+### Added - Session Tracking Infrastructure
+- **New Firestore Session Functions** (`frontend/js/firestore.js`)
+  - `createPendingSession(uid, sessionData)` - Schedule a gaming session
+  - `getPendingSessions(uid)` - Get sessions awaiting feedback (past scheduledEnd)
+  - `getSessionHistory(uid, limit)` - Paginated session history
+  - `updateSessionFeedback(uid, sessionId, feedbackData)` - Submit post-session feedback
+  - `markSessionSkipped(uid, sessionId)` - Dismiss without feedback
+  - `createManualSession(uid, sessionData)` - Log sessions not scheduled in advance
+  - `getSessionsForDateRange(uid, start, end)` - Calendar integration support
+
+- **Session Data Model**
+  - Full session tracking with game context, recommendation context, scheduling, and feedback
+  - Status flow: PENDING → COMPLETED/SKIPPED/EXPIRED
+  - Emotional tags support: RELAXING, ENERGIZING, SATISFYING, FRUSTRATING, CHALLENGING, FUN
+  - Source tracking: RECOMMENDATION, CALENDAR, MANUAL
+
+- **Helper Functions**
+  - `getDayOfWeek(date)` - Derive day of week from timestamp
+  - `getTimeOfDay(date)` - Categorize time (MORNING, AFTERNOON, EVENING, NIGHT)
+  - `toJSDate(timestamp)` - Convert Firestore timestamps to JS Date
+
+- **Firestore Security Rules** (`firestore.rules`)
+  - Users can only access their own profile and sessions
+  - Path: `users/{uid}/sessions/{sessionId}`
+
+- **Firestore Indexes** (`firestore.indexes.json`)
+  - Compound index for pending sessions query (status + scheduledEnd)
+  - Index for date range queries (scheduledStart)
+
+- **Exported Constants**
+  - `window.LutemSessionStatus` - PENDING, COMPLETED, SKIPPED, EXPIRED
+  - `window.LutemSessionSource` - RECOMMENDATION, CALENDAR, MANUAL
+  - `window.LutemEmotionalTags` - 6 emotional tag constants
+
+### Technical
+- Added `where` and `Timestamp` imports to Firestore module
+- All session timestamps properly converted for JS usage
+- Functions ready for Phase B (Schedule from Home) integration
+
+### Reference
+- See `docs/FEEDBACK_FLOW_ROADMAP.md` for full roadmap
+
+---
+
 ## [0.6.0] - 2025-11-30 (Desktop Responsive Layout)
 
 ### Added - Desktop Layout
@@ -366,7 +412,7 @@ See [docs/calendar-known-issues.md](docs/calendar-known-issues.md) for detailed 
 ### Technical
 - Java 17+ / Spring Boot 3.2.0
 - Maven build system
-- SQLite for future persistence
+- PostgreSQL (production) / H2 (local development)
 - Vanilla JavaScript (no frameworks)
 - CSS custom properties for theming
 

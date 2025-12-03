@@ -1,28 +1,29 @@
 # Lutem MVP - Project Tracker
 
 ## 📍 Current Status
-**✅ DATABASE MIGRATION COMPLETE!** - SQLite + 41 Games + Admin API
-- **NEW**: SQLite database with full persistence
-- **NEW**: Admin CRUD API for game management
-- **NEW**: 41 games loaded from JSON seed file
-- **NEW**: Easy to scale to 100+ games via admin endpoints
+**✅ DATABASE: PostgreSQL (prod) / H2 (local)** - 57 Games + Admin API
+- PostgreSQL on Railway for production persistence
+- H2 in-memory for local development (use `application-local.properties`)
+- Admin CRUD API for game management
+- 57 games loaded from JSON seed file
+- Easy to scale to 100+ games via admin endpoints
 - Backend: Multi-dimensional recommendation system with database
 - Frontend: Full validation system with required interruptibility field
 - Smart matching: Emotional goals + Energy + Flexibility + Time + Social + Genres
 - QuickWins 1-5 complete + Database persistence
 - Professional UX with hybrid validation approach
 
-**Last Updated:** November 23, 2025
+**Last Updated:** December 3, 2025
 
 ---
 
-## 🎯 Recent Major Achievement - Database Migration
+## 🎯 Recent Major Achievement - PostgreSQL Migration
 
 ### What Changed
-1. **Persistence Layer**: SQLite database replaces in-memory storage
+1. **Persistence Layer**: PostgreSQL (prod) / H2 (local) replaces SQLite
 2. **Admin API**: Full CRUD endpoints at `/admin/games`
-3. **Seed System**: 41 games auto-load from `games-seed.json`
-4. **Scalability**: Ready to add 100+ games easily
+3. **Seed System**: 57 games auto-load from `games-seed.json`
+4. **Scalability**: Production-ready database on Railway
 
 ### New Files
 - `GameRepository.java` - Spring Data JPA repository

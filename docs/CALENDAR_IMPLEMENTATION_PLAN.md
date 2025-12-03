@@ -107,7 +107,7 @@
 - [x] Skip duplicates (same externalId/UID)
 - [x] Return import summary
 - [x] Frontend shows "Imported X events, Y skipped"
-- [x] Persist events to SQLite database
+- [x] Persist events to database (PostgreSQL prod / H2 local)
 
 **Checkpoint:** ✅ ICS import works end-to-end
 

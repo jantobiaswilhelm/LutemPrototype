@@ -149,6 +149,9 @@ function buildTopRecommendationHTML(data, isDemo) {
                                     <span>▶️</span> Start Playing
                                 </button>
                             `}
+                            <button class="hero-schedule-btn" onclick="event.stopPropagation(); openScheduleModal(${JSON.stringify(game).replace(/"/g, '&quot;')}, '${reason.replace(/'/g, "\\'")}', ${matchPercentage})">
+                                <span>📅</span> Schedule
+                            </button>
                             <button class="hero-action-btn secondary" onclick="event.stopPropagation(); getAnotherRecommendation()">
                                 <span>🔄</span> Try Another
                             </button>
@@ -366,6 +369,8 @@ function buildAlternativesHTML(data) {
 function buildAltCardHTML(game, reason, matchPercentage) {
     const matchClass = getMatchClass(matchPercentage);
     const fallbackUrl = getFallbackImageUrl(game.name, 200, 110);
+    const gameJson = JSON.stringify(game).replace(/"/g, '&quot;');
+    const reasonEscaped = reason.replace(/'/g, "\\'");
     
     return `
         <div class="alt-card" onclick='openMaximizedGame(${JSON.stringify(game)}, ${JSON.stringify(reason)}, ${matchPercentage})'>
@@ -374,6 +379,11 @@ function buildAltCardHTML(game, reason, matchPercentage) {
                  class="alt-card-image"
                  loading="lazy"
                  onerror="this.onerror=null; this.src='${fallbackUrl}';">
+            <button class="alt-card-schedule-btn" 
+                    onclick="event.stopPropagation(); openScheduleModal(${gameJson}, '${reasonEscaped}', ${matchPercentage})"
+                    title="Schedule this game">
+                📅
+            </button>
             <div class="alt-card-content">
                 <div class="alt-card-title">${game.name}</div>
                 <span class="alt-card-match ${matchClass}">${matchPercentage}%</span>
@@ -665,3 +675,340 @@ function initMaximizedGameEvents() {
         }
     });
 }
+
+
+// ============================================
+// SCHEDULE SESSION MODAL (Phase B)
+// ============================================
+
+// Store current game being scheduled
+let scheduleModalData = {
+    game: null,
+    reason: '',
+    matchPercentage: 0
+};
+
+/**
+ * Open the schedule session modal
+ * @param {Object} game - Game object to schedule
+ * @param {string} reason - Recommendation reason
+ * @param {number} matchPercentage - Match percentage
+ */
+function openScheduleModal(game, reason, matchPercentage) {
+    // Check if user is logged in
+    const user = window.authState?.user;
+    if (!user) {
+        showToast('Please sign in to schedule sessions', 'error');
+        // Open auth modal
+        const authModal = document.getElementById('authModal');
+        if (authModal) authModal.style.display = 'flex';
+        return;
+    }
+    
+    // Store data for later use
+    scheduleModalData = { game, reason, matchPercentage };
+    
+    // Populate modal
+    document.getElementById('scheduleGameName').textContent = game.name;
+    document.getElementById('scheduleGameGenre').textContent = game.genre || 'Game';
+    document.getElementById('scheduleMatchPercent').textContent = `${matchPercentage}% Match`;
+    
+    // Set game image
+    const imgElement = document.getElementById('scheduleGameImage');
+    imgElement.src = game.imageUrl || getFallbackImageUrl(game.name, 200, 110);
+    imgElement.onerror = function() {
+        this.src = getFallbackImageUrl(game.name, 200, 110);
+    };
+    
+    // Set default date to today
+    const today = new Date();
+    document.getElementById('scheduleDate').value = today.toISOString().split('T')[0];
+    
+    // Set default time to next hour (rounded up)
+    const nextHour = new Date(today);
+    nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+    document.getElementById('scheduleTime').value = 
+        nextHour.toTimeString().slice(0, 5);
+    
+    // Set default duration based on game
+    const avgDuration = Math.round((game.minMinutes + game.maxMinutes) / 2) || 30;
+    document.getElementById('scheduleDuration').value = avgDuration;
+    document.getElementById('scheduleDurationHint').textContent = 
+        `Typical: ${game.minMinutes || 15}-${game.maxMinutes || 60} min`;
+    
+    // Show modal
+    const modal = document.getElementById('scheduleSessionModal');
+    modal.style.display = 'flex';
+    document.body.classList.add('modal-open');
+    
+    console.log('📅 Schedule modal opened for:', game.name);
+}
+
+/**
+ * Close the schedule session modal
+ */
+function closeScheduleModal() {
+    const modal = document.getElementById('scheduleSessionModal');
+    modal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    scheduleModalData = { game: null, reason: '', matchPercentage: 0 };
+}
+
+/**
+ * Quick action: Schedule for right now
+ */
+function schedulePlayNow() {
+    const now = new Date();
+    document.getElementById('scheduleDate').value = now.toISOString().split('T')[0];
+    document.getElementById('scheduleTime').value = now.toTimeString().slice(0, 5);
+    
+    // Auto-submit for "Play Now"
+    confirmScheduleSession();
+}
+
+/**
+ * Quick action: Schedule for next hour
+ */
+function scheduleNextHour() {
+    const now = new Date();
+    const nextHour = new Date(now);
+    nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+    
+    document.getElementById('scheduleDate').value = nextHour.toISOString().split('T')[0];
+    document.getElementById('scheduleTime').value = nextHour.toTimeString().slice(0, 5);
+}
+
+/**
+ * Quick action: Schedule for tomorrow (same time)
+ */
+function scheduleTomorrow() {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    document.getElementById('scheduleDate').value = tomorrow.toISOString().split('T')[0];
+    // Keep current time or default to noon
+    const timeInput = document.getElementById('scheduleTime');
+    if (!timeInput.value) {
+        timeInput.value = '12:00';
+    }
+}
+
+
+/**
+ * Confirm and create the scheduled session in Firestore
+ */
+async function confirmScheduleSession() {
+    const { game, reason, matchPercentage } = scheduleModalData;
+    
+    if (!game) {
+        showToast('No game selected', 'error');
+        return;
+    }
+    
+    // Get form values
+    const dateValue = document.getElementById('scheduleDate').value;
+    const timeValue = document.getElementById('scheduleTime').value;
+    const duration = parseInt(document.getElementById('scheduleDuration').value) || 30;
+    
+    if (!dateValue || !timeValue) {
+        showToast('Please select date and time', 'error');
+        return;
+    }
+    
+    // Combine date and time
+    const scheduledStart = new Date(`${dateValue}T${timeValue}`);
+    
+    if (isNaN(scheduledStart.getTime())) {
+        showToast('Invalid date/time', 'error');
+        return;
+    }
+    
+    // Check if Firestore is ready
+    if (!LutemFirestore.isReady()) {
+        showToast('Database not ready. Please try again.', 'error');
+        return;
+    }
+    
+    // Get current user
+    const user = window.authState?.user;
+    if (!user) {
+        showToast('Please sign in to schedule sessions', 'error');
+        return;
+    }
+    
+    // Disable confirm button
+    const confirmBtn = document.querySelector('.schedule-confirm-btn');
+    const originalText = confirmBtn.innerHTML;
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<span>⏳</span> Saving...';
+    
+    try {
+        // Get current recommendation context from state
+        const moodSelected = state.selectedGoals?.[0] || state.guidedGoals?.[0] || '';
+        const energyLevel = state.energyLevel || state.guidedEnergy || '';
+        const timeAvailable = state.availableMinutes || state.guidedTime || duration;
+        
+        // Create session in Firestore
+        const sessionId = await LutemFirestore.createPendingSession(user.uid, {
+            gameId: game.id,
+            gameName: game.name,
+            gameGenre: game.genre || '',
+            gameImageUrl: game.imageUrl || '',
+            moodSelected: moodSelected,
+            energyLevel: energyLevel,
+            timeAvailable: timeAvailable,
+            matchPercentage: matchPercentage,
+            recommendationReason: reason,
+            scheduledStart: scheduledStart,
+            duration: duration,
+            source: 'RECOMMENDATION'
+        });
+        
+        console.log('✅ Session scheduled:', sessionId);
+        
+        // Show success
+        showToast(`"${game.name}" scheduled for ${formatScheduleTime(scheduledStart)}!`, 'success');
+        
+        // Close modal
+        closeScheduleModal();
+        
+        // Optional: Refresh calendar if on calendar tab
+        if (typeof loadCalendarEvents === 'function') {
+            loadCalendarEvents();
+        }
+        
+    } catch (error) {
+        console.error('❌ Failed to schedule session:', error);
+        showToast('Failed to schedule session. Please try again.', 'error');
+    } finally {
+        // Re-enable button
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = originalText;
+    }
+}
+
+/**
+ * Format scheduled time for display
+ */
+function formatScheduleTime(date) {
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+    
+    const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    if (isToday) return `today at ${timeStr}`;
+    if (isTomorrow) return `tomorrow at ${timeStr}`;
+    return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) + ` at ${timeStr}`;
+}
+
+/**
+ * Simple toast notification helper
+ */
+function showToast(message, type = 'info') {
+    // Check if showToast already exists globally
+    if (typeof window.showToast === 'function' && window.showToast !== showToast) {
+        window.showToast(message, type);
+        return;
+    }
+    
+    // Create toast element
+    let toast = document.getElementById('lutem-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'lutem-toast';
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        `;
+        document.body.appendChild(toast);
+    }
+    
+    // Set type styling
+    const colors = {
+        success: 'linear-gradient(135deg, #10b981, #059669)',
+        error: 'linear-gradient(135deg, #ef4444, #dc2626)',
+        info: 'linear-gradient(135deg, #3b82f6, #2563eb)'
+    };
+    toast.style.background = colors[type] || colors.info;
+    toast.textContent = message;
+    
+    // Show toast
+    requestAnimationFrame(() => {
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        toast.style.opacity = '1';
+    });
+    
+    // Hide after delay
+    setTimeout(() => {
+        toast.style.transform = 'translateX(-50%) translateY(100px)';
+        toast.style.opacity = '0';
+    }, 3500);
+}
+
+
+/**
+ * Initialize schedule modal event listeners
+ * Called from main.js on DOMContentLoaded
+ */
+function initScheduleModalEvents() {
+    const modal = document.getElementById('scheduleSessionModal');
+    if (!modal) return;
+    
+    // Close when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeScheduleModal();
+        }
+    });
+    
+    // Close with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            closeScheduleModal();
+        }
+    });
+    
+    console.log('✅ Schedule modal events initialized');
+}
+
+// Auto-init when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScheduleModalEvents);
+} else {
+    initScheduleModalEvents();
+}
+
+
+
+// ============================================
+// GLOBAL EXPORTS
+// ============================================
+// These functions need to be accessible from onclick handlers in dynamically generated HTML
+
+// Schedule modal functions
+window.openScheduleModal = openScheduleModal;
+window.closeScheduleModal = closeScheduleModal;
+window.confirmScheduleSession = confirmScheduleSession;
+window.schedulePlayNow = schedulePlayNow;
+window.scheduleNextHour = scheduleNextHour;
+window.scheduleTomorrow = scheduleTomorrow;
+
+// Recommendation functions called from onclick handlers
+window.getRecommendation = getRecommendation;
+window.getAnotherRecommendation = getAnotherRecommendation;
+window.submitHeroFeedback = submitHeroFeedback;
+window.submitFeedback = submitFeedback;

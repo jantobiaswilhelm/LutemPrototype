@@ -34,9 +34,18 @@ function initCalendar() {
         dayMaxEvents: true,
         weekends: true,
         
-        // Event click handler - show details
+        // Event click handler - show details (handles both calendar events and Firestore sessions)
         eventClick: function(info) {
-            showEventDetails(info.event);
+            const eventType = info.event.extendedProps.type;
+            
+            // Check if it's a Firestore session
+            if (eventType === 'FIRESTORE_SESSION') {
+                const sessionData = info.event.extendedProps.sessionData;
+                showSessionDetails(sessionData);
+            } else {
+                // Regular calendar event
+                showEventDetails(info.event);
+            }
         },
         
         // Time slot selection handler - open enhanced event modal
@@ -55,7 +64,9 @@ function initCalendar() {
         
         // Custom event rendering with game images
         eventContent: function(arg) {
-            const isGame = arg.event.extendedProps.type === 'GAME';
+            const eventType = arg.event.extendedProps.type;
+            const isGame = eventType === 'GAME';
+            const isSession = eventType === 'FIRESTORE_SESSION';
             const imageUrl = arg.event.extendedProps.imageUrl;
             
             // Calculate duration
@@ -71,6 +82,19 @@ function initCalendar() {
                 } else {
                     durationText = `${mins}m`;
                 }
+            }
+            
+            // Firestore sessions - styled by status
+            if (isSession) {
+                const status = arg.event.extendedProps.status || 'PENDING';
+                const statusIcon = status === 'COMPLETED' ? '✅' : status === 'SKIPPED' ? '⏭️' : '⏳';
+                return {
+                    html: `<div class="fc-event-session-wrapper">
+                        <span class="fc-event-session-title">🎮 ${arg.event.title}</span>
+                        <span class="fc-event-session-duration">${durationText}</span>
+                        <span class="fc-event-session-status">${statusIcon}</span>
+                    </div>`
+                };
             }
             
             // Gaming events with background image
@@ -103,6 +127,12 @@ function initCalendar() {
                     <span class="fc-event-task-duration">${durationText}</span>
                 </div>`
             };
+        },
+        
+        // Reload sessions when calendar view changes (Phase C)
+        datesSet: function(info) {
+            // Reload Firestore sessions for new date range
+            loadFirestoreSessions();
         }
     });
     
@@ -236,6 +266,9 @@ async function loadCalendarEvents() {
             });
             
             console.log('Calendar events loaded:', events.length);
+            
+            // Also load Firestore sessions (Phase C)
+            await loadFirestoreSessions();
         }
     } catch (error) {
         console.error('Error loading calendar events:', error);
@@ -1631,3 +1664,407 @@ function updateRandomTimeHint() {
         hintEl.textContent = `${allGamesForModal.length} games available`;
     }
 }
+
+
+
+// ============================================
+// FIRESTORE SESSION DISPLAY (Phase C)
+// Display scheduled gaming sessions from Firestore
+// ============================================
+
+// State for session details modal
+let currentSessionData = null;
+let currentSessionId = null;
+
+/**
+ * Load Firestore sessions for the current calendar view
+ * Called after loadCalendarEvents()
+ */
+async function loadFirestoreSessions() {
+    if (!window.calendarInstance) {
+        console.log('Calendar not initialized yet');
+        return;
+    }
+    
+    // Check if user is logged in and Firestore is ready
+    if (!window.LutemFirestore || !window.LutemFirestore.isReady()) {
+        console.log('Firestore not ready, skipping session load');
+        return;
+    }
+    
+    // Get current user
+    const user = window.authState?.user;
+    if (!user) {
+        console.log('No user logged in, skipping session load');
+        return;
+    }
+    
+    try {
+        // Get current view's date range
+        const view = window.calendarInstance.view;
+        const startDate = view.activeStart;
+        const endDate = view.activeEnd;
+        
+        console.log('Loading Firestore sessions for range:', startDate, 'to', endDate);
+        
+        // Fetch sessions from Firestore
+        const sessions = await window.LutemFirestore.getSessionsForDateRange(
+            user.uid,
+            startDate,
+            endDate
+        );
+        
+        console.log('Loaded Firestore sessions:', sessions.length);
+        
+        // Add sessions to calendar
+        sessions.forEach(session => {
+            addSessionToCalendar(session);
+        });
+        
+    } catch (error) {
+        console.error('Error loading Firestore sessions:', error);
+    }
+}
+
+
+/**
+ * Add a single session to the calendar
+ * @param {Object} session - Session data from Firestore
+ */
+function addSessionToCalendar(session) {
+    if (!window.calendarInstance) return;
+    
+    // Determine status-based styling
+    const status = session.status || 'PENDING';
+    const statusClasses = getSessionStatusClasses(status);
+    
+    // Calculate duration text
+    const start = session.scheduledStart;
+    const end = session.scheduledEnd;
+    let durationText = '';
+    if (start && end) {
+        const mins = Math.round((end - start) / (1000 * 60));
+        if (mins >= 60) {
+            const hours = Math.floor(mins / 60);
+            const remainMins = mins % 60;
+            durationText = remainMins > 0 ? `${hours}h ${remainMins}m` : `${hours}h`;
+        } else {
+            durationText = `${mins}m`;
+        }
+    }
+    
+    // Check if session already exists (avoid duplicates)
+    const existingEvent = window.calendarInstance.getEventById(`session_${session.id}`);
+    if (existingEvent) {
+        return; // Already added
+    }
+    
+    window.calendarInstance.addEvent({
+        id: `session_${session.id}`,
+        title: session.gameName || 'Gaming Session',
+        start: start,
+        end: end,
+        classNames: statusClasses,
+        extendedProps: {
+            type: 'FIRESTORE_SESSION',
+            sessionId: session.id,
+            sessionData: session,
+            status: status
+        }
+    });
+}
+
+/**
+ * Get CSS classes for a session based on its status
+ * @param {string} status - Session status (PENDING, COMPLETED, SKIPPED)
+ * @returns {Array} Array of CSS class names
+ */
+function getSessionStatusClasses(status) {
+    const baseClasses = ['fc-event-session'];
+    
+    switch (status) {
+        case 'COMPLETED':
+            return [...baseClasses, 'fc-event-session-completed'];
+        case 'SKIPPED':
+            return [...baseClasses, 'fc-event-session-skipped'];
+        case 'PENDING':
+        default:
+            return [...baseClasses, 'fc-event-session-pending'];
+    }
+}
+
+/**
+ * Get status icon for display
+ * @param {string} status - Session status
+ * @returns {string} Emoji icon
+ */
+function getSessionStatusIcon(status) {
+    switch (status) {
+        case 'COMPLETED': return '✅';
+        case 'SKIPPED': return '⏭️';
+        case 'PENDING': 
+        default: return '⏳';
+    }
+}
+
+/**
+ * Get status label text
+ * @param {string} status - Session status
+ * @returns {string} Human readable status
+ */
+function getSessionStatusLabel(status) {
+    switch (status) {
+        case 'COMPLETED': return 'Completed';
+        case 'SKIPPED': return 'Skipped';
+        case 'PENDING':
+        default: return 'Pending';
+    }
+}
+
+
+/**
+ * Show session details modal
+ * @param {Object} session - Session data from Firestore
+ */
+function showSessionDetails(session) {
+    currentSessionData = session;
+    currentSessionId = session.id;
+    
+    const modal = document.getElementById('sessionDetailsModal');
+    const status = session.status || 'PENDING';
+    
+    // Set header background image
+    const header = document.getElementById('sessionDetailsHeader');
+    if (session.gameImageUrl) {
+        header.style.backgroundImage = `url('${session.gameImageUrl}')`;
+    } else {
+        header.style.backgroundImage = 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))';
+    }
+    
+    // Set title and time
+    document.getElementById('sessionDetailsTitle').textContent = `🎮 ${session.gameName || 'Gaming Session'}`;
+    
+    const start = session.scheduledStart;
+    const end = session.scheduledEnd;
+    let timeText = '';
+    if (start) {
+        timeText = formatDateTime(start);
+        if (end) {
+            timeText += ' - ' + end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+    }
+    document.getElementById('sessionDetailsTime').textContent = timeText;
+    
+    // Set status badge
+    const statusBadge = document.getElementById('sessionStatusBadge');
+    statusBadge.className = `session-status-badge ${status.toLowerCase()}`;
+    document.getElementById('sessionStatusIcon').textContent = getSessionStatusIcon(status);
+    document.getElementById('sessionStatusText').textContent = getSessionStatusLabel(status);
+    
+    // Set info grid
+    document.getElementById('sessionMatchPercent').textContent = 
+        session.matchPercentage ? `${session.matchPercentage}%` : '--';
+    
+    const durationMins = start && end ? Math.round((end - start) / (1000 * 60)) : null;
+    document.getElementById('sessionDuration').textContent = 
+        durationMins ? `${durationMins} min` : '--';
+    
+    document.getElementById('sessionMood').textContent = 
+        session.moodSelected || '--';
+    
+    document.getElementById('sessionEnergy').textContent = 
+        session.energyLevel || '--';
+    
+    // Handle status-specific UI
+    const feedbackPrompt = document.getElementById('sessionFeedbackPrompt');
+    const feedbackDisplay = document.getElementById('sessionFeedbackDisplay');
+    const feedbackBtn = document.getElementById('sessionFeedbackBtn');
+    const notesSection = document.getElementById('sessionNotesSection');
+    
+    // Hide all by default
+    feedbackPrompt.style.display = 'none';
+    feedbackDisplay.style.display = 'none';
+    feedbackBtn.style.display = 'none';
+    notesSection.style.display = 'none';
+    
+    if (status === 'COMPLETED') {
+        // Show feedback display
+        feedbackDisplay.style.display = 'block';
+        
+        // Show rating stars
+        const ratingDisplay = document.getElementById('sessionRatingDisplay');
+        const rating = session.rating || 0;
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            starsHtml += `<span class="session-rating-star ${i <= rating ? 'filled' : 'empty'}">★</span>`;
+        }
+        ratingDisplay.innerHTML = starsHtml;
+        
+        // Show emotional tags
+        const tagsContainer = document.getElementById('sessionEmotionalTags');
+        if (session.emotionalTags && session.emotionalTags.length > 0) {
+            tagsContainer.innerHTML = session.emotionalTags.map(tag => 
+                `<span class="session-emotional-tag">${tag}</span>`
+            ).join('');
+        } else {
+            tagsContainer.innerHTML = '<span style="color: var(--text-secondary)">No tags</span>';
+        }
+        
+        // Show notes if any
+        if (session.notes && session.notes.trim()) {
+            notesSection.style.display = 'block';
+            document.getElementById('sessionNotesText').textContent = session.notes;
+        }
+        
+    } else if (status === 'PENDING') {
+        // Check if session end time has passed
+        const now = new Date();
+        if (end && end < now) {
+            // Past pending session - show feedback prompt
+            feedbackPrompt.style.display = 'block';
+            feedbackBtn.style.display = 'inline-flex';
+        }
+    }
+    // SKIPPED sessions just show basic info
+    
+    // Show modal
+    modal.style.display = 'flex';
+}
+
+
+/**
+ * Close session details modal
+ */
+function closeSessionDetailsModal() {
+    document.getElementById('sessionDetailsModal').style.display = 'none';
+    currentSessionData = null;
+    currentSessionId = null;
+}
+
+/**
+ * Delete session from calendar and Firestore
+ */
+async function deleteSessionFromCalendar() {
+    if (!currentSessionId || !currentSessionData) {
+        showToast('No session selected', 'error');
+        return;
+    }
+    
+    if (!confirm('Delete this gaming session?')) {
+        return;
+    }
+    
+    const user = window.authState?.user;
+    if (!user) {
+        showToast('Please sign in first', 'error');
+        return;
+    }
+    
+    try {
+        // Delete from Firestore
+        await window.LutemFirestore.deleteSession(user.uid, currentSessionId);
+        
+        // Remove from calendar
+        const calendarEvent = window.calendarInstance.getEventById(`session_${currentSessionId}`);
+        if (calendarEvent) {
+            calendarEvent.remove();
+        }
+        
+        showToast('Session deleted', 'success');
+        closeSessionDetailsModal();
+        
+    } catch (error) {
+        console.error('Error deleting session:', error);
+        showToast('Failed to delete session', 'error');
+    }
+}
+
+/**
+ * Open feedback modal for a pending session
+ * Links to the feedback flow from Phase A
+ */
+function openFeedbackForSession() {
+    if (!currentSessionData) {
+        showToast('No session selected', 'error');
+        return;
+    }
+    
+    // Store session info for feedback flow
+    window.pendingFeedbackSession = currentSessionData;
+    
+    // Close this modal
+    closeSessionDetailsModal();
+    
+    // Check if feedback modal/flow exists
+    if (typeof openFeedbackModal === 'function') {
+        openFeedbackModal(currentSessionData);
+    } else {
+        // Fallback: Show simple feedback prompt
+        showToast('Feedback flow coming soon!', 'info');
+        console.log('Session for feedback:', currentSessionData);
+    }
+}
+
+
+// ============================================
+// GLOBAL EXPORTS
+// ============================================
+// These functions need to be accessible from onclick handlers in HTML
+// and from other JS files (tabs.js, etc.)
+
+// Core calendar functions
+window.initCalendar = initCalendar;
+window.loadCalendarEvents = loadCalendarEvents;
+
+// Event modal functions (called from calendar header buttons)
+window.openAddEventModal = openAddEventModal;
+window.closeAddEventModal = closeAddEventModal;
+window.switchEventTab = switchEventTab;
+window.switchGameMode = switchGameMode;
+window.saveCalendarEvent = saveCalendarEvent;
+window.filterEventGames = filterEventGames;
+window.selectGameForEvent = selectGameForEvent;
+window.clearGameSelection = clearGameSelection;
+window.updateDurationDisplay = updateDurationDisplay;
+
+// ICS Import functions (called from import modal)
+window.openImportModal = openImportModal;
+window.closeImportModal = closeImportModal;
+window.handleDragOver = handleDragOver;
+window.handleDragLeave = handleDragLeave;
+window.handleFileDrop = handleFileDrop;
+window.handleFileSelect = handleFileSelect;
+window.confirmImport = confirmImport;
+
+// Event details modal functions
+window.showEventDetails = showEventDetails;
+window.closeEventDetailsModal = closeEventDetailsModal;
+window.deleteCurrentEvent = deleteCurrentEvent;
+
+// Session details modal functions (Phase C)
+window.showSessionDetails = showSessionDetails;
+window.closeSessionDetailsModal = closeSessionDetailsModal;
+window.deleteSessionFromCalendar = deleteSessionFromCalendar;
+window.openFeedbackForSession = openFeedbackForSession;
+
+// Old task modal (legacy, may be deprecated)
+window.addTaskEvent = addTaskEvent;
+window.closeAddTaskModal = closeAddTaskModal;
+window.saveTask = saveTask;
+
+// Calendar wizard functions (used by wizard mode in modal)
+window.resetCalendarWizard = resetCalendarWizard;
+window.setCalendarMood = setCalendarMood;
+window.setCalendarEnergy = setCalendarEnergy;
+window.getCalendarWizardRecommendations = getCalendarWizardRecommendations;
+window.selectWizardGame = selectWizardGame;
+
+// Random mode functions
+window.resetRandomMode = resetRandomMode;
+window.rollRandomGame = rollRandomGame;
+window.acceptRandomGame = acceptRandomGame;
+
+// Helper functions that might be called elsewhere
+window.showGameWizardForCalendar = showGameWizardForCalendar;
+window.loadFirestoreSessions = loadFirestoreSessions;
+
