@@ -1,6 +1,6 @@
 # LUTEM - Project Roadmap
 
-**Last Updated:** December 2, 2025  
+**Last Updated:** December 3, 2025  
 **Project Type:** Side Project → Potential Startup  
 **Goal:** Real users, scalable architecture, satisfaction-driven gaming discovery
 
@@ -24,7 +24,8 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 
 ### Current Stack
 - **Frontend:** Vanilla HTML/CSS/JS → Netlify
-- **Backend:** Spring Boot + SQLite → Railway
+- **Backend:** Spring Boot + PostgreSQL → Railway
+- **User Data:** Firestore (profiles, sessions, feedback)
 - **Auth:** Firebase Authentication
 
 ### Target Stack (Scalable)
@@ -98,6 +99,13 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 - [x] Backend deployed to Railway
 - [x] Custom domain option (lutem.3lands.ch)
 
+### Database & Infrastructure (Phase 7-8)
+- [x] PostgreSQL migration on Railway (replaced SQLite)
+- [x] Firestore integration for user data
+- [x] firestore.js module with CRUD operations
+- [x] Auto profile creation on first sign-in
+- [x] Local dev setup with H2 database
+
 ### Calendar System
 - [x] ICS file import with duplicate detection
 - [x] Manual task creation
@@ -114,119 +122,52 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 
 ---
 
-## 🔴 PHASE 7: Database Migration (FOUNDATION)
-**Priority:** CRITICAL — Do before any new features  
-**Estimated:** 1-2 sessions (4-6 hours)
-
-### Why First?
-SQLite is fine for development but doesn't scale. PostgreSQL is free on Railway and production-ready. Do this migration before adding more data dependencies.
+## ✅ PHASE 7: Database Migration (COMPLETE)
+**Status:** ✅ DONE — December 2025
 
 ### 7.1 PostgreSQL Setup on Railway
-- [ ] Create PostgreSQL database on Railway (free tier)
-- [ ] Get connection string
-- [ ] Update `application.properties` with PostgreSQL config
-- [ ] Add PostgreSQL driver to `pom.xml`
+- [x] Create PostgreSQL database on Railway (free tier)
+- [x] Get connection string
+- [x] Update `application.properties` with PostgreSQL config
+- [x] Add PostgreSQL driver to `pom.xml`
 
 ### 7.2 Schema Migration
-- [ ] Export current SQLite data (games, calendar events)
-- [ ] Create PostgreSQL schema (Hibernate auto-create or manual)
-- [ ] Import data to PostgreSQL
-- [ ] Test all existing functionality
+- [x] Export current SQLite data (games, calendar events)
+- [x] Create PostgreSQL schema (Hibernate auto-create)
+- [x] Import data to PostgreSQL
+- [x] Test all existing functionality
 
-### 7.3 Remove SQLite
-- [ ] Remove SQLite dependency from `pom.xml`
-- [ ] Delete SQLite file from repo
-- [ ] Update documentation
+### 7.3 Local Development
+- [x] H2 database for local development
+- [x] `application-local.properties` for local config
+- [x] `start-backend-local.bat` for local dev
 
-**Checkpoint:** Backend runs on PostgreSQL, all features work, deployed to Railway.
+**Checkpoint:** ✅ Backend runs on PostgreSQL, all features work, deployed to Railway.
 
 ---
 
-## 🔴 PHASE 8: Firestore Integration (FOUNDATION)
-**Priority:** CRITICAL — Enables user data at scale  
-**Estimated:** 2-3 sessions (8-12 hours)
-
-### Why Firestore?
-- Already using Firebase Auth
-- Scales infinitely (Google infrastructure)
-- Real-time sync built-in
-- Perfect for user-specific data
-- Free tier: 50K reads, 20K writes per day
+## ✅ PHASE 8: Firestore Integration (COMPLETE)
+**Status:** ✅ DONE — December 2025
 
 ### 8.1 Firestore Setup
-- [ ] Enable Firestore in Firebase Console
-- [ ] Choose database location (europe-west for you)
-- [ ] Set up security rules (authenticated users only)
-- [ ] Add Firebase JS SDK to frontend (if not already)
+- [x] Enable Firestore in Firebase Console
+- [x] Choose database location (europe-west)
+- [x] Set up security rules (authenticated users only)
+- [x] Firebase JS SDK integrated
 
-### 8.2 Data Model Design
+### 8.2 Frontend Firestore Integration
+- [x] Create `firestore.js` module
+- [x] Initialize Firestore client
+- [x] Create CRUD functions for user profiles
+- [x] Create functions for session logging
+- [x] Handle offline persistence (Firestore built-in)
 
-```
-firestore/
-├── users/
-│   └── {firebaseUid}/
-│       ├── profile: {
-│       │     displayName: string,
-│       │     preferredGenres: string[],
-│       │     typicalSessionLength: string,
-│       │     engagementLevel: string,
-│       │     preferredGamingTimes: string[],
-│       │     primaryGoal: string,
-│       │     emotionalGoals: string[],
-│       │     createdAt: timestamp,
-│       │     updatedAt: timestamp
-│       │   }
-│       │
-│       ├── sessions/ (subcollection)
-│       │   └── {sessionId}/
-│       │       ├── gameId: number,
-│       │       ├── gameName: string,
-│       │       ├── startTime: timestamp,
-│       │       ├── endTime: timestamp,
-│       │       ├── source: string ("WIZARD" | "CALENDAR" | "LIBRARY"),
-│       │       ├── satisfaction: number (1-5),
-│       │       ├── moodTag: string,
-│       │       └── createdAt: timestamp
-│       │
-│       └── stats/ (subcollection)
-│           └── weekly/
-│               └── {weekId}/
-│                   ├── sessionsCount: number,
-│                   ├── totalMinutes: number,
-│                   ├── avgSatisfaction: number,
-│                   ├── topGames: array,
-│                   └── calculatedAt: timestamp
-```
+### 8.3 Auth Integration
+- [x] Profile auto-created on first sign-in
+- [x] Profile loaded on subsequent sign-ins
+- [x] `window.userProfile` cached in memory
 
-### 8.3 Frontend Firestore Integration
-- [ ] Create `firestore.js` module
-- [ ] Initialize Firestore client
-- [ ] Create CRUD functions for user profiles
-- [ ] Create functions for session logging
-- [ ] Handle offline persistence (Firestore built-in)
-
-### 8.4 Security Rules
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      match /sessions/{sessionId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-      
-      match /stats/{statId} {
-        allow read: if request.auth != null && request.auth.uid == userId;
-        allow write: if false; // Only cloud functions write stats
-      }
-    }
-  }
-}
-```
-
-**Checkpoint:** Can read/write user data to Firestore from frontend.
+**Checkpoint:** ✅ Can read/write user data to Firestore from frontend.
 
 ---
 
@@ -351,8 +292,8 @@ Already planned in detail. Lower priority now that we have ICS import.
 
 | Phase | Effort | Impact | Priority | Status |
 |-------|--------|--------|----------|--------|
-| 7: PostgreSQL Migration | Low | High | 🔴 Critical | Not Started |
-| 8: Firestore Setup | Medium | High | 🔴 Critical | Not Started |
+| 7: PostgreSQL Migration | Low | High | 🔴 Critical | ✅ Complete |
+| 8: Firestore Setup | Medium | High | 🔴 Critical | ✅ Complete |
 | 9: User Profiles | Low | High | 🟡 High | Not Started |
 | 10: Session Tracking | Medium | High | 🟡 High | Not Started |
 | 11: Weekly Dashboard | Medium | Medium | 🟡 High | Not Started |
@@ -366,8 +307,8 @@ Already planned in detail. Lower priority now that we have ICS import.
 ### December 2025
 **Focus:** Foundation
 
-- Week 1: Phase 7 (PostgreSQL migration)
-- Week 2: Phase 8 (Firestore setup)
+- ~~Week 1: Phase 7 (PostgreSQL migration)~~ ✅ DONE
+- ~~Week 2: Phase 8 (Firestore setup)~~ ✅ DONE
 - Week 3-4: Phase 9 (User profiles working)
 
 ### January 2026
