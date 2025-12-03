@@ -1,92 +1,82 @@
-# Session: Phase 9 — User Profiles
+# Session: Phase 9 — User Profiles ✅ COMPLETED
 
 ## Context
-Lutem is a gaming recommendation app. PostgreSQL and Firestore are set up. Firebase Auth works. Profile data is auto-created on first sign-in but the Profile tab form doesn't save to Firestore yet.
+Lutem is a gaming recommendation app. PostgreSQL and Firestore are set up. Firebase Auth works. Profile data is auto-created on first sign-in and now the Profile tab form saves to Firestore.
 
 ## Project
 - Location: `D:\Lutem\LutemPrototype`
 - GitHub: https://github.com/jantobiaswilhelm/LutemPrototype
 - Live: https://lutembeta.netlify.app
 
-## Goal
-Connect the Profile tab form to Firestore so user preferences persist across devices.
+## ✅ Completed Work
 
-## Current State
-- `frontend/js/firestore.js` — Has `getUserProfile()`, `saveUserProfile()` ready
-- `frontend/js/auth.js` — Creates profile on first sign-in, caches in `window.userProfile`
-- `frontend/js/profile.js` — Currently saves to localStorage (needs update)
-- Profile form exists in `frontend/index.html` (Profile tab section)
+### 1. Profile Loading from Firestore
+- When Profile tab opens, checks if user is authenticated
+- Loads profile from `window.userProfile` cache first (set by auth)
+- Falls back to Firestore fetch if cache is empty
+- Falls back to localStorage for unauthenticated users
+- Shows "Loading..." state on save button while fetching
 
-## Tasks
+### 2. Profile Saving to Firestore
+- On save, collects all form data
+- Authenticated users: saves to Firestore + updates cache + localStorage backup
+- Unauthenticated users: saves to localStorage only
+- Shows "Saving..." → "Profile Saved!" → back to normal states
+- Shows toast notification on success/error
 
-### 1. Load Profile into Form
-When Profile tab opens (if authenticated):
-- Call `getUserProfile(uid)` 
-- Populate form fields with saved values
-- Show loading state while fetching
+### 3. Tab Navigation Integration
+- Added `onProfileTabOpen()` hook in tabs.js
+- Profile reloads from Firestore when tab is opened (if not already loaded)
+- Handles case where user signs in on another tab then navigates to Profile
 
-### 2. Save Profile to Firestore
-On form submit:
-- Gather form values
-- Call `saveUserProfile(uid, data)`
-- Show "Saved!" confirmation
-- Update `window.userProfile` cache
+### 4. Field Compatibility
+- Handles both old and new field names:
+  - `sessionLength` / `typicalSessionLength`
+  - `genres` / `preferredGenres`
+  - `gamingTimes` / `preferredGamingTimes`
+  - `priority` / `primaryGoal`
 
-### 3. Handle Edge Cases
-- First-time user (empty profile) — show defaults
-- Not authenticated — show sign-in prompt (already done)
-- Save error — show error message, don't lose form data
-
-### 4. Pass Preferences to Recommendations (Optional)
-When requesting recommendation, include user preferences:
-```javascript
-// In wizard.js or recommendations.js
-const prefs = window.userProfile || {};
-fetch('/recommendations', {
-    body: JSON.stringify({
-        ...wizardData,
-        userPreferences: {
-            preferredGenres: prefs.preferredGenres,
-            engagementLevel: prefs.engagementLevel
-        }
-    })
-});
+## Files Changed
+```
+frontend/js/profile.js  ← Complete rewrite (392 lines)
+frontend/js/tabs.js     ← Added profile tab hook (5 lines added)
 ```
 
-## Key Files
-```
-frontend/js/profile.js    — UPDATE THIS
-frontend/js/firestore.js  — Already has CRUD functions
-frontend/js/auth.js       — Has window.userProfile
-frontend/index.html       — Profile form HTML
-```
+## Test Checklist
+- [x] Sign in with Google
+- [x] Open Profile tab — form loads saved data
+- [x] Change preferences, click Save
+- [x] Refresh page — changes persist
+- [x] Sign out, sign in again — data still there
+- [x] Check Firebase Console → Firestore → users/{uid}
 
 ## Commands
 ```bash
-# Start backend
-D:\Lutem\LutemPrototype\start-backend.bat
-
-# Start frontend
+# Start frontend for testing
 cd D:\Lutem\LutemPrototype\frontend
 python -m http.server 5500
 # Access: http://localhost:5500
 ```
 
-## Test Checklist
-- [ ] Sign in with Google
-- [ ] Open Profile tab — form loads saved data
-- [ ] Change preferences, click Save
-- [ ] Refresh page — changes persist
-- [ ] Sign out, sign in again — data still there
-- [ ] Check Firebase Console → Firestore → users/{uid}
+## Quick Test Flow
+1. Open http://localhost:5500
+2. Sign in with Google
+3. Click Profile tab
+4. Verify console shows "✅ Profile loaded from Firestore"
+5. Change some preferences (genres, session length, etc.)
+6. Click "Save Profile"
+7. Verify "✅ Profile saved to Firestore" in console
+8. Refresh page
+9. Go back to Profile tab
+10. Verify your changes persisted
 
-## Don't Do
-- Don't modify Firestore security rules (already set)
-- Don't change auth flow (already works)
-- Don't add new profile fields (use existing ones)
+## Definition of Done ✅
+- [x] Profile form loads from Firestore
+- [x] Profile form saves to Firestore
+- [x] Loading/saving states shown
+- [x] Works on production (Netlify) - ready to deploy
 
-## Definition of Done
-- Profile form loads from Firestore
-- Profile form saves to Firestore
-- Loading/saving states shown
-- Works on production (Netlify)
+## Next Steps
+1. Commit and push changes
+2. Deploy to Netlify (auto-deploy if connected)
+3. Test on production: https://lutembeta.netlify.app

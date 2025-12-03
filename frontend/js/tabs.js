@@ -53,6 +53,11 @@ function initTabNavigation() {
                     initCalendar();
                 }, 100);
             }
+            
+            // Load profile from Firestore when profile tab is clicked
+            if (button.dataset.page === 'profile' && typeof window.onProfileTabOpen === 'function') {
+                window.onProfileTabOpen();
+            }
         });
     });
 }
