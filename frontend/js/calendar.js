@@ -598,6 +598,11 @@ function closeAddEventModal() {
     selectedTimeSlot = null;
 }
 
+// CRITICAL: Export modal functions immediately to ensure they're available for onclick handlers
+// This protects against later script errors preventing the end-of-file exports from running
+window.openAddEventModal = openAddEventModal;
+window.closeAddEventModal = closeAddEventModal;
+
 
 /**
  * Switch between Task and Gaming Session tabs
@@ -910,6 +915,10 @@ function closeImportModal() {
     document.getElementById('importModal').style.display = 'none';
     parsedIcsEvents = [];
 }
+
+// CRITICAL: Export import modal functions immediately
+window.openImportModal = openImportModal;
+window.closeImportModal = closeImportModal;
 
 /**
  * Handle drag over event
@@ -1674,7 +1683,7 @@ function updateRandomTimeHint() {
 
 // State for session details modal
 let currentSessionData = null;
-let currentSessionId = null;
+// Note: currentSessionId is declared in state.js
 
 /**
  * Load Firestore sessions for the current calendar view

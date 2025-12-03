@@ -22,6 +22,9 @@ public class RecommendationRequest {
     
     // Optional: let user indicate if time is inferred or selected
     private boolean timeOfDayInferred;
+    
+    // Firebase user ID for personalized satisfaction-based scoring
+    private String userId;
 
     // Constructors
     public RecommendationRequest() {}
@@ -83,6 +86,9 @@ public class RecommendationRequest {
     public void setPreferredGenres(List<String> preferredGenres) { 
         this.preferredGenres = preferredGenres; 
     }
+    
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
     
     // Helper method for backward compatibility - gets first emotional goal
     public String getDesiredMood() {

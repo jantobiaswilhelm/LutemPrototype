@@ -88,6 +88,11 @@ async function handleAuthStateChange(user) {
         await loadOrCreateFirestoreProfile(user);
         syncUserWithBackend();
         migratePendingSession();
+        
+        // Check for pending sessions that need feedback (Phase D)
+        if (typeof checkPendingSessions === 'function') {
+            setTimeout(() => checkPendingSessions(), 500);
+        }
     } else {
         // Clear cached profile on sign out
         window.userProfile = null;

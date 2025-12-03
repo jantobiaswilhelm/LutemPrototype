@@ -8,10 +8,12 @@ import com.lutem.mvp.model.TimeOfDay;
 import com.lutem.mvp.dto.RecommendationRequest;
 import com.lutem.mvp.dto.RecommendationResponse;
 import com.lutem.mvp.dto.SessionFeedback;
+import com.lutem.mvp.dto.SatisfactionStats;
 import com.lutem.mvp.model.Game;
 import com.lutem.mvp.model.GameSession;
 import com.lutem.mvp.repository.GameRepository;
 import com.lutem.mvp.service.GameSessionService;
+import com.lutem.mvp.service.UserSatisfactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
@@ -25,6 +27,9 @@ public class GameController {
     
     @Autowired
     private GameSessionService sessionService;
+    
+    @Autowired(required = false)
+    private UserSatisfactionService satisfactionService;
     
     // In-memory feedback storage for backward compatibility
     private Map<Long, List<Integer>> feedbackMap = new HashMap<>();
@@ -56,14 +61,26 @@ public class GameController {
             return createValidationErrorResponse(validationErrors);
         }
         
+        // Load Firestore satisfaction data if user is logged in
+        SatisfactionStats userStats = null;
+        if (request.getUserId() != null && satisfactionService != null) {
+            try {
+                userStats = satisfactionService.getSatisfactionStats(request.getUserId());
+                System.out.println("📊 Loaded satisfaction stats for user: " + request.getUserId() + 
+                    " (" + userStats.getCompletedSessions() + " completed sessions)");
+            } catch (Exception e) {
+                System.err.println("⚠️ Could not load satisfaction stats: " + e.getMessage());
+            }
+        }
+        
         // Get all games from database
         List<Game> games = gameRepository.findAll();
         
-        // Score all games
+        // Score all games (now with personalized satisfaction data)
         Map<Game, ScoringResult> scoredGames = new HashMap<>();
         
         for (Game game : games) {
-            ScoringResult result = scoreGame(game, request);
+            ScoringResult result = scoreGame(game, request, userStats);
             if (result.score > 0) {
                 scoredGames.put(game, result);
             }
@@ -122,7 +139,7 @@ public class GameController {
         return response;
     }
 
-    private ScoringResult scoreGame(Game game, RecommendationRequest request) {
+    private ScoringResult scoreGame(Game game, RecommendationRequest request, SatisfactionStats userStats) {
         double score = 0.0;
         List<String> matchReasons = new ArrayList<>();
 
@@ -193,14 +210,28 @@ public class GameController {
             }
         }
 
-        // 7. SATISFACTION BONUS (max 10%)
-        double avg = getAverageSatisfaction(game.getId());
-        if (game.getSessionCount() > 0) {
-            score += (avg / 5.0) * 10.0;
-            if (avg >= 4.0) {
-                matchReasons.add("You've loved this before (" + String.format("%.1f", avg) + "/5 ⭐)");
-            } else if (avg >= 3.5) {
-                matchReasons.add("Previously enjoyed by you");
+        // 7. SATISFACTION BONUS - FIRESTORE (max 15%) 
+        // Uses personalized Firestore data if available
+        if (userStats != null && userStats.getRatingsByGame() != null) {
+            Double userRating = userStats.getRatingsByGame().get(game.getId());
+            if (userRating != null && userRating > 0) {
+                score += (userRating / 5.0) * 15.0;
+                if (userRating >= 4.0) {
+                    matchReasons.add("You rated this " + String.format("%.1f", userRating) + "/5 ⭐");
+                } else if (userRating >= 3.0) {
+                    matchReasons.add("Previously enjoyed by you");
+                }
+            }
+        } else {
+            // Fallback: database/memory satisfaction
+            double avg = getAverageSatisfaction(game.getId());
+            if (game.getSessionCount() > 0) {
+                score += (avg / 5.0) * 10.0;
+                if (avg >= 4.0) {
+                    matchReasons.add("You've loved this before (" + String.format("%.1f", avg) + "/5 ⭐)");
+                } else if (avg >= 3.5) {
+                    matchReasons.add("Previously enjoyed by you");
+                }
             }
         }
 
@@ -219,6 +250,34 @@ public class GameController {
                         .anyMatch(prefGenre -> prefGenre.equalsIgnoreCase(genre)))
                     .collect(Collectors.joining(", "));
                 matchReasons.add("Matches your taste: " + matchedGenres);
+            }
+        }
+        
+        // 9. GENRE SATISFACTION BOOST - FIRESTORE (max 10%)
+        // If user rates certain genres highly, boost games in those genres
+        if (userStats != null && userStats.getRatingsByGenre() != null) {
+            for (String gameGenre : game.getGenres()) {
+                Double genreRating = userStats.getRatingsByGenre().get(gameGenre);
+                if (genreRating != null && genreRating >= 4.0) {
+                    score += 5.0; // Boost for highly-rated genres
+                    if (!matchReasons.stream().anyMatch(r -> r.contains("satisfying genre"))) {
+                        matchReasons.add("Based on your history with " + gameGenre.toLowerCase() + " games");
+                    }
+                    break; // Only add this reason once
+                }
+            }
+        }
+        
+        // 10. TIME-OF-DAY SATISFACTION PATTERN (max 5%)
+        // Boost games that match patterns where user is typically satisfied
+        if (userStats != null && userStats.getBestTimeOfDay() != null && request.getTimeOfDay() != null) {
+            String currentTime = request.getTimeOfDay().name();
+            if (currentTime.equals(userStats.getBestTimeOfDay())) {
+                Double todRating = userStats.getRatingsByTimeOfDay().get(currentTime);
+                if (todRating != null && todRating >= 4.0) {
+                    score += 3.0;
+                    matchReasons.add("You're typically satisfied gaming at this time");
+                }
             }
         }
 

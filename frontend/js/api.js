@@ -52,7 +52,9 @@ async function getRecommendation() {
             requiredInterruptibility: state.interruptibility,
             timeOfDay: state.timeOfDay,
             socialPreference: state.socialPreference,
-            preferredGenres: state.selectedGenres.length > 0 ? state.selectedGenres : null
+            preferredGenres: state.selectedGenres.length > 0 ? state.selectedGenres : null,
+            // Include userId for personalized satisfaction-based scoring
+            userId: firebase.auth().currentUser ? firebase.auth().currentUser.uid : null
         };
 
         console.log('Request:', requestBody);
