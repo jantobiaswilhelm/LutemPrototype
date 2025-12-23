@@ -47,6 +47,11 @@ function displayResults(data, isDemo = false) {
     // Show the results container with animation
     resultsPanel.classList.add('show');
     
+    // Collapse wizard form to summary bar
+    if (typeof collapseWizardForm === 'function') {
+        collapseWizardForm();
+    }
+    
     // Scroll to results
     setTimeout(() => {
         resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });

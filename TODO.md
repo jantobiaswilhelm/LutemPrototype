@@ -1,343 +1,124 @@
 # Lutem MVP - Project Tracker
 
 ## 📍 Current Status
-**✅ DATABASE: PostgreSQL (prod) / H2 (local)** - 57 Games + Admin API
-- PostgreSQL on Railway for production persistence
-- H2 in-memory for local development (use `application-local.properties`)
-- Admin CRUD API for game management
-- 57 games loaded from JSON seed file
-- Easy to scale to 100+ games via admin endpoints
-- Backend: Multi-dimensional recommendation system with database
-- Frontend: Full validation system with required interruptibility field
-- Smart matching: Emotional goals + Energy + Flexibility + Time + Social + Genres
-- QuickWins 1-5 complete + Database persistence
-- Professional UX with hybrid validation approach
 
-**Last Updated:** December 3, 2025
+**✅ PRODUCTION DEPLOYED** - [lutembeta.netlify.app](https://lutembeta.netlify.app)
+- **Backend:** Spring Boot on Railway with PostgreSQL
+- **Frontend:** Vanilla HTML/CSS/JS on Netlify  
+- **Auth:** Firebase Authentication (Google Sign-in)
+- **User Data:** Firestore (profiles, preferences)
+- **Games:** 57 titles in database
+
+**Last Updated:** December 7, 2025
 
 ---
 
-## 🎯 Recent Major Achievement - PostgreSQL Migration
+## 🗺️ Phase Completion Status
 
-### What Changed
-1. **Persistence Layer**: PostgreSQL (prod) / H2 (local) replaces SQLite
-2. **Admin API**: Full CRUD endpoints at `/admin/games`
-3. **Seed System**: 57 games auto-load from `games-seed.json`
-4. **Scalability**: Production-ready database on Railway
+### ✅ PHASE 0-4 — Core MVP
+- [x] Multi-dimensional recommendation engine (8 scoring factors)
+- [x] 57 curated games with emotional metadata
+- [x] Quick Start wizard (4-step onboarding)
+- [x] Top pick + 3 alternatives display
+- [x] Progressive disclosure for 9 total recommendations
+- [x] "Touch Grass" wellness modal for 3+ hour sessions
+- [x] Loading spinner with rotating gaming quotes
 
-### New Files
-- `GameRepository.java` - Spring Data JPA repository
-- `GameAdminController.java` - Admin CRUD endpoints
-- `GameDataLoader.java` - Auto-loads games on startup
-- `games-seed.json` - All 41 games in JSON format
-- `DATABASE_MIGRATION_COMPLETE.md` - Full documentation
+### ✅ PHASE 5 — UI/UX Enhancement
+- [x] 4 color themes (Café, Lavender, Earth, Ocean)
+- [x] Light/Dark mode with system detection
+- [x] Games Library with filtering and search
+- [x] Frontend modularization (20+ JS modules, 6 CSS files)
+- [x] Responsive desktop layout with sidebar navigation
 
-**See `DATABASE_MIGRATION_COMPLETE.md` for detailed instructions!**
+### ✅ PHASE 6 — Deployment
+- [x] Backend deployed to Railway
+- [x] Frontend deployed to Netlify
+- [x] Custom domain configured (lutem.3lands.ch)
 
----
+### ✅ PHASE 7 — PostgreSQL Migration
+- [x] PostgreSQL on Railway (production)
+- [x] H2 for local development
+- [x] 57 games auto-loaded from seed file
 
-## 🗺️ Original Roadmap Progress
+### ✅ PHASE 8 — Firestore Integration
+- [x] Firebase SDK integrated
+- [x] Firestore CRUD operations
+- [x] Security rules configured
 
-### ✅ PHASE 0 -- Lock in MVP
-- [x] Define MVP scope for Sam persona
-- [x] Manually entered/mocked list of games (now 20!)
-- [x] Input: Available time (minutes) - **Enhanced with discrete slider**
-- [x] Input: Desired mood - **Upgraded to multi-dimensional emotional goals**
-- [x] System outputs best game recommendation + **top 3 alternatives**
-- [x] Simple feedback loop (1-5 satisfaction) - **Backend ready**
+### ✅ PHASE 9 — User Profiles
+- [x] Profile save/load to Firestore
+- [x] Cross-device sync
+- [x] Auto-create on first sign-in
 
-### ✅ PHASE 1 -- Set Up the Playground
-- [x] Create Git repo "lutem-mvp"
-- [x] Setup backend/ (Spring Boot)
-- [x] Setup frontend/ (HTML/JS)
-- [x] IntelliJ Spring Boot project
-- [x] GET /games endpoint
-- [x] POST /recommendations endpoint
-- [x] POST /sessions/feedback endpoint
-- [x] In-memory storage working
+### 🟡 PHASE 10 — Session Tracking (NEXT)
+- [ ] Log sessions when user accepts recommendation
+- [ ] Post-session feedback collection UI
+- [ ] Session history view in Profile tab
+- [ ] Connect feedback to recommendation scoring
 
-### ✅ PHASE 2 -- Core Domain Modeling (ENHANCED)
-- [x] Game entity with multi-dimensional attributes
-- [x] **NEW:** EmotionalGoal enum (6 types)
-- [x] **NEW:** Interruptibility enum (3 levels)
-- [x] **NEW:** EnergyLevel enum (3 levels)
-- [x] **NEW:** TimeOfDay enum (5 periods)
-- [x] **NEW:** SocialPreference enum (4 types)
-- [x] RecommendationRequest (6 parameters)
-- [x] RecommendationResponse (with alternatives)
-- [x] SessionFeedback
-
-### ✅ PHASE 3 -- Recommendation Engine v1 (UPGRADED)
-- [x] Time-based filtering (must fit available time)
-- [x] **NEW:** Emotional goal matching (25% weight)
-- [x] **NEW:** Interruptibility matching (20% weight)
-- [x] **NEW:** Energy level matching (15% weight)
-- [x] **NEW:** Time of day matching (5% weight)
-- [x] **NEW:** Social preference matching (5% weight)
-- [x] 5-tier scoring algorithm (100-point scale)
-- [x] Return top match + 3 alternatives with explanations
-
-### ✅ PHASE 4 -- Enhanced UI (UPGRADED)
-- [x] **6-parameter input form** (multi-select + radio groups)
-- [x] Button "Get Recommendation"
-- [x] Display recommended game
-- [x] **NEW:** Discrete time slider (8 steps: 5min → 3hr+)
-- [x] **NEW:** "Touch Grass" modal for 3+ hours
-- [x] **NEW:** Loading spinner with rotating gaming tips
-- [x] **NEW:** Smooth animations and transitions
-- [x] **NEXT:** Display top 3 alternatives (backend ready)
-
-### ⏳ PHASE 5 -- Satisfaction Learning (READY TO BUILD)
-- [ ] Store feedback (backend endpoint exists)
-- [ ] Compute average satisfaction per game
-- [ ] Use satisfaction to improve ranking
-- [ ] **NEW:** Weekly satisfaction trends
-- [ ] **NEW:** Personal gaming insights
-
-### ⏳ PHASE 6 -- Persistence & Deployment (PLANNED)
-- [ ] Move to PostgreSQL (from in-memory)
-- [ ] Deploy backend (Render/Railway)
-- [ ] Deploy frontend on Netlify
-- [ ] Update API URLs for production
-
-### ⏳ PHASE 7 -- Add One Integration (PLANNED)
-**Option A:** Google Calendar (manual → real OAuth)
-**Option B:** RAWG API (add real game data search)
-
-### ⏳ PHASE 8 -- Weekly Recap (PLANNED)
-- [ ] Backend: GET /summary/weekly
-- [ ] Frontend: Card with sessions, avg satisfaction, top games
-
-### ⏳ PHASE 9 -- Later Enhancements
-- [ ] Authentication (Clerk/Firebase)
-- [ ] Real calendar sync
-- [ ] Steam/Xbox/PS game imports
-- [ ] Support for personas: Mark, Emma, Lisa, Jake
-- [ ] Subscription model & analytics
-- [ ] Improved dashboards & UX
+### 🟡 PHASE 11 — Weekly Dashboard
+- [x] Backend stats calculation (UserSatisfactionService)
+- [ ] Dashboard UI on Home tab
+- [ ] Satisfaction trends visualization
+- [ ] Gaming pattern insights
 
 ---
 
-## 🚀 Quick Wins - Current Progress
+## 📦 Game Library
 
-### ✅ QuickWin #1: Loading Spinner (COMPLETE)
-**Status:** ✅ Shipped  
-**Duration:** ~30 minutes  
-**Features:**
-- Smooth fade-in animation
-- Rotating gaming tips while loading
-- Button disabled during request
-- Professional transitions
-
-### ✅ QuickWin #2: Fun Slider (COMPLETE)
-**Status:** ✅ Shipped  
-**Duration:** ~45 minutes  
-**Features:**
-- Discrete time steps (5min → 15min → ... → 3hr+)
-- Large, bold time display
-- Visual step labels
-- "Touch Grass" modal for marathon sessions
-- Promotes healthy gaming habits
-
-### ⏳ QuickWin #3: Display Top 3 Alternatives (NEXT)
-**Status:** Backend complete, frontend pending  
-**Estimated Duration:** 45 minutes  
-**What's needed:**
-- Show all 3 alternatives in UI cards
-- Display reasons for each alternative
-- Click to swap alternative with top pick
-- Visual distinction between top pick and alternatives
-
-### ✅ QuickWin #4: Input Validation (COMPLETE)
-**Status:** ✅ Shipped  
-**Duration:** ~45 minutes  
-**Features:**
-- Hybrid validation approach (on-submit → live)
-- Red borders + shake animation for errors
-- Green borders + checkmarks for valid fields
-- Friendly inline error messages
-- Auto-scroll to first error
-- Frontend + backend validation
-- Smart live validation after first submit
-- Prevents broken API calls
-
-### ✅ QuickWin #5: Required Interruptibility Field (COMPLETE)
-**Status:** ✅ Shipped  
-**Duration:** ~30 minutes  
-**Features:**
-- Interruptibility now required for all recommendations
-- Added as Question 4 in Quick Start wizard (3→4 questions)
-- Three clear options: Yes/Some/No (HIGH/MEDIUM/LOW)
-- Validation error if not selected
-- Fixed wizard value mapping bug (prevented server errors)
-- Enhanced state management and syncing
-- Updated progress indicators to show "X of 4"
-- Quick Start now takes ~40 seconds (was ~30)
-
-### ✅ QuickWin #6: Games Library with Filters (COMPLETE)
-**Status:** ✅ Shipped  
-**Duration:** ~1.5 hours  
-**Features:**
-- Beautiful game grid display with card-based layout
-- Comprehensive filter system (search, genre, mood, time)
-- Real-time filtering with instant updates
-- Game cards show cover, duration, genres, moods, interruptibility
-- Click to view full game details (reuses maximized view)
-- Responsive design (single column on mobile)
-- Loading and empty states
-- Smooth animations and hover effects
-- Clear all filters button
-- Results count display
-
-### ⏳ QuickWin #7: Display Top 3 Alternatives (NEXT)
-**Status:** Backend complete, frontend pending  
-**Estimated Duration:** 45 minutes  
-**What's needed:**
-- Show all 3 alternatives in UI cards
-- Display reasons for each alternative
-- Click to swap alternative with top pick
-- Visual distinction between top pick and alternatives
-
----
-
-## 🎯 NEXT SESSION GOALS
-
-### Priority 1: UI/UX Enhancement Phase
-**Goal:** Modern, polished design system
-
-**Tasks:**
-- [ ] Update color scheme (softer gradients, better contrast)
-- [ ] Improve typography (hierarchy, readability)
-- [ ] Add card-based layout for game results
-- [ ] Enhance visual feedback for selections
-- [ ] Mobile-responsive improvements
-- [ ] Add micro-interactions and hover states
-
-**Estimated Time:** 2-3 hours
-
-### Priority 2: Expand Game Library
-**Goal:** 40+ diverse games
-
-**Tasks:**
-- [ ] Add 20 more games (casual + mid-range focus)
-- [ ] Ensure broad emotional goal coverage
-- [ ] Include more co-op and competitive options
-- [ ] Add indie games and hidden gems
-- [ ] Verify all games have accurate metadata
-
-**Estimated Time:** 1-2 hours
-
-### Priority 3: Complete QuickWin #3
-**Goal:** Display all alternatives in UI
-
-**Tasks:**
-- [ ] Create alternative game cards
-- [ ] Show reasons for each alternative
-- [ ] Add swap functionality (promote alternative to top)
-- [ ] Style differentiators (top vs alternatives)
-
-**Estimated Time:** 45 minutes
-
----
-
-## 📦 Game Library Status
-
-### Current: 20 Games
-**Breakdown:**
-- Casual (5-30 min): 6 games
-- Mid-Range (30-60 min): 8 games
-- Long-Form (60+ min): 6 games
+**Current:** 57 Games  
+**Categories:** Casual, Mid-Range, Long-Form, Competitive, Cozy
 
 **Emotional Goal Coverage:**
-- UNWIND: 8 games
-- RECHARGE: 3 games
-- ENGAGE: 9 games
-- CHALLENGE: 8 games
-- ACHIEVE: 9 games
-- EXPLORE: 7 games
+- UNWIND, RECHARGE, ENGAGE, CHALLENGE, ACHIEVE, EXPLORE
 
-### Target: 40+ Games
-**Planned Additions:**
-- More indie games
-- Cozy games (Spiritfarer, Coffee Talk, etc.)
-- Quick competitive games (Overwatch, Valorant, etc.)
-- Strategy games (XCOM, Slay the Spire variants)
-- Casual mobile-friendly options
+---
+
+## ✅ Completed Quick Wins
+
+| # | Feature | Status |
+|---|---------|--------|
+| 1 | Loading Spinner | ✅ Done |
+| 2 | Time Slider | ✅ Done |
+| 3 | Display Alternatives | ✅ Done |
+| 4 | Input Validation | ✅ Done |
+| 5 | Required Interruptibility | ✅ Done |
+| 6 | Games Library | ✅ Done |
 
 ---
 
 ## 🐛 Known Issues
 
-### ✅ RESOLVED: IntelliJ Build Cache
-**Problem:** IntelliJ sometimes served old compiled code  
-**Solution:** Use `start-backend.bat` (always uses Maven)  
-**Status:** Documented and working
-
-### Open Issues
-None currently - all systems operational! 🎉
+All production bugs resolved as of November 30, 2025.
+See [docs/BUGS.md](docs/BUGS.md) for history.
 
 ---
 
-## 📊 Development Metrics
+## 📊 Tech Stack
 
-### Code Stats
-- **Backend:** 11 Java source files
-- **Frontend:** 1 HTML file (~1,000 lines)
-- **Enums:** 5 dimensional attributes
-- **Games:** 20 fully categorized
-- **API Endpoints:** 3 operational
-
-### Time Investment
-- **Phase 0-3:** ~4 hours (initial setup + backend)
-- **Phase 4 Enhancements:** ~4 hours (multi-dimensional system)
-- **QuickWins 1-2:** ~1.5 hours (UI polish)
-- **Total:** ~9.5 hours
-
-### Next Milestone
-- **UI Enhancement + Game Expansion:** ~3-5 hours
-- **Target Date:** TBD
+| Layer | Technology |
+|-------|------------|
+| Frontend | Vanilla HTML/CSS/JS (20+ modules) |
+| Backend | Spring Boot 3.2, Java 17 |
+| Database | PostgreSQL (Railway) |
+| User Data | Firestore |
+| Auth | Firebase Authentication |
+| Hosting | Netlify + Railway |
 
 ---
 
-## 🎨 Design System (To Be Updated)
+## 📝 Documentation
 
-### Current Colors
-- Primary: #667eea → #764ba2 (gradient)
-- Background: #f8f9fa
-- Text: #2d3748
-- Success: Green
-- Error: Red
-
-### Proposed Updates
-- [ ] Softer gradient (less purple)
-- [ ] Better contrast ratios (WCAG AA)
-- [ ] Consistent spacing system
-- [ ] Defined elevation levels
-- [ ] Dark mode support (future)
+| Doc | Purpose |
+|-----|---------|
+| [README.md](README.md) | Project overview |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | Detailed development roadmap |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design |
+| [docs/API.md](docs/API.md) | API reference |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
 
 ---
 
-## 📝 Session Notes
-
-### Session: November 22, 2025 (Evening)
-**Completed:**
-- ✅ Multi-dimensional recommendation system
-- ✅ 5 new enums for rich game categorization
-- ✅ 20 games with full metadata
-- ✅ 5-tier scoring algorithm (100-point scale)
-- ✅ Top 3 alternatives backend
-- ✅ Discrete time slider with "Touch Grass" modal
-- ✅ Loading spinner with rotating tips
-- ✅ Updated all documentation
-
-**Status:** Core MVP complete, ready for UI enhancement phase
-
-**Next Steps:**
-1. UI/UX refresh (modern design)
-2. Expand game library (40+ games)
-3. Complete QuickWin #3 (display alternatives)
-
----
-
-*Last Updated: November 22, 2025*
-*Status: ✅ Core MVP Shipped - UI Enhancement Phase Next*
+*Last Updated: December 7, 2025*  
+*Status: ✅ Phases 1-9 Complete — Phase 10 (Session Tracking) Next*

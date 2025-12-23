@@ -1964,3 +1964,159 @@
         right: auto;
     }
 }
+
+
+/* ============================================
+   COLLAPSED WIZARD SUMMARY BAR
+   Shows after recommendation, allows editing
+   ============================================ */
+.wizard-summary-bar {
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px var(--shadow);
+    animation: fadeSlideDown 0.3s ease-out;
+}
+
+.summary-bar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.summary-items {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.summary-icon {
+    font-size: 1.1em;
+}
+
+.summary-value {
+    color: var(--accent-primary);
+}
+
+.summary-divider {
+    color: var(--border-color);
+    font-weight: 300;
+}
+
+.summary-edit-btn {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 8px 16px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.summary-edit-btn:hover {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+    transform: translateY(-1px);
+}
+
+/* Fade animations for wizard collapse/expand */
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.wizard-inputs-grid.collapsing,
+.advanced-section.collapsing,
+.advanced-sections-grid.collapsing {
+    animation: fadeOut 0.25s ease-out forwards;
+}
+
+.wizard-inputs-grid.expanding,
+.advanced-section.expanding,
+.advanced-sections-grid.expanding {
+    animation: fadeSlideUp 0.3s ease-out;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Mobile adjustments for summary bar */
+@media (max-width: 600px) {
+    .wizard-summary-bar {
+        padding: 12px 16px;
+    }
+    
+    .summary-bar-content {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .summary-items {
+        justify-content: center;
+    }
+    
+    .summary-item {
+        font-size: 0.85em;
+    }
+    
+    .summary-divider {
+        display: none;
+    }
+    
+    .summary-edit-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+/* Hidden state for wizard elements when collapsed */
+.wizard-collapsed .wizard-inputs-grid,
+.wizard-collapsed .wizard-submit-row,
+.wizard-collapsed .advanced-section,
+.wizard-collapsed .advanced-sections-grid {
+    display: none !important;
+}

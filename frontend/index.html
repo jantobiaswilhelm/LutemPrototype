@@ -345,6 +345,13 @@
         <div class="page-header-tagline">Find your perfect game for right now</div>
     </div>
 
+    <!-- Weekly Summary Section (Phase E) -->
+    <div class="container">
+        <div id="weeklySummarySection">
+            <!-- Populated by weekly-summary.js -->
+        </div>
+    </div>
+
     <div class="container" id="mainContainer">
 
         <!-- NEW: Single-column Home Wizard -->
@@ -442,6 +449,36 @@
             </div>
 
             </div> <!-- End wizard-inputs-grid -->
+
+            <!-- Collapsed Summary Bar (shown after recommendation) -->
+            <div class="wizard-summary-bar" id="wizardSummaryBar" style="display: none;">
+                <div class="summary-bar-content">
+                    <div class="summary-items">
+                        <span class="summary-item" id="summaryEnergy">
+                            <span class="summary-icon">⚡</span>
+                            <span class="summary-value">Medium</span>
+                        </span>
+                        <span class="summary-divider">|</span>
+                        <span class="summary-item" id="summaryTime">
+                            <span class="summary-icon">⏱️</span>
+                            <span class="summary-value">30 min</span>
+                        </span>
+                        <span class="summary-divider">|</span>
+                        <span class="summary-item" id="summaryMood">
+                            <span class="summary-icon">😊</span>
+                            <span class="summary-value">Unwind</span>
+                        </span>
+                        <span class="summary-divider">|</span>
+                        <span class="summary-item" id="summaryInterrupt">
+                            <span class="summary-icon">⏸️</span>
+                            <span class="summary-value">Flexible</span>
+                        </span>
+                    </div>
+                    <button class="summary-edit-btn" id="summaryEditBtn" onclick="expandWizardForm()">
+                        ✏️ Edit
+                    </button>
+                </div>
+            </div>
 
             <!-- Submit Button Row (full width, centered) -->
             <div class="wizard-submit-row">
@@ -1778,6 +1815,7 @@
     <script src="js/satisfaction-stats.js"></script>
     <script src="js/feedback.js"></script>
     <script src="js/recommendation.js"></script>
+    <script src="js/weekly-summary.js"></script>
     <script src="js/tabs.js"></script>
     <script src="js/games-library.js"></script>
     <script src="js/profile.js"></script>

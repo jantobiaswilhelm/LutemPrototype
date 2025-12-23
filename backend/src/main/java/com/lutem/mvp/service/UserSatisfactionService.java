@@ -4,6 +4,11 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.lutem.mvp.dto.SatisfactionStats;
 import com.lutem.mvp.dto.SatisfactionStats.GameRatingSummary;
+import com.lutem.mvp.dto.WeeklySummary;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +49,128 @@ public class UserSatisfactionService {
         }
         
         return computeStats(documents);
+    }
+    
+    /**
+     * Get weekly summary for user dashboard
+     */
+    public WeeklySummary getWeeklySummary(String uid) throws ExecutionException, InterruptedException {
+        if (firestore == null) {
+            System.err.println("⚠️ Firestore not available");
+            return createEmptyWeeklySummary();
+        }
+        
+        // Calculate week boundaries
+        LocalDateTime weekEnd = LocalDateTime.now();
+        LocalDateTime weekStart = weekEnd.minusDays(7);
+        Date weekStartDate = Date.from(weekStart.atZone(ZoneId.systemDefault()).toInstant());
+        
+        // Query sessions from last 7 days
+        CollectionReference sessionsRef = firestore.collection("users").document(uid).collection("sessions");
+        ApiFuture<QuerySnapshot> future = sessionsRef
+            .whereGreaterThanOrEqualTo("timestamp", weekStartDate)
+            .get();
+        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+        
+        return computeWeeklySummary(documents, weekStart, weekEnd);
+    }
+    
+    /**
+     * Compute weekly summary from session documents
+     */
+    private WeeklySummary computeWeeklySummary(List<QueryDocumentSnapshot> documents, 
+            LocalDateTime weekStart, LocalDateTime weekEnd) {
+        
+        WeeklySummary summary = new WeeklySummary();
+        summary.setWeekStart(weekStart);
+        summary.setWeekEnd(weekEnd);
+        
+        if (documents.isEmpty()) {
+            summary.setSessionsThisWeek(0);
+            summary.setSessionsWithFeedback(0);
+            summary.setAverageSatisfaction(0);
+            summary.setTotalPlaytimeMinutes(0);
+            summary.setMoodDistribution(new HashMap<>());
+            return summary;
+        }
+        
+        int sessionsWithFeedback = 0;
+        int totalPlaytime = 0;
+        double ratingSum = 0;
+        int ratingCount = 0;
+        Map<String, Integer> moodCounts = new HashMap<>();
+        Map<Long, Integer> gamePlayCounts = new HashMap<>();
+        Map<Long, String> gameNames = new HashMap<>();
+        
+        for (QueryDocumentSnapshot doc : documents) {
+            Map<String, Object> data = doc.getData();
+            
+            // Rating
+            Number rating = (Number) data.get("rating");
+            if (rating != null) {
+                sessionsWithFeedback++;
+                ratingSum += rating.doubleValue();
+                ratingCount++;
+            }
+            
+            // Duration
+            Number duration = (Number) data.get("actualDuration");
+            if (duration != null) {
+                totalPlaytime += duration.intValue();
+            }
+            
+            // Mood/goal distribution
+            String mood = (String) data.get("desiredMood");
+            if (mood != null) {
+                moodCounts.merge(mood.toLowerCase(), 1, Integer::sum);
+            }
+            
+            // Track most played game
+            Number gameIdNum = (Number) data.get("gameId");
+            String gameName = (String) data.get("gameName");
+            if (gameIdNum != null) {
+                Long gameId = gameIdNum.longValue();
+                gamePlayCounts.merge(gameId, 1, Integer::sum);
+                if (gameName != null) {
+                    gameNames.put(gameId, gameName);
+                }
+            }
+        }
+        
+        summary.setSessionsThisWeek(documents.size());
+        summary.setSessionsWithFeedback(sessionsWithFeedback);
+        summary.setAverageSatisfaction(ratingCount > 0 ? ratingSum / ratingCount : 0);
+        summary.setTotalPlaytimeMinutes(totalPlaytime);
+        summary.setMoodDistribution(moodCounts);
+        
+        // Find most played game
+        if (!gamePlayCounts.isEmpty()) {
+            Map.Entry<Long, Integer> mostPlayed = gamePlayCounts.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .orElse(null);
+            if (mostPlayed != null) {
+                summary.setMostPlayedGameId(mostPlayed.getKey());
+                summary.setMostPlayedGame(gameNames.get(mostPlayed.getKey()));
+                summary.setMostPlayedCount(mostPlayed.getValue());
+            }
+        }
+        
+        return summary;
+    }
+    
+    /**
+     * Create empty weekly summary
+     */
+    private WeeklySummary createEmptyWeeklySummary() {
+        WeeklySummary summary = new WeeklySummary();
+        summary.setSessionsThisWeek(0);
+        summary.setSessionsWithFeedback(0);
+        summary.setAverageSatisfaction(0);
+        summary.setTotalPlaytimeMinutes(0);
+        summary.setMoodDistribution(new HashMap<>());
+        summary.setWeekStart(LocalDateTime.now().minusDays(7));
+        summary.setWeekEnd(LocalDateTime.now());
+        return summary;
     }
 
     /**

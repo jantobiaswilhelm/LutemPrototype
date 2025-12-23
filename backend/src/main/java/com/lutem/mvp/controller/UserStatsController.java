@@ -1,6 +1,7 @@
 package com.lutem.mvp.controller;
 
 import com.lutem.mvp.dto.SatisfactionStats;
+import com.lutem.mvp.dto.WeeklySummary;
 import com.lutem.mvp.service.UserSatisfactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,24 @@ public class UserStatsController {
             return ResponseEntity.ok(stats);
         } catch (ExecutionException | InterruptedException e) {
             System.err.println("❌ Error fetching satisfaction stats for " + uid + ": " + e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    /**
+     * Get weekly summary for a user.
+     * Used by dashboard to display recent activity recap.
+     * 
+     * @param uid Firebase user ID
+     * @return Weekly activity summary
+     */
+    @GetMapping("/{uid}/summary/weekly")
+    public ResponseEntity<WeeklySummary> getWeeklySummary(@PathVariable String uid) {
+        try {
+            WeeklySummary summary = satisfactionService.getWeeklySummary(uid);
+            return ResponseEntity.ok(summary);
+        } catch (ExecutionException | InterruptedException e) {
+            System.err.println("❌ Error fetching weekly summary for " + uid + ": " + e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }

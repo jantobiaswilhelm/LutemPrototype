@@ -25,12 +25,18 @@ async function getRecommendation() {
         return; // Stop if validation fails
     }
 
+    // Collapse wizard form immediately to make room for loading
+    if (typeof collapseWizardForm === 'function') {
+        collapseWizardForm();
+    }
+
     // Get random gaming quote
     const quote = getRandomQuote();
 
     // Show loading with quote
     btn.disabled = true;
     btn.textContent = '🎮 Finding your game...';
+    resultsPanel.classList.add('show'); // Make panel visible for loading
     resultsPanel.innerHTML = `
         <div class="loading-overlay">
             <div class="loading-spinner"></div>
@@ -41,7 +47,7 @@ async function getRecommendation() {
         </div>
     `;
 
-    // Start timer for minimum 2 seconds display
+    // Start timer for minimum 2.5 seconds display
     const startTime = Date.now();
 
     try {
@@ -54,7 +60,8 @@ async function getRecommendation() {
             socialPreference: state.socialPreference,
             preferredGenres: state.selectedGenres.length > 0 ? state.selectedGenres : null,
             // Include userId for personalized satisfaction-based scoring
-            userId: firebase.auth().currentUser ? firebase.auth().currentUser.uid : null
+            // Use window.authState from auth.js (modular Firebase SDK doesn't use global firebase object)
+            userId: window.authState?.user?.uid || null
         };
 
         console.log('Request:', requestBody);
@@ -99,9 +106,9 @@ async function getRecommendation() {
             }
         }
 
-        // Calculate remaining time to show spinner (minimum 2 seconds)
+        // Calculate remaining time to show spinner (minimum 2.5 seconds)
         const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(0, 2000 - elapsedTime);
+        const remainingTime = Math.max(0, 2500 - elapsedTime);
 
         // Wait for remaining time before showing results
         await new Promise(resolve => setTimeout(resolve, remainingTime));
@@ -113,7 +120,7 @@ async function getRecommendation() {
         
         // Still respect minimum display time even on error
         const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(0, 2000 - elapsedTime);
+        const remainingTime = Math.max(0, 2500 - elapsedTime);
         await new Promise(resolve => setTimeout(resolve, remainingTime));
         
         resultsPanel.innerHTML = `

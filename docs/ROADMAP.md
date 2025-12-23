@@ -1,6 +1,6 @@
 # LUTEM - Project Roadmap
 
-**Last Updated:** December 3, 2025  
+**Last Updated:** December 6, 2025  
 **Project Type:** Side Project → Potential Startup  
 **Goal:** Real users, scalable architecture, satisfaction-driven gaming discovery
 
@@ -171,31 +171,29 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 
 ---
 
-## 🟡 PHASE 9: User Profiles (CORE FEATURE)
+## ✅ PHASE 9: User Profiles (COMPLETE)
 **Priority:** HIGH — Enables personalization  
-**Estimated:** 1-2 sessions (4-6 hours)  
+**Status:** ✅ DONE — December 2025  
 **Depends on:** Phase 8 (Firestore)
 
-### 9.1 Profile Save/Load
-- [ ] Update `profile.js` to use Firestore instead of localStorage
-- [ ] Save profile on form submit
-- [ ] Load profile on page load (if authenticated)
-- [ ] Handle first-time users (empty profile)
-- [ ] Add loading states
+### 9.1 Profile Save/Load ✅
+- [x] Update `profile.js` to use Firestore instead of localStorage
+- [x] Save profile on form submit
+- [x] Load profile on page load (if authenticated)
+- [x] Handle first-time users (empty profile)
+- [x] Add loading states
+- [x] Removed redundant localStorage backup for authenticated users
 
-### 9.2 Profile UI Polish
-- [ ] Show save status ("Saved" / "Saving..." / "Error")
-- [ ] Show last updated timestamp
-- [ ] Add profile completion indicator
-- [ ] Remove "Coming Soon" placeholders
+### 9.2 Profile UI ✅
+- [x] Show save status ("Saved" / "Saving..." / "Error")
+- [x] Toast notifications on save success/failure
+- [x] Profile creation on first sign-in
 
-### 9.3 Backend Integration (for recommendations)
-- [ ] Backend needs to read user preferences for personalized recommendations
-- [ ] Option A: Frontend passes preferences with each recommendation request
-- [ ] Option B: Backend calls Firestore Admin SDK (more complex)
-- [ ] **Decision:** Option A for MVP — simpler, no backend changes
+### 9.3 Backend Integration
+- [x] Frontend passes preferences with recommendation requests
+- [x] No backend changes needed for MVP
 
-**Checkpoint:** User preferences persist across devices, influence recommendation requests.
+**Checkpoint:** ✅ User preferences persist across devices via Firestore.
 
 ---
 
@@ -294,9 +292,9 @@ Already planned in detail. Lower priority now that we have ICS import.
 |-------|--------|--------|----------|--------|
 | 7: PostgreSQL Migration | Low | High | 🔴 Critical | ✅ Complete |
 | 8: Firestore Setup | Medium | High | 🔴 Critical | ✅ Complete |
-| 9: User Profiles | Low | High | 🟡 High | Not Started |
+| 9: User Profiles | Low | High | 🟡 High | ✅ Complete |
 | 10: Session Tracking | Medium | High | 🟡 High | Not Started |
-| 11: Weekly Dashboard | Medium | Medium | 🟡 High | Not Started |
+| 11: Weekly Dashboard | Medium | Medium | 🟡 High | Backend ✅ |
 | 12: Google OAuth | High | Medium | 🟢 Medium | Not Started |
 | 13-16: Future | High | Variable | 🔵 Low | Backlog |
 
@@ -309,7 +307,7 @@ Already planned in detail. Lower priority now that we have ICS import.
 
 - ~~Week 1: Phase 7 (PostgreSQL migration)~~ ✅ DONE
 - ~~Week 2: Phase 8 (Firestore setup)~~ ✅ DONE
-- Week 3-4: Phase 9 (User profiles working)
+- ~~Week 3-4: Phase 9 (User profiles)~~ ✅ DONE
 
 ### January 2026
 **Focus:** Core loop

@@ -44,6 +44,20 @@
         transform: translateY(-2px);
     }
     
+    .nav-control-btn.disabled,
+    .nav-control-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    
+    .nav-control-btn.disabled:hover,
+    .nav-control-btn:disabled:hover {
+        border-color: var(--border-color);
+        color: var(--text-secondary);
+        background: transparent;
+        transform: none;
+    }
+    
     .nav-control-icon {
         font-size: 1.6em;
     }
@@ -106,6 +120,18 @@
     .nav-control-btn:hover {
         transform: translateY(-4px) scale(1.05);
         box-shadow: 0 6px 20px var(--shadow-hover);
+    }
+    
+    .nav-control-btn.disabled,
+    .nav-control-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    
+    .nav-control-btn.disabled:hover,
+    .nav-control-btn:disabled:hover {
+        transform: none;
+        box-shadow: 0 4px 15px var(--shadow);
     }
     
     .nav-control-icon {

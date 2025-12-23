@@ -93,9 +93,19 @@ async function handleAuthStateChange(user) {
         if (typeof checkPendingSessions === 'function') {
             setTimeout(() => checkPendingSessions(), 500);
         }
+        
+        // Load weekly summary (Phase E)
+        if (typeof loadWeeklySummary === 'function') {
+            setTimeout(() => loadWeeklySummary(), 600);
+        }
     } else {
         // Clear cached profile on sign out
         window.userProfile = null;
+        
+        // Hide weekly summary when signed out
+        if (typeof hideWeeklySummary === 'function') {
+            hideWeeklySummary();
+        }
     }
 }
 

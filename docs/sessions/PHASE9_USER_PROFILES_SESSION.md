@@ -19,7 +19,7 @@ Lutem is a gaming recommendation app. PostgreSQL and Firestore are set up. Fireb
 
 ### 2. Profile Saving to Firestore
 - On save, collects all form data
-- Authenticated users: saves to Firestore + updates cache + localStorage backup
+- Authenticated users: saves to Firestore + updates memory cache
 - Unauthenticated users: saves to localStorage only
 - Shows "Saving..." → "Profile Saved!" → back to normal states
 - Shows toast notification on success/error

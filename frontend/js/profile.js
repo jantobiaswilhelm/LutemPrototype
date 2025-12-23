@@ -269,9 +269,6 @@ async function saveProfileToFirestore(profileData, saveBtn) {
         // Update local cache
         window.userProfile = { ...window.userProfile, ...profileData };
         
-        // Also save to localStorage as backup
-        localStorage.setItem('lutemProfile', JSON.stringify(profileData));
-        
         // Show success
         if (saveBtn) {
             saveBtn.innerHTML = '✅ Profile Saved!';
@@ -304,9 +301,6 @@ async function saveProfileToFirestore(profileData, saveBtn) {
         }
         
         showProfileToast('Failed to save profile. Please try again.', 'error');
-        
-        // Still save to localStorage as fallback
-        localStorage.setItem('lutemProfile', JSON.stringify(profileData));
     }
 }
 

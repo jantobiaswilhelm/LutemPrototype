@@ -250,3 +250,164 @@ function initWizard() {
         });
     }
 }
+
+
+// ============================================
+// WIZARD COLLAPSE/EXPAND FUNCTIONALITY
+// ============================================
+
+// Track whether wizard is collapsed
+let wizardCollapsed = false;
+
+/**
+ * Collapse the wizard form and show summary bar
+ * Called after recommendation is displayed
+ */
+function collapseWizardForm() {
+    const inputsGrid = document.querySelector('.wizard-inputs-grid');
+    const submitRow = document.querySelector('.wizard-submit-row');
+    const advancedSection = document.querySelector('.advanced-section');
+    const advancedSectionsGrid = document.querySelector('.advanced-sections-grid');
+    const summaryBar = document.getElementById('wizardSummaryBar');
+    
+    if (!inputsGrid || !summaryBar) return;
+    
+    // Update summary bar with current selections
+    updateSummaryBar();
+    
+    // Add collapsing animation
+    inputsGrid.classList.add('collapsing');
+    if (submitRow) submitRow.classList.add('collapsing');
+    if (advancedSection) advancedSection.classList.add('collapsing');
+    if (advancedSectionsGrid) advancedSectionsGrid.classList.add('collapsing');
+    
+    // After animation, hide elements and show summary
+    setTimeout(() => {
+        inputsGrid.style.display = 'none';
+        if (submitRow) submitRow.style.display = 'none';
+        if (advancedSection) advancedSection.style.display = 'none';
+        if (advancedSectionsGrid) advancedSectionsGrid.style.display = 'none';
+        
+        inputsGrid.classList.remove('collapsing');
+        if (submitRow) submitRow.classList.remove('collapsing');
+        if (advancedSection) advancedSection.classList.remove('collapsing');
+        if (advancedSectionsGrid) advancedSectionsGrid.classList.remove('collapsing');
+        
+        summaryBar.style.display = 'block';
+        wizardCollapsed = true;
+    }, 250);
+}
+
+/**
+ * Expand the wizard form and hide summary bar
+ * Called when user clicks Edit button
+ */
+function expandWizardForm() {
+    const inputsGrid = document.querySelector('.wizard-inputs-grid');
+    const submitRow = document.querySelector('.wizard-submit-row');
+    const advancedSection = document.querySelector('.advanced-section');
+    const advancedSectionsGrid = document.querySelector('.advanced-sections-grid');
+    const summaryBar = document.getElementById('wizardSummaryBar');
+    const resultsPanel = document.getElementById('resultsPanel');
+    
+    if (!inputsGrid || !summaryBar) return;
+    
+    // Hide summary bar
+    summaryBar.style.display = 'none';
+    
+    // Show and animate inputs
+    inputsGrid.style.display = '';
+    if (submitRow) submitRow.style.display = '';
+    if (advancedSection) advancedSection.style.display = '';
+    if (advancedSectionsGrid) advancedSectionsGrid.style.display = '';
+    
+    inputsGrid.classList.add('expanding');
+    if (submitRow) submitRow.classList.add('expanding');
+    if (advancedSection) advancedSection.classList.add('expanding');
+    if (advancedSectionsGrid) advancedSectionsGrid.classList.add('expanding');
+    
+    // Remove animation class after completion
+    setTimeout(() => {
+        inputsGrid.classList.remove('expanding');
+        if (submitRow) submitRow.classList.remove('expanding');
+        if (advancedSection) advancedSection.classList.remove('expanding');
+        if (advancedSectionsGrid) advancedSectionsGrid.classList.remove('expanding');
+    }, 300);
+    
+    // Hide results panel
+    if (resultsPanel) {
+        resultsPanel.classList.remove('show');
+        resultsPanel.innerHTML = `
+            <div class="placeholder">
+                <div class="icon">🎮</div>
+                <p>Select your preferences and click "Get Recommendation"</p>
+                <p style="margin-top: 10px; font-size: 0.9em;">We'll find the perfect game for your mood and time!</p>
+            </div>
+        `;
+    }
+    
+    wizardCollapsed = false;
+    
+    // Scroll to top of wizard
+    const homeWizard = document.querySelector('.home-wizard');
+    if (homeWizard) {
+        homeWizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+/**
+ * Update summary bar with current state values
+ */
+function updateSummaryBar() {
+    // Energy
+    const energyMap = {
+        'LOW': 'Low',
+        'MEDIUM': 'Medium',
+        'HIGH': 'High'
+    };
+    const energyEl = document.querySelector('#summaryEnergy .summary-value');
+    if (energyEl && state.energyLevel) {
+        energyEl.textContent = energyMap[state.energyLevel] || state.energyLevel;
+    }
+    
+    // Time
+    const timeEl = document.querySelector('#summaryTime .summary-value');
+    if (timeEl && state.availableMinutes) {
+        if (state.availableMinutes >= 180) {
+            timeEl.textContent = '3+ hrs';
+        } else if (state.availableMinutes >= 60) {
+            timeEl.textContent = Math.floor(state.availableMinutes / 60) + ' hr';
+        } else {
+            timeEl.textContent = state.availableMinutes + ' min';
+        }
+    }
+    
+    // Mood/Goals - show first selected or count
+    const moodEl = document.querySelector('#summaryMood .summary-value');
+    if (moodEl && state.selectedGoals && state.selectedGoals.length > 0) {
+        const moodMap = {
+            'UNWIND': 'Unwind',
+            'PROGRESS_ORIENTED': 'Progress',
+            'LOCKING_IN': 'Focus',
+            'ADVENTURE_TIME': 'Adventure',
+            'CHALLENGE': 'Challenge',
+            'RECHARGE': 'Recharge'
+        };
+        if (state.selectedGoals.length === 1) {
+            moodEl.textContent = moodMap[state.selectedGoals[0]] || state.selectedGoals[0];
+        } else {
+            moodEl.textContent = state.selectedGoals.length + ' moods';
+        }
+    }
+    
+    // Interruptibility
+    const interruptMap = {
+        'HIGH': 'Flexible',
+        'MEDIUM': 'Some pauses',
+        'LOW': 'Locked in'
+    };
+    const interruptEl = document.querySelector('#summaryInterrupt .summary-value');
+    if (interruptEl && state.interruptibility) {
+        interruptEl.textContent = interruptMap[state.interruptibility] || state.interruptibility;
+    }
+}

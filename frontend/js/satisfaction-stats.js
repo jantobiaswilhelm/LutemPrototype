@@ -249,7 +249,7 @@ function renderInsights(stats) {
  * Called when Profile tab is shown
  */
 async function loadSatisfactionStats() {
-    const user = firebase.auth().currentUser;
+    const user = window.authState?.user;
     if (!user) {
         console.log('⚠️ No user logged in, skipping satisfaction stats');
         return;

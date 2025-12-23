@@ -37,6 +37,8 @@ __pycache__/
 
 # Temporary files
 *.tmp
+*.backup
+*.bak
 commit-message.txt
 
 # Firebase credentials (NEVER commit)

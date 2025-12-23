@@ -9,7 +9,7 @@
 function initTabNavigation() {
     const tabButtons = document.querySelectorAll('.tab-button');
     const pages = document.querySelectorAll('.page-content');
-    const wizardToggleBtn = document.getElementById('wizardToggle');
+    const wizardBtn = document.getElementById('navWizardBtn');
 
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -33,13 +33,22 @@ function initTabNavigation() {
             const pageId = button.dataset.page + '-page';
             document.getElementById(pageId).classList.add('active');
             
-            // Show/hide wizard button based on active page
-            if (wizardToggleBtn) {
+            // Enable/disable wizard button based on active page (only active on home)
+            if (wizardBtn) {
                 if (button.dataset.page === 'home') {
-                    wizardToggleBtn.style.display = 'flex';
+                    wizardBtn.classList.remove('disabled');
+                    wizardBtn.disabled = false;
+                    wizardBtn.title = 'Quick Start Wizard';
                 } else {
-                    wizardToggleBtn.style.display = 'none';
+                    wizardBtn.classList.add('disabled');
+                    wizardBtn.disabled = true;
+                    wizardBtn.title = 'Wizard only available on Home';
                 }
+            }
+            
+            // Load weekly summary when home tab is clicked (Phase E)
+            if (button.dataset.page === 'home' && typeof loadWeeklySummary === 'function') {
+                loadWeeklySummary();
             }
             
             // Load games when games tab is clicked

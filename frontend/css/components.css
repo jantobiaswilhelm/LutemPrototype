@@ -833,18 +833,14 @@
    ============================================ */
 
 .loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--bg-card);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    min-height: 350px;
+    padding: 60px 20px;
+    background: var(--bg-card);
     border-radius: 16px;
-    z-index: 100;
     animation: fadeIn 0.3s;
 }
 
@@ -4419,5 +4415,178 @@ body {
         width: 100%;
         margin-top: 4px;
         margin-left: 40px;
+    }
+}
+
+
+/* ============================================
+   WEEKLY SUMMARY CARD (Home Page)
+   Phase E: Weekly Recap Feature
+   ============================================ */
+
+#weeklySummarySection {
+    margin-bottom: 24px;
+    display: none;
+}
+
+.weekly-summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.weekly-summary-card.empty {
+    background: var(--background);
+    border-style: dashed;
+}
+
+.weekly-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.weekly-icon {
+    font-size: 1.4em;
+}
+
+.weekly-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.weekly-date-range {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+/* Stats Row */
+.weekly-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.weekly-stat {
+    text-align: center;
+    padding: 12px 8px;
+    background: var(--background);
+    border-radius: 10px;
+}
+
+.weekly-stat.highlight {
+    background: linear-gradient(135deg, var(--mood-unwind), var(--primary));
+    color: white;
+}
+
+.weekly-stat-value {
+    font-size: 1.5em;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.weekly-stat-label {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.weekly-stat.highlight .weekly-stat-label {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Mood Badges */
+.weekly-moods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.weekly-mood-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: var(--background);
+    border-radius: 20px;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+/* Top Game */
+.weekly-top-game {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--background);
+    border-radius: 8px;
+    font-size: 0.9em;
+}
+
+.top-game-label {
+    color: var(--text-secondary);
+}
+
+.top-game-name {
+    color: var(--text-primary);
+    font-weight: 600;
+    flex: 1;
+}
+
+.top-game-count {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+/* Empty State */
+.weekly-empty-state {
+    text-align: center;
+    padding: 8px 0;
+}
+
+.weekly-empty-state p {
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    margin: 0;
+}
+
+.weekly-empty-hint {
+    font-size: 0.85em !important;
+    margin-top: 4px !important;
+    opacity: 0.8;
+}
+
+/* Mobile Responsive */
+@media (max-width: 480px) {
+    .weekly-stats-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    
+    .weekly-stat {
+        padding: 10px 6px;
+    }
+    
+    .weekly-stat-value {
+        font-size: 1.3em;
+    }
+    
+    .weekly-top-game {
+        flex-wrap: wrap;
+    }
+    
+    .top-game-name {
+        width: 100%;
+        order: -1;
     }
 }
