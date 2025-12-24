@@ -1,0 +1,156 @@
+/* ============================================
+   ENERGY CARD & BATTERY ICON COMPONENTS
+   ============================================ */
+
+@layer components {
+  /* Energy Card - Battery Icon Design */
+  .energy-card {
+    @apply
+      flex flex-col items-center justify-center
+      p-4 rounded-xl
+      bg-[var(--color-bg-tertiary)]
+      border-2 border-transparent
+      text-[var(--color-text-secondary)]
+      cursor-pointer
+      transition-all duration-200;
+    min-width: 90px;
+    min-height: 100px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .energy-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0%;
+    transition: all 0.3s ease;
+    opacity: 0.15;
+    z-index: 0;
+  }
+  
+  .energy-card:hover {
+    @apply border-[var(--color-border-strong)] bg-[var(--color-bg-secondary)];
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .energy-card:active {
+    transform: scale(0.98);
+  }
+  
+  /* Energy Card - Low Selected */
+  .energy-card[data-value="LOW"].selected {
+    border-color: var(--color-energy-low);
+    background: linear-gradient(135deg, var(--color-energy-low), color-mix(in srgb, var(--color-energy-low) 70%, #fff));
+    color: white;
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-energy-low) 40%, transparent);
+  }
+  
+  .energy-card[data-value="LOW"].selected::before {
+    background: var(--color-energy-low);
+    height: 33%;
+    opacity: 0.3;
+  }
+  
+  /* Energy Card - Medium Selected */
+  .energy-card[data-value="MEDIUM"].selected {
+    border-color: var(--color-energy-medium);
+    background: linear-gradient(135deg, var(--color-energy-medium), color-mix(in srgb, var(--color-energy-medium) 70%, #fff));
+    color: white;
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-energy-medium) 40%, transparent);
+  }
+  
+  .energy-card[data-value="MEDIUM"].selected::before {
+    background: var(--color-energy-medium);
+    height: 66%;
+    opacity: 0.3;
+  }
+  
+  /* Energy Card - High Selected */
+  .energy-card[data-value="HIGH"].selected {
+    border-color: var(--color-energy-high);
+    background: linear-gradient(135deg, var(--color-energy-high), color-mix(in srgb, var(--color-energy-high) 70%, #fff));
+    color: white;
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-energy-high) 40%, transparent);
+  }
+  
+  .energy-card[data-value="HIGH"].selected::before {
+    background: var(--color-energy-high);
+    height: 100%;
+    opacity: 0.3;
+  }
+  
+  .energy-card-label {
+    font-weight: 700;
+    font-size: 0.9em;
+    position: relative;
+    z-index: 1;
+    margin-top: 8px;
+  }
+
+  /* Battery Icon */
+  .battery-icon {
+    width: 28px;
+    height: 40px;
+    border: 3px solid var(--color-border-strong);
+    border-radius: 4px;
+    position: relative;
+    background: var(--color-bg-secondary);
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+  
+  .battery-icon::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 4px;
+    background: var(--color-border-strong);
+    border-radius: 2px 2px 0 0;
+    transition: background 0.3s ease;
+  }
+  
+  .battery-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition: all 0.3s ease;
+    border-radius: 1px;
+  }
+  
+  /* Battery colors based on energy level */
+  .energy-card[data-value="LOW"] .battery-fill {
+    background: var(--color-energy-low);
+    height: 33%;
+  }
+  
+  .energy-card[data-value="MEDIUM"] .battery-fill {
+    background: var(--color-energy-medium);
+    height: 66%;
+  }
+  
+  .energy-card[data-value="HIGH"] .battery-fill {
+    background: var(--color-energy-high);
+    height: 100%;
+  }
+  
+  /* Selected state - battery becomes white */
+  .energy-card.selected .battery-icon {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .energy-card.selected .battery-icon::before {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  
+  .energy-card.selected .battery-fill {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}

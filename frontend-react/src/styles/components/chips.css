@@ -1,0 +1,31 @@
+/* ============================================
+   CHIP / SELECTION COMPONENTS
+   ============================================ */
+
+@layer components {
+  /* Selection Chip (for wizard options) */
+  .chip {
+    @apply
+      flex flex-col items-center justify-center
+      p-4 rounded-xl
+      bg-[var(--color-bg-tertiary)]
+      border-2 border-transparent
+      text-[var(--color-text-secondary)]
+      cursor-pointer
+      transition-all duration-150
+      hover:border-[var(--color-border-strong)]
+      hover:bg-[var(--color-bg-secondary)];
+    min-width: 100px;
+  }
+  
+  .chip.selected {
+    @apply
+      bg-[var(--color-accent-soft)]
+      border-[var(--color-accent)]
+      text-[var(--color-text-primary)];
+  }
+  
+  .chip:active {
+    transform: scale(0.98);
+  }
+}

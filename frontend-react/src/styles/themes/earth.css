@@ -1,0 +1,71 @@
+/* ============================================
+   EARTH THEME
+   ============================================ */
+
+/* Light Mode */
+[data-theme="earth"] {
+  --color-bg-primary: #F8FAF5;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #EBF0E3;
+  
+  --color-text-primary: #28352D;
+  --color-text-secondary: #546654;
+  --color-text-muted: #94A694;
+  
+  --color-accent: #5D8B55;
+  --color-accent-hover: #4D7A45;
+  --color-accent-soft: #C4D4BC;
+  
+  --color-success: #6B8E6B;
+  --color-warning: #C9A227;
+  --color-error: #C25D5D;
+  
+  --color-border: #D8E2D0;
+  --color-border-strong: #C4D4BC;
+  
+  /* Energy Level Colors */
+  --color-energy-low: #7db5d4;
+  --color-energy-medium: #e8a868;
+  --color-energy-high: #d47b78;
+}
+
+/* Dark Mode */
+.dark[data-theme="earth"], [data-theme="earth"].dark {
+  --color-bg-primary: #151A15;
+  --color-bg-secondary: #202520;
+  --color-bg-tertiary: #283028;
+  
+  --color-text-primary: #F8FAF5;
+  --color-text-secondary: #C4C9C4;
+  --color-text-muted: #84968C;
+  
+  --color-accent: #88C080;
+  --color-accent-hover: #98D090;
+  --color-accent-soft: #404840;
+  
+  --color-border: #323A32;
+  --color-border-strong: #424A42;
+  
+  /* Energy Level Colors (dark mode) */
+  --color-energy-low: #6a9fc0;
+  --color-energy-medium: #d89048;
+  --color-energy-high: #c46868;
+}
+
+/* ============================================
+   EARTH BACKGROUND IMAGE
+   ============================================ */
+
+[data-theme="earth"] {
+  background: 
+    linear-gradient(rgba(248, 250, 245, 0.88), rgba(248, 250, 245, 0.88)),
+    url('/earth-background.png') center/cover fixed no-repeat !important;
+  min-height: 100vh;
+}
+
+.dark[data-theme="earth"],
+[data-theme="earth"].dark {
+  background: 
+    linear-gradient(rgba(21, 26, 21, 0.85), rgba(21, 26, 21, 0.85)),
+    url('/earth-background.png') center/cover fixed no-repeat !important;
+}

@@ -1,0 +1,34 @@
+/* ============================================
+   INPUT COMPONENTS
+   ============================================ */
+
+@layer components {
+  /* Input */
+  .input {
+    @apply
+      w-full px-4 py-3 rounded-lg
+      bg-[var(--color-bg-tertiary)]
+      text-[var(--color-text-primary)]
+      border border-transparent
+      transition-all duration-150
+      placeholder:text-[var(--color-text-muted)]
+      focus:border-[var(--color-border-strong)]
+      focus:outline-none
+      focus:ring-2 focus:ring-[var(--color-accent-soft)];
+  }
+  
+  /* Range Slider */
+  .slider {
+    @apply w-full h-2 rounded-full bg-[var(--color-bg-tertiary)] appearance-none cursor-pointer;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    @apply appearance-none w-5 h-5 rounded-full bg-[var(--color-accent)] cursor-pointer;
+    box-shadow: var(--shadow-md);
+  }
+  
+  .slider::-moz-range-thumb {
+    @apply w-5 h-5 rounded-full bg-[var(--color-accent)] border-0 cursor-pointer;
+    box-shadow: var(--shadow-md);
+  }
+}

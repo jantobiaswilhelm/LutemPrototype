@@ -1,0 +1,71 @@
+/* ============================================
+   LAVENDER THEME
+   ============================================ */
+
+/* Light Mode */
+[data-theme="lavender"] {
+  --color-bg-primary: #FAF8FC;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #F0EBF5;
+  
+  --color-text-primary: #2D2835;
+  --color-text-secondary: #5C5466;
+  --color-text-muted: #9C94A6;
+  
+  --color-accent: #8B7AAE;
+  --color-accent-hover: #7A699D;
+  --color-accent-soft: #D4CCE5;
+  
+  --color-success: #6B8E6B;
+  --color-warning: #C9A227;
+  --color-error: #C25D5D;
+  
+  --color-border: #E8E2F0;
+  --color-border-strong: #D4CCE5;
+  
+  /* Energy Level Colors */
+  --color-energy-low: #7db5d4;
+  --color-energy-medium: #e8a868;
+  --color-energy-high: #d47b78;
+}
+
+/* Dark Mode */
+.dark[data-theme="lavender"], [data-theme="lavender"].dark {
+  --color-bg-primary: #1A171F;
+  --color-bg-secondary: #252028;
+  --color-bg-tertiary: #302835;
+  
+  --color-text-primary: #FAF8FC;
+  --color-text-secondary: #C9C4D0;
+  --color-text-muted: #8C8496;
+  
+  --color-accent: #B8A8D8;
+  --color-accent-hover: #C8B8E8;
+  --color-accent-soft: #4A4055;
+  
+  --color-border: #3A3442;
+  --color-border-strong: #4A4455;
+  
+  /* Energy Level Colors (dark mode) */
+  --color-energy-low: #6a9fc0;
+  --color-energy-medium: #d89048;
+  --color-energy-high: #c46868;
+}
+
+/* ============================================
+   LAVENDER BACKGROUND IMAGE
+   ============================================ */
+
+[data-theme="lavender"] {
+  background: 
+    linear-gradient(rgba(250, 248, 252, 0.88), rgba(250, 248, 252, 0.88)),
+    url('/lavender-background.png') center/cover fixed no-repeat !important;
+  min-height: 100vh;
+}
+
+.dark[data-theme="lavender"],
+[data-theme="lavender"].dark {
+  background: 
+    linear-gradient(rgba(26, 23, 31, 0.85), rgba(26, 23, 31, 0.85)),
+    url('/lavender-background.png') center/cover fixed no-repeat !important;
+}

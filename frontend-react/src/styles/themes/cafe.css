@@ -1,0 +1,71 @@
+/* ============================================
+   CAFÉ THEME
+   ============================================ */
+
+/* Light Mode */
+[data-theme="cafe"] {
+  --color-bg-primary: #FAF7F2;
+  --color-bg-secondary: #FFFFFF;
+  --color-bg-tertiary: #F0EBE3;
+  
+  --color-text-primary: #2D2A26;
+  --color-text-secondary: #5C574F;
+  --color-text-muted: #9C968C;
+  
+  --color-accent: #8B7355;
+  --color-accent-hover: #7A6448;
+  --color-accent-soft: #D4C9BC;
+  
+  --color-success: #6B8E6B;
+  --color-warning: #C9A227;
+  --color-error: #C25D5D;
+  
+  --color-border: #E8E2D9;
+  --color-border-strong: #D4C9BC;
+  
+  /* Energy Level Colors */
+  --color-energy-low: #7db5d4;
+  --color-energy-medium: #e8a868;
+  --color-energy-high: #d47b78;
+}
+
+/* Dark Mode */
+.dark[data-theme="cafe"], [data-theme="cafe"].dark {
+  --color-bg-primary: #1A1715;
+  --color-bg-secondary: #252220;
+  --color-bg-tertiary: #302C28;
+  
+  --color-text-primary: #FAF7F2;
+  --color-text-secondary: #C9C4BC;
+  --color-text-muted: #8C867C;
+  
+  --color-accent: #C9A87C;
+  --color-accent-hover: #D4B88A;
+  --color-accent-soft: #4A4238;
+  
+  --color-border: #3A3632;
+  --color-border-strong: #4A4642;
+  
+  /* Energy Level Colors (dark mode) */
+  --color-energy-low: #6a9fc0;
+  --color-energy-medium: #d89048;
+  --color-energy-high: #c46868;
+}
+
+/* ============================================
+   CAFÉ BACKGROUND IMAGE
+   ============================================ */
+
+[data-theme="cafe"] {
+  background: 
+    linear-gradient(rgba(250, 247, 242, 0.88), rgba(250, 247, 242, 0.88)),
+    url('/cafe-background.png') center/cover fixed no-repeat !important;
+  min-height: 100vh;
+}
+
+.dark[data-theme="cafe"],
+[data-theme="cafe"].dark {
+  background: 
+    linear-gradient(rgba(26, 23, 21, 0.85), rgba(26, 23, 21, 0.85)),
+    url('/cafe-background.png') center/cover fixed no-repeat !important;
+}

@@ -1,0 +1,59 @@
+/* ============================================
+   BUTTON COMPONENTS
+   ============================================ */
+
+@layer components {
+  /* Primary Button */
+  .btn-primary {
+    @apply 
+      bg-[var(--color-accent)] text-white
+      px-6 py-3 rounded-lg
+      font-semibold text-base
+      transition-all duration-150
+      hover:bg-[var(--color-accent-hover)]
+      active:scale-[0.98]
+      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)];
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .btn-primary:hover {
+    box-shadow: var(--shadow-md);
+  }
+  
+  /* Secondary Button */
+  .btn-secondary {
+    @apply
+      bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)]
+      px-6 py-3 rounded-lg
+      font-semibold text-base
+      border border-[var(--color-border)]
+      transition-all duration-150
+      hover:border-[var(--color-border-strong)]
+      hover:bg-[var(--color-bg-secondary)]
+      active:scale-[0.98]
+      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent)];
+  }
+  
+  /* Ghost Button */
+  .btn-ghost {
+    @apply
+      bg-transparent text-[var(--color-text-secondary)]
+      px-4 py-2 rounded-lg
+      font-medium text-base
+      transition-all duration-150
+      hover:bg-[var(--color-bg-tertiary)]
+      hover:text-[var(--color-text-primary)]
+      active:scale-[0.98];
+  }
+  
+  /* Icon Button */
+  .btn-icon {
+    @apply
+      p-2 rounded-lg
+      text-[var(--color-text-secondary)]
+      transition-all duration-150
+      hover:bg-[var(--color-bg-tertiary)]
+      hover:text-[var(--color-text-primary)]
+      active:scale-[0.95];
+  }
+}

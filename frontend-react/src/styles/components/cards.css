@@ -1,0 +1,27 @@
+/* ============================================
+   CARD COMPONENTS
+   ============================================ */
+
+@layer components {
+  .card {
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .card-hover {
+    background-color: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-fast);
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+}
