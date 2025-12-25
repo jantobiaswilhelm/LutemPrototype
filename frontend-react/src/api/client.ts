@@ -1,6 +1,6 @@
 import type { Game, RecommendationRequest, RecommendationResponse, SessionFeedback } from '@/types';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   console.log(`[API] Calling ${endpoint}`, options?.body);
