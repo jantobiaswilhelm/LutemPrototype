@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { RecommendationResponse, Game } from '@/types';
+import type { RecommendationResponse } from '@/types';
 
 interface RecommendationState {
   // Current recommendation (NOT persisted - resets on reload)
@@ -18,7 +18,7 @@ interface RecommendationState {
   setError: (error: string | null) => void;
 }
 
-export const useRecommendationStore = create<RecommendationState>((set, get) => ({
+export const useRecommendationStore = create<RecommendationState>((set) => ({
   currentRecommendation: null,
   showAlternatives: false,
   isLoading: false,

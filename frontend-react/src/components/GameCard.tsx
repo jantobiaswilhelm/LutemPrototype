@@ -1,5 +1,5 @@
-import { Clock, Zap, Pause, Users, User, ChevronDown, ChevronUp, Play } from 'lucide-react';
-import { EMOTIONAL_GOALS, ENERGY_LEVELS, INTERRUPTIBILITY } from '@/types';
+import { Clock, Zap, ChevronDown, Play } from 'lucide-react';
+import { EMOTIONAL_GOALS, ENERGY_LEVELS } from '@/types';
 import type { Game } from '@/types';
 
 interface GameCardProps {

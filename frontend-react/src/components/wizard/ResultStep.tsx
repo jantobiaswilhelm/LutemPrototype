@@ -66,14 +66,12 @@ export default function ResultStep() {
 
   const { setRecommendation: saveToStore } = useRecommendationStore();
 
-  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const hasFetched = useRef(false);
 
   const fetchRecommendation = async () => {
     if (!energyLevel || !interruptibility || !socialPreference) return;
     
-    setLoading(true);
     setError(null);
     
     try {
@@ -98,7 +96,6 @@ export default function ResultStep() {
     } catch (err) {
       console.error('Recommendation error:', err);
       setError(err instanceof Error ? err.message : 'Failed to get recommendation');
-      setLoading(false);
     }
   };
 
