@@ -28,6 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "https://lutem.3lands.ch",
                 // Netlify production
                 "https://lutembeta.netlify.app",
+                "https://lutemweb.netlify.app",
                 // Railway backend (for direct API access)
                 "https://lutemprototype-production.up.railway.app"
             )
