@@ -122,3 +122,6 @@ export interface User {
 // Theme types
 export type Theme = 'cafe' | 'lavender' | 'earth' | 'ocean';
 export type ThemeMode = 'light' | 'dark';
+
+// Re-export steam types
+export * from './steam';
