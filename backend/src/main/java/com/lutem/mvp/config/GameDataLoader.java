@@ -6,6 +6,7 @@ import com.lutem.mvp.model.Game;
 import com.lutem.mvp.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Component
+@Order(1) // Run before SteamIdMigration
 public class GameDataLoader implements CommandLineRunner {
     
     @Autowired

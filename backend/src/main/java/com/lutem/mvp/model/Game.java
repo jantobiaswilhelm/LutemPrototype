@@ -58,6 +58,40 @@ public class Game {
     // Learning metrics
     private double averageSatisfaction;
     private int sessionCount;
+    
+    // === Steam Integration Fields (Phase S1) ===
+    
+    /**
+     * Steam's unique application identifier.
+     * Used for matching imported Steam library games.
+     * Example: 367520 for Hollow Knight
+     */
+    @Column(unique = true)
+    private Long steamAppId;
+    
+    /**
+     * Indicates how the game's Lutem attributes were determined.
+     * MANUAL = curated by team, AI_GENERATED = from AI, USER_ADJUSTED = user modified, PENDING = needs tagging
+     */
+    @Enumerated(EnumType.STRING)
+    private TaggingSource taggingSource;
+    
+    /**
+     * Confidence score for AI-generated tags (0.0 to 1.0).
+     * Only relevant when taggingSource = AI_GENERATED
+     */
+    private Float taggingConfidence;
+    
+    /**
+     * RAWG API game ID for external data enrichment.
+     */
+    private Integer rawgId;
+    
+    /**
+     * Steam playtime in minutes (from user's library import).
+     * Stored per-user in UserLibrary, but this is the reference/average.
+     */
+    private Integer steamPlaytimeForever;
 
     // Constructors
     public Game() {
@@ -67,6 +101,7 @@ public class Game {
         this.genres = new ArrayList<>();
         this.averageSatisfaction = 0.0;
         this.sessionCount = 0;
+        this.taggingSource = TaggingSource.MANUAL; // Default for existing games
     }
 
     public Game(Long id, String name, int minMinutes, int maxMinutes, 
@@ -90,6 +125,7 @@ public class Game {
         this.userRating = userRating;
         this.averageSatisfaction = 0.0;
         this.sessionCount = 0;
+        this.taggingSource = TaggingSource.MANUAL;
     }
 
     // Getters and Setters
@@ -153,6 +189,24 @@ public class Game {
     public int getSessionCount() { return sessionCount; }
     public void setSessionCount(int sessionCount) { this.sessionCount = sessionCount; }
 
+    // Steam Integration Getters/Setters
+    public Long getSteamAppId() { return steamAppId; }
+    public void setSteamAppId(Long steamAppId) { this.steamAppId = steamAppId; }
+
+    public TaggingSource getTaggingSource() { return taggingSource; }
+    public void setTaggingSource(TaggingSource taggingSource) { this.taggingSource = taggingSource; }
+
+    public Float getTaggingConfidence() { return taggingConfidence; }
+    public void setTaggingConfidence(Float taggingConfidence) { this.taggingConfidence = taggingConfidence; }
+
+    public Integer getRawgId() { return rawgId; }
+    public void setRawgId(Integer rawgId) { this.rawgId = rawgId; }
+
+    public Integer getSteamPlaytimeForever() { return steamPlaytimeForever; }
+    public void setSteamPlaytimeForever(Integer steamPlaytimeForever) { 
+        this.steamPlaytimeForever = steamPlaytimeForever; 
+    }
+
     // Helper methods
     public boolean hasEmotionalGoal(EmotionalGoal goal) {
         return emotionalGoals.contains(goal);
@@ -165,5 +219,13 @@ public class Game {
     public boolean matchesSocialPreference(SocialPreference preference) {
         return socialPreferences.contains(preference) || 
                socialPreferences.contains(SocialPreference.BOTH);
+    }
+    
+    /**
+     * Check if this game has full Lutem tagging (can be used in smart recommendations).
+     * Games with PENDING tagging source are excluded from recommendations.
+     */
+    public boolean isFullyTagged() {
+        return taggingSource != null && taggingSource != TaggingSource.PENDING;
     }
 }

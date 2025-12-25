@@ -8,28 +8,32 @@ Steam user has 200 games → Lutem DB has 57 curated games → What about the ot
 
 ---
 
-## Phase S1: Database Preparation
+## Phase S1: Database Preparation ✅ COMPLETED
 **Goal:** Add Steam app ID support to existing games
 
 **Tasks:**
-- [ ] Add `steamAppId` (Long) field to Game entity
-- [ ] Add `taggingSource` enum: `MANUAL`, `AI_GENERATED`, `USER_ADJUSTED`
-- [ ] Create migration/update for existing schema
-- [ ] Manually map existing 57 games to their Steam app IDs
+- [x] Add `steamAppId` (Long) field to Game entity
+- [x] Add `taggingSource` enum: `MANUAL`, `AI_GENERATED`, `USER_ADJUSTED`, `PENDING`
+- [x] Create migration/update for existing schema (auto via JPA)
+- [x] Auto-extract Steam IDs from existing game URLs via SteamIdMigration
 
-**Effort:** Small
+**Files Created/Modified:**
+- `model/TaggingSource.java` - New enum
+- `model/Game.java` - Added steamAppId, taggingSource, taggingConfidence, rawgId fields
+- `config/SteamIdMigration.java` - Auto-extracts Steam IDs from store/image URLs
+
+**Effort:** ✅ Complete
 
 ---
 
-## Phase S2: Steam API Integration
+## Phase S2: Steam API Integration ✅ COMPLETED
 **Goal:** Fetch user's Steam library
 
 **Tasks:**
-- [ ] Get Steam API key (https://steamcommunity.com/dev/apikey)
-- [ ] Store API key as environment variable
-- [ ] Create SteamService with `GetOwnedGames` endpoint call
-- [ ] Create endpoint: `POST /api/steam/import?steamId={STEAM_ID_64}`
-- [ ] Handle public/private profile errors gracefully
+- [x] Create SteamService with `GetOwnedGames` endpoint call
+- [x] Store API key as environment variable (`STEAM_API_KEY`)
+- [x] Create endpoint: `POST /api/steam/import`
+- [x] Handle public/private profile errors gracefully
 
 **API Endpoint:**
 ```
@@ -42,45 +46,98 @@ GET https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/
 
 **Returns:** `appid`, `name`, `playtime_forever`, `playtime_2weeks`, `img_icon_url`
 
-**Effort:** Medium
+**Files Created:**
+- `service/SteamService.java` - Steam API integration
+- `controller/SteamController.java` - REST endpoints
+- `dto/SteamImportResponse.java` - Response DTOs
+
+**Setup Required:**
+1. Get Steam API key from https://steamcommunity.com/dev/apikey
+2. Set environment variable: `STEAM_API_KEY=your_key_here`
+
+**Effort:** ✅ Complete
 
 ---
 
-## Phase S3: Library Matching
+## Phase S3: Library Matching ✅ COMPLETED
 **Goal:** Match imported Steam games against Lutem database
 
 **Tasks:**
-- [ ] Match by `steamAppId` field
-- [ ] Return response with `matched` and `unmatched` game lists
-- [ ] Create UserLibrary entity to store user's owned games
-- [ ] Link matched games to user profile
+- [x] Match by `steamAppId` field
+- [x] Return response with `matched` and `unmatched` game lists
+- [x] Create UserLibrary entity to store user's owned games
+- [x] Link matched games to user profile
 
 **Response Example:**
 ```json
 {
   "matched": [
-    { "steamAppId": 367520, "name": "Hollow Knight", "lutemGameId": 12 }
+    { "steamAppId": 367520, "name": "Hollow Knight", "lutemGameId": 12, "playtimeForever": 4500 }
   ],
   "unmatched": [
-    { "steamAppId": 1234567, "name": "Some Indie Game", "playtime": 45 }
+    { "steamAppId": 1234567, "name": "Some Indie Game", "playtimeForever": 45 }
   ],
   "stats": {
     "total": 200,
     "matched": 12,
-    "unmatched": 188
-  }
+    "unmatched": 188,
+    "alreadyInLibrary": 0
+  },
+  "message": "Found 12 of your 200 Steam games in Lutem's curated library!"
 }
 ```
 
-**Effort:** Small
+**Files Created:**
+- `model/UserLibrary.java` - User-Game ownership entity
+- `repository/UserLibraryRepository.java` - Library queries
+- `repository/GameRepository.java` - Updated with Steam queries
+- `service/UserLibraryService.java` - Library management
+- `dto/UserLibraryGameDTO.java` - Library entry DTO
+
+**Effort:** ✅ Complete
 
 ---
 
-## Phase S4: Untagged Game Storage
+## API Endpoints Available
+
+### Check Steam Integration Status
+```
+GET /api/steam/status
+Response: { "configured": true/false, "message": "..." }
+```
+
+### Import Steam Library
+```
+POST /api/steam/import
+Headers: X-Firebase-UID: <firebase_uid>
+Body: { "steamId": "76561198012345678" }  // 17-digit Steam ID 64
+
+Response: SteamImportResponse (see above)
+```
+
+### Get User Library
+```
+GET /api/steam/library
+Headers: X-Firebase-UID: <firebase_uid>
+
+Response: {
+  "summary": {
+    "totalGames": 15,
+    "steamGames": 12,
+    "taggedGames": 12,
+    "untaggedGames": 3
+  },
+  "games": [UserLibraryGameDTO, ...]
+}
+```
+
+---
+
+## Phase S4: Untagged Game Storage (FUTURE)
 **Goal:** Store unmatched games for future tagging
 
 **Tasks:**
-- [ ] Create games from unmatched Steam data with `taggingSource: null` or `PENDING`
+- [ ] Create games from unmatched Steam data with `taggingSource: PENDING`
 - [ ] Store basic Steam info: `steamAppId`, `name`, `coverUrl`
 - [ ] Flag as "untagged" — excluded from smart recommendations
 - [ ] Show in user library with "needs tagging" indicator
@@ -89,7 +146,7 @@ GET https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/
 
 ---
 
-## Phase S5: RAWG API Enrichment
+## Phase S5: RAWG API Enrichment (FUTURE)
 **Goal:** Auto-fetch rich metadata for untagged games
 
 **Tasks:**
@@ -107,7 +164,7 @@ GET https://api.rawg.io/api/games?search={game_name}&key={API_KEY}
 
 ---
 
-## Phase S6: AI Tagging Pipeline
+## Phase S6: AI Tagging Pipeline (FUTURE)
 **Goal:** Auto-generate Lutem emotional attributes using AI
 
 **Pipeline:**
@@ -126,40 +183,20 @@ User can confirm/adjust
 **Tasks:**
 - [ ] Create GPT prompt template for game analysis
 - [ ] Map genres/tags to Lutem schema:
-  - `emotionalGoals` → [RELAXING, ESCAPING, LOCKING_IN, EXPLORING, COMPETING, CONNECTING]
+  - `emotionalGoals` → [UNWIND, RECHARGE, LOCKING_IN, ADVENTURE_TIME, CHALLENGE, SOCIAL]
   - `energyLevel` → LOW, MEDIUM, HIGH
   - `interruptibility` → LOW, MEDIUM, HIGH  
   - `sessionLength` → minMinutes, maxMinutes
-  - `socialType` → SOLO, COOP, COMPETITIVE, MMO
+  - `socialPreferences` → SOLO, COOP, COMPETITIVE, BOTH
 - [ ] Store confidence scores per attribute
 - [ ] Create batch processing job for multiple games
 - [ ] Rate limit API calls appropriately
-
-**GPT Prompt Example:**
-```
-Given this game data:
-- Name: {name}
-- Genres: {genres}
-- Tags: {tags}  
-- Description: {description}
-- Average playtime: {playtime}
-
-Estimate Lutem attributes as JSON:
-{
-  "emotionalGoals": [],
-  "energyLevel": "",
-  "interruptibility": "",
-  "minMinutes": 0,
-  "maxMinutes": 0,
-  "socialType": ""
-}
-```
 
 **Effort:** Medium
 
 ---
 
-## Phase S7: User Override & Confirmation
+## Phase S7: User Override & Confirmation (FUTURE)
 **Goal:** Let users adjust AI-generated tags
 
 **Tasks:**
@@ -172,36 +209,41 @@ Estimate Lutem attributes as JSON:
 
 ---
 
-## MVP Scope
-**S1 → S3** gets you a working "we found 12 of your Steam games" experience.
+## Current MVP Scope ✅
+**S1 → S3** implemented: "We found X of your Y Steam games" experience.
 
-**S4 → S6** makes it actually useful for users with large libraries.
-
-**S7** adds polish and user trust.
+**What Users Can Do Now:**
+1. Check if Steam integration is enabled (`GET /api/steam/status`)
+2. Import their Steam library (`POST /api/steam/import`)
+3. See matched games added to their Lutem library
+4. View their library summary (`GET /api/steam/library`)
 
 ---
 
 ## Technical Requirements
 
 **Environment Variables:**
-- `STEAM_API_KEY` — from Steam developer portal
-- `RAWG_API_KEY` — from RAWG.io (free tier: 20k requests/month)
-- `OPENAI_API_KEY` — for AI tagging (already have for other features?)
+- `STEAM_API_KEY` — from Steam developer portal ⚠️ REQUIRED
+- `RAWG_API_KEY` — from RAWG.io (free tier: 20k requests/month) — FUTURE
+- `OPENAI_API_KEY` — for AI tagging — FUTURE
 
-**New Entities:**
+**New Entities (Created):**
 - `UserLibrary` — links User to owned Games
-- `GameImport` — tracks import history/status
+- `TaggingSource` — enum for tracking metadata origin
 
-**New Fields on Game:**
+**New Fields on Game (Added):**
 - `steamAppId: Long` — Steam's app identifier
-- `taggingSource: Enum` — MANUAL, AI_GENERATED, USER_ADJUSTED, PENDING
+- `taggingSource: TaggingSource` — MANUAL, AI_GENERATED, USER_ADJUSTED, PENDING
 - `taggingConfidence: Float` — 0.0-1.0 for AI-generated entries
 - `rawgId: Integer` — for RAWG API linking
+- `steamPlaytimeForever: Integer` — reference playtime
 
 ---
 
 ## Notes
 - Steam profiles must be **public** for basic API access
+- Steam ID format must be 64-bit (17 digits)
+- Find your Steam ID at: https://steamid.io
 - Alternative: Steam OpenID OAuth (more complex, but works with private profiles)
 - Consider caching RAWG responses to avoid rate limits
 - AI tagging costs ~$0.01-0.05 per game depending on model
