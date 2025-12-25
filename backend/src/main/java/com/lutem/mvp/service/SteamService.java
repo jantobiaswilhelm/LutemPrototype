@@ -59,6 +59,98 @@ public class SteamService {
     }
     
     /**
+     * Resolve Steam input to a 64-bit Steam ID.
+     * Accepts:
+     * - Direct Steam ID (76561198012345678)
+     * - Profile URL (https://steamcommunity.com/profiles/76561198012345678)
+     * - Vanity URL (https://steamcommunity.com/id/gabelogannewell)
+     * - Just the vanity name (gabelogannewell)
+     * 
+     * @param input User input (ID, URL, or vanity name)
+     * @return 64-bit Steam ID
+     */
+    public String resolveSteamId(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            throw new IllegalArgumentException("Steam ID or URL is required");
+        }
+        
+        input = input.trim();
+        
+        // Pattern 1: Direct 64-bit Steam ID (17 digits)
+        if (input.matches("^\\d{17}$")) {
+            return input;
+        }
+        
+        // Pattern 2: Profile URL with Steam ID
+        // https://steamcommunity.com/profiles/76561198012345678
+        java.util.regex.Pattern profilePattern = java.util.regex.Pattern.compile(
+            "steamcommunity\\.com/profiles/(\\d{17})"
+        );
+        java.util.regex.Matcher profileMatcher = profilePattern.matcher(input);
+        if (profileMatcher.find()) {
+            return profileMatcher.group(1);
+        }
+        
+        // Pattern 3: Vanity URL
+        // https://steamcommunity.com/id/gabelogannewell
+        java.util.regex.Pattern vanityPattern = java.util.regex.Pattern.compile(
+            "steamcommunity\\.com/id/([a-zA-Z0-9_-]+)"
+        );
+        java.util.regex.Matcher vanityMatcher = vanityPattern.matcher(input);
+        if (vanityMatcher.find()) {
+            String vanityName = vanityMatcher.group(1);
+            return resolveVanityUrl(vanityName);
+        }
+        
+        // Pattern 4: Just the vanity name (no URL)
+        if (input.matches("^[a-zA-Z0-9_-]+$") && !input.matches("^\\d+$")) {
+            return resolveVanityUrl(input);
+        }
+        
+        throw new IllegalArgumentException(
+            "Invalid Steam ID format. Use your 17-digit Steam ID or profile URL."
+        );
+    }
+    
+    /**
+     * Resolve a Steam vanity URL name to 64-bit Steam ID.
+     */
+    private String resolveVanityUrl(String vanityName) {
+        if (!isConfigured()) {
+            throw new IllegalStateException("Steam API key not configured");
+        }
+        
+        String url = String.format(
+            "%s/ISteamUser/ResolveVanityURL/v1/?key=%s&vanityurl=%s",
+            STEAM_API_BASE, steamApiKey, vanityName
+        );
+        
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            JsonNode root = objectMapper.readTree(response);
+            JsonNode responseNode = root.path("response");
+            
+            int success = responseNode.path("success").asInt();
+            if (success == 1) {
+                String steamId = responseNode.path("steamid").asText();
+                logger.debug("Resolved vanity URL '{}' to Steam ID: {}", vanityName, steamId);
+                return steamId;
+            } else {
+                String message = responseNode.path("message").asText("Profile not found");
+                throw new IllegalArgumentException("Could not find Steam profile: " + vanityName + ". " + message);
+            }
+        } catch (HttpClientErrorException e) {
+            logger.error("Steam API error resolving vanity URL: {}", e.getMessage());
+            throw new RuntimeException("Failed to resolve Steam profile: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw e; // Re-throw our own exceptions
+        } catch (Exception e) {
+            logger.error("Error resolving vanity URL", e);
+            throw new RuntimeException("Failed to resolve Steam profile: " + e.getMessage());
+        }
+    }
+    
+    /**
      * Fetch and import user's Steam library.
      * 
      * @param steamId64 User's Steam ID (64-bit format)

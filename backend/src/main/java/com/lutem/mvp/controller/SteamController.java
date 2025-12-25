@@ -53,8 +53,14 @@ public class SteamController {
      * 
      * Request body:
      * {
-     *   "steamId": "76561198012345678"  // 64-bit Steam ID
+     *   "steamId": "76561198012345678"  // or profile URL or vanity name
      * }
+     * 
+     * Accepts:
+     * - 64-bit Steam ID: "76561198012345678"
+     * - Profile URL: "https://steamcommunity.com/profiles/76561198012345678"
+     * - Vanity URL: "https://steamcommunity.com/id/gabelogannewell"
+     * - Just vanity name: "gabelogannewell"
      * 
      * Headers:
      *   X-Firebase-UID: user's Firebase UID
@@ -64,27 +70,21 @@ public class SteamController {
             @RequestBody Map<String, String> request,
             @RequestHeader("X-Firebase-UID") String firebaseUid) {
         
-        String steamId = request.get("steamId");
+        String steamInput = request.get("steamId");
         
-        if (steamId == null || steamId.isBlank()) {
+        if (steamInput == null || steamInput.isBlank()) {
             return ResponseEntity.badRequest().body(Map.of(
                 "error", "Missing steamId",
-                "message", "Please provide your 64-bit Steam ID"
-            ));
-        }
-        
-        // Validate Steam ID format (should be 17 digits)
-        if (!steamId.matches("\\d{17}")) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "Invalid steamId format",
-                "message", "Steam ID should be a 17-digit number (64-bit format). " +
-                          "You can find it at steamid.io"
+                "message", "Please provide your Steam ID or profile URL"
             ));
         }
         
         try {
-            logger.info("Starting Steam import for user {} with Steam ID {}", firebaseUid, steamId);
-            SteamImportResponse response = steamService.importSteamLibrary(steamId, firebaseUid);
+            // Resolve input to 64-bit Steam ID (handles URLs, vanity names, etc.)
+            String steamId64 = steamService.resolveSteamId(steamInput);
+            
+            logger.info("Starting Steam import for user {} with Steam ID {}", firebaseUid, steamId64);
+            SteamImportResponse response = steamService.importSteamLibrary(steamId64, firebaseUid);
             return ResponseEntity.ok(response);
             
         } catch (IllegalStateException e) {
