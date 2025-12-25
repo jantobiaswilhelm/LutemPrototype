@@ -84,7 +84,7 @@ export function MoodShortcuts() {
 
   return (
     <div className="mb-6">
-      <div className="flex flex-wrap justify-center gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {MOOD_SHORTCUTS.map((shortcut) => {
           const isLoading = loadingId === shortcut.id;
           return (
@@ -93,7 +93,7 @@ export function MoodShortcuts() {
               onClick={() => handleShortcutClick(shortcut)}
               disabled={loadingId !== null}
               className={`
-                flex items-center gap-2 px-4 py-2.5 rounded-full
+                flex items-center justify-center gap-2 px-3 py-2.5 rounded-full
                 bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
                 text-[var(--color-text-secondary)]
                 hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)]
@@ -108,7 +108,7 @@ export function MoodShortcuts() {
               ) : (
                 <span className="text-base">{shortcut.emoji}</span>
               )}
-              <span className="text-sm font-medium">{shortcut.label}</span>
+              <span className="text-sm font-medium whitespace-nowrap">{shortcut.label}</span>
             </button>
           );
         })}
