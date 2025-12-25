@@ -12,61 +12,48 @@ const MOOD_ORDER: EmotionalGoal[] = [
 ];
 
 export default function MoodStep() {
-  const { selectedMoods, toggleMood, nextStep, prevStep } = useWizardStore();
+  const { selectedMoods, toggleMood, nextStep } = useWizardStore();
 
-  const canProceed = selectedMoods.length > 0;
+  const handleMoodSelect = (mood: EmotionalGoal) => {
+    if (!selectedMoods.includes(mood)) {
+      toggleMood(mood);
+      setTimeout(() => nextStep(), 300);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[var(--color-accent-soft)] mb-4">
-          <Heart className="w-6 h-6 text-[var(--color-accent)]" />
+    <div className="flex flex-col h-full">
+      <div className="text-center mb-3">
+        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[var(--color-accent-soft)] mb-2">
+          <Heart className="w-5 h-5 text-[var(--color-accent)]" />
         </div>
-        <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
+        <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-1">
           What mood are you in?
         </h3>
-        <p className="text-[var(--color-text-muted)]">
-          Select one or more emotional goals
+        <p className="text-sm text-[var(--color-text-muted)]">
+          Tap to select
         </p>
       </div>
 
-      {/* Mood options */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {MOOD_ORDER.map((mood) => {
           const data = EMOTIONAL_GOALS[mood];
           const isSelected = selectedMoods.includes(mood);
           return (
             <button
               key={mood}
-              onClick={() => toggleMood(mood)}
-              className={`chip ${isSelected ? 'selected' : ''}`}
+              onClick={() => handleMoodSelect(mood)}
+              className={`flex flex-col items-center justify-center py-3 px-2 rounded-xl border-2 transition-all ${
+                isSelected
+                  ? 'border-[var(--color-accent)] bg-[var(--color-accent-soft)] scale-[0.98]'
+                  : 'border-[var(--color-border)] bg-[var(--color-bg-tertiary)] hover:border-[var(--color-border-strong)]'
+              }`}
             >
-              <span className="text-2xl mb-1">{data.emoji}</span>
-              <span className="text-sm font-medium">{data.displayName}</span>
+              <span className="text-xl mb-0.5">{data.emoji}</span>
+              <span className="text-xs font-medium text-[var(--color-text-primary)]">{data.displayName}</span>
             </button>
           );
         })}
-      </div>
-
-      {/* Selected hint */}
-      {selectedMoods.length > 0 && (
-        <p className="text-center text-sm text-[var(--color-text-muted)]">
-          {selectedMoods.length} mood{selectedMoods.length > 1 ? 's' : ''} selected
-        </p>
-      )}
-
-      {/* Navigation buttons */}
-      <div className="flex gap-3 mt-4">
-        <button onClick={prevStep} className="btn-secondary flex-1">
-          Back
-        </button>
-        <button
-          onClick={nextStep}
-          disabled={!canProceed}
-          className={`btn-primary flex-1 ${!canProceed ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          Next
-        </button>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useWizardStore } from '@/stores/wizardStore';
 import { useRecommendationStore } from '@/stores/recommendationStore';
 import { GameCard, AlternativeCard } from '@/components/GameCard';
 import { MoodShortcuts } from '@/components/MoodShortcuts';
+import { InlineWizard } from '@/components/wizard';
 
 // Get greeting based on time of day
 function getGreeting(): string {
@@ -16,7 +17,7 @@ function getGreeting(): string {
 
 export default function Home() {
   const { mode, toggleMode, theme, setTheme } = useThemeStore();
-  const { openWizard } = useWizardStore();
+  const { isOpen, openWizard } = useWizardStore();
   const { 
     currentRecommendation, 
     showAlternatives, 
@@ -28,6 +29,7 @@ export default function Home() {
   const primaryGame = currentRecommendation?.topRecommendation;
   const alternatives = currentRecommendation?.alternatives || [];
   const hasRecommendation = !!primaryGame;
+  const isWizardActive = isOpen;
 
   const cardStyles = "bg-[var(--color-bg-secondary)] rounded-xl border border-[var(--color-border)] shadow-md";
 
@@ -89,85 +91,88 @@ export default function Home() {
           </div>
         )}
 
-        {/* MAIN CONTENT: Either the game recommendation or the empty state */}
-        {hasRecommendation ? (
-          <div className="mb-6">
-            {/* The recommended game */}
-            <GameCard 
-              game={primaryGame} 
-              reason={currentRecommendation?.reason}
-              onStart={() => {
-                // TODO: Start session tracking
-                console.log('Starting session with:', primaryGame.name);
-              }}
-            />
+        {/* MAIN CONTENT AREA */}
+        <div className="mb-6">
+          {isWizardActive ? (
+            /* Wizard steps - inline */
+            <InlineWizard />
+          ) : hasRecommendation ? (
+            /* Game recommendation display */
+            <>
+              <GameCard 
+                game={primaryGame} 
+                reason={currentRecommendation?.reason}
+                onStart={() => {
+                  console.log('Starting session with:', primaryGame.name);
+                }}
+              />
 
-            {/* Action buttons */}
-            <div className="flex gap-3 mt-4">
-              <button
-                onClick={openWizard}
-                className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] transition-all"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span className="text-sm font-medium">New Recommendation</span>
-              </button>
-              
-              {alternatives.length > 0 && (
+              {/* Action buttons */}
+              <div className="flex gap-3 mt-4">
                 <button
-                  onClick={toggleAlternatives}
+                  onClick={openWizard}
                   className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] transition-all"
                 >
-                  {showAlternatives ? (
-                    <ChevronUp className="w-4 h-4" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4" />
-                  )}
-                  <span className="text-sm font-medium">
-                    {showAlternatives ? 'Hide' : 'Show'} Alternatives ({alternatives.length})
-                  </span>
+                  <RefreshCw className="w-4 h-4" />
+                  <span className="text-sm font-medium">New Recommendation</span>
                 </button>
-              )}
-            </div>
-
-            {/* Alternatives list (collapsible) */}
-            {showAlternatives && alternatives.length > 0 && (
-              <div className="mt-4 space-y-2">
-                <h4 className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide px-1">
-                  Other options
-                </h4>
-                {alternatives.map((game) => (
-                  <AlternativeCard 
-                    key={game.id} 
-                    game={game}
-                    onSelect={() => {
-                      // TODO: Swap this as primary
-                      console.log('Selected alternative:', game.name);
-                    }}
-                  />
-                ))}
+                
+                {alternatives.length > 0 && (
+                  <button
+                    onClick={toggleAlternatives}
+                    className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] transition-all"
+                  >
+                    {showAlternatives ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    )}
+                    <span className="text-sm font-medium">
+                      {showAlternatives ? 'Hide' : 'Show'} Alternatives ({alternatives.length})
+                    </span>
+                  </button>
+                )}
               </div>
-            )}
-          </div>
-        ) : (
-          /* Empty state - no recommendation yet */
-          <div className={`${cardStyles} p-8 text-center mb-6`}>
-            <div className="mb-6">
-              <Sparkles className="w-12 h-12 mx-auto text-[var(--color-accent)]" />
+
+              {/* Alternatives list */}
+              {showAlternatives && alternatives.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <h4 className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide px-1">
+                    Other options
+                  </h4>
+                  {alternatives.map((game) => (
+                    <AlternativeCard 
+                      key={game.id} 
+                      game={game}
+                      onSelect={() => {
+                        console.log('Selected alternative:', game.name);
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            /* Empty state */
+            <div className={`${cardStyles} p-8 text-center`}>
+              <div className="mb-6">
+                <Sparkles className="w-12 h-12 mx-auto text-[var(--color-accent)]" />
+              </div>
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
+                Find your perfect game
+              </h3>
+              <p className="text-[var(--color-text-muted)] mb-6">
+                Tell us your mood and available time, and we'll recommend the ideal game for right now.
+              </p>
+              <button
+                onClick={openWizard}
+                className="bg-[var(--color-accent)] text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-[var(--color-accent-hover)] transition-all active:scale-[0.98]"
+              >
+                Get a Recommendation
+              </button>
             </div>
-            <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
-              Find your perfect game
-            </h3>
-            <p className="text-[var(--color-text-muted)] mb-6">
-              Tell us your mood and available time, and we'll recommend the ideal game for right now.
-            </p>
-            <button
-              onClick={openWizard}
-              className="bg-[var(--color-accent)] text-white px-8 py-3 rounded-lg font-semibold text-lg hover:bg-[var(--color-accent-hover)] transition-all active:scale-[0.98]"
-            >
-              Get a Recommendation
-            </button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Weekly stats */}
         <div className={`${cardStyles} p-4`}>
@@ -189,7 +194,6 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Last session info placeholder */}
           <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
             <p className="text-xs text-[var(--color-text-muted)]">Last session</p>
             <p className="text-sm text-[var(--color-text-secondary)]">No sessions yet</p>

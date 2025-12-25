@@ -5,9 +5,15 @@ import { initializeTheme } from '@/stores/themeStore';
 
 // Pages
 import Home from '@/pages/Home';
+import Stats from '@/pages/Stats';
+import Sessions from '@/pages/Sessions';
+import Library from '@/pages/Library';
+import Settings from '@/pages/Settings';
+import Profile from '@/pages/Profile';
 
 // Components
-import WizardModal from '@/components/wizard/WizardModal';
+import Taskbar from '@/components/Taskbar';
+import Footer from '@/components/Footer';
 
 // Create query client
 const queryClient = new QueryClient({
@@ -33,10 +39,16 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeInitializer>
         <BrowserRouter>
+          <Taskbar />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/stats" element={<Stats />} />
+            <Route path="/sessions" element={<Sessions />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
-          <WizardModal />
+          <Footer />
         </BrowserRouter>
       </ThemeInitializer>
     </QueryClientProvider>
@@ -44,4 +56,3 @@ function App() {
 }
 
 export default App;
- 
