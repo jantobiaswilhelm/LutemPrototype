@@ -24,14 +24,6 @@ export function SteamConnect({ firebaseUid }: SteamConnectProps) {
   const handleImport = async () => {
     if (!steamId.trim()) return;
     
-    // Validate Steam ID format (17 digits)
-    if (!/^\d{17}$/.test(steamId.trim())) {
-      useSteamStore.setState({ 
-        error: 'Steam ID should be 17 digits. Find yours at steamid.io' 
-      });
-      return;
-    }
-    
     try {
       await importLibrary(steamId.trim(), firebaseUid);
     } catch {
@@ -130,7 +122,7 @@ export function SteamConnect({ firebaseUid }: SteamConnectProps) {
       <div className="space-y-3">
         <div>
           <label className="block text-sm text-[var(--color-text-muted)] mb-1.5">
-            Your Steam ID (64-bit)
+            Steam Profile URL or ID
             <button 
               onClick={() => setShowHelp(!showHelp)}
               className="ml-1 text-[var(--color-accent)] hover:underline inline-flex items-center"
@@ -142,7 +134,7 @@ export function SteamConnect({ firebaseUid }: SteamConnectProps) {
             type="text"
             value={steamId}
             onChange={(e) => setSteamId(e.target.value)}
-            placeholder="76561198012345678"
+            placeholder="https://steamcommunity.com/id/yourname"
             className="w-full px-4 py-2.5 rounded-lg bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors"
             disabled={isLoading}
           />
@@ -152,13 +144,14 @@ export function SteamConnect({ firebaseUid }: SteamConnectProps) {
         {showHelp && (
           <div className="p-3 rounded-lg bg-[var(--color-accent)]/5 border border-[var(--color-accent)]/20 text-sm">
             <p className="text-[var(--color-text-secondary)] mb-2">
-              <strong>How to find your Steam ID:</strong>
+              <strong>Any of these formats work:</strong>
             </p>
-            <ol className="list-decimal list-inside space-y-1 text-[var(--color-text-muted)]">
-              <li>Go to <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" className="text-[var(--color-accent)] hover:underline">steamid.io</a></li>
-              <li>Enter your Steam profile URL</li>
-              <li>Copy the <strong>steamID64</strong> (17 digits)</li>
-            </ol>
+            <ul className="space-y-1 text-[var(--color-text-muted)] text-xs">
+              <li>• <code className="bg-[var(--color-bg-tertiary)] px-1 rounded">https://steamcommunity.com/id/yourname</code></li>
+              <li>• <code className="bg-[var(--color-bg-tertiary)] px-1 rounded">https://steamcommunity.com/profiles/76561198...</code></li>
+              <li>• Just your vanity name: <code className="bg-[var(--color-bg-tertiary)] px-1 rounded">yourname</code></li>
+              <li>• Or 17-digit Steam ID: <code className="bg-[var(--color-bg-tertiary)] px-1 rounded">76561198012345678</code></li>
+            </ul>
             <p className="mt-2 text-[var(--color-text-muted)]">
               ⚠️ Your Steam profile and game details must be set to <strong>Public</strong>
             </p>
