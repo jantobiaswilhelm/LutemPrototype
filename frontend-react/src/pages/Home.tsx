@@ -174,11 +174,16 @@ export default function Home() {
           )}
         </div>
 
-        {/* Weekly stats */}
-        <div className={`${cardStyles} p-4`}>
-          <h4 className="text-sm font-medium text-[var(--color-text-muted)] mb-3">
-            This Week
-          </h4>
+        {/* Weekly stats - Placeholder */}
+        <div className={`${cardStyles} p-4 opacity-60`}>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium text-[var(--color-text-muted)]">
+              This Week
+            </h4>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+              Coming Soon
+            </span>
+          </div>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-[var(--color-text-primary)]">—</div>
@@ -195,8 +200,9 @@ export default function Home() {
           </div>
           
           <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
-            <p className="text-xs text-[var(--color-text-muted)]">Last session</p>
-            <p className="text-sm text-[var(--color-text-secondary)]">No sessions yet</p>
+            <p className="text-xs text-[var(--color-text-muted)] text-center">
+              Session tracking will help Lutem learn what satisfies you
+            </p>
           </div>
         </div>
       </main>
