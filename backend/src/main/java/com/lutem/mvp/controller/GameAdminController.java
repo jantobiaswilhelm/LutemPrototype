@@ -3,6 +3,8 @@ package com.lutem.mvp.controller;
 import com.lutem.mvp.model.Game;
 import com.lutem.mvp.model.TaggingSource;
 import com.lutem.mvp.repository.GameRepository;
+import com.lutem.mvp.repository.GameSessionRepository;
+import com.lutem.mvp.repository.UserLibraryRepository;
 import com.lutem.mvp.service.AITaggingService;
 import com.lutem.mvp.service.AITaggingService.TaggingResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,12 @@ public class GameAdminController {
     
     @Autowired
     private GameRepository gameRepository;
+    
+    @Autowired
+    private GameSessionRepository gameSessionRepository;
+    
+    @Autowired
+    private UserLibraryRepository userLibraryRepository;
     
     @Autowired
     private AITaggingService aiTaggingService;
@@ -69,6 +77,18 @@ public class GameAdminController {
     @DeleteMapping("/all")
     public void deleteAllGames() {
         gameRepository.deleteAll();
+    }
+    
+    // Wipe entire database (games + related data)
+    @DeleteMapping("/wipe")
+    public Map<String, String> wipeDatabase() {
+        // Delete in order due to foreign keys
+        userLibraryRepository.deleteAll();
+        gameSessionRepository.deleteAll();
+        gameRepository.deleteAll();
+        Map<String, String> result = new HashMap<>();
+        result.put("status", "wiped");
+        return result;
     }
 
     
