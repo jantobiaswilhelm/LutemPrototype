@@ -14,6 +14,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     
     // Existing methods
     List<Game> findByNameContainingIgnoreCase(String name);
+    Optional<Game> findByNameIgnoreCase(String name);
     List<Game> findByMinMinutesLessThanEqualAndMaxMinutesGreaterThanEqual(int max, int min);
     
     // === Steam Integration Methods (Phase S1-S3) ===

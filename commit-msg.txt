@@ -1,0 +1,11 @@
+feat: AI tagging system with new game attributes
+
+- Added AudioDependency enum (REQUIRED, HELPFUL, OPTIONAL)
+- Added ContentRating enum (EVERYONE, TEEN, MATURE, ADULT)  
+- Added NsfwLevel enum (NONE, SUGGESTIVE, EXPLICIT)
+- Updated Game entity with new fields
+- Enhanced AITaggingService with detailed prompts
+- Added SteamStoreService for game metadata
+- Frontend: Added AudioStep wizard component
+- Frontend: Added content preferences hook
+- Docs: Session handoffs for next steps
