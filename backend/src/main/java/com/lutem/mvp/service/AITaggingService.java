@@ -28,7 +28,7 @@ public class AITaggingService {
     @Value("${anthropic.api.key:}")
     private String anthropicApiKey;
     
-    @Value("${anthropic.model:claude-3-haiku-20240307}")
+    @Value("${anthropic.model:claude-haiku-4-5-20251001}")
     private String anthropicModel;
     
     private final GameRepository gameRepository;
