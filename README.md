@@ -23,12 +23,12 @@ An emotionally intelligent companion that learns your patterns and suggests game
 
 | Dimension | What We Ask |
 |-----------|-------------|
+| **Source** | Where do you want to play from? (Your library, all games) |
 | **Mood** | What emotional outcome do you want? (Unwind, Focus, Challenge, Explore) |
 | **Energy** | How much mental energy do you have right now? |
 | **Time** | How long can you actually play? |
 | **Interruptibility** | Might you need to stop suddenly? |
 | **Social** | Solo session or playing with others? |
-| **Context** | Morning coffee break? Evening wind-down? |
 
 The result: **One confident recommendation** that fits your life right now — not 500 options that paralyze you.
 
@@ -36,54 +36,74 @@ The result: **One confident recommendation** that fits your life right now — n
 
 ## 🚀 Current Progress
 
-### What's Live
+### What's Live & Working
 
 **Backend** (Spring Boot + PostgreSQL on Railway)
-- ✅ 57 curated games with rich metadata
-- ✅ Multi-dimensional recommendation engine
-- ✅ Firebase authentication (Google sign-in)
+- ✅ 57 curated games with rich metadata (mood tags, energy levels, time ranges, interruptibility)
+- ✅ Multi-dimensional recommendation engine (6 input parameters)
+- ✅ Firebase authentication (Google + Steam sign-in)
 - ✅ Firestore integration for user data
-- ✅ Production deployment at `lutembeta.netlify.app`
+- ✅ Steam library import API
+- ✅ JWT-based auth with token validation
+- ✅ Production deployment
 
-**Frontend** (React Rebuild in Progress)
-- ✅ Vite + React 18 + TypeScript foundation
-- ✅ Tailwind CSS with custom theme system
-- ✅ 4 themes: Café, Lavender, Earth, Ocean (light/dark each)
-- ✅ Home page with smart recommendation display
-- ✅ Inline wizard for adjusting preferences
-- ✅ React Router navigation with 6 routes
-- ✅ Zustand state management
-- ✅ TanStack Query for API calls
+**Frontend** (React + Vite + TypeScript)
+- ✅ Complete theme system with 4 themes × 2 modes (8 total combinations)
+  - Café, Lavender, Earth, Ocean themes
+  - Light and dark mode for each
+- ✅ **Home page** with smart recommendation display
+- ✅ **Inline wizard** with 6 steps for customized recommendations
+- ✅ **Mood shortcuts** for quick one-tap recommendations (Relax, Challenge, Quick Break, Explore)
+- ✅ **Game cards** showing cover art (Steam CDN), time range, and match reasoning
+- ✅ **Alternative games** expandable section
+- ✅ **Library page** with dual tabs:
+  - "My Games" - Steam library integration with search, sort, filter, grid/list views
+  - "All Games" - Browse all 57 games in the database
+- ✅ **Authentication system**:
+  - Steam login (auto-imports library)
+  - Google login (manual Steam ID connection)
+  - Persistent JWT sessions
+- ✅ **Profile page** with user info and Steam connection status
+- ✅ **Swipeable taskbar navigation** (edge gesture support)
+- ✅ **Login prompt components** for protected features
+- ✅ API integration with TanStack Query
+- ✅ Zustand state management (auth, theme, wizard, recommendations, steam)
+
+### Live URLs
+
+- **Production:** [lutembeta.netlify.app](https://lutembeta.netlify.app)
+- **GitHub:** [github.com/jantobiaswilhelm/LutemPrototype](https://github.com/jantobiaswilhelm/LutemPrototype)
 
 ### Pages Status
 
-| Page | Status | Description |
-|------|--------|-------------|
-| `/` Home | 🟢 Active | Smart recommendation + inline wizard |
-| `/stats` Stats | 🟡 Placeholder | Satisfaction trends, time insights, top games |
-| `/sessions` Sessions | 🟡 Placeholder | Session history, feedback collection |
-| `/library` Library | 🟡 Placeholder | Your games, favorites, custom tags |
-| `/settings` Settings | 🟡 Placeholder | Appearance, notifications, privacy |
-| `/profile` Profile | 🟡 Placeholder | Gaming preferences, connected platforms |
+| Page | Status | Features |
+|------|--------|----------|
+| `/` Home | 🟢 **Complete** | Greeting, mood shortcuts, inline wizard, game card display, alternatives |
+| `/login` Login | 🟢 **Complete** | Steam + Google auth, loading states, error handling |
+| `/library` Library | 🟢 **Complete** | My Games (Steam import) + All Games tabs, search/sort/filter, grid/list views |
+| `/profile` Profile | 🟢 **Complete** | User info, Steam connection, placeholder sections |
+| `/stats` Stats | 🟡 Placeholder | Preview cards for satisfaction trends, time insights, top games |
+| `/sessions` Sessions | 🟡 Placeholder | Coming: session history, feedback collection |
+| `/settings` Settings | 🟡 Placeholder | Coming: appearance, notifications, privacy |
 
 ---
 
 ## 🛠 Tech Stack
 
 ### Backend
-- **Framework:** Spring Boot 3.x (Java)
+- **Framework:** Spring Boot 3.x (Java 17)
 - **Database:** PostgreSQL (Railway) / H2 (local dev)
-- **Auth:** Firebase Authentication
+- **Auth:** Firebase Admin SDK + JWT
 - **User Data:** Firestore
 - **Hosting:** Railway
 
-### Frontend (React Rebuild)
-- **Build:** Vite
+### Frontend
+- **Build:** Vite 5.x
 - **Framework:** React 18
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS + CSS Variables
-- **State:** Zustand
-- **Data Fetching:** TanStack Query
+- **Styling:** Tailwind CSS + CSS Variables (custom tokens)
+- **State:** Zustand (with persist middleware)
+- **Data Fetching:** TanStack Query v5
 - **Routing:** React Router v6
 - **Icons:** Lucide React
 - **Hosting:** Netlify
@@ -99,9 +119,15 @@ The result: **One confident recommendation** that fits your life right now — n
 
 ### Backend
 ```bash
-# From project root
 cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+
+# Local development (H2 in-memory database)
+set SPRING_PROFILES_ACTIVE=local
+./mvnw spring-boot:run
+
+# Or use the batch file
+../start-backend-local.bat
+
 # Runs on http://localhost:8080
 ```
 
@@ -113,53 +139,14 @@ npm run dev
 # Runs on http://localhost:5173
 ```
 
-### Old Vanilla Frontend (Reference Only)
+### Quick Start
 ```bash
-cd frontend
-python -m http.server 5500
-# Runs on http://localhost:5500
+# Terminal 1: Backend
+start-backend-local.bat
+
+# Terminal 2: Frontend
+cd frontend-react && npm run dev
 ```
-
----
-
-## 🗺 Roadmap
-
-### Phase: React Frontend Rebuild (Current)
-- [x] Project setup (Vite, TypeScript, Tailwind)
-- [x] Theme system with 4 themes × 2 modes
-- [x] Home page with recommendation display
-- [x] Inline wizard for preference adjustment
-- [x] Navigation structure (Taskbar + Footer)
-- [x] Placeholder pages for future features
-- [ ] Mobile bottom navigation
-- [ ] Full wizard modal experience
-- [ ] Mood shortcuts integration
-- [ ] Theme switcher in settings
-
-### Phase: Session Tracking & Feedback (Core Value)
-*This is the key differentiator from the research paper*
-- [ ] Post-session feedback flow ("How did that feel?")
-- [ ] Satisfaction ratings (not just thumbs up/down)
-- [ ] Session history with emotional context
-- [ ] Learning algorithm refinement based on feedback
-
-### Phase: Stats & Insights
-- [ ] Weekly satisfaction summaries
-- [ ] Time-of-day patterns
-- [ ] Mood correlation insights
-- [ ] "Your gaming personality" analysis
-
-### Phase: Library Management
-- [ ] Manual game entry
-- [ ] Steam API integration (stretch)
-- [ ] Custom tags and favorites
-- [ ] "Haven't played in a while" suggestions
-
-### Phase: Advanced Features (Future)
-- [ ] Calendar integration for smart scheduling
-- [ ] Social recommendations ("Play with friends")
-- [ ] Game discovery for new titles
-- [ ] Subscription service integration (Game Pass, etc.)
 
 ---
 
@@ -167,25 +154,120 @@ python -m http.server 5500
 
 ```
 LutemPrototype/
-├── backend/                    # Spring Boot API (DO NOT TOUCH)
-│   ├── src/main/java/...
+├── backend/                    # Spring Boot API
+│   ├── src/main/java/
+│   │   └── com/lutem/
+│   │       ├── auth/          # JWT + Firebase auth
+│   │       ├── games/         # Game CRUD + metadata
+│   │       ├── recommendations/ # Recommendation engine
+│   │       ├── steam/         # Steam library integration
+│   │       └── user/          # User profiles
 │   └── src/main/resources/
-├── frontend/                   # Old vanilla HTML/CSS/JS (reference)
-├── frontend-react/             # NEW React frontend
+│       └── application.yml
+│
+├── frontend-react/             # React frontend (active)
 │   ├── src/
-│   │   ├── api/               # API client & React Query hooks
-│   │   ├── components/        # Reusable UI components
-│   │   │   ├── wizard/        # Wizard step components
-│   │   │   └── ui/            # Base UI components
-│   │   ├── pages/             # Route pages
-│   │   ├── stores/            # Zustand state stores
-│   │   ├── styles/            # CSS (themes, components)
+│   │   ├── api/               # API client, hooks
+│   │   │   ├── auth.ts        # Auth API calls
+│   │   │   ├── client.ts      # Base API client
+│   │   │   ├── hooks.ts       # TanStack Query hooks
+│   │   │   └── steam.ts       # Steam API calls
+│   │   │
+│   │   ├── components/
+│   │   │   ├── wizard/        # Wizard steps (6 steps)
+│   │   │   │   ├── SourceStep.tsx
+│   │   │   │   ├── TimeStep.tsx
+│   │   │   │   ├── MoodStep.tsx
+│   │   │   │   ├── EnergyStep.tsx
+│   │   │   │   ├── InterruptionStep.tsx
+│   │   │   │   ├── SocialStep.tsx
+│   │   │   │   ├── ResultStep.tsx
+│   │   │   │   └── InlineWizard.tsx
+│   │   │   ├── GameCard.tsx   # Primary + alternative cards
+│   │   │   ├── MoodShortcuts.tsx # Quick mood buttons
+│   │   │   ├── Taskbar.tsx    # Swipeable side navigation
+│   │   │   ├── Footer.tsx
+│   │   │   ├── LoginPrompt.tsx
+│   │   │   └── SteamConnect.tsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Home.tsx       # Main recommendation UI
+│   │   │   ├── Login.tsx      # Steam + Google auth
+│   │   │   ├── Library.tsx    # My Games + All Games
+│   │   │   ├── Profile.tsx    # User profile
+│   │   │   ├── Stats.tsx      # Placeholder
+│   │   │   ├── Sessions.tsx   # Placeholder
+│   │   │   └── Settings.tsx   # Placeholder
+│   │   │
+│   │   ├── stores/            # Zustand stores
+│   │   │   ├── authStore.ts   # Auth state + JWT
+│   │   │   ├── themeStore.ts  # Theme + dark mode
+│   │   │   ├── wizardStore.ts # Wizard state
+│   │   │   ├── recommendationStore.ts
+│   │   │   └── steamStore.ts  # Steam library
+│   │   │
+│   │   ├── styles/
+│   │   │   ├── themes/        # 4 color themes
+│   │   │   ├── components/    # Component styles
+│   │   │   ├── tokens.css     # Design tokens
+│   │   │   └── base.css       # Global styles
+│   │   │
 │   │   └── types/             # TypeScript definitions
+│   │
 │   └── index.html
+│
+├── frontend/                   # Legacy vanilla JS (reference only)
+│
 └── docs/
     ├── DESIGN_VISION.md       # Complete design system
+    ├── FRONTEND_FUNCTIONALITY_SPEC.md
     └── sessions/              # Development session notes
 ```
+
+---
+
+## 🗺 Roadmap
+
+### ✅ Phase: React Frontend (Complete)
+- [x] Project setup (Vite, TypeScript, Tailwind)
+- [x] Theme system with 4 themes × 2 modes
+- [x] Home page with recommendation display
+- [x] Inline wizard with 6 steps
+- [x] Mood shortcuts for quick recommendations
+- [x] Game cards with Steam cover images
+- [x] Alternative games section
+- [x] Library page with Steam import
+- [x] All Games browser
+- [x] Authentication (Steam + Google)
+- [x] Profile page
+- [x] Swipeable taskbar navigation
+
+### 🔜 Phase: Session Tracking & Feedback (Next Priority)
+*This is the core value proposition from the research paper*
+- [ ] Post-session feedback flow ("How did that feel?")
+- [ ] Satisfaction ratings (1-5 scale with emotional labels)
+- [ ] Session history with emotional context
+- [ ] Learning algorithm refinement based on feedback
+- [ ] "Start Session" button that tracks play time
+
+### 📅 Phase: Stats & Insights
+- [ ] Weekly satisfaction summaries
+- [ ] Time-of-day patterns
+- [ ] Mood correlation insights
+- [ ] "Your gaming personality" analysis
+- [ ] Satisfaction trends over time
+
+### 🎮 Phase: Enhanced Library
+- [ ] Manual game entry
+- [ ] Custom tags and favorites
+- [ ] "Haven't played in a while" suggestions
+- [ ] Game metadata editing
+
+### 🚀 Phase: Advanced Features (Future)
+- [ ] Calendar integration for smart scheduling
+- [ ] Social recommendations ("Play with friends")
+- [ ] Game discovery for new titles
+- [ ] Subscription service integration (Game Pass, etc.)
 
 ---
 
@@ -217,17 +299,25 @@ Lutem learns what makes YOU feel satisfied. Not what's popular. Not what's new. 
 
 ---
 
-## 🔗 Links
+## ☕ Support the Project
 
-- **Live Beta:** [lutembeta.netlify.app](https://lutembeta.netlify.app)
-- **GitHub:** [github.com/jantobiaswilhelm/LutemPrototype](https://github.com/jantobiaswilhelm/LutemPrototype)
-- **Design System:** See `docs/DESIGN_VISION.md`
+If you like what we're building, consider supporting Lutem's development!
+
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/lutem)
+
+Your support helps keep the coffee flowing and the code shipping. Every contribution goes directly toward making Lutem the best gaming companion it can be.
 
 ---
 
-## 📄 License
+## 📄 Academic Context
 
-This project is part of the Strategic Business Innovation 2025 coursework at the University of Applied Sciences Northwestern Switzerland, developed as a real startup prototype.
+This project is part of the **Strategic Business Innovation 2025** coursework at the University of Applied Sciences Northwestern Switzerland (FHNW), developed as a real startup prototype with genuine commercial ambitions.
+
+The research paper explores Lutem's positioning in the Gaming Recommendation & Discovery Ecosystem, analyzing:
+- Persona-driven human driver analysis (Satisfaction as the dominant driver)
+- Customer control through emotional feedback loops
+- Digital ecosystem positioning strategy
+- Economic assessment and business model
 
 ---
 
