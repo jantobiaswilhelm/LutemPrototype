@@ -108,6 +108,23 @@ public class GameAdminController {
     }
     
     /**
+     * Reset all games to PENDING status for re-tagging.
+     */
+    @PostMapping("/reset-tags")
+    public Map<String, Object> resetAllTags() {
+        List<Game> allGames = gameRepository.findAll();
+        for (Game game : allGames) {
+            game.setTaggingSource(TaggingSource.PENDING);
+            game.setTaggingConfidence(null);
+        }
+        gameRepository.saveAll(allGames);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("reset", allGames.size());
+        return result;
+    }
+    
+    /**
      * Trigger AI tagging for pending games.
      * Body: { "gameIds": [1,2,3] } or { "all": true }
      */
@@ -149,5 +166,100 @@ public class GameAdminController {
         
         TaggingResult result = aiTaggingService.tagGames(List.of(id));
         return ResponseEntity.ok(result);
+    }
+    
+    // ========== IMPORT/SYNC ENDPOINT ==========
+    
+    /**
+     * Import/sync games from another environment (e.g., production → local).
+     * Matches by steamAppId (preferred) or name, updates tag-related fields.
+     * 
+     * Usage:
+     *   1. Export: curl https://production/games > games.json
+     *   2. Import: curl -X POST http://localhost:8080/admin/games/import -H "Content-Type: application/json" -d @games.json
+     */
+    @PostMapping("/import")
+    public Map<String, Object> importGames(@RequestBody List<Game> games) {
+        int updated = 0;
+        int skipped = 0;
+        int created = 0;
+        List<String> errors = new ArrayList<>();
+        
+        for (Game incoming : games) {
+            try {
+                Game existing = null;
+                
+                // Try to match by steamAppId first (most reliable)
+                if (incoming.getSteamAppId() != null) {
+                    existing = gameRepository.findBySteamAppId(incoming.getSteamAppId()).orElse(null);
+                }
+                
+                // Fall back to name match
+                if (existing == null && incoming.getName() != null) {
+                    existing = gameRepository.findByNameIgnoreCase(incoming.getName()).orElse(null);
+                }
+                
+                if (existing != null) {
+                    // Update tag-related fields only
+                    boolean changed = false;
+                    
+                    if (incoming.getEmotionalGoals() != null && !incoming.getEmotionalGoals().isEmpty()) {
+                        existing.setEmotionalGoals(incoming.getEmotionalGoals());
+                        changed = true;
+                    }
+                    if (incoming.getInterruptibility() != null) {
+                        existing.setInterruptibility(incoming.getInterruptibility());
+                        changed = true;
+                    }
+                    if (incoming.getAudioDependency() != null) {
+                        existing.setAudioDependency(incoming.getAudioDependency());
+                        changed = true;
+                    }
+                    if (incoming.getContentRating() != null) {
+                        existing.setContentRating(incoming.getContentRating());
+                        changed = true;
+                    }
+                    if (incoming.getNsfwLevel() != null) {
+                        existing.setNsfwLevel(incoming.getNsfwLevel());
+                        changed = true;
+                    }
+                    if (incoming.getEnergyRequired() != null) {
+                        existing.setEnergyRequired(incoming.getEnergyRequired());
+                        changed = true;
+                    }
+                    if (incoming.getTaggingSource() != null) {
+                        existing.setTaggingSource(incoming.getTaggingSource());
+                        changed = true;
+                    }
+                    if (incoming.getTaggingConfidence() != null) {
+                        existing.setTaggingConfidence(incoming.getTaggingConfidence());
+                        changed = true;
+                    }
+                    
+                    if (changed) {
+                        gameRepository.save(existing);
+                        updated++;
+                    } else {
+                        skipped++;
+                    }
+                } else {
+                    // Game doesn't exist locally - optionally create it
+                    incoming.setId(null);
+                    gameRepository.save(incoming);
+                    created++;
+                }
+            } catch (Exception e) {
+                errors.add(incoming.getName() + ": " + e.getMessage());
+            }
+        }
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("updated", updated);
+        result.put("created", created);
+        result.put("skipped", skipped);
+        result.put("errors", errors);
+        result.put("total", games.size());
+        
+        return result;
     }
 }
