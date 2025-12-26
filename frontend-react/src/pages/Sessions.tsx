@@ -1,6 +1,10 @@
 import { Calendar, History, MessageSquare, Zap } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { LoginPrompt } from '@/components/LoginPrompt';
 
 export function Sessions() {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
       <div className="max-w-2xl mx-auto">
@@ -13,7 +17,7 @@ export function Sessions() {
             Session History
           </h1>
           <p className="text-[var(--color-text-muted)]">
-            Coming soon
+            {isAuthenticated ? 'Coming soon' : 'Track and reflect on your gaming sessions'}
           </p>
         </div>
 
@@ -36,12 +40,16 @@ export function Sessions() {
           />
         </div>
 
-        {/* Coming soon message */}
-        <div className="mt-12 text-center">
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Session tracking is the heart of Lutem's satisfaction-driven approach.
-          </p>
-        </div>
+        {/* Login prompt or coming soon message */}
+        {!isAuthenticated ? (
+          <LoginPrompt feature="session tracking and feedback" />
+        ) : (
+          <div className="mt-12 text-center">
+            <p className="text-sm text-[var(--color-text-muted)]">
+              Session tracking is the heart of Lutem's satisfaction-driven approach.
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );

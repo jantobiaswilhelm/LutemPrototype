@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, 
   BarChart2, 
@@ -8,8 +8,11 @@ import {
   ChevronRight, 
   ChevronLeft,
   Library,
-  Settings
+  Settings,
+  LogIn,
+  LogOut
 } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
 
 interface NavItem {
   icon: React.ReactNode;
@@ -37,46 +40,40 @@ export function Taskbar() {
   const taskbarRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  const { user, isAuthenticated, logout } = useAuthStore();
 
-  // Swipe threshold for opening/closing
   const SWIPE_THRESHOLD = 50;
 
-  // Close menu when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  // Handle touch start
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
     setStartX(e.touches[0].clientX);
     setCurrentX(e.touches[0].clientX);
   };
 
-  // Handle touch move
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
     setCurrentX(e.touches[0].clientX);
   };
 
-  // Handle touch end
   const handleTouchEnd = () => {
     if (!isDragging) return;
-    
     const diff = currentX - startX;
-    
     if (!isOpen && diff > SWIPE_THRESHOLD) {
       setIsOpen(true);
     } else if (isOpen && diff < -SWIPE_THRESHOLD) {
       setIsOpen(false);
     }
-    
     setIsDragging(false);
     setStartX(0);
     setCurrentX(0);
   };
 
-  // Handle edge swipe to open (when closed)
   useEffect(() => {
     const handleEdgeSwipe = (e: TouchEvent) => {
       if (e.touches[0].clientX <= 20 && !isOpen) {
@@ -84,12 +81,10 @@ export function Taskbar() {
         setStartX(e.touches[0].clientX);
       }
     };
-
     window.addEventListener('touchstart', handleEdgeSwipe);
     return () => window.removeEventListener('touchstart', handleEdgeSwipe);
   }, [isOpen]);
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -102,12 +97,10 @@ export function Taskbar() {
         setIsOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  // Calculate drag offset for smooth animation
   const getDragOffset = () => {
     if (!isDragging) return 0;
     const diff = currentX - startX;
@@ -119,6 +112,12 @@ export function Taskbar() {
   };
 
   const dragOffset = getDragOffset();
+
+  const handleLogout = async () => {
+    await logout();
+    setIsOpen(false);
+    navigate('/');
+  };
 
   return (
     <>
@@ -177,20 +176,58 @@ export function Taskbar() {
           ${isDragging ? '' : 'transition-transform duration-300 ease-out'}
         `}
       >
-        {/* Header */}
-        <div className="p-4 flex items-center justify-between border-b border-[var(--color-border)]">
-          <span className="text-lg font-semibold text-[var(--color-text-primary)]">
-            Menu
-          </span>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="p-1.5 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
+        {/* Header with user info */}
+        <div className="p-4 border-b border-[var(--color-border)]">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-lg font-semibold text-[var(--color-text-primary)]">
+              Menu
+            </span>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-1.5 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          </div>
+          
+          {/* User info or login button */}
+          {isAuthenticated && user ? (
+            <div className="flex items-center gap-3">
+              {user.avatarUrl ? (
+                <img 
+                  src={user.avatarUrl} 
+                  alt={user.displayName} 
+                  className="w-10 h-10 rounded-full border-2 border-[var(--color-border)]"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-[var(--color-accent)]/20 flex items-center justify-center">
+                  <User className="w-5 h-5 text-[var(--color-accent)]" />
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-[var(--color-text-primary)] truncate">
+                  {user.displayName}
+                </p>
+                <p className="text-xs text-[var(--color-text-muted)] capitalize">
+                  {user.authProvider === 'steam' ? '🎮 Steam' : '📧 Google'}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                navigate('/login');
+              }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] transition-colors"
+            >
+              <LogIn className="w-5 h-5" />
+              <span className="text-sm font-medium">Sign In</span>
+            </button>
+          )}
         </div>
 
-        {/* Navigation items */}
+        {/* Navigation items - ALL items always visible */}
         <nav className="flex-1 p-3 space-y-1">
           {navItems.map((item) => (
             <NavLink
@@ -230,6 +267,17 @@ export function Taskbar() {
               <span className="text-sm font-medium">{item.label}</span>
             </NavLink>
           ))}
+          
+          {/* Logout button */}
+          {isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[var(--color-text-muted)] hover:bg-red-500/10 hover:text-red-500 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="text-sm font-medium">Sign Out</span>
+            </button>
+          )}
         </div>
 
         {/* Swipe hint on mobile */}

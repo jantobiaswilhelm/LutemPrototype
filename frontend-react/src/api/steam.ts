@@ -1,9 +1,10 @@
 import type { SteamStatus, SteamImportResponse, UserLibraryResponse } from '@/types/steam';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+// Note: Steam endpoints are at /api/steam/* on backend
+// Vite proxy forwards /api/* to backend without rewriting
 
 async function fetchSteamApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  const response = await fetch(endpoint, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
@@ -27,7 +28,7 @@ export const steamApi = {
 
   /**
    * Import user's Steam library
-   * @param steamId - 17-digit Steam ID (64-bit format)
+   * @param steamId - 17-digit Steam ID (64-bit format) or vanity URL
    * @param firebaseUid - User's Firebase UID for authentication
    */
   importLibrary: (steamId: string, firebaseUid: string) =>

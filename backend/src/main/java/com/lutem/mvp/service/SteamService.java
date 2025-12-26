@@ -151,12 +151,75 @@ public class SteamService {
     }
     
     /**
+     * Get player profile summary from Steam API.
+     * 
+     * @param steamId64 Steam 64-bit ID
+     * @return Map containing profile data (personaname, avatarfull, etc.)
+     */
+    public Map<String, String> getPlayerSummary(String steamId64) {
+        if (!isConfigured()) {
+            throw new IllegalStateException("Steam API key not configured");
+        }
+        
+        String url = String.format(
+            "%s/ISteamUser/GetPlayerSummaries/v2/?key=%s&steamids=%s",
+            STEAM_API_BASE, steamApiKey, steamId64
+        );
+        
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            JsonNode root = objectMapper.readTree(response);
+            JsonNode players = root.path("response").path("players");
+            
+            if (players.isArray() && players.size() > 0) {
+                JsonNode player = players.get(0);
+                Map<String, String> profile = new HashMap<>();
+                profile.put("steamid", player.path("steamid").asText());
+                profile.put("personaname", player.path("personaname").asText());
+                profile.put("avatar", player.path("avatar").asText());
+                profile.put("avatarmedium", player.path("avatarmedium").asText());
+                profile.put("avatarfull", player.path("avatarfull").asText());
+                profile.put("profileurl", player.path("profileurl").asText());
+                return profile;
+            }
+            
+            return Collections.emptyMap();
+            
+        } catch (Exception e) {
+            logger.error("Failed to fetch player summary for {}: {}", steamId64, e.getMessage());
+            return Collections.emptyMap();
+        }
+    }
+    
+    /**
+     * Fetch and import user's Steam library by user ID.
+     * 
+     * @param steamId64 User's Steam ID (64-bit format)
+     * @param userId Database ID of the authenticated user
+     * @return Import results with matched and unmatched games
+     */
+    @Transactional
+    public SteamImportResponse importSteamLibraryByUserId(String steamId64, Long userId) {
+        if (!isConfigured()) {
+            throw new IllegalStateException("Steam API key not configured");
+        }
+        
+        // Get user by ID
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        
+        return doImportSteamLibrary(steamId64, user);
+    }
+    
+    /**
      * Fetch and import user's Steam library.
      * 
      * @param steamId64 User's Steam ID (64-bit format)
      * @param firebaseUid Firebase UID of the authenticated user
      * @return Import results with matched and unmatched games
+     * @deprecated Use importSteamLibraryByUserId instead
      */
+    @Deprecated
     @Transactional
     public SteamImportResponse importSteamLibrary(String steamId64, String firebaseUid) {
         if (!isConfigured()) {
@@ -164,8 +227,16 @@ public class SteamService {
         }
         
         // Get or validate user
-        User user = userRepository.findByFirebaseUid(firebaseUid)
+        User user = userRepository.findByGoogleId(firebaseUid)
             .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        
+        return doImportSteamLibrary(steamId64, user);
+    }
+    
+    /**
+     * Internal method to import Steam library for a user.
+     */
+    private SteamImportResponse doImportSteamLibrary(String steamId64, User user) {
         
         // Fetch games from Steam API
         List<SteamGame> steamGames = fetchOwnedGames(steamId64);
@@ -245,7 +316,7 @@ public class SteamService {
         );
         
         logger.info("Steam import for user {}: {} total, {} matched, {} unmatched, {} already in library",
-            firebaseUid, stats.getTotal(), stats.getMatched(), stats.getUnmatched(), stats.getAlreadyInLibrary());
+            user.getId(), stats.getTotal(), stats.getMatched(), stats.getUnmatched(), stats.getAlreadyInLibrary());
         
         return new SteamImportResponse(matched, unmatched, stats, steamId64);
     }

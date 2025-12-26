@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useWizardStore } from '@/stores/wizardStore';
+import SourceStep from './SourceStep';
 import TimeStep from './TimeStep';
 import MoodStep from './MoodStep';
 import EnergyStep from './EnergyStep';
@@ -8,7 +9,7 @@ import InterruptionStep from './InterruptionStep';
 import SocialStep from './SocialStep';
 import ResultStep from './ResultStep';
 
-const STEPS = ['time', 'mood', 'energy', 'interruption', 'social', 'result'] as const;
+const STEPS = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'result'] as const;
 
 export default function WizardModal() {
   const { isOpen, closeWizard, resetWizard, currentStep } = useWizardStore();
@@ -48,6 +49,8 @@ export default function WizardModal() {
 
   const renderStep = () => {
     switch (currentStep) {
+      case 'source':
+        return <SourceStep />;
       case 'time':
         return <TimeStep />;
       case 'mood':
@@ -61,7 +64,7 @@ export default function WizardModal() {
       case 'result':
         return <ResultStep />;
       default:
-        return <TimeStep />;
+        return <SourceStep />;
     }
   };
 

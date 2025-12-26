@@ -10,6 +10,7 @@ import java.util.Optional;
 
 /**
  * Service for managing User entities.
+ * Supports dual auth: Steam OpenID and Google (Firebase).
  */
 @Service
 public class UserService {
@@ -21,18 +22,41 @@ public class UserService {
     }
     
     /**
-     * Find or create a user by Firebase UID.
+     * Find or create a user by Steam ID.
+     * Used when authenticating via Steam OpenID.
+     */
+    @Transactional
+    public User findOrCreateBySteamId(String steamId, String personaName, String avatarUrl) {
+        Optional<User> existingUser = userRepository.findBySteamId(steamId);
+        
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            user.setLastLoginAt(LocalDateTime.now());
+            // Update profile info if changed
+            if (personaName != null && !personaName.equals(user.getDisplayName())) {
+                user.setDisplayName(personaName);
+            }
+            if (avatarUrl != null && !avatarUrl.equals(user.getAvatarUrl())) {
+                user.setAvatarUrl(avatarUrl);
+            }
+            return userRepository.save(user);
+        } else {
+            User newUser = User.fromSteam(steamId, personaName, avatarUrl);
+            return userRepository.save(newUser);
+        }
+    }
+    
+    /**
+     * Find or create a user by Google/Firebase UID.
      * Creates new user on first login, updates lastLoginAt on subsequent logins.
      */
     @Transactional
-    public User findOrCreateByFirebaseUid(String firebaseUid, String email, String displayName) {
-        Optional<User> existingUser = userRepository.findByFirebaseUid(firebaseUid);
+    public User findOrCreateByGoogleId(String googleId, String email, String displayName) {
+        Optional<User> existingUser = userRepository.findByGoogleId(googleId);
         
         if (existingUser.isPresent()) {
-            // Update last login time
             User user = existingUser.get();
             user.setLastLoginAt(LocalDateTime.now());
-            // Update email/displayName if changed
             if (email != null && !email.equals(user.getEmail())) {
                 user.setEmail(email);
             }
@@ -41,17 +65,40 @@ public class UserService {
             }
             return userRepository.save(user);
         } else {
-            // Create new user
-            User newUser = new User(firebaseUid, email, displayName);
+            User newUser = new User(googleId, email, displayName);
             return userRepository.save(newUser);
         }
     }
     
     /**
-     * Find user by Firebase UID
+     * @deprecated Use findOrCreateByGoogleId() instead
      */
+    @Deprecated
+    @Transactional
+    public User findOrCreateByFirebaseUid(String firebaseUid, String email, String displayName) {
+        return findOrCreateByGoogleId(firebaseUid, email, displayName);
+    }
+    
+    /**
+     * Find user by Steam ID
+     */
+    public Optional<User> findBySteamId(String steamId) {
+        return userRepository.findBySteamId(steamId);
+    }
+    
+    /**
+     * Find user by Google/Firebase UID
+     */
+    public Optional<User> findByGoogleId(String googleId) {
+        return userRepository.findByGoogleId(googleId);
+    }
+    
+    /**
+     * @deprecated Use findByGoogleId() instead
+     */
+    @Deprecated
     public Optional<User> findByFirebaseUid(String firebaseUid) {
-        return userRepository.findByFirebaseUid(firebaseUid);
+        return findByGoogleId(firebaseUid);
     }
     
     /**
@@ -59,5 +106,34 @@ public class UserService {
      */
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
+    }
+    
+    /**
+     * Find user by email
+     */
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+    
+    /**
+     * Link a Steam account to an existing user.
+     * Used when a Google user wants to connect their Steam account.
+     */
+    @Transactional
+    public User linkSteamAccount(Long userId, String steamId, String avatarUrl) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        
+        // Check if Steam ID is already linked to another account
+        Optional<User> existingWithSteam = userRepository.findBySteamId(steamId);
+        if (existingWithSteam.isPresent() && !existingWithSteam.get().getId().equals(userId)) {
+            throw new IllegalStateException("Steam account already linked to another user");
+        }
+        
+        user.setSteamId(steamId);
+        if (avatarUrl != null) {
+            user.setAvatarUrl(avatarUrl);
+        }
+        return userRepository.save(user);
     }
 }

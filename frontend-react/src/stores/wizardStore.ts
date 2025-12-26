@@ -7,12 +7,19 @@ import type {
   RecommendationResponse,
 } from '@/types';
 
-export type WizardStep = 'time' | 'mood' | 'energy' | 'interruption' | 'social' | 'result';
+// Source determines where recommendations come from
+export type RecommendationSource = 'library' | 'all' | 'steamLink';
+
+export type WizardStep = 'source' | 'time' | 'mood' | 'energy' | 'interruption' | 'social' | 'result';
 
 interface WizardState {
   // Current step
   currentStep: WizardStep;
   isOpen: boolean;
+
+  // Source selection (new!)
+  recommendationSource: RecommendationSource;
+  steamProfileUrl: string; // For 'steamLink' source option
 
   // Form values
   availableMinutes: number;
@@ -35,6 +42,8 @@ interface WizardState {
   prevStep: () => void;
 
   // Setters
+  setRecommendationSource: (source: RecommendationSource) => void;
+  setSteamProfileUrl: (url: string) => void;
   setAvailableMinutes: (minutes: number) => void;
   toggleMood: (mood: EmotionalGoal) => void;
   setEnergyLevel: (level: EnergyLevel) => void;
@@ -47,11 +56,13 @@ interface WizardState {
   setError: (error: string | null) => void;
 }
 
-const STEP_ORDER: WizardStep[] = ['time', 'mood', 'energy', 'interruption', 'social', 'result'];
+const STEP_ORDER: WizardStep[] = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'result'];
 
 const initialState = {
-  currentStep: 'time' as WizardStep,
+  currentStep: 'source' as WizardStep,
   isOpen: false,
+  recommendationSource: 'all' as RecommendationSource,
+  steamProfileUrl: '',
   availableMinutes: 30,
   selectedMoods: [] as EmotionalGoal[],
   energyLevel: null,
@@ -87,6 +98,8 @@ export const useWizardStore = create<WizardState>((set, get) => ({
     }
   },
 
+  setRecommendationSource: (source) => set({ recommendationSource: source }),
+  setSteamProfileUrl: (url) => set({ steamProfileUrl: url }),
   setAvailableMinutes: (minutes) => set({ availableMinutes: minutes }),
 
   toggleMood: (mood) => {

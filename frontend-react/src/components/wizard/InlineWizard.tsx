@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import { useWizardStore } from '@/stores/wizardStore';
+import SourceStep from './SourceStep';
 import TimeStep from './TimeStep';
 import MoodStep from './MoodStep';
 import EnergyStep from './EnergyStep';
@@ -7,7 +8,7 @@ import InterruptionStep from './InterruptionStep';
 import SocialStep from './SocialStep';
 import ResultStep from './ResultStep';
 
-const STEP_ORDER = ['time', 'mood', 'energy', 'interruption', 'social', 'result'] as const;
+const STEP_ORDER = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'result'] as const;
 type Step = typeof STEP_ORDER[number];
 
 export default function InlineWizard() {
@@ -21,7 +22,7 @@ export default function InlineWizard() {
   const currentIndex = STEP_ORDER.indexOf(currentStep as Step);
   const isFirstStep = currentIndex === 0;
   const isResultStep = currentStep === 'result';
-  const progressSteps = STEP_ORDER.length - 1; 
+  const progressSteps = STEP_ORDER.length - 1; // Exclude result step from progress
 
   const handleBack = () => {
     if (isFirstStep) {
@@ -76,6 +77,7 @@ export default function InlineWizard() {
 
       {/* Step content */}
       <div className="p-5 flex-1 overflow-hidden">
+        {currentStep === 'source' && <SourceStep />}
         {currentStep === 'time' && <TimeStep />}
         {currentStep === 'mood' && <MoodStep />}
         {currentStep === 'energy' && <EnergyStep />}

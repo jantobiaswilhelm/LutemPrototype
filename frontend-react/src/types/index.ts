@@ -77,6 +77,11 @@ export interface Game {
   userRating?: number;
   averageSatisfaction?: number;
   sessionCount?: number;
+  // Steam integration
+  steamAppId?: number;
+  taggingSource?: 'MANUAL' | 'AI_GENERATED' | 'USER_ADJUSTED' | 'PENDING';
+  taggingConfidence?: number;
+  rawgId?: number;
 }
 
 
