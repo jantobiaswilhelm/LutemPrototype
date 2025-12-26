@@ -8,14 +8,28 @@ import java.util.Optional;
 
 /**
  * Repository for User entities.
+ * Supports dual auth: Steam and Google (Firebase).
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     
     /**
-     * Find user by Firebase UID
+     * Find user by Steam ID (64-bit Steam ID)
      */
-    Optional<User> findByFirebaseUid(String firebaseUid);
+    Optional<User> findBySteamId(String steamId);
+    
+    /**
+     * Find user by Google/Firebase UID
+     */
+    Optional<User> findByGoogleId(String googleId);
+    
+    /**
+     * @deprecated Use findByGoogleId() instead
+     */
+    @Deprecated
+    default Optional<User> findByFirebaseUid(String firebaseUid) {
+        return findByGoogleId(firebaseUid);
+    }
     
     /**
      * Find user by email
@@ -23,7 +37,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     
     /**
-     * Check if user exists by Firebase UID
+     * Check if user exists by Steam ID
      */
-    boolean existsByFirebaseUid(String firebaseUid);
+    boolean existsBySteamId(String steamId);
+    
+    /**
+     * Check if user exists by Google/Firebase UID
+     */
+    boolean existsByGoogleId(String googleId);
+    
+    /**
+     * @deprecated Use existsByGoogleId() instead
+     */
+    @Deprecated
+    default boolean existsByFirebaseUid(String firebaseUid) {
+        return existsByGoogleId(firebaseUid);
+    }
 }

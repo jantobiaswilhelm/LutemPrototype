@@ -14,6 +14,13 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
+      // Steam API endpoints - backend expects /api/steam/* 
+      '/api/steam': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        // Pass through as-is (backend has /api/steam/*)
+      },
+      // Other API endpoints - backend expects /games, /recommendations, etc.
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,

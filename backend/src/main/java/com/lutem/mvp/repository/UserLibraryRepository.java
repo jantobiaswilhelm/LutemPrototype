@@ -18,10 +18,10 @@ public interface UserLibraryRepository extends JpaRepository<UserLibrary, Long> 
     List<UserLibrary> findByUserId(Long userId);
     
     /**
-     * Find all library entries for a user by Firebase UID.
+     * Find all library entries for a user by Google ID (Firebase UID).
      */
-    @Query("SELECT ul FROM UserLibrary ul WHERE ul.user.firebaseUid = :firebaseUid")
-    List<UserLibrary> findByUserFirebaseUid(@Param("firebaseUid") String firebaseUid);
+    @Query("SELECT ul FROM UserLibrary ul WHERE ul.user.googleId = :googleId")
+    List<UserLibrary> findByUserGoogleId(@Param("googleId") String googleId);
     
     /**
      * Find a specific game in user's library.

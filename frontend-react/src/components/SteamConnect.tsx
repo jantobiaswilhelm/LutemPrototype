@@ -3,10 +3,10 @@ import { Link2, ExternalLink, Loader2, CheckCircle, AlertCircle, HelpCircle } fr
 import { useSteamStore } from '@/stores/steamStore';
 
 interface SteamConnectProps {
-  firebaseUid: string;
+  userId: string;  // User's database ID for linking the library
 }
 
-export function SteamConnect({ firebaseUid }: SteamConnectProps) {
+export function SteamConnect({ userId }: SteamConnectProps) {
   const [steamId, setSteamId] = useState('');
   const [showHelp, setShowHelp] = useState(false);
   
@@ -25,7 +25,7 @@ export function SteamConnect({ firebaseUid }: SteamConnectProps) {
     if (!steamId.trim()) return;
     
     try {
-      await importLibrary(steamId.trim(), firebaseUid);
+      await importLibrary(steamId.trim(), userId);
     } catch {
       // Error is handled in store
     }

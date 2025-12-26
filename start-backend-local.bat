@@ -9,6 +9,14 @@ echo Using Java: %JAVA_HOME%
 REM Set Spring profile
 set SPRING_PROFILES_ACTIVE=local
 
+REM Load environment variables from .env.local if it exists
+if exist .env.local (
+    echo Loading environment from .env.local...
+    for /f "tokens=1,2 delims==" %%a in ('type .env.local ^| findstr /v "^#" ^| findstr /v "^$"') do (
+        set "%%a=%%b"
+    )
+)
+
 REM Try Maven wrapper
 if exist mvnw.cmd (
     echo Using Maven wrapper with profile: local

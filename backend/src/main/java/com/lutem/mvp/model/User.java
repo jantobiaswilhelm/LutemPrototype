@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 
 /**
  * User entity representing authenticated users.
- * Links to Firebase Authentication via firebaseUid.
+ * Supports dual auth: Steam OpenID or Google (Firebase).
+ * At least one of steamId or googleId must be set.
  */
 @Entity
 @Table(name = "users")
@@ -15,12 +16,34 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(unique = true, nullable = false)
-    private String firebaseUid;
+    /**
+     * Google/Firebase UID (nullable if Steam-only user)
+     * Previously called firebaseUid - kept for backwards compatibility
+     */
+    @Column(name = "firebase_uid", unique = true)
+    private String googleId;
+    
+    /**
+     * Steam 64-bit ID (nullable if Google-only user)
+     */
+    @Column(name = "steam_id", unique = true)
+    private String steamId;
     
     private String email;
     
     private String displayName;
+    
+    /**
+     * Avatar URL from Steam or Google profile
+     */
+    @Column(name = "avatar_url", length = 500)
+    private String avatarUrl;
+    
+    /**
+     * Auth provider used: "steam" or "google"
+     */
+    @Column(name = "auth_provider")
+    private String authProvider;
     
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -32,12 +55,30 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
     
-    public User(String firebaseUid, String email, String displayName) {
-        this.firebaseUid = firebaseUid;
+    /**
+     * Constructor for Google/Firebase auth (backwards compatible)
+     */
+    public User(String googleId, String email, String displayName) {
+        this.googleId = googleId;
         this.email = email;
         this.displayName = displayName;
+        this.authProvider = "google";
         this.createdAt = LocalDateTime.now();
         this.lastLoginAt = LocalDateTime.now();
+    }
+    
+    /**
+     * Constructor for Steam auth
+     */
+    public static User fromSteam(String steamId, String personaName, String avatarUrl) {
+        User user = new User();
+        user.steamId = steamId;
+        user.displayName = personaName;
+        user.avatarUrl = avatarUrl;
+        user.authProvider = "steam";
+        user.createdAt = LocalDateTime.now();
+        user.lastLoginAt = LocalDateTime.now();
+        return user;
     }
     
     // Getters and Setters
@@ -49,12 +90,36 @@ public class User {
         this.id = id;
     }
     
+    /**
+     * @deprecated Use getGoogleId() instead
+     */
+    @Deprecated
     public String getFirebaseUid() {
-        return firebaseUid;
+        return googleId;
     }
     
+    /**
+     * @deprecated Use setGoogleId() instead
+     */
+    @Deprecated
     public void setFirebaseUid(String firebaseUid) {
-        this.firebaseUid = firebaseUid;
+        this.googleId = firebaseUid;
+    }
+    
+    public String getGoogleId() {
+        return googleId;
+    }
+    
+    public void setGoogleId(String googleId) {
+        this.googleId = googleId;
+    }
+    
+    public String getSteamId() {
+        return steamId;
+    }
+    
+    public void setSteamId(String steamId) {
+        this.steamId = steamId;
     }
     
     public String getEmail() {
@@ -71,6 +136,22 @@ public class User {
     
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+    
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+    
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+    
+    public String getAuthProvider() {
+        return authProvider;
+    }
+    
+    public void setAuthProvider(String authProvider) {
+        this.authProvider = authProvider;
     }
     
     public LocalDateTime getCreatedAt() {

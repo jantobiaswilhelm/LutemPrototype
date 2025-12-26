@@ -1,6 +1,10 @@
 import { BarChart2, TrendingUp, Clock, Star } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { LoginPrompt } from '@/components/LoginPrompt';
 
 export function Stats() {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
       <div className="max-w-2xl mx-auto">
@@ -13,7 +17,7 @@ export function Stats() {
             Your Gaming Stats
           </h1>
           <p className="text-[var(--color-text-muted)]">
-            Coming soon
+            {isAuthenticated ? 'Coming soon' : 'Track your gaming satisfaction over time'}
           </p>
         </div>
 
@@ -36,12 +40,16 @@ export function Stats() {
           />
         </div>
 
-        {/* Coming soon message */}
-        <div className="mt-12 text-center">
-          <p className="text-sm text-[var(--color-text-muted)]">
-            We're building something special to help you understand your gaming habits better.
-          </p>
-        </div>
+        {/* Login prompt or coming soon message */}
+        {!isAuthenticated ? (
+          <LoginPrompt feature="your personal gaming statistics" />
+        ) : (
+          <div className="mt-12 text-center">
+            <p className="text-sm text-[var(--color-text-muted)]">
+              We're building something special to help you understand your gaming habits better.
+            </p>
+          </div>
+        )}
       </div>
     </main>
   );

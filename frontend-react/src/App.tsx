@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { initializeTheme } from '@/stores/themeStore';
+import { useAuthStore } from '@/stores/authStore';
 
 // Pages
 import Home from '@/pages/Home';
@@ -10,6 +11,8 @@ import Sessions from '@/pages/Sessions';
 import Library from '@/pages/Library';
 import Settings from '@/pages/Settings';
 import Profile from '@/pages/Profile';
+import Login from '@/pages/Login';
+import AuthCallback from '@/pages/AuthCallback';
 
 // Components
 import Taskbar from '@/components/Taskbar';
@@ -25,11 +28,14 @@ const queryClient = new QueryClient({
   },
 });
 
-// Initialize theme on app load
-function ThemeInitializer({ children }: { children: React.ReactNode }) {
+// Initialize theme and validate auth on app load
+function AppInitializer({ children }: { children: React.ReactNode }) {
+  const { fetchCurrentUser } = useAuthStore();
+  
   useEffect(() => {
     initializeTheme();
-  }, []);
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
 
   return <>{children}</>;
 }
@@ -37,20 +43,23 @@ function ThemeInitializer({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeInitializer>
+      <AppInitializer>
         <BrowserRouter>
           <Taskbar />
           <Routes>
+            {/* All routes are public - pages handle their own auth state */}
             <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/stats" element={<Stats />} />
             <Route path="/sessions" element={<Sessions />} />
             <Route path="/library" element={<Library />} />
-            <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
           </Routes>
           <Footer />
         </BrowserRouter>
-      </ThemeInitializer>
+      </AppInitializer>
     </QueryClientProvider>
   );
 }

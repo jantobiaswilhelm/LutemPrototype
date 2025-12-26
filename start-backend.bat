@@ -2,12 +2,10 @@
 echo Starting Lutem Backend (Local Development)...
 cd /d "%~dp0backend"
 
-REM Verify JAVA_HOME is set
+REM Set JAVA_HOME if not already set
 if "%JAVA_HOME%"=="" (
-    echo ERROR: JAVA_HOME not set
-    echo Run: setx JAVA_HOME "C:\Program Files\Java\jdk-25"
-    pause
-    exit /b 1
+    set "JAVA_HOME=C:\Program Files\Java\jdk-25"
+    echo JAVA_HOME not set, using default: %JAVA_HOME%
 )
 
 echo Using JAVA_HOME: %JAVA_HOME%
