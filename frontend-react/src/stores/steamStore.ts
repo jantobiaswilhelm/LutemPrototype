@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { SteamImportResponse, UserLibraryResponse, LibrarySummary } from '@/types/steam';
-import { steamApi } from '@/api/steam';
+import type { SteamImportResponse, UserLibraryResponse, LibrarySummary, TaggingResult, GameStats } from '@/types/steam';
+import { steamApi, gamesApi } from '@/api/steam';
 
 interface SteamState {
   // Status
@@ -17,12 +17,20 @@ interface SteamState {
   library: UserLibraryResponse | null;
   lastImport: SteamImportResponse | null;
   
+  // AI Tagging state
+  isTagging: boolean;
+  taggingProgress: TaggingResult | null;
+  gameStats: GameStats | null;
+  
   // Actions
   checkStatus: () => Promise<boolean>;
   importLibrary: (steamId: string, firebaseUid: string) => Promise<SteamImportResponse>;
   fetchLibrary: (firebaseUid: string) => Promise<void>;
+  fetchGameStats: () => Promise<GameStats>;
+  tagPendingGames: (gameIds?: number[]) => Promise<TaggingResult>;
   disconnect: () => void;
   clearError: () => void;
+  clearTaggingProgress: () => void;
 }
 
 export const useSteamStore = create<SteamState>()(
@@ -36,6 +44,9 @@ export const useSteamStore = create<SteamState>()(
       isConnected: false,
       library: null,
       lastImport: null,
+      isTagging: false,
+      taggingProgress: null,
+      gameStats: null,
 
       checkStatus: async () => {
         try {
@@ -59,8 +70,9 @@ export const useSteamStore = create<SteamState>()(
             isConnected: true,
             isLoading: false,
           });
-          // Fetch updated library after import
+          // Fetch updated library and stats after import
           await get().fetchLibrary(firebaseUid);
+          await get().fetchGameStats();
           return result;
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to import Steam library';
@@ -84,16 +96,48 @@ export const useSteamStore = create<SteamState>()(
         }
       },
 
+      fetchGameStats: async () => {
+        try {
+          const stats = await gamesApi.getStats();
+          set({ gameStats: stats });
+          return stats;
+        } catch (error) {
+          console.error('Failed to fetch game stats:', error);
+          throw error;
+        }
+      },
+
+      tagPendingGames: async (gameIds?: number[]) => {
+        set({ isTagging: true, error: null, taggingProgress: null });
+        try {
+          const result = await gamesApi.tagPending(gameIds);
+          set({ 
+            taggingProgress: result,
+            isTagging: false,
+          });
+          // Refresh stats after tagging
+          await get().fetchGameStats();
+          return result;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Failed to tag games';
+          set({ error: message, isTagging: false });
+          throw error;
+        }
+      },
+
       disconnect: () => {
         set({
           steamId: null,
           isConnected: false,
           library: null,
           lastImport: null,
+          taggingProgress: null,
         });
       },
 
       clearError: () => set({ error: null }),
+      
+      clearTaggingProgress: () => set({ taggingProgress: null }),
     }),
     {
       name: 'lutem-steam',
@@ -116,3 +160,11 @@ export const useSteamLibrary = () => useSteamStore((s) => s.library);
 
 export const useLibrarySummary = (): LibrarySummary | null => 
   useSteamStore((s) => s.library?.summary ?? null);
+
+export const useGameStats = () => useSteamStore((s) => s.gameStats);
+
+export const useTaggingState = () => useSteamStore((s) => ({
+  isTagging: s.isTagging,
+  taggingProgress: s.taggingProgress,
+  gameStats: s.gameStats,
+}));

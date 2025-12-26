@@ -6,9 +6,10 @@ import MoodStep from './MoodStep';
 import EnergyStep from './EnergyStep';
 import InterruptionStep from './InterruptionStep';
 import SocialStep from './SocialStep';
+import AudioStep from './AudioStep';
 import ResultStep from './ResultStep';
 
-const STEP_ORDER = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'result'] as const;
+const STEP_ORDER = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'audio', 'result'] as const;
 type Step = typeof STEP_ORDER[number];
 
 export default function InlineWizard() {
@@ -83,6 +84,7 @@ export default function InlineWizard() {
         {currentStep === 'energy' && <EnergyStep />}
         {currentStep === 'interruption' && <InterruptionStep />}
         {currentStep === 'social' && <SocialStep />}
+        {currentStep === 'audio' && <AudioStep />}
       </div>
     </div>
   );

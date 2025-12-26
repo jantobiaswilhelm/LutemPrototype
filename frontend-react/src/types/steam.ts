@@ -63,6 +63,32 @@ export interface UserLibraryGame {
   taggingSource?: 'MANUAL' | 'AI_GENERATED' | 'USER_ADJUSTED' | 'PENDING';
 }
 
+// AI Tagging Types
+export interface TaggingResult {
+  total: number;
+  successCount: number;
+  failedCount: number;
+  taggedGames: TaggedGameInfo[];
+  failedGames: Record<number, string>;
+}
+
+export interface TaggedGameInfo {
+  id: number;
+  name: string;
+  steamAppId?: number;
+  confidence?: number;
+}
+
+export interface GameStats {
+  total: number;
+  pending: number;
+  manual: number;
+  aiGenerated: number;
+  userAdjusted: number;
+  fullyTagged: number;
+  aiConfigured: boolean;
+}
+
 // Helper to format playtime
 export function formatPlaytime(minutes?: number): string {
   if (!minutes || minutes === 0) return 'Never played';

@@ -1,6 +1,7 @@
-import { Settings as SettingsIcon, Palette, Bell, Shield, Monitor, Sun, Moon, Check } from 'lucide-react';
+import { Settings as SettingsIcon, Palette, Bell, Shield, Monitor, Sun, Moon, Check, ShieldAlert } from 'lucide-react';
 import { useThemeStore } from '@/stores/themeStore';
-import type { Theme } from '@/types';
+import { useContentPreferences } from '@/hooks/useContentPreferences';
+import { CONTENT_RATING, type Theme, type ContentRating } from '@/types';
 
 const THEMES: { id: Theme; name: string; emoji: string; colors: { primary: string; secondary: string } }[] = [
   { id: 'cafe', name: 'Café', emoji: '☕', colors: { primary: '#8B7355', secondary: '#D4C4B5' } },
@@ -9,8 +10,11 @@ const THEMES: { id: Theme; name: string; emoji: string; colors: { primary: strin
   { id: 'ocean', name: 'Ocean', emoji: '🌊', colors: { primary: '#5B8A9A', secondary: '#D0E5EB' } },
 ];
 
+const RATING_ORDER: ContentRating[] = ['EVERYONE', 'TEEN', 'MATURE', 'ADULT'];
+
 export function Settings() {
   const { theme, mode, setTheme, setMode } = useThemeStore();
+  const { maxContentRating, allowNsfw, setMaxContentRating, toggleNsfw } = useContentPreferences();
 
   return (
     <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
@@ -28,7 +32,7 @@ export function Settings() {
           </p>
         </div>
 
-        {/* Appearance - Active */}
+        {/* Appearance Section */}
         <div className="mb-6">
           <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
             <div className="flex items-start gap-4 mb-6">
@@ -49,13 +53,11 @@ export function Settings() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setMode('light')}
-                  className={`
-                    flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all
-                    ${mode === 'light' 
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                    mode === 'light' 
                       ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
                       : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                    }
-                  `}
+                  }`}
                 >
                   <Sun className={`w-5 h-5 ${mode === 'light' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}`} />
                   <span className={`font-medium ${mode === 'light' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
@@ -64,13 +66,11 @@ export function Settings() {
                 </button>
                 <button
                   onClick={() => setMode('dark')}
-                  className={`
-                    flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all
-                    ${mode === 'dark' 
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                    mode === 'dark' 
                       ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
                       : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                    }
-                  `}
+                  }`}
                 >
                   <Moon className={`w-5 h-5 ${mode === 'dark' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}`} />
                   <span className={`font-medium ${mode === 'dark' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
@@ -90,24 +90,15 @@ export function Settings() {
                   <button
                     key={t.id}
                     onClick={() => setTheme(t.id)}
-                    className={`
-                      relative flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left
-                      ${theme === t.id 
+                    className={`relative flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${
+                      theme === t.id 
                         ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
                         : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                      }
-                    `}
+                    }`}
                   >
-                    {/* Color preview */}
                     <div className="flex-shrink-0 flex gap-1">
-                      <div 
-                        className="w-4 h-8 rounded-l-md" 
-                        style={{ backgroundColor: t.colors.primary }}
-                      />
-                      <div 
-                        className="w-4 h-8 rounded-r-md" 
-                        style={{ backgroundColor: t.colors.secondary }}
-                      />
+                      <div className="w-4 h-8 rounded-l-md" style={{ backgroundColor: t.colors.primary }} />
+                      <div className="w-4 h-8 rounded-r-md" style={{ backgroundColor: t.colors.secondary }} />
                     </div>
                     <div>
                       <span className="text-sm">{t.emoji}</span>
@@ -115,11 +106,88 @@ export function Settings() {
                         {t.name}
                       </span>
                     </div>
-                    {theme === t.id && (
-                      <Check className="absolute top-2 right-2 w-4 h-4 text-[var(--color-accent)]" />
-                    )}
+                    {theme === t.id && <Check className="absolute top-2 right-2 w-4 h-4 text-[var(--color-accent)]" />}
                   </button>
                 ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Preferences Section */}
+        <div className="mb-6">
+          <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-2 rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-medium text-[var(--color-text-primary)] mb-1">Content Preferences</h3>
+                <p className="text-sm text-[var(--color-text-muted)]">Filter recommendations by content maturity</p>
+              </div>
+            </div>
+
+            {/* Content Rating */}
+            <div className="mb-6">
+              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 block">
+                Maximum Content Rating
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {RATING_ORDER.map((rating) => {
+                  const data = CONTENT_RATING[rating];
+                  const isSelected = maxContentRating === rating;
+                  return (
+                    <button
+                      key={rating}
+                      onClick={() => setMaxContentRating(rating)}
+                      className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
+                        isSelected
+                          ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10'
+                          : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
+                      }`}
+                    >
+                      <span className="text-lg">{data.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className={`block text-sm font-medium ${isSelected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+                          {data.displayName}
+                        </span>
+                        <span className="block text-xs text-[var(--color-text-muted)] truncate">
+                          {data.description}
+                        </span>
+                      </div>
+                      {isSelected && <Check className="w-4 h-4 text-[var(--color-accent)] flex-shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* NSFW Toggle */}
+            <div>
+              <div className="flex items-center justify-between p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-tertiary)]">
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">🔥</span>
+                  <div>
+                    <span className="block text-sm font-medium text-[var(--color-text-primary)]">
+                      Allow NSFW Content
+                    </span>
+                    <span className="block text-xs text-[var(--color-text-muted)]">
+                      Include games with sexual/suggestive content
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={toggleNsfw}
+                  className={`relative w-12 h-7 rounded-full transition-colors ${
+                    allowNsfw ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border-strong)]'
+                  }`}
+                >
+                  <div
+                    className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                      allowNsfw ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
               </div>
             </div>
           </div>
@@ -165,12 +233,7 @@ function PlaceholderCard({
   description: string;
 }) {
   return (
-    <div className="
-      p-5 rounded-2xl
-      bg-[var(--color-bg-secondary)]/50
-      border border-[var(--color-border)]/50
-      opacity-60
-    ">
+    <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)]/50 border border-[var(--color-border)]/50 opacity-60">
       <div className="flex items-start gap-4">
         <div className="p-2 rounded-xl bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)]">
           {icon}

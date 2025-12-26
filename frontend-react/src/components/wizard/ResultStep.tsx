@@ -3,6 +3,7 @@ import { Sparkles, RotateCcw } from 'lucide-react';
 import { useWizardStore } from '@/stores/wizardStore';
 import { useRecommendationStore } from '@/stores/recommendationStore';
 import { recommendationsApi } from '@/api/client';
+import { getContentPreferences } from '@/hooks/useContentPreferences';
 
 function LoadingState() {
   return (
@@ -59,6 +60,7 @@ export default function ResultStep() {
     energyLevel,
     interruptibility,
     socialPreference,
+    audioAvailability,
     resetWizard,
     closeWizard,
     prevStep,
@@ -74,6 +76,9 @@ export default function ResultStep() {
     
     setError(null);
     
+    // Get content preferences from localStorage
+    const contentPrefs = getContentPreferences();
+    
     try {
       const data = await recommendationsApi.getRecommendation({
         availableMinutes,
@@ -81,6 +86,10 @@ export default function ResultStep() {
         currentEnergyLevel: energyLevel,
         requiredInterruptibility: interruptibility,
         socialPreference,
+        // New parameters
+        audioAvailability: audioAvailability ?? undefined,
+        maxContentRating: contentPrefs.maxContentRating,
+        allowNsfw: contentPrefs.allowNsfw,
       });
       console.log('Got recommendation:', data);
       

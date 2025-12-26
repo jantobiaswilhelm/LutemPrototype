@@ -7,4 +7,5 @@ export { default as MoodStep } from './MoodStep';
 export { default as EnergyStep } from './EnergyStep';
 export { default as InterruptionStep } from './InterruptionStep';
 export { default as SocialStep } from './SocialStep';
+export { default as AudioStep } from './AudioStep';
 export { default as ResultStep } from './ResultStep';

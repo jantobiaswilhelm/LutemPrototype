@@ -34,13 +34,16 @@ public class GameController {
     // In-memory feedback storage for backward compatibility
     private Map<Long, List<Integer>> feedbackMap = new HashMap<>();
 
-    // GET /games
+    // GET /games - Returns only fully tagged games (for frontend recommendation UI)
     @GetMapping("/games")
     public List<Game> getAllGames() {
         System.out.println("=================================");
         System.out.println("GET /games called!");
-        List<Game> games = gameRepository.findAll();
-        System.out.println("Total games: " + games.size());
+        // Only return games that can be used for recommendations
+        List<Game> games = gameRepository.findAllFullyTagged();
+        System.out.println("Total fully-tagged games: " + games.size());
+        long pendingCount = gameRepository.findAllPendingTagging().size();
+        System.out.println("Pending games needing AI tagging: " + pendingCount);
         if (!games.isEmpty()) {
             Game firstGame = games.get(0);
             System.out.println("First game: " + firstGame.getName());
@@ -49,6 +52,12 @@ public class GameController {
         }
         System.out.println("=================================");
         return games;
+    }
+    
+    // GET /games/all - Returns ALL games including pending (for admin/library views)
+    @GetMapping("/games/all")
+    public List<Game> getAllGamesIncludingPending() {
+        return gameRepository.findAll();
     }
     
     // POST /recommendations with multi-dimensional scoring
@@ -73,8 +82,19 @@ public class GameController {
             }
         }
         
-        // Get all games from database
-        List<Game> games = gameRepository.findAll();
+        // Get only fully tagged games for recommendations (excludes PENDING)
+        List<Game> games = gameRepository.findAllFullyTagged();
+        System.out.println("📚 Found " + games.size() + " fully tagged games for recommendations");
+        
+        // Filter by audio availability
+        if (request.getAudioAvailability() != null) {
+            games = filterByAudioAvailability(games, request.getAudioAvailability());
+            System.out.println("🔊 After audio filter: " + games.size() + " games");
+        }
+        
+        // Filter by content rating and NSFW preferences
+        games = filterByContentPreferences(games, request.getMaxContentRating(), request.getAllowNsfw());
+        System.out.println("🛡️ After content filter: " + games.size() + " games");
         
         // Score all games (now with personalized satisfaction data)
         Map<Game, ScoringResult> scoredGames = new HashMap<>();
@@ -425,5 +445,58 @@ public class GameController {
         public int compareTo(ScoringResult other) {
             return Double.compare(other.score, this.score); // Descending order
         }
+    }
+    
+    // Filter by audio availability
+    // 'full' = show all games
+    // 'low' = exclude games where audioDependency = REQUIRED
+    // 'muted' = only show games where audioDependency = OPTIONAL
+    private List<Game> filterByAudioAvailability(List<Game> games, String audioAvailability) {
+        if (audioAvailability == null || "full".equalsIgnoreCase(audioAvailability)) {
+            return games; // No filtering needed
+        }
+        
+        return games.stream()
+            .filter(game -> {
+                if (game.getAudioDependency() == null) {
+                    return true; // Untagged games pass through
+                }
+                
+                if ("muted".equalsIgnoreCase(audioAvailability)) {
+                    // Only OPTIONAL games can be played without sound
+                    return game.getAudioDependency() == com.lutem.mvp.model.AudioDependency.OPTIONAL;
+                } else if ("low".equalsIgnoreCase(audioAvailability)) {
+                    // OPTIONAL and HELPFUL are OK, REQUIRED is excluded
+                    return game.getAudioDependency() != com.lutem.mvp.model.AudioDependency.REQUIRED;
+                }
+                return true;
+            })
+            .collect(Collectors.toList());
+    }
+    
+    // Filter by content rating and NSFW preferences
+    private List<Game> filterByContentPreferences(List<Game> games, 
+            com.lutem.mvp.model.ContentRating maxRating, Boolean allowNsfw) {
+        
+        return games.stream()
+            .filter(game -> {
+                // Filter by max content rating
+                if (maxRating != null && game.getContentRating() != null) {
+                    if (game.getContentRating().ordinal() > maxRating.ordinal()) {
+                        return false; // Game exceeds user's max rating
+                    }
+                }
+                
+                // Filter by NSFW preference
+                if (allowNsfw != null && !allowNsfw) {
+                    if (game.getNsfwLevel() != null && 
+                        game.getNsfwLevel() != com.lutem.mvp.model.NsfwLevel.NONE) {
+                        return false; // User doesn't want NSFW content
+                    }
+                }
+                
+                return true;
+            })
+            .collect(Collectors.toList());
     }
 }

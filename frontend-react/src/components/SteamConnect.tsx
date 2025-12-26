@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Link2, ExternalLink, Loader2, CheckCircle, AlertCircle, HelpCircle } from 'lucide-react';
-import { useSteamStore } from '@/stores/steamStore';
+import { useState, useEffect } from 'react';
+import { Link2, ExternalLink, Loader2, CheckCircle, AlertCircle, HelpCircle, Sparkles, Clock } from 'lucide-react';
+import { useSteamStore, useTaggingState } from '@/stores/steamStore';
 
 interface SteamConnectProps {
   userId: string;  // User's database ID for linking the library
@@ -19,7 +19,18 @@ export function SteamConnect({ userId }: SteamConnectProps) {
     importLibrary, 
     disconnect,
     clearError,
+    fetchGameStats,
+    tagPendingGames,
   } = useSteamStore();
+  
+  const { isTagging, taggingProgress, gameStats } = useTaggingState();
+
+  // Fetch game stats when connected
+  useEffect(() => {
+    if (isConnected) {
+      fetchGameStats().catch(console.error);
+    }
+  }, [isConnected, fetchGameStats]);
 
   const handleImport = async () => {
     if (!steamId.trim()) return;
@@ -31,9 +42,22 @@ export function SteamConnect({ userId }: SteamConnectProps) {
     }
   };
 
-  // Connected state - show library summary
+  const handleTagPending = async () => {
+    try {
+      await tagPendingGames();
+    } catch {
+      // Error is handled in store
+    }
+  };
+
+  const pendingCount = gameStats?.pending ?? library?.summary.untaggedGames ?? 0;
+  const taggedCount = gameStats?.fullyTagged ?? library?.summary.taggedGames ?? 0;
+  const aiConfigured = gameStats?.aiConfigured ?? false;
+
+  // Connected state - show library summary and tagging options
   if (isConnected && library) {
     const { summary } = library;
+    
     return (
       <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
         <div className="flex items-start justify-between mb-4">
@@ -44,7 +68,7 @@ export function SteamConnect({ userId }: SteamConnectProps) {
             <div>
               <h3 className="font-medium text-[var(--color-text-primary)]">Steam Connected</h3>
               <p className="text-sm text-[var(--color-text-muted)]">
-                {summary.taggedGames} games ready for recommendations
+                {taggedCount} games ready for recommendations
               </p>
             </div>
           </div>
@@ -57,7 +81,7 @@ export function SteamConnect({ userId }: SteamConnectProps) {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-3 text-center">
+        <div className="grid grid-cols-3 gap-3 text-center mb-4">
           <div className="p-3 rounded-xl bg-[var(--color-bg-tertiary)]">
             <div className="text-lg font-bold text-[var(--color-text-primary)]">
               {summary.steamGames}
@@ -66,20 +90,86 @@ export function SteamConnect({ userId }: SteamConnectProps) {
           </div>
           <div className="p-3 rounded-xl bg-[var(--color-bg-tertiary)]">
             <div className="text-lg font-bold text-[var(--color-accent)]">
-              {summary.taggedGames}
+              {taggedCount}
             </div>
-            <div className="text-xs text-[var(--color-text-muted)]">Tagged</div>
+            <div className="text-xs text-[var(--color-text-muted)]">Ready</div>
           </div>
           <div className="p-3 rounded-xl bg-[var(--color-bg-tertiary)]">
-            <div className="text-lg font-bold text-[var(--color-text-muted)]">
-              {summary.untaggedGames}
+            <div className="text-lg font-bold text-amber-500">
+              {pendingCount}
             </div>
             <div className="text-xs text-[var(--color-text-muted)]">Pending</div>
           </div>
         </div>
 
+        {/* AI Tagging Section */}
+        {pendingCount > 0 && (
+          <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
+            {isTagging ? (
+              // Tagging in progress
+              <div className="text-center">
+                <Loader2 className="w-8 h-8 text-amber-500 animate-spin mx-auto mb-3" />
+                <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                  Analyzing games with AI...
+                </p>
+                <p className="text-xs text-[var(--color-text-muted)] mt-1">
+                  This may take a few minutes for large libraries
+                </p>
+              </div>
+            ) : taggingProgress ? (
+              // Tagging complete
+              <div className="text-center">
+                <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-3" />
+                <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                  Tagged {taggingProgress.successCount} of {taggingProgress.total} games!
+                </p>
+                {taggingProgress.failedCount > 0 && (
+                  <p className="text-xs text-amber-500 mt-1">
+                    {taggingProgress.failedCount} games couldn't be tagged
+                  </p>
+                )}
+              </div>
+            ) : (
+              // Ready to tag
+              <>
+                <div className="flex items-start gap-3 mb-3">
+                  <Sparkles className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-[var(--color-text-primary)]">
+                      {pendingCount} games need AI setup
+                    </p>
+                    <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                      AI will analyze each game and assign Lutem attributes
+                    </p>
+                  </div>
+                </div>
+                
+                {!aiConfigured ? (
+                  <p className="text-xs text-red-500 mb-3">
+                    ⚠️ AI tagging not configured on server
+                  </p>
+                ) : null}
+                
+                <button
+                  onClick={handleTagPending}
+                  disabled={!aiConfigured}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg bg-amber-500 text-white font-medium hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Set up {pendingCount} games
+                </button>
+                
+                <p className="text-xs text-[var(--color-text-muted)] text-center mt-2 flex items-center justify-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  ~{Math.ceil(pendingCount * 2 / 60)} min estimated
+                </p>
+              </>
+            )}
+          </div>
+        )}
+
         {/* Last import info */}
-        {lastImport && (
+        {lastImport && !taggingProgress && (
           <p className="mt-3 text-xs text-[var(--color-text-muted)] text-center">
             {lastImport.message}
           </p>
