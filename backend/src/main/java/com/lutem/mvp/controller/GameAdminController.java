@@ -282,4 +282,13 @@ public class GameAdminController {
         
         return result;
     }
+    
+    // Debug: Check database counts
+    @GetMapping("/debug/counts")
+    public Map<String, Object> getDebugCounts() {
+        Map<String, Object> counts = new HashMap<>();
+        counts.put("games", gameRepository.count());
+        counts.put("userLibrary", userLibraryRepository.count());
+        return counts;
+    }
 }
