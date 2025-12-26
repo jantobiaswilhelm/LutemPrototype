@@ -91,7 +91,7 @@ export function Profile() {
         <div className="space-y-4">
           {/* Steam Connect - only show for Google users who haven't connected Steam */}
           {user?.authProvider === 'google' && !user.steamId && (
-            <SteamConnect userId={String(user.id)} />
+            <SteamConnect />
           )}
           
           {/* Steam connected info for Steam users */}

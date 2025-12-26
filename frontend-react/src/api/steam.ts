@@ -1,13 +1,35 @@
 import type { SteamStatus, SteamImportResponse, UserLibraryResponse, TaggingResult, GameStats } from '@/types/steam';
+import { useAuthStore } from '@/stores/authStore';
 
-// Note: Steam endpoints are at /api/steam/* on backend
-// Vite proxy forwards /api/* to backend without rewriting
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
+/**
+ * Get JWT token from auth store
+ */
+function getAuthToken(): string | null {
+  return useAuthStore.getState().token;
+}
+
+/**
+ * Steam API fetch wrapper
+ * 
+ * Dev: Vite proxy forwards /api/steam/* to localhost:8080 without rewriting
+ * Prod: Prepend the full backend URL
+ */
 async function fetchSteamApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(endpoint, {
+  // In dev, use endpoint directly (Vite proxy handles /api/steam/*)
+  // In prod, prepend the backend URL
+  const url = API_BASE.startsWith('http') ? `${API_BASE}${endpoint}` : endpoint;
+  
+  const token = getAuthToken();
+  
+  console.log(`[Steam API] Calling ${url}`, token ? '(with auth)' : '(no auth)');
+  
+  const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...options?.headers,
     },
   });
@@ -28,28 +50,20 @@ export const steamApi = {
 
   /**
    * Import user's Steam library
-   * @param steamId - 17-digit Steam ID (64-bit format) or vanity URL
-   * @param firebaseUid - User's Firebase UID for authentication
+   * Requires JWT authentication - uses token from auth store automatically
+   * @param steamId - Optional Steam ID (only needed for Google-auth users)
    */
-  importLibrary: (steamId: string, firebaseUid: string) =>
+  importLibrary: (steamId?: string) =>
     fetchSteamApi<SteamImportResponse>('/api/steam/import', {
       method: 'POST',
-      headers: {
-        'X-Firebase-UID': firebaseUid,
-      },
-      body: JSON.stringify({ steamId }),
+      body: JSON.stringify(steamId ? { steamId } : {}),
     }),
 
   /**
    * Get user's library summary and games
-   * @param firebaseUid - User's Firebase UID
+   * Requires JWT authentication
    */
-  getLibrary: (firebaseUid: string) =>
-    fetchSteamApi<UserLibraryResponse>('/api/steam/library', {
-      headers: {
-        'X-Firebase-UID': firebaseUid,
-      },
-    }),
+  getLibrary: () => fetchSteamApi<UserLibraryResponse>('/api/steam/library'),
 };
 
 export const gamesApi = {
@@ -60,7 +74,6 @@ export const gamesApi = {
 
   /**
    * Trigger AI tagging for pending games
-   * @param gameIds - Specific game IDs to tag, or undefined to tag all pending
    */
   tagPending: (gameIds?: number[]) =>
     fetchSteamApi<TaggingResult>('/admin/games/tag', {

@@ -2,11 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link2, ExternalLink, Loader2, CheckCircle, AlertCircle, HelpCircle, Sparkles, Clock } from 'lucide-react';
 import { useSteamStore, useTaggingState } from '@/stores/steamStore';
 
-interface SteamConnectProps {
-  userId: string;  // User's database ID for linking the library
-}
-
-export function SteamConnect({ userId }: SteamConnectProps) {
+// Note: JWT auth is handled automatically by the steam API client
+export function SteamConnect() {
   const [steamId, setSteamId] = useState('');
   const [showHelp, setShowHelp] = useState(false);
   
@@ -36,7 +33,8 @@ export function SteamConnect({ userId }: SteamConnectProps) {
     if (!steamId.trim()) return;
     
     try {
-      await importLibrary(steamId.trim(), userId);
+      // JWT auth handled automatically by steam API client
+      await importLibrary(steamId.trim());
     } catch {
       // Error is handled in store
     }

@@ -363,11 +363,11 @@ function MyGamesContent() {
   useEffect(() => {
     if (isAuthenticated) {
       checkStatus();
-      if (isConnected && user?.id) {
-        fetchLibrary(String(user.id));
+      if (isConnected) {
+        fetchLibrary();
       }
     }
-  }, [isAuthenticated, isConnected, user?.id, checkStatus, fetchLibrary]);
+  }, [isAuthenticated, isConnected, checkStatus, fetchLibrary]);
 
   const filteredGames = useMemo(() => {
     if (!library?.games) return [];
@@ -411,9 +411,7 @@ function MyGamesContent() {
   }, [library?.games, searchQuery, filterBy, sortBy, sortDesc]);
 
   const handleRefresh = () => {
-    if (user?.id) {
-      fetchLibrary(String(user.id));
-    }
+    fetchLibrary();
   };
 
   // Not logged in - show preview
@@ -511,9 +509,8 @@ function MyGamesContent() {
             </div>
             <button
               onClick={() => {
-                if (user.steamId) {
-                  useSteamStore.getState().importLibrary(user.steamId, String(user.id));
-                }
+                // JWT auth + steamId from user profile handled automatically
+                useSteamStore.getState().importLibrary();
               }}
               disabled={isLoading}
               className="px-4 py-2 rounded-lg bg-[var(--color-accent)] text-white font-medium hover:bg-[var(--color-accent-hover)] disabled:opacity-50 transition-all"
@@ -527,7 +524,7 @@ function MyGamesContent() {
       {/* Google users - show Steam connect form */}
       {user?.authProvider === 'google' && !isConnected && (
         <div className="space-y-6">
-          <SteamConnect userId={String(user.id)} />
+          <SteamConnect />
           
           <div className="grid gap-4 sm:grid-cols-2">
             <BenefitCard
