@@ -96,6 +96,31 @@ public class Game {
      */
     private Integer rawgId;
     
+    // === Steam Popularity Fields ===
+    
+    /**
+     * Number of positive Steam reviews.
+     */
+    private Integer steamPositiveReviews;
+    
+    /**
+     * Number of negative Steam reviews.
+     */
+    private Integer steamNegativeReviews;
+    
+    /**
+     * Metacritic score (0-100) if available.
+     */
+    private Integer metacriticScore;
+    
+    /**
+     * Calculated popularity score for recommendation sorting.
+     * Formula: qualityScore + visibilityBonus
+     * where qualityScore = positiveRatio * 100
+     * and visibilityBonus = min(log10(totalReviews), 5) * 5
+     */
+    private Double popularityScore;
+    
     /**
      * Steam playtime in minutes (from user's library import).
      * Stored per-user in UserLibrary, but this is the reference/average.
@@ -225,6 +250,26 @@ public class Game {
 
     public Integer getRawgId() { return rawgId; }
     public void setRawgId(Integer rawgId) { this.rawgId = rawgId; }
+
+    public Integer getSteamPositiveReviews() { return steamPositiveReviews; }
+    public void setSteamPositiveReviews(Integer steamPositiveReviews) { 
+        this.steamPositiveReviews = steamPositiveReviews; 
+    }
+
+    public Integer getSteamNegativeReviews() { return steamNegativeReviews; }
+    public void setSteamNegativeReviews(Integer steamNegativeReviews) { 
+        this.steamNegativeReviews = steamNegativeReviews; 
+    }
+
+    public Integer getMetacriticScore() { return metacriticScore; }
+    public void setMetacriticScore(Integer metacriticScore) { 
+        this.metacriticScore = metacriticScore; 
+    }
+
+    public Double getPopularityScore() { return popularityScore; }
+    public void setPopularityScore(Double popularityScore) { 
+        this.popularityScore = popularityScore; 
+    }
 
     public Integer getSteamPlaytimeForever() { return steamPlaytimeForever; }
     public void setSteamPlaytimeForever(Integer steamPlaytimeForever) { 

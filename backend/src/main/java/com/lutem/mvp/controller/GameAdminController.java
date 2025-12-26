@@ -291,4 +291,113 @@ public class GameAdminController {
         counts.put("userLibrary", userLibraryRepository.count());
         return counts;
     }
+    
+    // ========== AI IMPORT FROM STEAM ==========
+    
+    /**
+     * Import unmatched Steam games and tag them with AI.
+     * Takes games that weren't found in Lutem's database during Steam import.
+     * 
+     * Body: { "games": [{ "steamAppId": 123, "name": "Game Name", "playtimeForever": 1234 }] }
+     */
+    @PostMapping("/ai-import")
+    public ResponseEntity<Map<String, Object>> aiImportGames(@RequestBody Map<String, Object> request) {
+        Map<String, Object> result = new HashMap<>();
+        
+        // Check if AI is configured
+        if (!aiTaggingService.isConfigured()) {
+            result.put("total", 0);
+            result.put("successCount", 0);
+            result.put("failedCount", 0);
+            result.put("message", "AI tagging is not configured. Please set ANTHROPIC_API_KEY.");
+            result.put("createdGames", new ArrayList<>());
+            result.put("failedGames", new HashMap<>());
+            return ResponseEntity.status(503).body(result);
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> games = (List<Map<String, Object>>) request.get("games");
+        
+        if (games == null || games.isEmpty()) {
+            result.put("total", 0);
+            result.put("successCount", 0);
+            result.put("failedCount", 0);
+            result.put("message", "No games provided");
+            result.put("createdGames", new ArrayList<>());
+            result.put("failedGames", new HashMap<>());
+            return ResponseEntity.ok(result);
+        }
+        
+        List<Map<String, Object>> createdGames = new ArrayList<>();
+        Map<Long, String> failedGames = new HashMap<>();
+        List<Long> gamesToTag = new ArrayList<>();
+        
+        for (Map<String, Object> gameData : games) {
+            try {
+                Long steamAppId = ((Number) gameData.get("steamAppId")).longValue();
+                String name = (String) gameData.get("name");
+                
+                // Check if game already exists
+                Optional<Game> existing = gameRepository.findBySteamAppId(steamAppId);
+                if (existing.isPresent()) {
+                    // Game already exists, skip but note it
+                    Map<String, Object> gameInfo = new HashMap<>();
+                    gameInfo.put("steamAppId", steamAppId);
+                    gameInfo.put("name", name);
+                    gameInfo.put("lutemGameId", existing.get().getId());
+                    createdGames.add(gameInfo);
+                    continue;
+                }
+                
+                // Create new game with minimal info - AI will fill in the tags
+                Game newGame = new Game();
+                newGame.setName(name);
+                newGame.setSteamAppId(steamAppId);
+                newGame.setMinMinutes(15);  // Default values, AI will adjust
+                newGame.setMaxMinutes(60);
+                newGame.setTaggingSource(TaggingSource.PENDING);
+                
+                Game savedGame = gameRepository.save(newGame);
+                gamesToTag.add(savedGame.getId());
+                
+                Map<String, Object> gameInfo = new HashMap<>();
+                gameInfo.put("steamAppId", steamAppId);
+                gameInfo.put("name", name);
+                gameInfo.put("lutemGameId", savedGame.getId());
+                createdGames.add(gameInfo);
+                
+            } catch (Exception e) {
+                Long steamAppId = gameData.get("steamAppId") != null 
+                    ? ((Number) gameData.get("steamAppId")).longValue() 
+                    : 0L;
+                failedGames.put(steamAppId, e.getMessage());
+            }
+        }
+        
+        // Now tag all created games with AI
+        int taggedCount = 0;
+        if (!gamesToTag.isEmpty()) {
+            try {
+                TaggingResult taggingResult = aiTaggingService.tagGames(gamesToTag);
+                taggedCount = taggingResult.getSuccessCount();
+                // Merge any tagging failures into our failed games map
+                if (taggingResult.getFailedGames() != null) {
+                    failedGames.putAll(taggingResult.getFailedGames());
+                }
+            } catch (Exception e) {
+                // Tagging failed but games were still created
+                System.err.println("AI tagging failed: " + e.getMessage());
+            }
+        }
+        
+        result.put("total", games.size());
+        result.put("successCount", createdGames.size());
+        result.put("failedCount", failedGames.size());
+        result.put("taggedCount", taggedCount);
+        result.put("message", String.format("Created %d games, tagged %d with AI", createdGames.size(), taggedCount));
+        result.put("createdGames", createdGames);
+        result.put("failedGames", failedGames);
+        
+        return ResponseEntity.ok(result);
+    }
 }

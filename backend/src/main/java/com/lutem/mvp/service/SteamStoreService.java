@@ -20,6 +20,7 @@ public class SteamStoreService {
     
     private static final Logger logger = LoggerFactory.getLogger(SteamStoreService.class);
     private static final String STEAM_STORE_API = "https://store.steampowered.com/api/appdetails";
+    private static final String STEAM_REVIEWS_API = "https://store.steampowered.com/appreviews";
     
     // Simple in-memory cache to avoid hammering Steam API
     private final Map<Long, SteamAppDetails> cache = new ConcurrentHashMap<>();
@@ -69,8 +70,9 @@ public class SteamStoreService {
             JsonNode data = appNode.path("data");
             SteamAppDetails details = parseAppDetails(steamAppId, data);
             
-            // Cache the result
+            // Fetch review data separately
             if (details != null) {
+                fetchReviewData(details);
                 cache.put(steamAppId, details);
             }
             
@@ -98,6 +100,56 @@ public class SteamStoreService {
         }
         
         lastRequestTime = System.currentTimeMillis();
+    }
+    
+    /**
+     * Fetch review statistics from Steam Reviews API.
+     * Updates the details object with positive/negative review counts.
+     */
+    private void fetchReviewData(SteamAppDetails details) {
+        enforceRateLimit();
+        
+        try {
+            // Steam Reviews API - get summary only (json=1), all languages, all purchase types
+            String url = String.format("%s/%d?json=1&language=all&purchase_type=all&num_per_page=0",
+                STEAM_REVIEWS_API, details.getSteamAppId());
+            
+            logger.debug("Fetching Steam Reviews for app: {}", details.getSteamAppId());
+            
+            String response = restTemplate.getForObject(url, String.class);
+            JsonNode root = objectMapper.readTree(response);
+            
+            if (root.path("success").asInt(0) != 1) {
+                logger.warn("Steam Reviews API unsuccessful for app: {}", details.getSteamAppId());
+                return;
+            }
+            
+            JsonNode summary = root.path("query_summary");
+            if (!summary.isMissingNode()) {
+                int totalPositive = summary.path("total_positive").asInt(0);
+                int totalNegative = summary.path("total_negative").asInt(0);
+                
+                details.setTotalPositiveReviews(totalPositive);
+                details.setTotalNegativeReviews(totalNegative);
+                
+                // Calculate popularity score
+                int totalReviews = totalPositive + totalNegative;
+                if (totalReviews > 0) {
+                    double positiveRatio = (double) totalPositive / totalReviews;
+                    double qualityScore = positiveRatio * 100;
+                    double visibilityBonus = Math.min(Math.log10(Math.max(totalReviews, 1)), 5) * 5;
+                    details.setPopularityScore(qualityScore + visibilityBonus);
+                    
+                    logger.debug("Game {} - Reviews: {}+ / {}- ({}%), Popularity: {}", 
+                        details.getName(), totalPositive, totalNegative, 
+                        Math.round(positiveRatio * 100), Math.round(details.getPopularityScore()));
+                }
+            }
+            
+        } catch (Exception e) {
+            logger.warn("Failed to fetch reviews for app {}: {}", details.getSteamAppId(), e.getMessage());
+            // Non-fatal - continue without review data
+        }
     }
     
     private SteamAppDetails parseAppDetails(Long steamAppId, JsonNode data) {
@@ -181,6 +233,9 @@ public class SteamStoreService {
         private List<String> categories = new ArrayList<>();
         private Integer metacriticScore;
         private Integer recommendationsTotal;
+        private Integer totalPositiveReviews;
+        private Integer totalNegativeReviews;
+        private Double popularityScore;
         private String type;
         private String releaseDate;
         private boolean comingSoon;
@@ -212,6 +267,15 @@ public class SteamStoreService {
         
         public Integer getRecommendationsTotal() { return recommendationsTotal; }
         public void setRecommendationsTotal(Integer recommendationsTotal) { this.recommendationsTotal = recommendationsTotal; }
+        
+        public Integer getTotalPositiveReviews() { return totalPositiveReviews; }
+        public void setTotalPositiveReviews(Integer totalPositiveReviews) { this.totalPositiveReviews = totalPositiveReviews; }
+        
+        public Integer getTotalNegativeReviews() { return totalNegativeReviews; }
+        public void setTotalNegativeReviews(Integer totalNegativeReviews) { this.totalNegativeReviews = totalNegativeReviews; }
+        
+        public Double getPopularityScore() { return popularityScore; }
+        public void setPopularityScore(Double popularityScore) { this.popularityScore = popularityScore; }
         
         public String getType() { return type; }
         public void setType(String type) { this.type = type; }

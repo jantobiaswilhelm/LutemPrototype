@@ -89,6 +89,22 @@ export interface GameStats {
   aiConfigured: boolean;
 }
 
+// AI Import Types
+export interface AiImportResult {
+  total: number;
+  successCount: number;
+  failedCount: number;
+  createdGames: AiCreatedGame[];
+  failedGames: Record<number, string>;
+  message: string;
+}
+
+export interface AiCreatedGame {
+  steamAppId: number;
+  name: string;
+  lutemGameId: number;
+}
+
 // Helper to format playtime
 export function formatPlaytime(minutes?: number): string {
   if (!minutes || minutes === 0) return 'Never played';
