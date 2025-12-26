@@ -24,8 +24,8 @@ interface SteamState {
   
   // Actions
   checkStatus: () => Promise<boolean>;
-  importLibrary: (steamId: string, firebaseUid: string) => Promise<SteamImportResponse>;
-  fetchLibrary: (firebaseUid: string) => Promise<void>;
+  importLibrary: (steamId?: string) => Promise<SteamImportResponse>;
+  fetchLibrary: () => Promise<void>;
   fetchGameStats: () => Promise<GameStats>;
   tagPendingGames: (gameIds?: number[]) => Promise<TaggingResult>;
   disconnect: () => void;
@@ -60,18 +60,22 @@ export const useSteamStore = create<SteamState>()(
         }
       },
 
-      importLibrary: async (steamId: string, firebaseUid: string) => {
+      /**
+       * Import Steam library
+       * @param steamId - Optional for Google-auth users; Steam-auth users don't need this
+       */
+      importLibrary: async (steamId?: string) => {
         set({ isLoading: true, error: null });
         try {
-          const result = await steamApi.importLibrary(steamId, firebaseUid);
+          const result = await steamApi.importLibrary(steamId);
           set({ 
             lastImport: result,
-            steamId: steamId,
+            steamId: steamId || null,
             isConnected: true,
             isLoading: false,
           });
           // Fetch updated library and stats after import
-          await get().fetchLibrary(firebaseUid);
+          await get().fetchLibrary();
           await get().fetchGameStats();
           return result;
         } catch (error) {
@@ -81,10 +85,10 @@ export const useSteamStore = create<SteamState>()(
         }
       },
 
-      fetchLibrary: async (firebaseUid: string) => {
+      fetchLibrary: async () => {
         set({ isLoading: true, error: null });
         try {
-          const library = await steamApi.getLibrary(firebaseUid);
+          const library = await steamApi.getLibrary();
           set({ 
             library,
             isConnected: library.summary.steamGames > 0,
