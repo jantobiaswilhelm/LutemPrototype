@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lutem.mvp.dto.SteamImportResponse;
 import com.lutem.mvp.dto.SteamImportResponse.*;
 import com.lutem.mvp.model.Game;
+import com.lutem.mvp.model.TaggingSource;
 import com.lutem.mvp.model.User;
 import com.lutem.mvp.model.UserLibrary;
 import com.lutem.mvp.model.UserLibrary.LibrarySource;
@@ -235,6 +236,7 @@ public class SteamService {
     
     /**
      * Internal method to import Steam library for a user.
+     * Phase S-Import: Now creates Game entities for ALL Steam games (matched and unmatched).
      */
     private SteamImportResponse doImportSteamLibrary(String steamId64, User user) {
         
@@ -251,23 +253,24 @@ public class SteamService {
             .map(SteamGame::getAppId)
             .collect(Collectors.toList());
         
-        // Find matching games in Lutem database
-        List<Game> matchedLutemGames = gameRepository.findBySteamAppIdIn(steamAppIds);
+        // Find matching games in Lutem database (both curated and previously imported)
+        List<Game> existingLutemGames = gameRepository.findBySteamAppIdIn(steamAppIds);
         
         // Create lookup map for quick matching
-        Map<Long, Game> lutemGamesByAppId = matchedLutemGames.stream()
+        Map<Long, Game> lutemGamesByAppId = existingLutemGames.stream()
             .collect(Collectors.toMap(Game::getSteamAppId, g -> g));
         
-        // Separate matched and unmatched
+        // Separate matched and unmatched, track newly created
         List<MatchedGame> matched = new ArrayList<>();
         List<UnmatchedGame> unmatched = new ArrayList<>();
         int alreadyInLibrary = 0;
+        int newlyCreated = 0;
         
         for (SteamGame steamGame : steamGames) {
             Game lutemGame = lutemGamesByAppId.get(steamGame.getAppId());
             
             if (lutemGame != null) {
-                // Check if already in user's library
+                // Game already exists in Lutem database (curated or previously imported)
                 boolean exists = userLibraryRepository
                     .existsByUserIdAndGameId(user.getId(), lutemGame.getId());
                 
@@ -291,6 +294,67 @@ public class SteamService {
                     steamGame.getPlaytime2Weeks()
                 ));
             } else {
+                // Phase S-Import: Create new Game entity for unmatched Steam games
+                // Check one more time it doesn't exist (race condition protection)
+                if (!gameRepository.existsBySteamAppId(steamGame.getAppId())) {
+                    Game newGame = new Game();
+                    newGame.setName(steamGame.getName());
+                    newGame.setSteamAppId(steamGame.getAppId());
+                    newGame.setImageUrl("https://cdn.cloudflare.steamstatic.com/steam/apps/" 
+                        + steamGame.getAppId() + "/header.jpg");
+                    newGame.setStoreUrl("https://store.steampowered.com/app/" 
+                        + steamGame.getAppId());
+                    newGame.setTaggingSource(TaggingSource.PENDING);
+                    newGame.setSteamPlaytimeForever(steamGame.getPlaytimeForever());
+                    // Leave all Lutem attributes (emotionalGoals, interruptibility, etc.) as null/empty
+                    
+                    newGame = gameRepository.save(newGame);
+                    newlyCreated++;
+                    
+                    // Create UserLibrary entry linking user to the new game
+                    UserLibrary libraryEntry = new UserLibrary(
+                        user, newGame, steamGame.getAppId(),
+                        steamGame.getPlaytimeForever(), steamGame.getPlaytime2Weeks()
+                    );
+                    userLibraryRepository.save(libraryEntry);
+                    
+                    // Add to matched list since it's now in the database
+                    matched.add(new MatchedGame(
+                        steamGame.getAppId(),
+                        steamGame.getName(),
+                        newGame.getId(),
+                        newGame.getImageUrl(),
+                        steamGame.getPlaytimeForever(),
+                        steamGame.getPlaytime2Weeks()
+                    ));
+                    
+                    logger.debug("Created new PENDING game: {} (Steam App ID: {})", 
+                        steamGame.getName(), steamGame.getAppId());
+                } else {
+                    // Game was created by another concurrent request, fetch and link
+                    Game existingGame = gameRepository.findBySteamAppId(steamGame.getAppId()).orElse(null);
+                    if (existingGame != null) {
+                        boolean exists = userLibraryRepository
+                            .existsByUserIdAndGameId(user.getId(), existingGame.getId());
+                        if (!exists) {
+                            UserLibrary libraryEntry = new UserLibrary(
+                                user, existingGame, steamGame.getAppId(),
+                                steamGame.getPlaytimeForever(), steamGame.getPlaytime2Weeks()
+                            );
+                            userLibraryRepository.save(libraryEntry);
+                        }
+                        matched.add(new MatchedGame(
+                            steamGame.getAppId(),
+                            steamGame.getName(),
+                            existingGame.getId(),
+                            existingGame.getImageUrl(),
+                            steamGame.getPlaytimeForever(),
+                            steamGame.getPlaytime2Weeks()
+                        ));
+                    }
+                }
+                
+                // Still track in unmatched for response (shows which games need AI tagging)
                 unmatched.add(new UnmatchedGame(
                     steamGame.getAppId(),
                     steamGame.getName(),
@@ -312,13 +376,24 @@ public class SteamService {
             steamGames.size(),
             matched.size(),
             unmatched.size(),
-            alreadyInLibrary
+            alreadyInLibrary,
+            newlyCreated
         );
         
-        logger.info("Steam import for user {}: {} total, {} matched, {} unmatched, {} already in library",
-            user.getId(), stats.getTotal(), stats.getMatched(), stats.getUnmatched(), stats.getAlreadyInLibrary());
+        logger.info("Steam import for user {}: {} total, {} matched, {} unmatched, {} already in library, {} newly created",
+            user.getId(), stats.getTotal(), stats.getMatched(), stats.getUnmatched(), 
+            stats.getAlreadyInLibrary(), stats.getNewlyCreated());
         
-        return new SteamImportResponse(matched, unmatched, stats, steamId64);
+        SteamImportResponse response = new SteamImportResponse(matched, unmatched, stats, steamId64);
+        
+        // Update message to reflect newly imported games
+        if (newlyCreated > 0) {
+            response.setMessage(String.format(
+                "Imported %d games! %d matched with Lutem database, %d new games imported (pending AI tagging).",
+                stats.getTotal(), stats.getMatched() - newlyCreated, newlyCreated));
+        }
+        
+        return response;
     }
     
     /**

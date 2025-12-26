@@ -21,6 +21,14 @@ export type TimeOfDay =
 
 export type SocialPreference = 'SOLO' | 'COOP' | 'COMPETITIVE' | 'BOTH';
 
+// New attributes from AI tagging system
+export type AudioDependency = 'REQUIRED' | 'HELPFUL' | 'OPTIONAL';
+export type ContentRating = 'EVERYONE' | 'TEEN' | 'MATURE' | 'ADULT';
+export type NsfwLevel = 'NONE' | 'SUGGESTIVE' | 'EXPLICIT';
+
+// User's audio availability (for wizard - contextual per session)
+export type AudioAvailability = 'full' | 'low' | 'muted';
+
 // Display data for enums
 export const EMOTIONAL_GOALS: Record<EmotionalGoal, { displayName: string; emoji: string; description: string }> = {
   UNWIND: { displayName: 'Unwind and relax', emoji: '😌', description: 'Low stress, calming, meditative' },
@@ -59,6 +67,32 @@ export const SOCIAL_PREFERENCES: Record<SocialPreference, { displayName: string;
   BOTH: { displayName: 'Either', description: 'Supports both solo and multiplayer', emoji: '🎮' },
 };
 
+// Display data for new attributes
+export const AUDIO_DEPENDENCY: Record<AudioDependency, { displayName: string; emoji: string; description: string }> = {
+  REQUIRED: { displayName: 'Sound Required', emoji: '🔊', description: 'Audio cues essential for gameplay' },
+  HELPFUL: { displayName: 'Sound Helpful', emoji: '🔉', description: 'Better with sound but playable muted' },
+  OPTIONAL: { displayName: 'Sound Optional', emoji: '🔇', description: 'Fully playable without sound' },
+};
+
+export const CONTENT_RATING: Record<ContentRating, { displayName: string; emoji: string; description: string }> = {
+  EVERYONE: { displayName: 'Everyone', emoji: '👨‍👩‍👧‍👦', description: 'Suitable for all ages' },
+  TEEN: { displayName: 'Teen', emoji: '🧑', description: 'Mild violence, some language' },
+  MATURE: { displayName: 'Mature', emoji: '🔞', description: 'Violence, strong language, mature themes' },
+  ADULT: { displayName: 'Adult Only', emoji: '⛔', description: 'Intense violence, explicit content' },
+};
+
+export const NSFW_LEVEL: Record<NsfwLevel, { displayName: string; emoji: string; description: string }> = {
+  NONE: { displayName: 'None', emoji: '✅', description: 'No sexual content' },
+  SUGGESTIVE: { displayName: 'Suggestive', emoji: '💋', description: 'Revealing outfits, innuendo' },
+  EXPLICIT: { displayName: 'Explicit', emoji: '🔥', description: 'Sexual content' },
+};
+
+export const AUDIO_AVAILABILITY: Record<AudioAvailability, { displayName: string; emoji: string; description: string }> = {
+  full: { displayName: 'Yes, full volume', emoji: '🔊', description: 'Can use headphones or speakers' },
+  low: { displayName: 'Quiet only', emoji: '🔉', description: 'Low volume or background audio' },
+  muted: { displayName: 'No sound', emoji: '🔇', description: 'Completely muted' },
+};
+
 // Game type - matching backend Game entity
 export interface Game {
   id: number;
@@ -82,6 +116,10 @@ export interface Game {
   taggingSource?: 'MANUAL' | 'AI_GENERATED' | 'USER_ADJUSTED' | 'PENDING';
   taggingConfidence?: number;
   rawgId?: number;
+  // New AI tagging attributes
+  audioDependency?: AudioDependency;
+  contentRating?: ContentRating;
+  nsfwLevel?: NsfwLevel;
 }
 
 
@@ -95,6 +133,10 @@ export interface RecommendationRequest {
   timeOfDay?: TimeOfDay;
   preferredGenres?: string[];
   userId?: string;
+  // New filter parameters
+  audioAvailability?: AudioAvailability;
+  maxContentRating?: ContentRating;
+  allowNsfw?: boolean;
 }
 
 // Recommendation response - matching backend

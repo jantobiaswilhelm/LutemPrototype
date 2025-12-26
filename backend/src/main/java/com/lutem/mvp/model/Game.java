@@ -30,6 +30,15 @@ public class Game {
     @Enumerated(EnumType.STRING)
     private EnergyLevel energyRequired;
     
+    @Enumerated(EnumType.STRING)
+    private AudioDependency audioDependency;
+    
+    @Enumerated(EnumType.STRING)
+    private ContentRating contentRating;
+    
+    @Enumerated(EnumType.STRING)
+    private NsfwLevel nsfwLevel;
+    
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "game_time_of_day", joinColumns = @JoinColumn(name = "game_id"))
     @Enumerated(EnumType.STRING)
@@ -154,6 +163,21 @@ public class Game {
     public EnergyLevel getEnergyRequired() { return energyRequired; }
     public void setEnergyRequired(EnergyLevel energyRequired) { 
         this.energyRequired = energyRequired; 
+    }
+
+    public AudioDependency getAudioDependency() { return audioDependency; }
+    public void setAudioDependency(AudioDependency audioDependency) { 
+        this.audioDependency = audioDependency; 
+    }
+
+    public ContentRating getContentRating() { return contentRating; }
+    public void setContentRating(ContentRating contentRating) { 
+        this.contentRating = contentRating; 
+    }
+
+    public NsfwLevel getNsfwLevel() { return nsfwLevel; }
+    public void setNsfwLevel(NsfwLevel nsfwLevel) { 
+        this.nsfwLevel = nsfwLevel; 
     }
 
     public List<TimeOfDay> getBestTimeOfDay() { return bestTimeOfDay; }

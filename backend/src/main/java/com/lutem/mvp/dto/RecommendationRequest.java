@@ -1,5 +1,6 @@
 package com.lutem.mvp.dto;
 
+import com.lutem.mvp.model.ContentRating;
 import com.lutem.mvp.model.EmotionalGoal;
 import com.lutem.mvp.model.EnergyLevel;
 import com.lutem.mvp.model.Interruptibility;
@@ -16,6 +17,11 @@ public class RecommendationRequest {
     private EnergyLevel currentEnergyLevel;
     private TimeOfDay timeOfDay;
     private SocialPreference socialPreference;
+    
+    // Audio/Content filtering (new)
+    private String audioAvailability;  // 'full', 'low', 'muted'
+    private ContentRating maxContentRating;
+    private Boolean allowNsfw;
     
     // Genre preferences (optional)
     private List<String> preferredGenres;
@@ -89,6 +95,20 @@ public class RecommendationRequest {
     
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+    
+    // Audio/Content filtering getters and setters
+    public String getAudioAvailability() { return audioAvailability; }
+    public void setAudioAvailability(String audioAvailability) { 
+        this.audioAvailability = audioAvailability; 
+    }
+    
+    public ContentRating getMaxContentRating() { return maxContentRating; }
+    public void setMaxContentRating(ContentRating maxContentRating) { 
+        this.maxContentRating = maxContentRating; 
+    }
+    
+    public Boolean getAllowNsfw() { return allowNsfw; }
+    public void setAllowNsfw(Boolean allowNsfw) { this.allowNsfw = allowNsfw; }
     
     // Helper method for backward compatibility - gets first emotional goal
     public String getDesiredMood() {

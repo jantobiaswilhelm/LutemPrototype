@@ -7,9 +7,10 @@ import MoodStep from './MoodStep';
 import EnergyStep from './EnergyStep';
 import InterruptionStep from './InterruptionStep';
 import SocialStep from './SocialStep';
+import AudioStep from './AudioStep';
 import ResultStep from './ResultStep';
 
-const STEPS = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'result'] as const;
+const STEPS = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'audio', 'result'] as const;
 
 export default function WizardModal() {
   const { isOpen, closeWizard, resetWizard, currentStep } = useWizardStore();
@@ -61,6 +62,8 @@ export default function WizardModal() {
         return <InterruptionStep />;
       case 'social':
         return <SocialStep />;
+      case 'audio':
+        return <AudioStep />;
       case 'result':
         return <ResultStep />;
       default:

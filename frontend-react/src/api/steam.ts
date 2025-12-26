@@ -1,4 +1,4 @@
-import type { SteamStatus, SteamImportResponse, UserLibraryResponse } from '@/types/steam';
+import type { SteamStatus, SteamImportResponse, UserLibraryResponse, TaggingResult, GameStats } from '@/types/steam';
 
 // Note: Steam endpoints are at /api/steam/* on backend
 // Vite proxy forwards /api/* to backend without rewriting
@@ -49,5 +49,30 @@ export const steamApi = {
       headers: {
         'X-Firebase-UID': firebaseUid,
       },
+    }),
+};
+
+export const gamesApi = {
+  /**
+   * Get game statistics (pending, tagged, etc.)
+   */
+  getStats: () => fetchSteamApi<GameStats>('/admin/games/stats'),
+
+  /**
+   * Trigger AI tagging for pending games
+   * @param gameIds - Specific game IDs to tag, or undefined to tag all pending
+   */
+  tagPending: (gameIds?: number[]) =>
+    fetchSteamApi<TaggingResult>('/admin/games/tag', {
+      method: 'POST',
+      body: JSON.stringify(gameIds ? { gameIds } : { all: true }),
+    }),
+
+  /**
+   * Tag a single game
+   */
+  tagGame: (gameId: number) =>
+    fetchSteamApi<TaggingResult>(`/admin/games/${gameId}/tag`, {
+      method: 'POST',
     }),
 };

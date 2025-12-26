@@ -107,6 +107,7 @@ public class SteamImportResponse {
         private int matched;
         private int unmatched;
         private int alreadyInLibrary;
+        private int newlyCreated; // Games created with PENDING status
         
         public ImportStats() {}
         
@@ -115,6 +116,15 @@ public class SteamImportResponse {
             this.matched = matched;
             this.unmatched = unmatched;
             this.alreadyInLibrary = alreadyInLibrary;
+            this.newlyCreated = 0;
+        }
+        
+        public ImportStats(int total, int matched, int unmatched, int alreadyInLibrary, int newlyCreated) {
+            this.total = total;
+            this.matched = matched;
+            this.unmatched = unmatched;
+            this.alreadyInLibrary = alreadyInLibrary;
+            this.newlyCreated = newlyCreated;
         }
         
         // Getters and Setters
@@ -129,6 +139,9 @@ public class SteamImportResponse {
         
         public int getAlreadyInLibrary() { return alreadyInLibrary; }
         public void setAlreadyInLibrary(int alreadyInLibrary) { this.alreadyInLibrary = alreadyInLibrary; }
+        
+        public int getNewlyCreated() { return newlyCreated; }
+        public void setNewlyCreated(int newlyCreated) { this.newlyCreated = newlyCreated; }
     }
     
     // Main class Getters and Setters

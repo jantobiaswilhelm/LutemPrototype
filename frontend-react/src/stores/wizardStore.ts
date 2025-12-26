@@ -5,12 +5,13 @@ import type {
   Interruptibility,
   SocialPreference,
   RecommendationResponse,
+  AudioAvailability,
 } from '@/types';
 
 // Source determines where recommendations come from
 export type RecommendationSource = 'library' | 'all' | 'steamLink';
 
-export type WizardStep = 'source' | 'time' | 'mood' | 'energy' | 'interruption' | 'social' | 'result';
+export type WizardStep = 'source' | 'time' | 'mood' | 'energy' | 'interruption' | 'social' | 'audio' | 'result';
 
 interface WizardState {
   // Current step
@@ -27,6 +28,7 @@ interface WizardState {
   energyLevel: EnergyLevel | null;
   interruptibility: Interruptibility | null;
   socialPreference: SocialPreference | null;
+  audioAvailability: AudioAvailability | null;
 
   // Result
   recommendation: RecommendationResponse | null;
@@ -49,6 +51,7 @@ interface WizardState {
   setEnergyLevel: (level: EnergyLevel) => void;
   setInterruptibility: (level: Interruptibility) => void;
   setSocialPreference: (pref: SocialPreference) => void;
+  setAudioAvailability: (level: AudioAvailability) => void;
 
   // Result actions
   setRecommendation: (rec: RecommendationResponse) => void;
@@ -56,7 +59,7 @@ interface WizardState {
   setError: (error: string | null) => void;
 }
 
-const STEP_ORDER: WizardStep[] = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'result'];
+const STEP_ORDER: WizardStep[] = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'audio', 'result'];
 
 const initialState = {
   currentStep: 'source' as WizardStep,
@@ -68,6 +71,7 @@ const initialState = {
   energyLevel: null,
   interruptibility: null,
   socialPreference: null,
+  audioAvailability: null,
   recommendation: null,
   isLoading: false,
   error: null,
@@ -114,6 +118,7 @@ export const useWizardStore = create<WizardState>((set, get) => ({
   setEnergyLevel: (level) => set({ energyLevel: level }),
   setInterruptibility: (level) => set({ interruptibility: level }),
   setSocialPreference: (pref) => set({ socialPreference: pref }),
+  setAudioAvailability: (level) => set({ audioAvailability: level }),
 
   setRecommendation: (rec) => set({ recommendation: rec }),
   setLoading: (loading) => set({ isLoading: loading }),
