@@ -19,6 +19,7 @@ import {
 import { useSteamStore } from '@/stores/steamStore';
 import { useAuthStore } from '@/stores/authStore';
 import { SteamConnect } from '@/components/SteamConnect';
+import { AiGameImport } from '@/components/AiGameImport';
 import { LoginPrompt } from '@/components/LoginPrompt';
 import { formatPlaytime, type UserLibraryGame } from '@/types/steam';
 import { gamesApi } from '@/api/client';
@@ -357,7 +358,9 @@ function MyGamesContent() {
     error, 
     fetchLibrary,
     library,
-    checkStatus
+    checkStatus,
+    lastImport,
+    aiImportGames,
   } = useSteamStore();
 
   useEffect(() => {
@@ -494,6 +497,16 @@ function MyGamesContent() {
           </button>
         )}
       </div>
+
+      {/* AI Game Import - show when there are unmatched games */}
+      {lastImport?.unmatched && lastImport.unmatched.length > 0 && (
+        <div className="mb-6">
+          <AiGameImport 
+            unmatchedGames={lastImport.unmatched}
+            onImport={aiImportGames}
+          />
+        </div>
+      )}
 
       {/* Steam users - auto-connected, show import option */}
       {user?.authProvider === 'steam' && !isConnected && (

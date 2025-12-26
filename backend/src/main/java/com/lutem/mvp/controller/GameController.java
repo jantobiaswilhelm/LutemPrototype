@@ -300,6 +300,29 @@ public class GameController {
                 }
             }
         }
+        
+        // 11. POPULARITY BONUS (max 10%)
+        // Boost highly-rated community games as tiebreaker
+        // PopularityScore formula: qualityScore (0-100) + visibilityBonus (0-25)
+        // Max possible ~125, so normalize to 10% max bonus
+        if (game.getPopularityScore() != null && game.getPopularityScore() > 0) {
+            double normalizedPopularity = Math.min(game.getPopularityScore() / 125.0, 1.0);
+            double popularityBonus = normalizedPopularity * 10.0;
+            score += popularityBonus;
+            
+            // Only mention if highly rated (>90% positive)
+            if (game.getSteamPositiveReviews() != null && game.getSteamNegativeReviews() != null) {
+                int total = game.getSteamPositiveReviews() + game.getSteamNegativeReviews();
+                if (total > 100) { // Only show for games with meaningful reviews
+                    double ratio = (double) game.getSteamPositiveReviews() / total;
+                    if (ratio >= 0.95) {
+                        matchReasons.add("Overwhelmingly positive reviews");
+                    } else if (ratio >= 0.90) {
+                        matchReasons.add("Very positive community reviews");
+                    }
+                }
+            }
+        }
 
         // Build reason summary
         String reason;

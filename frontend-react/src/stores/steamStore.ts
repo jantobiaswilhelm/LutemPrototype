@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { SteamImportResponse, UserLibraryResponse, LibrarySummary, TaggingResult, GameStats } from '@/types/steam';
+import type { SteamImportResponse, UserLibraryResponse, LibrarySummary, TaggingResult, GameStats, UnmatchedGame, AiImportResult } from '@/types/steam';
 import { steamApi, gamesApi } from '@/api/steam';
 
 interface SteamState {
@@ -22,15 +22,21 @@ interface SteamState {
   taggingProgress: TaggingResult | null;
   gameStats: GameStats | null;
   
+  // AI Import state (for unmatched games)
+  isAiImporting: boolean;
+  aiImportResult: AiImportResult | null;
+  
   // Actions
   checkStatus: () => Promise<boolean>;
   importLibrary: (steamId?: string) => Promise<SteamImportResponse>;
   fetchLibrary: () => Promise<void>;
   fetchGameStats: () => Promise<GameStats>;
   tagPendingGames: (gameIds?: number[]) => Promise<TaggingResult>;
+  aiImportGames: (games: UnmatchedGame[]) => Promise<AiImportResult>;
   disconnect: () => void;
   clearError: () => void;
   clearTaggingProgress: () => void;
+  clearAiImportResult: () => void;
 }
 
 export const useSteamStore = create<SteamState>()(
@@ -47,6 +53,8 @@ export const useSteamStore = create<SteamState>()(
       isTagging: false,
       taggingProgress: null,
       gameStats: null,
+      isAiImporting: false,
+      aiImportResult: null,
 
       checkStatus: async () => {
         try {
@@ -119,12 +127,46 @@ export const useSteamStore = create<SteamState>()(
             taggingProgress: result,
             isTagging: false,
           });
-          // Refresh stats after tagging
+          // Refresh library and stats after tagging so badges update
+          await get().fetchLibrary();
           await get().fetchGameStats();
           return result;
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to tag games';
           set({ error: message, isTagging: false });
+          throw error;
+        }
+      },
+
+      aiImportGames: async (games: UnmatchedGame[]) => {
+        set({ isAiImporting: true, error: null, aiImportResult: null });
+        try {
+          const result = await gamesApi.aiImportGames(games);
+          set({ 
+            aiImportResult: result,
+            isAiImporting: false,
+          });
+          // Clear unmatched from lastImport after successful import
+          const currentLastImport = get().lastImport;
+          if (currentLastImport) {
+            set({
+              lastImport: {
+                ...currentLastImport,
+                unmatched: [],
+                stats: {
+                  ...currentLastImport.stats,
+                  unmatched: 0,
+                },
+              },
+            });
+          }
+          // Refresh library and stats
+          await get().fetchLibrary();
+          await get().fetchGameStats();
+          return result;
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Failed to import games with AI';
+          set({ error: message, isAiImporting: false });
           throw error;
         }
       },
@@ -136,12 +178,15 @@ export const useSteamStore = create<SteamState>()(
           library: null,
           lastImport: null,
           taggingProgress: null,
+          aiImportResult: null,
         });
       },
 
       clearError: () => set({ error: null }),
       
       clearTaggingProgress: () => set({ taggingProgress: null }),
+      
+      clearAiImportResult: () => set({ aiImportResult: null }),
     }),
     {
       name: 'lutem-steam',

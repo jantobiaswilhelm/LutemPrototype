@@ -1,4 +1,4 @@
-import type { SteamStatus, SteamImportResponse, UserLibraryResponse, TaggingResult, GameStats } from '@/types/steam';
+import type { SteamStatus, SteamImportResponse, UserLibraryResponse, TaggingResult, GameStats, UnmatchedGame, AiImportResult } from '@/types/steam';
 import { useAuthStore } from '@/stores/authStore';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -87,5 +87,15 @@ export const gamesApi = {
   tagGame: (gameId: number) =>
     fetchSteamApi<TaggingResult>(`/admin/games/${gameId}/tag`, {
       method: 'POST',
+    }),
+
+  /**
+   * Import unmatched games using AI
+   * Takes games that weren't found in Lutem's database and creates them with AI-generated tags
+   */
+  aiImportGames: (games: UnmatchedGame[]) =>
+    fetchSteamApi<AiImportResult>('/admin/games/ai-import', {
+      method: 'POST',
+      body: JSON.stringify({ games }),
     }),
 };

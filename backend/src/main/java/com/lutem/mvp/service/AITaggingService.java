@@ -429,6 +429,20 @@ public class AITaggingService {
             if (!storeDetails.getGenres().isEmpty() && game.getGenres().isEmpty()) {
                 game.setGenres(storeDetails.getGenres());
             }
+            
+            // Popularity data from Steam Reviews API
+            if (storeDetails.getTotalPositiveReviews() != null) {
+                game.setSteamPositiveReviews(storeDetails.getTotalPositiveReviews());
+            }
+            if (storeDetails.getTotalNegativeReviews() != null) {
+                game.setSteamNegativeReviews(storeDetails.getTotalNegativeReviews());
+            }
+            if (storeDetails.getMetacriticScore() != null) {
+                game.setMetacriticScore(storeDetails.getMetacriticScore());
+            }
+            if (storeDetails.getPopularityScore() != null) {
+                game.setPopularityScore(storeDetails.getPopularityScore());
+            }
         }
     }
 
