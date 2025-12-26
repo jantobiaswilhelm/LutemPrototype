@@ -11,7 +11,7 @@ import { persist } from 'zustand/middleware';
 import { signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 export interface LutemUser {
   id: number;
