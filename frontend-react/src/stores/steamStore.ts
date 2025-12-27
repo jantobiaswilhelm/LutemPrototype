@@ -16,6 +16,7 @@ interface SteamState {
   // Library data
   library: UserLibraryResponse | null;
   lastImport: SteamImportResponse | null;
+  pendingGames: UnmatchedGame[];  // Games in library that need AI tagging
   
   // AI Tagging state
   isTagging: boolean;
@@ -30,6 +31,7 @@ interface SteamState {
   checkStatus: () => Promise<boolean>;
   importLibrary: (steamId?: string) => Promise<SteamImportResponse>;
   fetchLibrary: () => Promise<void>;
+  fetchPendingGames: () => Promise<void>;
   fetchGameStats: () => Promise<GameStats>;
   tagPendingGames: (gameIds?: number[]) => Promise<TaggingResult>;
   aiImportGames: (games: UnmatchedGame[]) => Promise<AiImportResult>;
@@ -50,6 +52,7 @@ export const useSteamStore = create<SteamState>()(
       isConnected: false,
       library: null,
       lastImport: null,
+      pendingGames: [],
       isTagging: false,
       taggingProgress: null,
       gameStats: null,
@@ -108,6 +111,16 @@ export const useSteamStore = create<SteamState>()(
         }
       },
 
+      fetchPendingGames: async () => {
+        try {
+          const result = await steamApi.getPendingGames();
+          set({ pendingGames: result.pending });
+        } catch (error) {
+          console.error('Failed to fetch pending games:', error);
+          // Don't set error - this is a background fetch
+        }
+      },
+
       fetchGameStats: async () => {
         try {
           const stats = await gamesApi.getStats();
@@ -145,6 +158,7 @@ export const useSteamStore = create<SteamState>()(
           set({ 
             aiImportResult: result,
             isAiImporting: false,
+            pendingGames: [],  // Clear pending games after successful import
           });
           // Clear unmatched from lastImport after successful import
           const currentLastImport = get().lastImport;
@@ -177,6 +191,7 @@ export const useSteamStore = create<SteamState>()(
           isConnected: false,
           library: null,
           lastImport: null,
+          pendingGames: [],
           taggingProgress: null,
           aiImportResult: null,
         });
@@ -217,3 +232,5 @@ export const useTaggingState = () => useSteamStore((s) => ({
   taggingProgress: s.taggingProgress,
   gameStats: s.gameStats,
 }));
+
+export const usePendingGames = () => useSteamStore((s) => s.pendingGames);

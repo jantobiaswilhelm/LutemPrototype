@@ -357,20 +357,34 @@ function MyGamesContent() {
     isLoading, 
     error, 
     fetchLibrary,
+    fetchPendingGames,
+    pendingGames,
     library,
     checkStatus,
     lastImport,
     aiImportGames,
+    tagPendingGames,
+    isTagging,
+    fetchGameStats,
+    gameStats,
   } = useSteamStore();
 
   useEffect(() => {
     if (isAuthenticated) {
       checkStatus();
+      fetchGameStats();
+      fetchPendingGames();  // Fetch pending games for returning users
       if (isConnected) {
         fetchLibrary();
       }
     }
-  }, [isAuthenticated, isConnected, checkStatus, fetchLibrary]);
+  }, [isAuthenticated, isConnected, checkStatus, fetchLibrary, fetchGameStats, fetchPendingGames]);
+
+  // Count untagged games in user's library
+  const untaggedCount = useMemo(() => {
+    if (!library?.games) return 0;
+    return library.games.filter(g => !g.isTagged).length;
+  }, [library?.games]);
 
   const filteredGames = useMemo(() => {
     if (!library?.games) return [];
@@ -498,13 +512,49 @@ function MyGamesContent() {
         )}
       </div>
 
-      {/* AI Game Import - show when there are unmatched games */}
-      {lastImport?.unmatched && lastImport.unmatched.length > 0 && (
+      {/* AI Game Import - show when there are unmatched/pending games */}
+      {((lastImport?.unmatched && lastImport.unmatched.length > 0) || pendingGames.length > 0) && (
         <div className="mb-6">
           <AiGameImport 
-            unmatchedGames={lastImport.unmatched}
+            unmatchedGames={lastImport?.unmatched?.length ? lastImport.unmatched : pendingGames}
             onImport={aiImportGames}
           />
+        </div>
+      )}
+
+      {/* Pending Games Card - show when user has untagged games in library */}
+      {untaggedCount > 0 && (
+        <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-amber-500/20">
+                <Tag className="w-5 h-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="font-medium text-[var(--color-text-primary)]">
+                  {untaggedCount} games need tagging
+                </p>
+                <p className="text-sm text-[var(--color-text-muted)]">
+                  AI tagging makes games available for recommendations
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => tagPendingGames()}
+              disabled={isTagging || !gameStats?.aiConfigured}
+              className="px-4 py-2 rounded-lg bg-amber-500 text-white font-medium hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 whitespace-nowrap"
+              title={!gameStats?.aiConfigured ? 'AI tagging requires Anthropic API key on server' : ''}
+            >
+              {isTagging ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Tagging...
+                </>
+              ) : (
+                'Tag All'
+              )}
+            </button>
+          </div>
         </div>
       )}
 

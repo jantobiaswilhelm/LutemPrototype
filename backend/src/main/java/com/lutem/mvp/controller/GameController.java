@@ -375,6 +375,71 @@ public class GameController {
         response.put("message", "No sessionId or gameId provided");
         return response;
     }
+    
+    // POST /sessions/{id}/start - Records when user actually launches the game
+    @PostMapping("/sessions/{id}/start")
+    public Map<String, Object> startSession(@PathVariable("id") Long sessionId) {
+        Map<String, Object> response = new HashMap<>();
+        
+        boolean success = sessionService.startSession(sessionId).isPresent();
+        
+        if (success) {
+            System.out.println("🎮 Session started - ID: " + sessionId);
+            response.put("status", "success");
+            response.put("sessionId", sessionId);
+            response.put("message", "Session start recorded");
+        } else {
+            System.out.println("❌ Failed to start session - ID: " + sessionId + " not found");
+            response.put("status", "error");
+            response.put("message", "Session not found");
+        }
+        
+        return response;
+    }
+    
+    // POST /sessions/{id}/end - Records when user ends the session (optional, for future)
+    @PostMapping("/sessions/{id}/end")
+    public Map<String, Object> endSession(@PathVariable("id") Long sessionId) {
+        Map<String, Object> response = new HashMap<>();
+        
+        boolean success = sessionService.endSession(sessionId).isPresent();
+        
+        if (success) {
+            System.out.println("🏁 Session ended - ID: " + sessionId);
+            response.put("status", "success");
+            response.put("sessionId", sessionId);
+            response.put("message", "Session end recorded");
+        } else {
+            response.put("status", "error");
+            response.put("message", "Session not found");
+        }
+        
+        return response;
+    }
+    
+    // POST /sessions/alternative/{gameId} - Creates a new session when user picks an alternative
+    @PostMapping("/sessions/alternative/{gameId}")
+    public Map<String, Object> createAlternativeSession(@PathVariable("gameId") Long gameId) {
+        Map<String, Object> response = new HashMap<>();
+        
+        Optional<Game> gameOpt = gameRepository.findById(gameId);
+        if (gameOpt.isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Game not found");
+            return response;
+        }
+        
+        GameSession session = sessionService.createAlternativeSession(gameOpt.get());
+        System.out.println("🔀 Alternative session created - Game: " + gameOpt.get().getName() + 
+                           ", Session ID: " + session.getId());
+        
+        response.put("status", "success");
+        response.put("sessionId", session.getId());
+        response.put("gameName", gameOpt.get().getName());
+        response.put("message", "Alternative session created and started");
+        
+        return response;
+    }
 
     // Helper method to get average satisfaction from both database and memory
     private double getAverageSatisfaction(Long gameId) {

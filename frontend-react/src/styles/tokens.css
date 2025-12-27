@@ -31,8 +31,9 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   
-  /* Transitions */
-  --transition-fast: 150ms ease-out;
-  --transition-base: 200ms ease-out;
-  --transition-slow: 300ms ease-out;
+  /* Transitions - soft, cozy easing */
+  --ease-cozy: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 150ms var(--ease-cozy);
+  --transition-base: 250ms var(--ease-cozy);
+  --transition-slow: 350ms var(--ease-cozy);
 }

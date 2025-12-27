@@ -66,6 +66,18 @@ public class UserLibraryService {
             .collect(Collectors.toList());
     }
     
+    /**
+     * Get pending (untagged) games in user's library.
+     * These are games imported from Steam that haven't been AI-tagged yet.
+     */
+    @Transactional(readOnly = true)
+    public List<UserLibraryGameDTO> getPendingGamesByUserId(Long userId) {
+        List<UserLibrary> entries = userLibraryRepository.findPendingGamesByUserId(userId);
+        return entries.stream()
+            .map(UserLibraryGameDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
+    
     // =====================================================
     // Legacy methods using firebaseUid (for backwards compatibility)
     // =====================================================
