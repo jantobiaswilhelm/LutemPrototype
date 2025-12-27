@@ -14,7 +14,7 @@ import type { UnmatchedGame } from '@/types/steam';
 
 interface AiGameImportProps {
   unmatchedGames: UnmatchedGame[];
-  onImport: (games: UnmatchedGame[]) => Promise<void>;
+  onImport: (games: UnmatchedGame[]) => Promise<unknown>;
 }
 
 // The donation unlock code - in a real app this would be validated server-side
