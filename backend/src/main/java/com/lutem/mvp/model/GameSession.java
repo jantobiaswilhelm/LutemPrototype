@@ -34,6 +34,13 @@ public class GameSession {
     @Column(name = "recommended_at", nullable = false)
     private LocalDateTime recommendedAt;
     
+    // Session lifecycle timestamps
+    @Column(name = "started_at")
+    private LocalDateTime startedAt; // When user clicked "Start Session"
+    
+    @Column(name = "ended_at")
+    private LocalDateTime endedAt; // When session was marked complete (optional)
+    
     // Feedback (null until user rates)
     @Column(name = "satisfaction_score")
     private Integer satisfactionScore; // 1-5
@@ -104,8 +111,22 @@ public class GameSession {
         this.feedbackAt = feedbackAt; 
     }
     
+    public LocalDateTime getStartedAt() { return startedAt; }
+    public void setStartedAt(LocalDateTime startedAt) { 
+        this.startedAt = startedAt; 
+    }
+    
+    public LocalDateTime getEndedAt() { return endedAt; }
+    public void setEndedAt(LocalDateTime endedAt) { 
+        this.endedAt = endedAt; 
+    }
+    
     // Helper method
     public boolean hasFeedback() {
         return satisfactionScore != null;
+    }
+    
+    public boolean wasStarted() {
+        return startedAt != null;
     }
 }

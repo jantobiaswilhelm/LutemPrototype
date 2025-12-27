@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -142,6 +143,49 @@ public class SteamController {
             return ResponseEntity.ok(Map.of(
                 "summary", summary,
                 "games", games
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Bad request",
+                "message", e.getMessage()
+            ));
+        }
+    }
+    
+    /**
+     * Get pending (untagged) games in user's library.
+     * These are Steam games that were imported but not yet AI-tagged.
+     * Used to show the AI Import button for returning users.
+     */
+    @GetMapping("/library/pending")
+    public ResponseEntity<?> getPendingGames(HttpServletRequest httpRequest) {
+        Long userId = (Long) httpRequest.getAttribute("userId");
+        
+        if (userId == null) {
+            return ResponseEntity.status(401).body(Map.of(
+                "error", "Unauthorized",
+                "message", "Authentication required"
+            ));
+        }
+        
+        try {
+            List<UserLibraryGameDTO> pendingGames = userLibraryService.getPendingGamesByUserId(userId);
+            
+            // Convert to UnmatchedGame format for frontend compatibility
+            List<Map<String, Object>> unmatched = new ArrayList<>();
+            for (UserLibraryGameDTO game : pendingGames) {
+                unmatched.add(Map.of(
+                    "appId", game.getSteamAppId() != null ? game.getSteamAppId() : 0,
+                    "name", game.getGameName(),
+                    "playtimeForever", game.getPlaytimeForever() != null ? game.getPlaytimeForever() : 0,
+                    "playtimeRecent", 0,
+                    "iconUrl", game.getImageUrl() != null ? game.getImageUrl() : ""
+                ));
+            }
+            
+            return ResponseEntity.ok(Map.of(
+                "pending", unmatched,
+                "count", unmatched.size()
             ));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of(

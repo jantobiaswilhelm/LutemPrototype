@@ -34,7 +34,7 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
       setIsUnlocked(true);
       setCodeError('');
     } else {
-      setCodeError('Invalid code. Please check your donation confirmation.');
+      setCodeError("Hmm, that doesn't look right. Check your Ko-fi confirmation email!");
     }
   };
 
@@ -59,9 +59,9 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
         <div className="flex items-center gap-3">
           <CheckCircle className="w-5 h-5 text-green-500" />
           <div>
-            <p className="font-medium text-green-600">Games queued for AI import!</p>
+            <p className="font-medium text-green-600">You're all set! 🎮</p>
             <p className="text-sm text-green-600/80">
-              Your games are being processed. This may take a few minutes.
+              Your games are being analyzed by AI. Give it a few minutes and they'll be ready for recommendations.
             </p>
           </div>
         </div>
@@ -81,10 +81,10 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
         </div>
         <div className="flex-1">
           <p className="font-medium text-[var(--color-text-primary)]">
-            {unmatchedGames.length} games not in Lutem yet
+            {unmatchedGames.length} games waiting to be added
           </p>
           <p className="text-sm text-[var(--color-text-muted)]">
-            Use AI to add them to our database
+            Let AI analyze and add them for you
           </p>
         </div>
         <div className={`transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
@@ -110,12 +110,12 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
                   </div>
                   <div className="flex-1">
                     <h4 className="font-medium text-[var(--color-text-primary)] mb-1">
-                      Support Lutem's Development
+                      Help Keep Lutem Growing
                     </h4>
                     <p className="text-sm text-[var(--color-text-muted)] mb-3">
-                      Adding games with AI costs us money (API tokens aren't free!). 
-                      To keep Lutem running, we ask for a small donation to unlock this feature.
-                      You'll receive a code after donating.
+                      Hey! I'm building Lutem as a solo project to help gamers like you find the perfect game for any moment. 
+                      Adding your games uses AI which has real costs — a small donation helps cover this and keeps Lutem free for everyone. 
+                      You'll get an unlock code right after. Thank you! 💚
                     </p>
                     <a
                       href="https://ko-fi.com/lutem"
@@ -124,17 +124,16 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FF5E5B] text-white font-medium hover:bg-[#ff4744] transition-colors"
                     >
                       <Coffee className="w-4 h-4" />
-                      Support on Ko-fi
+                      Buy me a coffee
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   </div>
                 </div>
               </div>
 
-              {/* Code input */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-[var(--color-text-secondary)]">
-                  Already donated? Enter your code:
+                  Got your code? Pop it in here:
                 </label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
@@ -146,7 +145,7 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
                         setUnlockCode(e.target.value.toUpperCase());
                         setCodeError('');
                       }}
-                      placeholder="Enter unlock code"
+                      placeholder="e.g. ABC123"
                       className="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors uppercase tracking-wider"
                     />
                   </div>
@@ -171,14 +170,14 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
               <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30 flex items-center gap-2">
                 <Unlock className="w-4 h-4 text-green-500" />
                 <span className="text-sm text-green-600 font-medium">
-                  AI Import unlocked! Thank you for supporting Lutem ❤️
+                  Unlocked! Thanks for the support, you're awesome 💚
                 </span>
               </div>
 
               {/* Games preview */}
               <div className="max-h-40 overflow-y-auto rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] p-3 space-y-2">
                 <p className="text-xs text-[var(--color-text-muted)] sticky top-0 bg-[var(--color-bg-secondary)] pb-1">
-                  Games to import:
+                  Here's what we'll add:
                 </p>
                 {unmatchedGames.slice(0, 10).map((game) => (
                   <div key={game.steamAppId} className="text-sm text-[var(--color-text-primary)]">
@@ -186,8 +185,8 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
                   </div>
                 ))}
                 {unmatchedGames.length > 10 && (
-                  <p className="text-xs text-[var(--color-text-muted)]">
-                    ...and {unmatchedGames.length - 10} more
+                  <p className="text-xs text-[var(--color-text-muted)] pt-1">
+                    + {unmatchedGames.length - 10} more games
                   </p>
                 )}
               </div>
@@ -201,12 +200,12 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
                 {isImporting ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Importing {unmatchedGames.length} games...
+                    Adding your games...
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4" />
-                    Import {unmatchedGames.length} Games with AI
+                    Add {unmatchedGames.length} Games to Lutem
                   </>
                 )}
               </button>

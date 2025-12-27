@@ -2,22 +2,105 @@ import { Coffee, Moon, Sun, RefreshCw, ChevronDown, ChevronUp, AlertCircle, Spar
 import { useThemeStore } from '@/stores/themeStore';
 import { useWizardStore } from '@/stores/wizardStore';
 import { useRecommendationStore } from '@/stores/recommendationStore';
+import { useAuthStore } from '@/stores/authStore';
 import { GameCard, AlternativeCard } from '@/components/GameCard';
 import { MoodShortcuts } from '@/components/MoodShortcuts';
 import { InlineWizard } from '@/components/wizard';
+import type { Game } from '@/types';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 // Get greeting based on time of day
-function getGreeting(): string {
+function getGreeting(name?: string): string {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  if (hour < 21) return 'Good evening';
-  return 'Late night gaming?';
+  let timeGreeting: string;
+  
+  if (hour < 12) timeGreeting = 'Good morning';
+  else if (hour < 17) timeGreeting = 'Good afternoon';
+  else if (hour < 21) timeGreeting = 'Good evening';
+  else timeGreeting = 'Late night gaming?';
+  
+  // Add name if available (use first name only for friendliness)
+  if (name) {
+    const firstName = name.split(' ')[0];
+    return `${timeGreeting}, ${firstName}`;
+  }
+  
+  return timeGreeting;
+}
+
+// Record session start in backend
+async function recordSessionStart(sessionId: number): Promise<void> {
+  try {
+    await fetch(`${API_BASE}/sessions/${sessionId}/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    console.log(`📊 Session start recorded (ID: ${sessionId})`);
+  } catch (err) {
+    console.error('Failed to record session start:', err);
+  }
+}
+
+// Create session for alternative game selection
+async function createAlternativeSession(gameId: number): Promise<number | null> {
+  try {
+    const res = await fetch(`${API_BASE}/sessions/alternative/${gameId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await res.json();
+    if (data.status === 'success') {
+      console.log(`🔀 Alternative session created (ID: ${data.sessionId})`);
+      return data.sessionId;
+    }
+    return null;
+  } catch (err) {
+    console.error('Failed to create alternative session:', err);
+    return null;
+  }
+}
+
+// Launch a game via Steam protocol or store URL
+async function launchGame(game: Game, sessionId?: number): Promise<void> {
+  // Record the session start (fire and forget)
+  if (sessionId) {
+    recordSessionStart(sessionId);
+  }
+  
+  if (game.steamAppId) {
+    // Steam protocol - opens Steam and launches the game
+    window.open(`steam://run/${game.steamAppId}`, '_self');
+    console.log(`🎮 Launching ${game.name} via Steam (appId: ${game.steamAppId})`);
+  } else if (game.storeUrl) {
+    // Fallback to store page
+    window.open(game.storeUrl, '_blank');
+    console.log(`🔗 Opening store page for ${game.name}`);
+  } else {
+    // No launch option available
+    console.log(`⚠️ No launch method available for ${game.name}`);
+  }
+}
+
+// Launch alternative game (creates new session first)
+async function launchAlternative(game: Game): Promise<void> {
+  // Create a new session for this alternative
+  await createAlternativeSession(game.id);
+  
+  // Then launch the game
+  if (game.steamAppId) {
+    window.open(`steam://run/${game.steamAppId}`, '_self');
+    console.log(`🎮 Launching alternative ${game.name} via Steam`);
+  } else if (game.storeUrl) {
+    window.open(game.storeUrl, '_blank');
+    console.log(`🔗 Opening store page for ${game.name}`);
+  }
 }
 
 export default function Home() {
   const { mode, toggleMode, theme, setTheme } = useThemeStore();
   const { isOpen, openWizard } = useWizardStore();
+  const { user } = useAuthStore();
   const { 
     currentRecommendation, 
     showAlternatives, 
@@ -25,7 +108,7 @@ export default function Home() {
     error,
   } = useRecommendationStore();
 
-  const greeting = getGreeting();
+  const greeting = getGreeting(user?.displayName);
   const primaryGame = currentRecommendation?.topRecommendation;
   const alternatives = currentRecommendation?.alternatives || [];
   const hasRecommendation = !!primaryGame;
@@ -102,9 +185,7 @@ export default function Home() {
               <GameCard 
                 game={primaryGame} 
                 reason={currentRecommendation?.reason}
-                onStart={() => {
-                  console.log('Starting session with:', primaryGame.name);
-                }}
+                onStart={() => launchGame(primaryGame, currentRecommendation?.sessionId)}
               />
 
               {/* Action buttons */}
@@ -144,9 +225,7 @@ export default function Home() {
                     <AlternativeCard 
                       key={game.id} 
                       game={game}
-                      onSelect={() => {
-                        console.log('Selected alternative:', game.name);
-                      }}
+                      onSelect={() => launchAlternative(game)}
                     />
                   ))}
                 </div>

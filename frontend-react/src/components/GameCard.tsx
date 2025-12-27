@@ -1,6 +1,18 @@
-import { Clock, Zap, ChevronDown, Play } from 'lucide-react';
+import { Clock, Zap, ChevronDown, Play, ExternalLink } from 'lucide-react';
 import { EMOTIONAL_GOALS, ENERGY_LEVELS } from '@/types';
 import type { Game } from '@/types';
+
+// Determine if we can launch the game directly
+function canLaunchGame(game: Game): boolean {
+  return !!game.steamAppId || !!game.storeUrl;
+}
+
+// Get appropriate button text
+function getButtonText(game: Game): string {
+  if (game.steamAppId) return 'Launch in Steam';
+  if (game.storeUrl) return 'Open Store Page';
+  return 'Start Session';
+}
 
 interface GameCardProps {
   game: Game;
@@ -75,10 +87,21 @@ export function GameCard({ game, reason, showDetails = true, onStart }: GameCard
         {/* Start button */}
         <button 
           onClick={onStart}
-          className="w-full bg-[var(--color-accent)] text-white py-3 rounded-xl font-semibold hover:bg-[var(--color-accent-hover)] transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+          disabled={!canLaunchGame(game)}
+          className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+            canLaunchGame(game)
+              ? 'bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] active:scale-[0.98]'
+              : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)] cursor-not-allowed'
+          }`}
         >
-          <Play className="w-5 h-5" fill="currentColor" />
-          Start Session
+          {game.steamAppId ? (
+            <Play className="w-5 h-5" fill="currentColor" />
+          ) : game.storeUrl ? (
+            <ExternalLink className="w-5 h-5" />
+          ) : (
+            <Play className="w-5 h-5" fill="currentColor" />
+          )}
+          {getButtonText(game)}
         </button>
       </div>
 

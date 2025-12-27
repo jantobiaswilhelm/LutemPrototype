@@ -64,6 +64,12 @@ export const steamApi = {
    * Requires JWT authentication
    */
   getLibrary: () => fetchSteamApi<UserLibraryResponse>('/api/steam/library'),
+
+  /**
+   * Get pending (untagged) games in user's library
+   * Returns games imported from Steam that haven't been AI-tagged yet
+   */
+  getPendingGames: () => fetchSteamApi<{ pending: UnmatchedGame[]; count: number }>('/api/steam/library/pending'),
 };
 
 export const gamesApi = {

@@ -67,4 +67,12 @@ public interface UserLibraryRepository extends JpaRepository<UserLibrary, Long> 
      * Delete all library entries for a user from a specific source.
      */
     void deleteByUserIdAndSource(Long userId, LibrarySource source);
+    
+    /**
+     * Find user's library entries where the game is PENDING (not yet tagged by AI).
+     */
+    @Query("SELECT ul FROM UserLibrary ul " +
+           "WHERE ul.user.id = :userId " +
+           "AND ul.game.taggingSource = 'PENDING'")
+    List<UserLibrary> findPendingGamesByUserId(@Param("userId") Long userId);
 }

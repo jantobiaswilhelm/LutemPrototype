@@ -30,13 +30,13 @@
 }
 
 .animate-fadeIn {
-  animation: fadeIn var(--transition-base) ease-out;
+  animation: fadeIn var(--transition-base) var(--ease-cozy);
 }
 
 .animate-slideUp {
-  animation: slideUp var(--transition-base) ease-out;
+  animation: slideUp var(--transition-base) var(--ease-cozy);
 }
 
 .animate-scaleIn {
-  animation: scaleIn var(--transition-base) ease-out;
+  animation: scaleIn var(--transition-base) var(--ease-cozy);
 }
