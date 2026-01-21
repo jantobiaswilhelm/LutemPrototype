@@ -17,7 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,11 +67,14 @@ public class CalendarController {
         User currentUser = getCurrentUser(request);
 
         LocalDateTime startDate = start != null
-            ? LocalDateTime.parse(start)
+            ? parseDateTime(start)
             : LocalDateTime.now().minusDays(7);
         LocalDateTime endDate = end != null
-            ? LocalDateTime.parse(end)
+            ? parseDateTime(end)
             : LocalDateTime.now().plusDays(30);
+
+        if (startDate == null) startDate = LocalDateTime.now().minusDays(7);
+        if (endDate == null) endDate = LocalDateTime.now().plusDays(30);
 
         List<CalendarEvent> events;
 
@@ -105,12 +110,10 @@ public class CalendarController {
             return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
         }
 
-        LocalDateTime startDate = start != null
-            ? LocalDateTime.parse(start)
-            : LocalDateTime.now().minusDays(7);
-        LocalDateTime endDate = end != null
-            ? LocalDateTime.parse(end)
-            : LocalDateTime.now().plusDays(30);
+        LocalDateTime startDate = start != null ? parseDateTime(start) : LocalDateTime.now().minusDays(7);
+        LocalDateTime endDate = end != null ? parseDateTime(end) : LocalDateTime.now().plusDays(30);
+        if (startDate == null) startDate = LocalDateTime.now().minusDays(7);
+        if (endDate == null) endDate = LocalDateTime.now().plusDays(30);
 
         List<CalendarEvent> events = calendarService.getOwnEvents(currentUser, startDate, endDate);
 
@@ -516,6 +519,24 @@ public class CalendarController {
         if (dto.getGameId() != null) {
             gameRepository.findById(dto.getGameId())
                 .ifPresent(game -> dto.setGameName(game.getName()));
+        }
+    }
+
+    /**
+     * Parse ISO date string, handling both with and without Z suffix
+     */
+    private LocalDateTime parseDateTime(String dateStr) {
+        if (dateStr == null) return null;
+        try {
+            // Try parsing as Instant first (handles Z suffix)
+            if (dateStr.endsWith("Z") || dateStr.contains("+")) {
+                return Instant.parse(dateStr).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            }
+            // Fall back to LocalDateTime parsing
+            return LocalDateTime.parse(dateStr);
+        } catch (Exception e) {
+            logger.warn("Failed to parse date: {}", dateStr);
+            return null;
         }
     }
 }
