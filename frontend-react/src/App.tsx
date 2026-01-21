@@ -1,22 +1,35 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { initializeTheme } from '@/stores/themeStore';
 import { useAuthStore } from '@/stores/authStore';
 
-// Pages
-import Home from '@/pages/Home';
-import Stats from '@/pages/Stats';
-import Sessions from '@/pages/Sessions';
-import Library from '@/pages/Library';
-import Settings from '@/pages/Settings';
-import Profile from '@/pages/Profile';
-import Login from '@/pages/Login';
-import AuthCallback from '@/pages/AuthCallback';
-
-// Components
+// Components (always loaded)
 import Taskbar from '@/components/Taskbar';
 import Footer from '@/components/Footer';
+import ErrorBoundary from '@/components/ErrorBoundary';
+
+// Lazy-loaded pages for code splitting
+const Home = lazy(() => import('@/pages/Home'));
+const Stats = lazy(() => import('@/pages/Stats'));
+const Sessions = lazy(() => import('@/pages/Sessions'));
+const Library = lazy(() => import('@/pages/Library'));
+const Settings = lazy(() => import('@/pages/Settings'));
+const Profile = lazy(() => import('@/pages/Profile'));
+const Login = lazy(() => import('@/pages/Login'));
+const AuthCallback = lazy(() => import('@/pages/AuthCallback'));
+
+// Loading fallback component
+function PageLoader() {
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin" />
+        <span className="text-[var(--text-secondary)] text-sm">Loading...</span>
+      </div>
+    </div>
+  );
+}
 
 // Create query client
 const queryClient = new QueryClient({
@@ -43,23 +56,27 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AppInitializer>
-        <BrowserRouter>
-          <Taskbar />
-          <Routes>
-            {/* All routes are public - pages handle their own auth state */}
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/stats" element={<Stats />} />
-            <Route path="/sessions" element={<Sessions />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-          <Footer />
-        </BrowserRouter>
-      </AppInitializer>
+      <ErrorBoundary>
+        <AppInitializer>
+          <BrowserRouter>
+            <Taskbar />
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                {/* All routes are public - pages handle their own auth state */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/stats" element={<Stats />} />
+                <Route path="/sessions" element={<Sessions />} />
+                <Route path="/library" element={<Library />} />
+                <Route path="/profile" element={<Profile />} />
+              </Routes>
+            </Suspense>
+            <Footer />
+          </BrowserRouter>
+        </AppInitializer>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
 }

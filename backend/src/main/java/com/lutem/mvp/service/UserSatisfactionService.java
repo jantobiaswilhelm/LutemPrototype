@@ -9,6 +9,8 @@ import com.lutem.mvp.dto.WeeklySummary;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,20 +24,22 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserSatisfactionService {
-    
-    private final Firestore firestore;
-    
-    @Autowired
-    public UserSatisfactionService(Firestore firestore) {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserSatisfactionService.class);
+
+    private Firestore firestore;
+
+    @Autowired(required = false)
+    public void setFirestore(Firestore firestore) {
         this.firestore = firestore;
     }
-    
+
     /**
      * Get comprehensive satisfaction stats for a user
      */
     public SatisfactionStats getSatisfactionStats(String uid) throws ExecutionException, InterruptedException {
         if (firestore == null) {
-            System.err.println("⚠️ Firestore not available");
+            logger.warn("Firestore not available - returning empty stats");
             return createEmptyStats();
         }
         
@@ -56,7 +60,7 @@ public class UserSatisfactionService {
      */
     public WeeklySummary getWeeklySummary(String uid) throws ExecutionException, InterruptedException {
         if (firestore == null) {
-            System.err.println("⚠️ Firestore not available");
+            logger.warn("Firestore not available - returning empty weekly summary");
             return createEmptyWeeklySummary();
         }
         
