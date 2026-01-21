@@ -2,8 +2,11 @@ package com.lutem.mvp.repository;
 
 import com.lutem.mvp.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -53,4 +56,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     default boolean existsByFirebaseUid(String firebaseUid) {
         return existsByGoogleId(firebaseUid);
     }
+
+    /**
+     * Search users by display name (case-insensitive, partial match)
+     * Excludes the searching user from results
+     */
+    @Query("SELECT u FROM User u WHERE " +
+           "LOWER(u.displayName) LIKE LOWER(CONCAT('%', :query, '%')) " +
+           "AND u.id != :excludeUserId " +
+           "ORDER BY u.displayName")
+    List<User> searchByDisplayName(
+        @Param("query") String query,
+        @Param("excludeUserId") Long excludeUserId
+    );
 }

@@ -16,6 +16,8 @@ const Sessions = lazy(() => import('@/pages/Sessions'));
 const Library = lazy(() => import('@/pages/Library'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const Profile = lazy(() => import('@/pages/Profile'));
+const Friends = lazy(() => import('@/pages/Friends'));
+const Calendar = lazy(() => import('@/pages/Calendar'));
 const Login = lazy(() => import('@/pages/Login'));
 const AuthCallback = lazy(() => import('@/pages/AuthCallback'));
 
@@ -71,6 +73,8 @@ function App() {
                 <Route path="/sessions" element={<Sessions />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/friends" element={<Friends />} />
+                <Route path="/calendar" element={<Calendar />} />
               </Routes>
             </Suspense>
             <Footer />

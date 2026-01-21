@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Home, 
-  BarChart2, 
-  Calendar, 
-  User, 
-  ChevronRight, 
+import {
+  Home,
+  Calendar,
+  Clock,
+  User,
+  Users,
+  ChevronRight,
   ChevronLeft,
   Library,
   Settings,
@@ -22,9 +23,10 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { icon: <Home className="w-5 h-5" />, label: 'Home', path: '/' },
-  { icon: <BarChart2 className="w-5 h-5" />, label: 'Stats', path: '/stats' },
-  { icon: <Calendar className="w-5 h-5" />, label: 'Sessions', path: '/sessions' },
+  { icon: <Calendar className="w-5 h-5" />, label: 'Calendar', path: '/calendar' },
+  { icon: <Clock className="w-5 h-5" />, label: 'Sessions', path: '/sessions' },
   { icon: <Library className="w-5 h-5" />, label: 'Library', path: '/library' },
+  { icon: <Users className="w-5 h-5" />, label: 'Friends', path: '/friends' },
 ];
 
 const secondaryItems: NavItem[] = [
