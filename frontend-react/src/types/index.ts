@@ -180,6 +180,78 @@ export interface User {
   photoUrl?: string;
 }
 
+// Friendship types
+export type FriendshipStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'BLOCKED';
+
+export interface UserSummary {
+  id: number;
+  displayName: string;
+  avatarUrl?: string;
+  steamId?: string;
+}
+
+export interface FriendRequest {
+  id: number;
+  user: UserSummary;
+  createdAt: string;
+}
+
+export interface Friendship {
+  id: number;
+  friend: UserSummary;
+  status: FriendshipStatus;
+  createdAt: string;
+}
+
+// Calendar types
+export type EventType = 'GAME' | 'REMINDER' | 'TASK';
+export type EventVisibility = 'PRIVATE' | 'FRIENDS_ONLY' | 'PUBLIC';
+
+export interface CalendarEvent {
+  id: number;
+  title: string;
+  startTime: string;
+  endTime?: string;
+  type: EventType;
+  gameId?: number;
+  gameName?: string;
+  description?: string;
+  sourceType: string;
+  owner?: UserSummary;
+  visibility: EventVisibility;
+  maxParticipants?: number;
+  participantCount: number;
+  participants?: EventParticipant[];
+  isOwner: boolean;
+  hasJoined: boolean;
+  canJoin: boolean;
+}
+
+export interface EventParticipant {
+  id: number;
+  user: UserSummary;
+  status: 'INVITED' | 'JOINED' | 'DECLINED' | 'LEFT';
+  joinedAt?: string;
+}
+
+export interface CalendarInvitation {
+  invitationId: number;
+  event: CalendarEvent;
+  invitedBy?: UserSummary;
+  invitedAt: string;
+}
+
+export interface CreateEventRequest {
+  title: string;
+  startTime: string;
+  endTime?: string;
+  type: EventType;
+  gameId?: number;
+  description?: string;
+  visibility: EventVisibility;
+  maxParticipants?: number;
+}
+
 // Theme types
 export type Theme = 'cafe' | 'lavender' | 'earth' | 'ocean';
 export type ThemeMode = 'light' | 'dark';

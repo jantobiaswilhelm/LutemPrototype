@@ -1,4 +1,4 @@
-import type { Game, RecommendationRequest, RecommendationResponse, SessionFeedback, SessionHistory } from '@/types';
+import type { Game, RecommendationRequest, RecommendationResponse, SessionFeedback, SessionHistory, UserSummary, FriendRequest, Friendship, CalendarEvent, CalendarInvitation, CreateEventRequest, EventParticipant } from '@/types';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -11,13 +11,16 @@ const DEFAULT_RETRY_CONFIG = {
 
 // Custom error class for API errors
 export class ApiError extends Error {
-  constructor(
-    public status: number,
-    public statusText: string,
-    public body?: string
-  ) {
+  status: number;
+  statusText: string;
+  body?: string;
+
+  constructor(status: number, statusText: string, body?: string) {
     super(`API Error: ${status} ${statusText}`);
     this.name = 'ApiError';
+    this.status = status;
+    this.statusText = statusText;
+    this.body = body;
   }
 
   get isRetryable(): boolean {
@@ -133,4 +136,96 @@ export const feedbackApi = {
 export const sessionsApi = {
   getHistory: (limit = 20) =>
     fetchApi<SessionHistory[]>(`/sessions/history?limit=${limit}`),
+};
+
+// Friends API
+export const friendsApi = {
+  getFriends: () =>
+    fetchApi<UserSummary[]>('/friends'),
+
+  getIncomingRequests: () =>
+    fetchApi<FriendRequest[]>('/friends/requests/incoming'),
+
+  getOutgoingRequests: () =>
+    fetchApi<FriendRequest[]>('/friends/requests/outgoing'),
+
+  searchUsers: (query: string) =>
+    fetchApi<UserSummary[]>(`/friends/search?query=${encodeURIComponent(query)}`),
+
+  sendRequest: (userId: number) =>
+    fetchApi<Friendship>(`/friends/request/${userId}`, { method: 'POST' }),
+
+  acceptRequest: (requesterId: number) =>
+    fetchApi<Friendship>(`/friends/accept/${requesterId}`, { method: 'POST' }),
+
+  declineRequest: (requesterId: number) =>
+    fetchApi<void>(`/friends/decline/${requesterId}`, { method: 'POST' }),
+
+  removeFriend: (friendId: number) =>
+    fetchApi<void>(`/friends/${friendId}`, { method: 'DELETE' }),
+
+  cancelRequest: (addresseeId: number) =>
+    fetchApi<void>(`/friends/request/${addresseeId}`, { method: 'DELETE' }),
+};
+
+// Calendar API
+export const calendarApi = {
+  getEvents: (start?: string, end?: string, friendsOnly = false) => {
+    const params = new URLSearchParams();
+    if (start) params.set('start', start);
+    if (end) params.set('end', end);
+    if (friendsOnly) params.set('friendsOnly', 'true');
+    const query = params.toString();
+    return fetchApi<CalendarEvent[]>(`/calendar/events${query ? `?${query}` : ''}`);
+  },
+
+  getMyEvents: (start?: string, end?: string) => {
+    const params = new URLSearchParams();
+    if (start) params.set('start', start);
+    if (end) params.set('end', end);
+    const query = params.toString();
+    return fetchApi<CalendarEvent[]>(`/calendar/events/mine${query ? `?${query}` : ''}`);
+  },
+
+  getEvent: (id: number) =>
+    fetchApi<CalendarEvent>(`/calendar/events/${id}`),
+
+  createEvent: (event: CreateEventRequest) =>
+    fetchApi<CalendarEvent>('/calendar/events', {
+      method: 'POST',
+      body: JSON.stringify(event),
+    }),
+
+  updateEvent: (id: number, event: Partial<CreateEventRequest>) =>
+    fetchApi<CalendarEvent>(`/calendar/events/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(event),
+    }),
+
+  deleteEvent: (id: number) =>
+    fetchApi<void>(`/calendar/events/${id}`, { method: 'DELETE' }),
+
+  joinEvent: (id: number) =>
+    fetchApi<{ message: string; participant: EventParticipant }>(`/calendar/events/${id}/join`, {
+      method: 'POST',
+    }),
+
+  leaveEvent: (id: number) =>
+    fetchApi<{ message: string }>(`/calendar/events/${id}/leave`, { method: 'POST' }),
+
+  getParticipants: (id: number) =>
+    fetchApi<EventParticipant[]>(`/calendar/events/${id}/participants`),
+
+  getInvitations: () =>
+    fetchApi<CalendarInvitation[]>('/calendar/invitations'),
+
+  respondToInvitation: (id: number, accept: boolean) =>
+    fetchApi<{ message: string; status: string }>(`/calendar/invitations/${id}/respond?accept=${accept}`, {
+      method: 'POST',
+    }),
+
+  inviteToEvent: (eventId: number, userId: number) =>
+    fetchApi<{ message: string; invitation: EventParticipant }>(`/calendar/events/${eventId}/invite/${userId}`, {
+      method: 'POST',
+    }),
 };
