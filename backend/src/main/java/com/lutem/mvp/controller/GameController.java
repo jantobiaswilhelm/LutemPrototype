@@ -95,7 +95,7 @@ public class GameController {
 
     // POST /recommendations with multi-dimensional scoring
     @PostMapping("/recommendations")
-    @Transactional(readOnly = true)
+    @Transactional
     public RecommendationResponse getRecommendation(@Valid @RequestBody RecommendationRequest request) {
         // Backend validation
         List<String> validationErrors = validateRequest(request);
