@@ -194,12 +194,12 @@ function RequestsList() {
             {incoming.map((request: FriendRequest) => (
               <UserCard
                 key={request.id}
-                user={request.user}
+                user={request.fromUser}
                 subtitle={`Sent ${formatDate(request.createdAt)}`}
                 action={
                   <div className="flex gap-2">
                     <button
-                      onClick={() => acceptRequest.mutate(request.user.id)}
+                      onClick={() => acceptRequest.mutate(request.id)}
                       disabled={acceptRequest.isPending}
                       className="p-2 rounded-lg text-green-500 hover:bg-green-500/10 transition-colors"
                       title="Accept"
@@ -207,7 +207,7 @@ function RequestsList() {
                       <UserCheck className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => declineRequest.mutate(request.user.id)}
+                      onClick={() => declineRequest.mutate(request.id)}
                       disabled={declineRequest.isPending}
                       className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
                       title="Decline"
@@ -231,11 +231,11 @@ function RequestsList() {
             {outgoing.map((request: FriendRequest) => (
               <UserCard
                 key={request.id}
-                user={request.user}
+                user={request.toUser}
                 subtitle={`Sent ${formatDate(request.createdAt)}`}
                 action={
                   <button
-                    onClick={() => cancelRequest.mutate(request.user.id)}
+                    onClick={() => cancelRequest.mutate(request.id)}
                     disabled={cancelRequest.isPending}
                     className="px-3 py-1.5 rounded-lg text-sm text-[var(--color-text-muted)] hover:text-red-500 hover:bg-red-500/10 transition-colors"
                   >
@@ -259,7 +259,7 @@ function FindUsers() {
   const sendRequest = useSendFriendRequest();
 
   const friendIds = new Set(friends?.map((f) => f.id) || []);
-  const pendingIds = new Set(outgoing?.map((r) => r.user.id) || []);
+  const pendingIds = new Set(outgoing?.map((r) => r.toUser.id) || []);
 
   const getStatus = (userId: number): 'friend' | 'pending' | 'none' => {
     if (friendIds.has(userId)) return 'friend';

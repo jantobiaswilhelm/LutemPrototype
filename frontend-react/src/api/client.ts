@@ -144,10 +144,10 @@ export const friendsApi = {
     fetchApi<UserSummary[]>('/friends'),
 
   getIncomingRequests: () =>
-    fetchApi<FriendRequest[]>('/friends/requests/incoming'),
+    fetchApi<FriendRequest[]>('/friends/requests'),
 
   getOutgoingRequests: () =>
-    fetchApi<FriendRequest[]>('/friends/requests/outgoing'),
+    fetchApi<FriendRequest[]>('/friends/requests/sent'),
 
   searchUsers: (query: string) =>
     fetchApi<UserSummary[]>(`/friends/search?query=${encodeURIComponent(query)}`),
