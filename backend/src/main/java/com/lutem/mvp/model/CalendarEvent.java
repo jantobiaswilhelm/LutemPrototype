@@ -43,7 +43,6 @@ public class CalendarEvent {
 
     // Visibility setting for social features
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private EventVisibility visibility = EventVisibility.PRIVATE;
 
     // Maximum participants (null = unlimited, for GAME events)
@@ -108,7 +107,7 @@ public class CalendarEvent {
     public User getOwner() { return owner; }
     public void setOwner(User owner) { this.owner = owner; }
 
-    public EventVisibility getVisibility() { return visibility; }
+    public EventVisibility getVisibility() { return visibility != null ? visibility : EventVisibility.PRIVATE; }
     public void setVisibility(EventVisibility visibility) { this.visibility = visibility; }
 
     public Integer getMaxParticipants() { return maxParticipants; }

@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs ls:*)",
+      "Bash(wc -l \"D:\\\\Lutem\\\\LutemPrototype\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\lutem\\\\mvp\\\\controller\"*.java)",
+      "Bash(mvn test:*)",
+      "Bash(findstr:*)",
+      "Bash(mvn clean test:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(./mvnw compile:*)",
+      "Bash(./mvnw test:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(tasklist:*)",
+      "Bash(start cmd /c \"mvnw spring-boot:run\")",
+      "Bash(./mvnw.cmd spring-boot:run:*)",
+      "Bash(ls:*)"
+    ]
+  }
+}
