@@ -1,7 +1,8 @@
-import { Settings as SettingsIcon, Palette, Bell, Shield, Monitor, Sun, Moon, Check, ShieldAlert } from 'lucide-react';
+import { Settings as SettingsIcon, Palette, Bell, Shield, Monitor, Sun, Moon, Check, ShieldAlert, Gamepad2, Clock, Users, Volume2 } from 'lucide-react';
 import { useThemeStore } from '@/stores/themeStore';
 import { useContentPreferences } from '@/hooks/useContentPreferences';
-import { CONTENT_RATING, type Theme, type ContentRating } from '@/types';
+import { useGamingPreferences } from '@/hooks/useGamingPreferences';
+import { CONTENT_RATING, SOCIAL_PREFERENCES, AUDIO_AVAILABILITY, type Theme, type ContentRating, type SocialPreference, type AudioAvailability } from '@/types';
 
 const THEMES: { id: Theme; name: string; emoji: string; colors: { primary: string; secondary: string } }[] = [
   { id: 'cafe', name: 'Café', emoji: '☕', colors: { primary: '#8B7355', secondary: '#D4C4B5' } },
@@ -12,9 +13,37 @@ const THEMES: { id: Theme; name: string; emoji: string; colors: { primary: strin
 
 const RATING_ORDER: ContentRating[] = ['EVERYONE', 'TEEN', 'MATURE', 'ADULT'];
 
+const SOCIAL_ORDER: SocialPreference[] = ['SOLO', 'COOP', 'COMPETITIVE', 'BOTH'];
+const AUDIO_ORDER: AudioAvailability[] = ['full', 'low', 'muted'];
+
+const TIME_OPTIONS = [
+  { value: 15, label: '15 min' },
+  { value: 30, label: '30 min' },
+  { value: 60, label: '1 hour' },
+  { value: 90, label: '1.5 hours' },
+  { value: 120, label: '2 hours' },
+  { value: 180, label: '3+ hours' },
+];
+
+const POPULAR_GENRES = [
+  'Action', 'Adventure', 'RPG', 'Strategy', 'Simulation',
+  'Puzzle', 'Platformer', 'Shooter', 'Horror', 'Indie',
+  'Roguelike', 'Survival', 'Racing', 'Sports', 'Fighting',
+];
+
 export function Settings() {
   const { theme, mode, setTheme, setMode } = useThemeStore();
   const { maxContentRating, allowNsfw, setMaxContentRating, toggleNsfw } = useContentPreferences();
+  const {
+    defaultTimeAvailable,
+    defaultSocialPreference,
+    defaultAudioAvailability,
+    preferredGenres,
+    setDefaultTimeAvailable,
+    setDefaultSocialPreference,
+    setDefaultAudioAvailability,
+    toggleGenre,
+  } = useGamingPreferences();
 
   return (
     <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
@@ -188,6 +217,136 @@ export function Settings() {
                     }`}
                   />
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Gaming Preferences Section */}
+        <div className="mb-6">
+          <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="p-2 rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
+                <Gamepad2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-medium text-[var(--color-text-primary)] mb-1">Gaming Defaults</h3>
+                <p className="text-sm text-[var(--color-text-muted)]">Set your typical gaming preferences</p>
+              </div>
+            </div>
+
+            {/* Default Time Available */}
+            <div className="mb-6">
+              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                Default Time Available
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {TIME_OPTIONS.map((option) => {
+                  const isSelected = defaultTimeAvailable === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => setDefaultTimeAvailable(option.value)}
+                      className={`p-2.5 rounded-xl border-2 text-sm font-medium transition-all ${
+                        isSelected
+                          ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
+                          : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/50'
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Social Preference */}
+            <div className="mb-6">
+              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Default Play Style
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                {SOCIAL_ORDER.map((social) => {
+                  const data = SOCIAL_PREFERENCES[social];
+                  const isSelected = defaultSocialPreference === social;
+                  return (
+                    <button
+                      key={social}
+                      onClick={() => setDefaultSocialPreference(social)}
+                      className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
+                        isSelected
+                          ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10'
+                          : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
+                      }`}
+                    >
+                      <span className="text-lg">{data.emoji}</span>
+                      <span className={`text-sm font-medium ${isSelected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+                        {data.displayName}
+                      </span>
+                      {isSelected && <Check className="w-4 h-4 text-[var(--color-accent)] ml-auto" />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Audio Availability */}
+            <div className="mb-6">
+              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
+                <Volume2 className="w-4 h-4" />
+                Default Audio Situation
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {AUDIO_ORDER.map((audio) => {
+                  const data = AUDIO_AVAILABILITY[audio];
+                  const isSelected = defaultAudioAvailability === audio;
+                  return (
+                    <button
+                      key={audio}
+                      onClick={() => setDefaultAudioAvailability(audio)}
+                      className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all ${
+                        isSelected
+                          ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10'
+                          : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
+                      }`}
+                    >
+                      <span className="text-xl">{data.emoji}</span>
+                      <span className={`text-xs font-medium text-center ${isSelected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+                        {data.displayName}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Preferred Genres */}
+            <div>
+              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 block">
+                Preferred Genres
+              </label>
+              <p className="text-xs text-[var(--color-text-muted)] mb-3">
+                Select genres you enjoy - these will boost recommendations
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {POPULAR_GENRES.map((genre) => {
+                  const isSelected = preferredGenres.includes(genre.toLowerCase());
+                  return (
+                    <button
+                      key={genre}
+                      onClick={() => toggleGenre(genre)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                        isSelected
+                          ? 'bg-[var(--color-accent)] text-white'
+                          : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-accent)]/20'
+                      }`}
+                    >
+                      {genre}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

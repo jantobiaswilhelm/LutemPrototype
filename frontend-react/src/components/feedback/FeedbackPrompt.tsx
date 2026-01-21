@@ -52,20 +52,20 @@ export function FeedbackPrompt({ onSubmitted }: FeedbackPromptProps) {
       animate-in fade-in slide-in-from-top-2 duration-300
     ">
       {/* Header with dismiss button */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-2 mb-4">
+        <div className="flex items-center gap-3 min-w-0">
           {pendingFeedback.gameImageUrl && (
             <img
               src={pendingFeedback.gameImageUrl}
               alt={pendingFeedback.gameName}
-              className="w-12 h-12 rounded-lg object-cover"
+              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
             />
           )}
-          <div>
+          <div className="min-w-0">
             <p className="text-sm text-[var(--color-text-muted)]">
               How was your session?
             </p>
-            <p className="font-medium text-[var(--color-text-primary)]">
+            <p className="font-medium text-[var(--color-text-primary)] truncate">
               {pendingFeedback.gameName}
             </p>
           </div>
@@ -133,17 +133,18 @@ export function FeedbackPrompt({ onSubmitted }: FeedbackPromptProps) {
         )}
       </div>
 
-      {/* Action Buttons */}
+      {/* Action Buttons - touch-friendly sizing */}
       <div className="flex gap-3">
         <button
           onClick={handleSubmit}
           disabled={rating === 0 || isSubmitting}
           className="
             flex-1 flex items-center justify-center gap-2
-            py-2.5 px-4 rounded-lg
+            py-3 px-4 rounded-lg
             bg-[var(--color-accent)]
             text-white font-medium
             hover:bg-[var(--color-accent-hover)]
+            active:scale-[0.98]
             disabled:opacity-50 disabled:cursor-not-allowed
             transition-all
           "
@@ -154,10 +155,11 @@ export function FeedbackPrompt({ onSubmitted }: FeedbackPromptProps) {
         <button
           onClick={handleSkip}
           className="
-            py-2.5 px-4 rounded-lg
+            py-3 px-5 rounded-lg
             text-[var(--color-text-secondary)]
             hover:bg-[var(--color-bg-tertiary)]
-            transition-colors
+            active:scale-[0.98]
+            transition-all
           "
         >
           Skip

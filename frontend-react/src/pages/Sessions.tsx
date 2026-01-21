@@ -201,7 +201,8 @@ function SessionCard({ session }: { session: SessionHistory }) {
       bg-[var(--color-bg-secondary)]
       border border-[var(--color-border)]
       hover:border-[var(--color-border-hover)]
-      transition-colors
+      active:scale-[0.995]
+      transition-all
     ">
       <div className="flex items-start gap-3">
         {/* Game Image */}
@@ -209,21 +210,21 @@ function SessionCard({ session }: { session: SessionHistory }) {
           <img
             src={session.gameImageUrl}
             alt={session.gameName}
-            className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
+            className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover flex-shrink-0"
           />
         ) : (
-          <div className="w-14 h-14 rounded-lg bg-[var(--color-bg-tertiary)] flex items-center justify-center flex-shrink-0">
-            <Gamepad2 className="w-6 h-6 text-[var(--color-text-muted)]" />
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-[var(--color-bg-tertiary)] flex items-center justify-center flex-shrink-0">
+            <Gamepad2 className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--color-text-muted)]" />
           </div>
         )}
 
         {/* Session Info */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-[var(--color-text-primary)] truncate">
+          <h4 className="font-medium text-[var(--color-text-primary)] truncate text-sm sm:text-base">
             {session.gameName}
           </h4>
 
-          <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-text-muted)]">
+          <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs text-[var(--color-text-muted)]">
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
               {dateLabel}
@@ -237,18 +238,18 @@ function SessionCard({ session }: { session: SessionHistory }) {
           {/* Rating Section */}
           <div className="mt-2">
             {displayRating ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <StarRating value={displayRating} size="sm" readonly />
                 <span className="text-xs text-[var(--color-text-muted)]">
                   {getRatingText(displayRating)}
                 </span>
               </div>
             ) : isRating ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <StarRating value={0} onChange={handleRate} size="sm" />
                 <button
                   onClick={() => setIsRating(false)}
-                  className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+                  className="text-xs py-1 px-2 rounded text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)]"
                 >
                   Cancel
                 </button>
@@ -258,12 +259,13 @@ function SessionCard({ session }: { session: SessionHistory }) {
                 onClick={() => setIsRating(true)}
                 className="
                   flex items-center gap-1
-                  text-xs text-[var(--color-accent)]
+                  text-xs py-1 -ml-1 px-1
+                  text-[var(--color-accent)]
                   hover:text-[var(--color-accent-hover)]
                   transition-colors
                 "
               >
-                <Star className="w-3 h-3" />
+                <Star className="w-3.5 h-3.5" />
                 Rate this session
               </button>
             )}
