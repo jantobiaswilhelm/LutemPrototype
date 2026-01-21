@@ -158,6 +158,20 @@ export interface SessionFeedback {
   comment?: string;
 }
 
+// Session history for the sessions page
+export interface SessionHistory {
+  id: number;
+  gameId: number;
+  gameName: string;
+  gameImageUrl?: string;
+  startedAt?: string; // ISO date string
+  recommendedAt: string; // ISO date string
+  satisfactionScore?: number; // 1-5, null if not rated
+  feedbackAt?: string; // ISO date string
+  desiredMood?: string;
+  availableMinutes?: number;
+}
+
 // User types
 export interface User {
   id: string;

@@ -55,4 +55,22 @@ public interface GameSessionRepository extends JpaRepository<GameSession, Long> 
         @Param("user") User user,
         @Param("since") LocalDateTime since
     );
+
+    // Get started sessions ordered by start time (for history page)
+    @Query("SELECT s FROM GameSession s " +
+           "WHERE s.startedAt IS NOT NULL " +
+           "ORDER BY s.startedAt DESC " +
+           "LIMIT :limit")
+    List<GameSession> findStartedSessionsOrderByStartedAtDesc(@Param("limit") int limit);
+
+    // Get started sessions for a specific user (by legacy user id)
+    @Query("SELECT s FROM GameSession s " +
+           "WHERE s.startedAt IS NOT NULL " +
+           "AND s.legacyUserId = :legacyUserId " +
+           "ORDER BY s.startedAt DESC " +
+           "LIMIT :limit")
+    List<GameSession> findStartedSessionsForUserOrderByStartedAtDesc(
+        @Param("legacyUserId") String legacyUserId,
+        @Param("limit") int limit
+    );
 }

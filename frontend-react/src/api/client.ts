@@ -1,4 +1,4 @@
-import type { Game, RecommendationRequest, RecommendationResponse, SessionFeedback } from '@/types';
+import type { Game, RecommendationRequest, RecommendationResponse, SessionFeedback, SessionHistory } from '@/types';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
 
@@ -127,4 +127,10 @@ export const feedbackApi = {
       method: 'POST',
       body: JSON.stringify(feedback),
     }),
+};
+
+// Sessions API
+export const sessionsApi = {
+  getHistory: (limit = 20) =>
+    fetchApi<SessionHistory[]>(`/sessions/history?limit=${limit}`),
 };

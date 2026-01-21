@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { gamesApi, recommendationsApi, feedbackApi } from './client';
+import { gamesApi, recommendationsApi, feedbackApi, sessionsApi } from './client';
 import type { RecommendationRequest, SessionFeedback } from '@/types';
 
 // Query keys
@@ -7,6 +7,7 @@ export const queryKeys = {
   games: ['games'] as const,
   game: (id: number) => ['games', id] as const,
   recommendation: ['recommendation'] as const,
+  sessionHistory: ['sessions', 'history'] as const,
 };
 
 // Games hooks
@@ -44,6 +45,17 @@ export function useSubmitFeedback() {
     onSuccess: () => {
       // Invalidate games to refresh satisfaction scores
       queryClient.invalidateQueries({ queryKey: queryKeys.games });
+      // Invalidate session history to show the new rating
+      queryClient.invalidateQueries({ queryKey: queryKeys.sessionHistory });
     },
+  });
+}
+
+// Session history hooks
+export function useSessionHistory(limit = 20) {
+  return useQuery({
+    queryKey: queryKeys.sessionHistory,
+    queryFn: () => sessionsApi.getHistory(limit),
+    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 }
