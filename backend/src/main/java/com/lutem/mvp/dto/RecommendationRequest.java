@@ -6,14 +6,24 @@ import com.lutem.mvp.model.EnergyLevel;
 import com.lutem.mvp.model.Interruptibility;
 import com.lutem.mvp.model.SocialPreference;
 import com.lutem.mvp.model.TimeOfDay;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public class RecommendationRequest {
+    @Min(value = 1, message = "Available minutes must be at least 1")
+    @Max(value = 1440, message = "Available minutes cannot exceed 24 hours (1440 minutes)")
     private int availableMinutes;
-    
+
     // Multi-dimensional preferences
+    @NotEmpty(message = "At least one emotional goal is required")
     private List<EmotionalGoal> desiredEmotionalGoals;
+
+    @NotNull(message = "Interruptibility level is required")
     private Interruptibility requiredInterruptibility;
+
     private EnergyLevel currentEnergyLevel;
     private TimeOfDay timeOfDay;
     private SocialPreference socialPreference;

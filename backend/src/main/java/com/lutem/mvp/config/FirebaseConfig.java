@@ -6,6 +6,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.cloud.FirestoreClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,34 +31,35 @@ import java.nio.charset.StandardCharsets;
  */
 @Configuration
 public class FirebaseConfig {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
+
     @Value("${firebase.credentials.path:firebase-service-account.json}")
     private String credentialsPath;
-    
+
     @PostConstruct
     public void initialize() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
                 InputStream serviceAccount = getCredentialsStream();
-                
+
                 if (serviceAccount == null) {
-                    System.err.println("⚠️ Firebase credentials not found");
-                    System.err.println("⚠️ Authentication will be disabled");
+                    logger.warn("Firebase credentials not found - authentication will be disabled");
                     return;
                 }
-                
+
                 FirebaseOptions options = FirebaseOptions.builder()
                         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                         .build();
-                
+
                 FirebaseApp.initializeApp(options);
-                System.out.println("✅ Firebase Admin SDK initialized");
+                logger.info("Firebase Admin SDK initialized");
             }
         } catch (IOException e) {
-            System.err.println("❌ Failed to initialize Firebase: " + e.getMessage());
+            logger.error("Failed to initialize Firebase: {}", e.getMessage());
         }
     }
-    
+
     /**
      * Get credentials from environment variable (production) or file (development)
      */
@@ -64,14 +67,14 @@ public class FirebaseConfig {
         // First, try environment variable (for Railway/production)
         String envCredentials = System.getenv("FIREBASE_CREDENTIALS");
         if (envCredentials != null && !envCredentials.isEmpty()) {
-            System.out.println("✅ Loading Firebase credentials from environment variable");
+            logger.info("Loading Firebase credentials from environment variable");
             return new ByteArrayInputStream(envCredentials.getBytes(StandardCharsets.UTF_8));
         }
-        
+
         // Fall back to file (for local development)
         try {
             Resource resource;
-            
+
             if (credentialsPath.startsWith("/") || credentialsPath.contains(":")) {
                 resource = new FileSystemResource(credentialsPath);
             } else {
@@ -80,18 +83,18 @@ public class FirebaseConfig {
                     resource = new FileSystemResource(credentialsPath);
                 }
             }
-            
+
             if (resource.exists()) {
-                System.out.println("✅ Loading Firebase credentials from file: " + credentialsPath);
+                logger.info("Loading Firebase credentials from file: {}", credentialsPath);
                 return resource.getInputStream();
             }
         } catch (IOException e) {
-            System.err.println("⚠️ Could not read credentials file: " + e.getMessage());
+            logger.warn("Could not read credentials file: {}", e.getMessage());
         }
-        
+
         return null;
     }
-    
+
     @Bean
     public FirebaseAuth firebaseAuth() {
         if (FirebaseApp.getApps().isEmpty()) {
@@ -99,14 +102,14 @@ public class FirebaseConfig {
         }
         return FirebaseAuth.getInstance();
     }
-    
+
     @Bean
     public Firestore firestore() {
         if (FirebaseApp.getApps().isEmpty()) {
-            System.err.println("⚠️ Firestore not available - Firebase not initialized");
+            logger.warn("Firestore not available - Firebase not initialized");
             return null;
         }
-        System.out.println("✅ Firestore client initialized");
+        logger.info("Firestore client initialized");
         return FirestoreClient.getFirestore();
     }
 }

@@ -17,8 +17,8 @@ public class Game {
     private int minMinutes;
     private int maxMinutes;
     
-    // Multi-dimensional attributes - stored as comma-separated strings
-    @ElementCollection(fetch = FetchType.EAGER)
+    // Multi-dimensional attributes
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "game_emotional_goals", joinColumns = @JoinColumn(name = "game_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "emotional_goal")
@@ -39,20 +39,20 @@ public class Game {
     @Enumerated(EnumType.STRING)
     private NsfwLevel nsfwLevel;
     
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "game_time_of_day", joinColumns = @JoinColumn(name = "game_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "time_of_day")
     private List<TimeOfDay> bestTimeOfDay = new ArrayList<>();
-    
-    @ElementCollection(fetch = FetchType.EAGER)
+
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "game_social_preferences", joinColumns = @JoinColumn(name = "game_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "social_preference")
     private List<SocialPreference> socialPreferences = new ArrayList<>();
-    
+
     // Metadata
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "game_genres", joinColumns = @JoinColumn(name = "game_id"))
     @Column(name = "genre")
     private List<String> genres = new ArrayList<>();

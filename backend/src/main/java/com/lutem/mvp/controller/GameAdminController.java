@@ -7,6 +7,8 @@ import com.lutem.mvp.repository.GameSessionRepository;
 import com.lutem.mvp.repository.UserLibraryRepository;
 import com.lutem.mvp.service.AITaggingService;
 import com.lutem.mvp.service.AITaggingService.TaggingResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,9 @@ import java.util.*;
 @RestController
 @RequestMapping("/admin/games")
 public class GameAdminController {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(GameAdminController.class);
+
     @Autowired
     private GameRepository gameRepository;
     
@@ -386,7 +390,7 @@ public class GameAdminController {
                 }
             } catch (Exception e) {
                 // Tagging failed but games were still created
-                System.err.println("AI tagging failed: " + e.getMessage());
+                logger.error("AI tagging failed: {}", e.getMessage());
             }
         }
         

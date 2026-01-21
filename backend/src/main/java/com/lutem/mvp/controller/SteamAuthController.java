@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/auth/steam")
-@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 public class SteamAuthController {
     
     private static final Logger logger = LoggerFactory.getLogger(SteamAuthController.class);

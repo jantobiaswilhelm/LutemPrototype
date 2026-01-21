@@ -14,14 +14,24 @@ import com.lutem.mvp.model.GameSession;
 import com.lutem.mvp.repository.GameRepository;
 import com.lutem.mvp.service.GameSessionService;
 import com.lutem.mvp.service.UserSatisfactionService;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 public class GameController {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
+
     @Autowired
     private GameRepository gameRepository;
     
@@ -36,65 +46,88 @@ public class GameController {
 
     // GET /games - Returns only fully tagged games (for frontend recommendation UI)
     @GetMapping("/games")
+    @Transactional(readOnly = true)
     public List<Game> getAllGames() {
-        System.out.println("=================================");
-        System.out.println("GET /games called!");
+        logger.debug("GET /games called");
         // Only return games that can be used for recommendations
         List<Game> games = gameRepository.findAllFullyTagged();
-        System.out.println("Total fully-tagged games: " + games.size());
-        long pendingCount = gameRepository.findAllPendingTagging().size();
-        System.out.println("Pending games needing AI tagging: " + pendingCount);
-        if (!games.isEmpty()) {
-            Game firstGame = games.get(0);
-            System.out.println("First game: " + firstGame.getName());
-            System.out.println("Has emotionalGoals? " + (firstGame.getEmotionalGoals() != null));
-            System.out.println("Has energyRequired? " + (firstGame.getEnergyRequired() != null));
-        }
-        System.out.println("=================================");
+        logger.info("Returning {} fully-tagged games", games.size());
         return games;
     }
-    
+
+    // GET /games/paged - Returns paginated list of fully tagged games
+    @GetMapping("/games/paged")
+    @Transactional(readOnly = true)
+    public Map<String, Object> getGamesPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+            ? Sort.by(sortBy).descending()
+            : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, Math.min(size, 100), sort); // Max 100 per page
+        Page<Game> gamesPage = gameRepository.findAllFullyTaggedPaged(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("games", gamesPage.getContent());
+        response.put("currentPage", gamesPage.getNumber());
+        response.put("totalItems", gamesPage.getTotalElements());
+        response.put("totalPages", gamesPage.getTotalPages());
+        response.put("hasNext", gamesPage.hasNext());
+        response.put("hasPrevious", gamesPage.hasPrevious());
+
+        logger.info("Returning page {} of {} games (total: {})",
+            page, gamesPage.getNumberOfElements(), gamesPage.getTotalElements());
+
+        return response;
+    }
+
     // GET /games/all - Returns ALL games including pending (for admin/library views)
     @GetMapping("/games/all")
+    @Transactional(readOnly = true)
     public List<Game> getAllGamesIncludingPending() {
         return gameRepository.findAll();
     }
-    
+
     // POST /recommendations with multi-dimensional scoring
     @PostMapping("/recommendations")
-    public RecommendationResponse getRecommendation(@RequestBody RecommendationRequest request) {
+    @Transactional(readOnly = true)
+    public RecommendationResponse getRecommendation(@Valid @RequestBody RecommendationRequest request) {
         // Backend validation
         List<String> validationErrors = validateRequest(request);
         if (!validationErrors.isEmpty()) {
-            System.out.println("❌ Validation failed: " + String.join(", ", validationErrors));
+            logger.warn("Validation failed: {}", String.join(", ", validationErrors));
             return createValidationErrorResponse(validationErrors);
         }
-        
+
         // Load Firestore satisfaction data if user is logged in
         SatisfactionStats userStats = null;
         if (request.getUserId() != null && satisfactionService != null) {
             try {
                 userStats = satisfactionService.getSatisfactionStats(request.getUserId());
-                System.out.println("📊 Loaded satisfaction stats for user: " + request.getUserId() + 
-                    " (" + userStats.getCompletedSessions() + " completed sessions)");
+                logger.debug("Loaded satisfaction stats for user: {} ({} completed sessions)",
+                    request.getUserId(), userStats.getCompletedSessions());
             } catch (Exception e) {
-                System.err.println("⚠️ Could not load satisfaction stats: " + e.getMessage());
+                logger.warn("Could not load satisfaction stats: {}", e.getMessage());
             }
         }
-        
+
         // Get only fully tagged games for recommendations (excludes PENDING)
         List<Game> games = gameRepository.findAllFullyTagged();
-        System.out.println("📚 Found " + games.size() + " fully tagged games for recommendations");
-        
+        logger.debug("Found {} fully tagged games for recommendations", games.size());
+
         // Filter by audio availability
         if (request.getAudioAvailability() != null) {
             games = filterByAudioAvailability(games, request.getAudioAvailability());
-            System.out.println("🔊 After audio filter: " + games.size() + " games");
+            logger.debug("After audio filter: {} games", games.size());
         }
-        
+
         // Filter by content rating and NSFW preferences
         games = filterByContentPreferences(games, request.getMaxContentRating(), request.getAllowNsfw());
-        System.out.println("🛡️ After content filter: " + games.size() + " games");
+        logger.debug("After content filter: {} games", games.size());
         
         // Score all games (now with personalized satisfaction data)
         Map<Game, ScoringResult> scoredGames = new HashMap<>();
@@ -153,9 +186,10 @@ public class GameController {
             topMatchPercentage, alternativeMatchPercentages
         );
         response.setSessionId(session.getId());
-        
-        System.out.println("✅ Recommendation created - Session ID: " + session.getId());
-        
+
+        logger.info("Recommendation created - Session ID: {}, Game: {}",
+            session.getId(), topRecommendation.getName());
+
         return response;
     }
 
@@ -342,35 +376,35 @@ public class GameController {
     @PostMapping("/sessions/feedback")
     public Map<String, String> submitFeedback(@RequestBody SessionFeedback feedback) {
         Map<String, String> response = new HashMap<>();
-        
+
         // Save to database using session ID
         if (feedback.getSessionId() != null) {
             boolean success = sessionService.recordFeedback(
                 feedback.getSessionId(),
                 feedback.getSatisfactionScore()
             ).isPresent();
-            
+
             if (success) {
-                System.out.println("✅ Feedback saved - Session ID: " + feedback.getSessionId() + 
-                                   ", Score: " + feedback.getSatisfactionScore());
+                logger.info("Feedback saved - Session ID: {}, Score: {}",
+                    feedback.getSessionId(), feedback.getSatisfactionScore());
                 response.put("status", "success");
                 response.put("message", "Feedback recorded in database");
                 return response;
             }
         }
-        
+
         // Fallback: in-memory storage for backward compatibility
         if (feedback.getGameId() != null) {
             feedbackMap.computeIfAbsent(feedback.getGameId(), k -> new ArrayList<>())
                        .add(feedback.getSatisfactionScore());
-            
-            System.out.println("⚠️ Feedback saved to memory (no sessionId) - Game ID: " + 
-                             feedback.getGameId() + ", Score: " + feedback.getSatisfactionScore());
+
+            logger.warn("Feedback saved to memory (no sessionId) - Game ID: {}, Score: {}",
+                feedback.getGameId(), feedback.getSatisfactionScore());
             response.put("status", "success");
             response.put("message", "Feedback recorded in memory");
             return response;
         }
-        
+
         response.put("status", "error");
         response.put("message", "No sessionId or gameId provided");
         return response;
@@ -380,32 +414,32 @@ public class GameController {
     @PostMapping("/sessions/{id}/start")
     public Map<String, Object> startSession(@PathVariable("id") Long sessionId) {
         Map<String, Object> response = new HashMap<>();
-        
+
         boolean success = sessionService.startSession(sessionId).isPresent();
-        
+
         if (success) {
-            System.out.println("🎮 Session started - ID: " + sessionId);
+            logger.info("Session started - ID: {}", sessionId);
             response.put("status", "success");
             response.put("sessionId", sessionId);
             response.put("message", "Session start recorded");
         } else {
-            System.out.println("❌ Failed to start session - ID: " + sessionId + " not found");
+            logger.warn("Failed to start session - ID: {} not found", sessionId);
             response.put("status", "error");
             response.put("message", "Session not found");
         }
-        
+
         return response;
     }
-    
+
     // POST /sessions/{id}/end - Records when user ends the session (optional, for future)
     @PostMapping("/sessions/{id}/end")
     public Map<String, Object> endSession(@PathVariable("id") Long sessionId) {
         Map<String, Object> response = new HashMap<>();
-        
+
         boolean success = sessionService.endSession(sessionId).isPresent();
-        
+
         if (success) {
-            System.out.println("🏁 Session ended - ID: " + sessionId);
+            logger.info("Session ended - ID: {}", sessionId);
             response.put("status", "success");
             response.put("sessionId", sessionId);
             response.put("message", "Session end recorded");
@@ -413,7 +447,7 @@ public class GameController {
             response.put("status", "error");
             response.put("message", "Session not found");
         }
-        
+
         return response;
     }
     
@@ -421,23 +455,23 @@ public class GameController {
     @PostMapping("/sessions/alternative/{gameId}")
     public Map<String, Object> createAlternativeSession(@PathVariable("gameId") Long gameId) {
         Map<String, Object> response = new HashMap<>();
-        
+
         Optional<Game> gameOpt = gameRepository.findById(gameId);
         if (gameOpt.isEmpty()) {
             response.put("status", "error");
             response.put("message", "Game not found");
             return response;
         }
-        
+
         GameSession session = sessionService.createAlternativeSession(gameOpt.get());
-        System.out.println("🔀 Alternative session created - Game: " + gameOpt.get().getName() + 
-                           ", Session ID: " + session.getId());
-        
+        logger.info("Alternative session created - Game: {}, Session ID: {}",
+            gameOpt.get().getName(), session.getId());
+
         response.put("status", "success");
         response.put("sessionId", session.getId());
         response.put("gameName", gameOpt.get().getName());
         response.put("message", "Alternative session created and started");
-        
+
         return response;
     }
 
