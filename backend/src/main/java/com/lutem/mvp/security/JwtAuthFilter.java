@@ -134,7 +134,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             path.startsWith("/api/steam/library") ||
             path.startsWith("/api/library") ||
             path.startsWith("/api/sessions") ||
-            path.startsWith("/api/calendar")) {
+            path.startsWith("/api/calendar") ||
+            path.startsWith("/api/friends")) {
             return true;
         }
         
