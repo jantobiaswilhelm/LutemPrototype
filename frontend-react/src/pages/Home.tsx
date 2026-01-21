@@ -3,9 +3,11 @@ import { useThemeStore } from '@/stores/themeStore';
 import { useWizardStore } from '@/stores/wizardStore';
 import { useRecommendationStore } from '@/stores/recommendationStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useFeedbackStore } from '@/stores/feedbackStore';
 import { GameCard, AlternativeCard } from '@/components/GameCard';
 import { MoodShortcuts } from '@/components/MoodShortcuts';
 import { InlineWizard } from '@/components/wizard';
+import { FeedbackPrompt } from '@/components/feedback';
 import type { Game } from '@/types';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -62,12 +64,27 @@ async function createAlternativeSession(gameId: number): Promise<number | null> 
 }
 
 // Launch a game via Steam protocol or store URL
-async function launchGame(game: Game, sessionId?: number): Promise<void> {
+// The setPendingFeedback parameter is optional - if provided, it will save feedback info for later
+async function launchGame(
+  game: Game,
+  sessionId?: number,
+  setPendingFeedback?: (feedback: { sessionId: number; gameName: string; gameImageUrl?: string; startedAt: number }) => void
+): Promise<void> {
   // Record the session start (fire and forget)
   if (sessionId) {
     recordSessionStart(sessionId);
+
+    // Save pending feedback for when user returns
+    if (setPendingFeedback) {
+      setPendingFeedback({
+        sessionId,
+        gameName: game.name,
+        gameImageUrl: game.imageUrl,
+        startedAt: Date.now(),
+      });
+    }
   }
-  
+
   if (game.steamAppId) {
     // Steam protocol - opens Steam and launches the game
     window.open(`steam://run/${game.steamAppId}`, '_self');
@@ -101,18 +118,22 @@ export default function Home() {
   const { mode, toggleMode, theme, setTheme } = useThemeStore();
   const { isOpen, openWizard } = useWizardStore();
   const { user } = useAuthStore();
-  const { 
-    currentRecommendation, 
-    showAlternatives, 
+  const {
+    currentRecommendation,
+    showAlternatives,
     toggleAlternatives,
     error,
   } = useRecommendationStore();
+  const { setPendingFeedback, shouldShowPrompt } = useFeedbackStore();
 
   const greeting = getGreeting(user?.displayName);
   const primaryGame = currentRecommendation?.topRecommendation;
   const alternatives = currentRecommendation?.alternatives || [];
   const hasRecommendation = !!primaryGame;
   const isWizardActive = isOpen;
+
+  // Check if we should show the feedback prompt
+  const showFeedbackPrompt = shouldShowPrompt();
 
   const cardStyles = "bg-[var(--color-bg-secondary)] rounded-xl border border-[var(--color-border)] shadow-md";
 
@@ -182,10 +203,13 @@ export default function Home() {
           ) : hasRecommendation ? (
             /* Game recommendation display */
             <>
-              <GameCard 
-                game={primaryGame} 
+              {/* Feedback prompt - shows when user returns after playing */}
+              {showFeedbackPrompt && <FeedbackPrompt />}
+
+              <GameCard
+                game={primaryGame}
                 reason={currentRecommendation?.reason}
-                onStart={() => launchGame(primaryGame, currentRecommendation?.sessionId)}
+                onStart={() => launchGame(primaryGame, currentRecommendation?.sessionId, setPendingFeedback)}
               />
 
               {/* Action buttons */}

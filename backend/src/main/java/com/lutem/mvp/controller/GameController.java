@@ -8,6 +8,7 @@ import com.lutem.mvp.model.TimeOfDay;
 import com.lutem.mvp.dto.RecommendationRequest;
 import com.lutem.mvp.dto.RecommendationResponse;
 import com.lutem.mvp.dto.SessionFeedback;
+import com.lutem.mvp.dto.SessionHistoryDTO;
 import com.lutem.mvp.dto.SatisfactionStats;
 import com.lutem.mvp.model.Game;
 import com.lutem.mvp.model.GameSession;
@@ -451,6 +452,27 @@ public class GameController {
         return response;
     }
     
+    // GET /sessions/history - Returns recent session history for the sessions page
+    @GetMapping("/sessions/history")
+    @Transactional(readOnly = true)
+    public List<SessionHistoryDTO> getSessionHistory(
+            @RequestParam(defaultValue = "20") int limit) {
+
+        logger.debug("GET /sessions/history called (limit: {})", limit);
+
+        // Cap at 100 to prevent excessive data transfer
+        int safeLimit = Math.min(limit, 100);
+
+        List<GameSession> sessions = sessionService.getSessionHistory(safeLimit);
+
+        List<SessionHistoryDTO> history = sessions.stream()
+            .map(SessionHistoryDTO::new)
+            .collect(Collectors.toList());
+
+        logger.info("Returning {} session history items", history.size());
+        return history;
+    }
+
     // POST /sessions/alternative/{gameId} - Creates a new session when user picks an alternative
     @PostMapping("/sessions/alternative/{gameId}")
     public Map<String, Object> createAlternativeSession(@PathVariable("gameId") Long gameId) {

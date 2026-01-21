@@ -101,4 +101,19 @@ public class GameSessionService {
         session.setStartedAt(LocalDateTime.now());
         return repository.save(session);
     }
+
+    /**
+     * Get session history (most recent first)
+     * Returns all sessions that were actually started by the user
+     */
+    public List<GameSession> getSessionHistory(int limit) {
+        return repository.findStartedSessionsOrderByStartedAtDesc(limit);
+    }
+
+    /**
+     * Get session history for a specific user
+     */
+    public List<GameSession> getSessionHistoryForUser(String legacyUserId, int limit) {
+        return repository.findStartedSessionsForUserOrderByStartedAtDesc(legacyUserId, limit);
+    }
 }
