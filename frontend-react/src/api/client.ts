@@ -150,7 +150,7 @@ export const friendsApi = {
     fetchApi<FriendRequest[]>('/friends/requests/sent'),
 
   searchUsers: (query: string) =>
-    fetchApi<UserSummary[]>(`/friends/search?query=${encodeURIComponent(query)}`),
+    fetchApi<UserSummary[]>(`/friends/search?q=${encodeURIComponent(query)}`),
 
   sendRequest: (userId: number) =>
     fetchApi<Friendship>(`/friends/request/${userId}`, { method: 'POST' }),

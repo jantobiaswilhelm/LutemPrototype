@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * Requires authentication for all endpoints.
  */
 @RestController
-@RequestMapping("/friends")
+@RequestMapping("/api/friends")
 public class FriendshipController {
 
     private static final Logger logger = LoggerFactory.getLogger(FriendshipController.class);
@@ -242,6 +242,7 @@ public class FriendshipController {
 
     /**
      * GET /friends/search?q=name - Search users by display name
+     * Returns list of UserSummaryDTO for frontend compatibility
      */
     @GetMapping("/search")
     public ResponseEntity<?> searchUsers(
@@ -260,27 +261,10 @@ public class FriendshipController {
 
         List<User> users = userRepository.searchByDisplayName(q.trim(), currentUser.getId());
 
-        // Include friendship status for each user
-        List<Map<String, Object>> results = users.stream()
+        // Return simple UserSummaryDTO list - frontend calculates friendship status separately
+        List<UserSummaryDTO> results = users.stream()
             .limit(20) // Limit results
-            .map(user -> {
-                Map<String, Object> result = new HashMap<>();
-                result.put("user", new UserSummaryDTO(user));
-
-                // Get friendship status
-                var friendship = friendshipService.getFriendshipWith(currentUser, user.getId());
-                if (friendship.isPresent()) {
-                    Friendship f = friendship.get();
-                    result.put("friendshipStatus", f.getStatus().name());
-                    result.put("friendshipId", f.getId());
-                    // Indicate if current user is the requester or addressee
-                    result.put("isRequester", f.getRequester().getId().equals(currentUser.getId()));
-                } else {
-                    result.put("friendshipStatus", null);
-                }
-
-                return result;
-            })
+            .map(UserSummaryDTO::new)
             .collect(Collectors.toList());
 
         return ResponseEntity.ok(results);
