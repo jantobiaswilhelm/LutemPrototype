@@ -39,6 +39,7 @@ public class CorsConfig implements WebMvcConfigurer {
         return Arrays.asList(
             "https://lutembeta.netlify.app",
             "https://lutem.netlify.app",
+            "https://lutemweb.netlify.app",
             "https://lutem.3lands.ch",
             frontendUrl
         );
