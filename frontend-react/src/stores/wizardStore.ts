@@ -7,6 +7,7 @@ import type {
   RecommendationResponse,
   AudioAvailability,
 } from '@/types';
+import { getGamingPreferences } from '@/hooks/useGamingPreferences';
 
 // Source determines where recommendations come from
 export type RecommendationSource = 'library' | 'all' | 'steamLink';
@@ -61,28 +62,34 @@ interface WizardState {
 
 const STEP_ORDER: WizardStep[] = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'audio', 'result'];
 
-const initialState = {
-  currentStep: 'source' as WizardStep,
-  isOpen: false,
-  recommendationSource: 'all' as RecommendationSource,
-  steamProfileUrl: '',
-  availableMinutes: 30,
-  selectedMoods: [] as EmotionalGoal[],
-  energyLevel: null,
-  interruptibility: null,
-  socialPreference: null,
-  audioAvailability: null,
-  recommendation: null,
-  isLoading: false,
-  error: null,
-};
+// Get initial state with user preferences as defaults
+function getInitialState() {
+  const prefs = getGamingPreferences();
+  return {
+    currentStep: 'source' as WizardStep,
+    isOpen: false,
+    recommendationSource: 'all' as RecommendationSource,
+    steamProfileUrl: '',
+    availableMinutes: prefs.defaultTimeAvailable,
+    selectedMoods: [] as EmotionalGoal[],
+    energyLevel: null,
+    interruptibility: null,
+    socialPreference: prefs.defaultSocialPreference,
+    audioAvailability: prefs.defaultAudioAvailability,
+    recommendation: null,
+    isLoading: false,
+    error: null,
+  };
+}
+
+const initialState = getInitialState();
 
 export const useWizardStore = create<WizardState>((set, get) => ({
   ...initialState,
 
   openWizard: () => set({ isOpen: true }),
   closeWizard: () => set({ isOpen: false }),
-  resetWizard: () => set({ ...initialState }),
+  resetWizard: () => set({ ...getInitialState() }), // Use fresh preferences
 
   setStep: (step) => set({ currentStep: step }),
 
