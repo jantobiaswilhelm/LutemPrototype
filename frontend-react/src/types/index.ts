@@ -191,8 +191,10 @@ export interface UserSummary {
 }
 
 export interface FriendRequest {
-  id: number;
-  user: UserSummary;
+  id: number;  // Friendship ID (for accept/decline)
+  fromUser: UserSummary;
+  toUser: UserSummary;
+  status: FriendshipStatus;
   createdAt: string;
 }
 
