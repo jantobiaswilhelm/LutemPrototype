@@ -1,5 +1,6 @@
 package com.lutem.mvp.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lutem.mvp.model.Game;
 import com.lutem.mvp.model.TaggingSource;
 import com.lutem.mvp.model.UserLibrary;
@@ -20,6 +21,7 @@ public class UserLibraryGameDTO {
     private Integer playtimeForever;
     private Integer playtime2Weeks;
     private LocalDateTime addedAt;
+    @JsonProperty("isTagged")
     private boolean isTagged;
     private String taggingSource;
     
