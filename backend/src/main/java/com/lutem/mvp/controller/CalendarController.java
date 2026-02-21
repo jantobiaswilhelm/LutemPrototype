@@ -50,9 +50,7 @@ public class CalendarController {
     }
 
     private User getCurrentUser(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) return null;
-        return userRepository.findById(userId).orElse(null);
+        return com.lutem.mvp.util.RequestUtils.getCurrentUser(request, userRepository);
     }
 
     /**

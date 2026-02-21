@@ -153,6 +153,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             path.startsWith("/auth/logout") ||
             path.startsWith("/api/steam/import") ||
             path.startsWith("/api/steam/library") ||
+            path.startsWith("/api/steam/ai-import") ||
             path.startsWith("/api/library") ||
             path.startsWith("/sessions") ||
             path.startsWith("/api/sessions") ||

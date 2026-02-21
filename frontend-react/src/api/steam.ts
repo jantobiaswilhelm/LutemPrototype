@@ -1,19 +1,7 @@
 import type { SteamStatus, SteamImportResponse, UserLibraryResponse, TaggingResult, GameStats, UnmatchedGame, AiImportResult } from '@/types/steam';
 
 import { API_BASE } from '@/lib/config';
-
-/**
- * Steam API fetch wrapper
- *
- * Dev: Vite proxy forwards /api/steam/* to localhost:8080 without rewriting
- * Prod: Prepend the full backend URL
- * Auth: Uses httpOnly cookie (sent automatically with credentials: 'include')
- */
-// Read CSRF token from cookie
-function getCsrfToken(): string | null {
-  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
+import { getCsrfToken } from './csrf';
 
 async function fetchSteamApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   // In dev, use endpoint directly (Vite proxy handles /api/steam/*)
@@ -105,9 +93,9 @@ export const gamesApi = {
    * Import unmatched games using AI
    * Takes games that weren't found in Lutem's database and creates them with AI-generated tags
    */
-  aiImportGames: (games: UnmatchedGame[]) =>
-    fetchSteamApi<AiImportResult>('/admin/games/ai-import', {
+  aiImportGames: (games: UnmatchedGame[], unlockCode?: string) =>
+    fetchSteamApi<AiImportResult>('/api/steam/ai-import', {
       method: 'POST',
-      body: JSON.stringify({ games }),
+      body: JSON.stringify({ games, unlockCode }),
     }),
 };

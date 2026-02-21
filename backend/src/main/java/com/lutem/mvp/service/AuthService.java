@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,9 +23,12 @@ public class AuthService {
     private static final int COOKIE_MAX_AGE = 7 * 24 * 60 * 60; // 7 days
 
     private final JwtService jwtService;
+    private final boolean secureCookies;
 
-    public AuthService(JwtService jwtService) {
+    public AuthService(JwtService jwtService,
+                       @Value("${frontend.url:http://localhost:5173}") String frontendUrl) {
         this.jwtService = jwtService;
+        this.secureCookies = !frontendUrl.startsWith("http://localhost");
     }
 
     /**
@@ -36,7 +40,7 @@ public class AuthService {
 
         Cookie cookie = new Cookie("lutem_token", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(secureCookies);
         cookie.setPath("/");
         cookie.setMaxAge(COOKIE_MAX_AGE);
         cookie.setAttribute("SameSite", "Lax");
@@ -52,7 +56,7 @@ public class AuthService {
     public void clearTokenCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("lutem_token", "");
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(secureCookies);
         cookie.setPath("/");
         cookie.setMaxAge(0);
         cookie.setAttribute("SameSite", "Lax");

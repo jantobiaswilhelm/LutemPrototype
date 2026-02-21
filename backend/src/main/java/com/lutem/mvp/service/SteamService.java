@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpClientErrorException;
@@ -273,20 +274,26 @@ public class SteamService {
                 ));
             } else {
                 // Phase S-Import: Create new Game entity for unmatched Steam games
-                // Check one more time it doesn't exist (race condition protection)
-                if (!gameRepository.existsBySteamAppId(steamGame.getAppId())) {
+                // Use findBySteamAppId + catch constraint violation for race safety
+                Game existingCheck = gameRepository.findBySteamAppId(steamGame.getAppId()).orElse(null);
+                if (existingCheck == null) {
                     Game newGame = new Game();
                     newGame.setName(steamGame.getName());
                     newGame.setSteamAppId(steamGame.getAppId());
-                    newGame.setImageUrl("https://cdn.cloudflare.steamstatic.com/steam/apps/" 
+                    newGame.setImageUrl("https://cdn.cloudflare.steamstatic.com/steam/apps/"
                         + steamGame.getAppId() + "/header.jpg");
-                    newGame.setStoreUrl("https://store.steampowered.com/app/" 
+                    newGame.setStoreUrl("https://store.steampowered.com/app/"
                         + steamGame.getAppId());
                     newGame.setTaggingSource(TaggingSource.PENDING);
                     newGame.setSteamPlaytimeForever(steamGame.getPlaytimeForever());
-                    // Leave all Lutem attributes (emotionalGoals, interruptibility, etc.) as null/empty
-                    
-                    newGame = gameRepository.save(newGame);
+
+                    try {
+                        newGame = gameRepository.save(newGame);
+                    } catch (DataIntegrityViolationException e) {
+                        // Concurrent insert won the race — fall through to existing game path
+                        newGame = gameRepository.findBySteamAppId(steamGame.getAppId()).orElse(null);
+                        if (newGame == null) continue;
+                    }
                     newlyCreated++;
                     
                     // Create UserLibrary entry linking user to the new game

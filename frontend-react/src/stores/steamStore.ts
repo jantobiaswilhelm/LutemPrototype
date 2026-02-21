@@ -34,7 +34,7 @@ interface SteamState {
   fetchPendingGames: () => Promise<void>;
   fetchGameStats: () => Promise<GameStats>;
   tagPendingGames: (gameIds?: number[]) => Promise<TaggingResult>;
-  aiImportGames: (games: UnmatchedGame[]) => Promise<AiImportResult>;
+  aiImportGames: (games: UnmatchedGame[], unlockCode?: string) => Promise<AiImportResult>;
   disconnect: () => void;
   clearError: () => void;
   clearTaggingProgress: () => void;
@@ -151,10 +151,10 @@ export const useSteamStore = create<SteamState>()(
         }
       },
 
-      aiImportGames: async (games: UnmatchedGame[]) => {
+      aiImportGames: async (games: UnmatchedGame[], unlockCode?: string) => {
         set({ isAiImporting: true, error: null, aiImportResult: null });
         try {
-          const result = await gamesApi.aiImportGames(games);
+          const result = await gamesApi.aiImportGames(games, unlockCode);
           set({ 
             aiImportResult: result,
             isAiImporting: false,

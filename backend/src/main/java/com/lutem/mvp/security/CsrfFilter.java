@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,6 +34,9 @@ public class CsrfFilter extends OncePerRequestFilter {
     private static final String CSRF_HEADER_NAME = "X-XSRF-TOKEN";
     private static final Set<String> SAFE_METHODS = Set.of("GET", "HEAD", "OPTIONS");
     private static final SecureRandom secureRandom = new SecureRandom();
+
+    @Value("${frontend.url:http://localhost:5173}")
+    private String frontendUrl;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -91,7 +95,7 @@ public class CsrfFilter extends OncePerRequestFilter {
     private void setCsrfCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie(CSRF_COOKIE_NAME, token);
         cookie.setHttpOnly(false); // Must be readable by JavaScript
-        cookie.setSecure(true);
+        cookie.setSecure(!frontendUrl.startsWith("http://localhost"));
         cookie.setPath("/");
         cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
         cookie.setAttribute("SameSite", "Lax");

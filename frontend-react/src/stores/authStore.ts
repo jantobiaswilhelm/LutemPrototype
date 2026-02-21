@@ -11,11 +11,7 @@ import { persist } from 'zustand/middleware';
 import { signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { API_BASE } from '@/lib/config';
-
-function getCsrfToken(): string | null {
-  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
+import { getCsrfToken } from '@/api/csrf';
 
 export interface LutemUser {
   id: number;
@@ -58,7 +54,7 @@ export const useAuthStore = create<AuthState>()(
        * Redirects to backend which redirects to Steam
        */
       loginWithSteam: () => {
-        console.log('Initiating Steam login...');
+        // Redirect to Steam login
         window.location.href = `${API_BASE}/auth/steam/login`;
       },
 

@@ -72,11 +72,14 @@ public class GameController {
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir) {
 
+        page = Math.max(0, Math.min(page, 10000));
+        size = Math.max(1, Math.min(size, 100));
+
         Sort sort = sortDir.equalsIgnoreCase("desc")
             ? Sort.by(sortBy).descending()
             : Sort.by(sortBy).ascending();
 
-        Pageable pageable = PageRequest.of(page, Math.min(size, 100), sort); // Max 100 per page
+        Pageable pageable = PageRequest.of(page, size, sort);
         Page<Game> gamesPage = gameRepository.findAllFullyTaggedPaged(pageable);
 
         Map<String, Object> response = new HashMap<>();
@@ -628,9 +631,7 @@ public class GameController {
     }
     
     private User getCurrentUser(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) return null;
-        return userRepository.findById(userId).orElse(null);
+        return com.lutem.mvp.util.RequestUtils.getCurrentUser(request, userRepository);
     }
 
     // Filter by content rating and NSFW preferences

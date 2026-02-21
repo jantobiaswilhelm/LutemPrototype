@@ -68,7 +68,7 @@ public class GameSession {
     public GameSession(Game game, Integer availableMinutes, String desiredMood, User user) {
         this(game, availableMinutes, desiredMood);
         this.user = user;
-        this.legacyUserId = user != null ? user.getGoogleId() : "anonymous";
+        this.legacyUserId = user != null ? String.valueOf(user.getId()) : "anonymous";
     }
     
     // Getters and Setters
@@ -79,10 +79,10 @@ public class GameSession {
     public void setGame(Game game) { this.game = game; }
     
     public User getUser() { return user; }
-    public void setUser(User user) { 
+    public void setUser(User user) {
         this.user = user;
         if (user != null) {
-            this.legacyUserId = user.getGoogleId();
+            this.legacyUserId = String.valueOf(user.getId());
         }
     }
     

@@ -1,6 +1,7 @@
 import type { Game, RecommendationRequest, RecommendationResponse, SessionFeedback, SessionHistory, UserSummary, FriendRequest, Friendship, CalendarEvent, CalendarInvitation, CreateEventRequest, EventParticipant } from '@/types';
 
 import { API_BASE } from '@/lib/config';
+import { getCsrfToken } from './csrf';
 
 // Configuration for retry logic
 const DEFAULT_RETRY_CONFIG = {
@@ -39,12 +40,6 @@ function calculateRetryDelay(attempt: number, config = DEFAULT_RETRY_CONFIG): nu
 // Sleep helper
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Read CSRF token from cookie (set by backend as non-httpOnly)
-function getCsrfToken(): string | null {
-  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
 interface FetchOptions extends RequestInit {
   retries?: number;
   skipRetry?: boolean;
@@ -63,7 +58,7 @@ async function fetchApi<T>(
     try {
       if (attempt > 0) {
         const delay = calculateRetryDelay(attempt - 1);
-        console.log(`[API] Retry attempt ${attempt}/${retries} after ${Math.round(delay)}ms`);
+        // Retry with exponential backoff
         await sleep(delay);
       }
 

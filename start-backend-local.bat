@@ -2,8 +2,10 @@
 echo Starting Lutem Backend with LOCAL profile (H2 database)...
 cd /d "%~dp0backend"
 
-REM Set JAVA_HOME to JDK 25
-set "JAVA_HOME=C:\Program Files\Java\jdk-25"
+REM Set JAVA_HOME if not already set (auto-detect latest JDK)
+if "%JAVA_HOME%"=="" (
+    for /d %%d in ("C:\Program Files\Java\jdk-*") do set "JAVA_HOME=%%d"
+)
 echo Using Java: %JAVA_HOME%
 
 REM Set Spring profile

@@ -36,15 +36,8 @@ public class FriendshipController {
         this.userRepository = userRepository;
     }
 
-    /**
-     * Get the current user from the request (set by JWT filter).
-     */
     private User getCurrentUser(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) {
-            return null;
-        }
-        return userRepository.findById(userId).orElse(null);
+        return com.lutem.mvp.util.RequestUtils.getCurrentUser(request, userRepository);
     }
 
     /**
@@ -258,6 +251,10 @@ public class FriendshipController {
         if (q == null || q.trim().length() < 2) {
             return ResponseEntity.badRequest()
                 .body(Map.of("error", "Search query must be at least 2 characters"));
+        }
+        if (q.trim().length() > 100) {
+            return ResponseEntity.badRequest()
+                .body(Map.of("error", "Search query too long"));
         }
 
         List<User> users = userRepository.searchByDisplayName(q.trim(), currentUser.getId(), PageRequest.of(0, 20));

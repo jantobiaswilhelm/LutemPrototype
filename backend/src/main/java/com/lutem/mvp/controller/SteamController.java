@@ -2,17 +2,21 @@ package com.lutem.mvp.controller;
 
 import com.lutem.mvp.dto.SteamImportResponse;
 import com.lutem.mvp.dto.UserLibraryGameDTO;
+import com.lutem.mvp.model.Game;
+import com.lutem.mvp.model.TaggingSource;
+import com.lutem.mvp.repository.GameRepository;
+import com.lutem.mvp.service.AITaggingService;
 import com.lutem.mvp.service.SteamService;
 import com.lutem.mvp.service.UserLibraryService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * REST controller for Steam integration endpoints.
@@ -26,7 +30,16 @@ public class SteamController {
     
     private final SteamService steamService;
     private final UserLibraryService userLibraryService;
-    
+
+    @Autowired(required = false)
+    private AITaggingService aiTaggingService;
+
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Value("${lutem.ai-import.unlock-code:}")
+    private String unlockCode;
+
     public SteamController(SteamService steamService, UserLibraryService userLibraryService) {
         this.steamService = steamService;
         this.userLibraryService = userLibraryService;
@@ -193,5 +206,101 @@ public class SteamController {
                 "message", e.getMessage()
             ));
         }
+    }
+
+    /**
+     * Import unmatched Steam games and tag them with AI.
+     * Requires authentication + valid unlock code.
+     * Body: { "unlockCode": "...", "games": [{ "steamAppId": 123, "name": "Game Name" }] }
+     */
+    @PostMapping("/ai-import")
+    public ResponseEntity<Map<String, Object>> aiImportGames(
+            @RequestBody Map<String, Object> request,
+            HttpServletRequest httpRequest) {
+
+        Long userId = (Long) httpRequest.getAttribute("userId");
+        if (userId == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "Authentication required"));
+        }
+
+        // Validate unlock code
+        String submittedCode = (String) request.get("unlockCode");
+        if (unlockCode.isEmpty() || submittedCode == null || !unlockCode.equalsIgnoreCase(submittedCode.trim())) {
+            return ResponseEntity.status(403).body(Map.of("error", "Invalid unlock code"));
+        }
+
+        if (aiTaggingService == null || !aiTaggingService.isConfigured()) {
+            return ResponseEntity.status(503).body(Map.of(
+                "error", "AI tagging is not configured",
+                "total", 0, "successCount", 0, "failedCount", 0,
+                "createdGames", List.of(), "failedGames", Map.of()
+            ));
+        }
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> games = (List<Map<String, Object>>) request.get("games");
+        if (games == null || games.isEmpty()) {
+            return ResponseEntity.ok(Map.of(
+                "total", 0, "successCount", 0, "failedCount", 0,
+                "message", "No games provided",
+                "createdGames", List.of(), "failedGames", Map.of()
+            ));
+        }
+
+        List<Map<String, Object>> createdGames = new ArrayList<>();
+        Map<Long, String> failedGames = new HashMap<>();
+        List<Long> gamesToTag = new ArrayList<>();
+
+        for (Map<String, Object> gameData : games) {
+            try {
+                Long steamAppId = ((Number) gameData.get("steamAppId")).longValue();
+                String name = (String) gameData.get("name");
+
+                Optional<Game> existing = gameRepository.findBySteamAppId(steamAppId);
+                if (existing.isPresent()) {
+                    createdGames.add(Map.of("steamAppId", steamAppId, "name", name, "lutemGameId", existing.get().getId()));
+                    continue;
+                }
+
+                Game newGame = new Game();
+                newGame.setName(name);
+                newGame.setSteamAppId(steamAppId);
+                newGame.setMinMinutes(15);
+                newGame.setMaxMinutes(60);
+                newGame.setTaggingSource(TaggingSource.PENDING);
+
+                Game savedGame = gameRepository.save(newGame);
+                gamesToTag.add(savedGame.getId());
+                createdGames.add(Map.of("steamAppId", steamAppId, "name", name, "lutemGameId", savedGame.getId()));
+            } catch (Exception e) {
+                Long steamAppId = gameData.get("steamAppId") != null
+                    ? ((Number) gameData.get("steamAppId")).longValue() : 0L;
+                failedGames.put(steamAppId, e.getMessage());
+            }
+        }
+
+        int taggedCount = 0;
+        if (!gamesToTag.isEmpty()) {
+            try {
+                AITaggingService.TaggingResult taggingResult = aiTaggingService.tagGames(gamesToTag);
+                taggedCount = taggingResult.getSuccessCount();
+                if (taggingResult.getFailedGames() != null) {
+                    failedGames.putAll(taggingResult.getFailedGames());
+                }
+            } catch (Exception e) {
+                logger.error("AI tagging failed: {}", e.getMessage());
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("total", games.size());
+        result.put("successCount", createdGames.size());
+        result.put("failedCount", failedGames.size());
+        result.put("taggedCount", taggedCount);
+        result.put("message", String.format("Created %d games, tagged %d with AI", createdGames.size(), taggedCount));
+        result.put("createdGames", createdGames);
+        result.put("failedGames", failedGames);
+
+        return ResponseEntity.ok(result);
     }
 }

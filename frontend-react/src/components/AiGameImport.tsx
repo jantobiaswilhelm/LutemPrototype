@@ -14,11 +14,8 @@ import type { UnmatchedGame } from '@/types/steam';
 
 interface AiGameImportProps {
   unmatchedGames: UnmatchedGame[];
-  onImport: (games: UnmatchedGame[]) => Promise<unknown>;
+  onImport: (games: UnmatchedGame[], unlockCode?: string) => Promise<unknown>;
 }
-
-// The donation unlock code - in a real app this would be validated server-side
-const VALID_CODE = 'R356T2';
 
 export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -30,11 +27,11 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
   const [importError, setImportError] = useState('');
 
   const handleCodeSubmit = () => {
-    if (unlockCode.trim().toUpperCase() === VALID_CODE) {
+    if (unlockCode.trim().length >= 4) {
       setIsUnlocked(true);
       setCodeError('');
     } else {
-      setCodeError("Hmm, that doesn't look right. Check your Ko-fi confirmation email!");
+      setCodeError('Please enter your unlock code');
     }
   };
 
@@ -42,10 +39,16 @@ export function AiGameImport({ unmatchedGames, onImport }: AiGameImportProps) {
     setIsImporting(true);
     setImportError('');
     try {
-      await onImport(unmatchedGames);
+      await onImport(unmatchedGames, unlockCode.trim());
       setImportSuccess(true);
     } catch (error) {
-      setImportError(error instanceof Error ? error.message : 'Import failed');
+      const message = error instanceof Error ? error.message : 'Import failed';
+      if (message.includes('403') || message.includes('unlock')) {
+        setIsUnlocked(false);
+        setCodeError("Invalid unlock code. Check your Ko-fi confirmation email!");
+      } else {
+        setImportError(message);
+      }
     } finally {
       setIsImporting(false);
     }

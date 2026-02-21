@@ -91,8 +91,6 @@ export default function ResultStep() {
         maxContentRating: contentPrefs.maxContentRating,
         allowNsfw: contentPrefs.allowNsfw,
       });
-      console.log('Got recommendation:', data);
-      
       // Save to store
       saveToStore(data);
       

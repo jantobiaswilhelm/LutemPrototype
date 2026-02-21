@@ -1,6 +1,5 @@
 export { default as WizardModal } from './WizardModal';
 export { default as InlineWizard } from './InlineWizard';
-export { default as LoadingStep } from './LoadingStep';
 export { default as SourceStep } from './SourceStep';
 export { default as TimeStep } from './TimeStep';
 export { default as MoodStep } from './MoodStep';

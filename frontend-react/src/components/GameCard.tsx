@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Clock, Zap, ChevronDown, Play, ExternalLink } from 'lucide-react';
 import { EMOTIONAL_GOALS, ENERGY_LEVELS } from '@/types';
 import type { Game } from '@/types';
@@ -21,7 +22,7 @@ interface GameCardProps {
   onStart?: () => void;
 }
 
-export function GameCard({ game, reason, showDetails = true, onStart }: GameCardProps) {
+export const GameCard = memo(function GameCard({ game, reason, showDetails = true, onStart }: GameCardProps) {
   return (
     <div className="rounded-2xl overflow-hidden bg-[var(--color-bg-secondary)] border border-[var(--color-border)] shadow-lg">
       {/* Game image */}
@@ -119,7 +120,7 @@ export function GameCard({ game, reason, showDetails = true, onStart }: GameCard
       )}
     </div>
   );
-}
+});
 
 // Compact card for alternatives
 interface AlternativeCardProps {
@@ -127,7 +128,7 @@ interface AlternativeCardProps {
   onSelect?: () => void;
 }
 
-export function AlternativeCard({ game, onSelect }: AlternativeCardProps) {
+export const AlternativeCard = memo(function AlternativeCard({ game, onSelect }: AlternativeCardProps) {
   return (
     <button
       onClick={onSelect}
@@ -167,4 +168,4 @@ export function AlternativeCard({ game, onSelect }: AlternativeCardProps) {
       <ChevronDown className="w-5 h-5 text-[var(--color-text-muted)] rotate-[-90deg]" />
     </button>
   );
-}
+});
