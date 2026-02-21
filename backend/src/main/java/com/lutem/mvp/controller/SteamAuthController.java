@@ -101,10 +101,10 @@ public class SteamAuthController {
             return;
         }
         
-        // Extract Steam ID from claimed_id
+        // Extract Steam ID from claimed_id (must exactly match Steam's URL format)
         Matcher matcher = STEAM_ID_PATTERN.matcher(claimedId);
-        if (!matcher.find()) {
-            logger.error("Could not extract Steam ID from claimed_id: {}", claimedId);
+        if (!matcher.matches()) {
+            logger.error("Invalid Steam claimed_id format");
             redirectWithError(response, "Steam login failed: invalid claimed_id");
             return;
         }

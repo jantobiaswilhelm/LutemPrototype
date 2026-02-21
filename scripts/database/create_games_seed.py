@@ -1,4 +1,5 @@
 import json
+import os
 
 # All 41 games from GameController.java
 games = [
@@ -45,8 +46,10 @@ games = [
     {"name": "Counter-Strike 2", "minMinutes": 30, "maxMinutes": 50, "emotionalGoals": ["CHALLENGE", "LOCKING_IN"], "interruptibility": "LOW", "energyRequired": "HIGH", "bestTimeOfDay": ["MORNING", "AFTERNOON", "EVENING"], "socialPreferences": ["COMPETITIVE", "COOP"], "genres": ["Tactical FPS", "Action"], "description": "Legendary tactical shooter with competitive gameplay", "imageUrl": "https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg", "storeUrl": "https://store.steampowered.com/app/730/CounterStrike_2/", "userRating": 4.0}
 ]
 
-# Write to JSON file with proper formatting
-with open('D:/Lutem/ProjectFiles/lutem-mvp/backend/src/main/resources/games-seed.json', 'w', encoding='utf-8') as f:
+# Write to JSON file with proper formatting (relative to this script's location)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+output_path = os.path.join(script_dir, '..', '..', 'backend', 'src', 'main', 'resources', 'games-seed.json')
+with open(output_path, 'w', encoding='utf-8') as f:
     json.dump(games, f, indent=2, ensure_ascii=False)
 
 print(f"✅ Created games-seed.json with {len(games)} games!")

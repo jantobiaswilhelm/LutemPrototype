@@ -8,73 +8,36 @@ import { GameCard, AlternativeCard } from '@/components/GameCard';
 import { MoodShortcuts } from '@/components/MoodShortcuts';
 import { InlineWizard } from '@/components/wizard';
 import { FeedbackPrompt } from '@/components/feedback';
+import { sessionsApi } from '@/api/client';
 import type { Game } from '@/types';
-
-import { API_BASE } from '@/lib/config';
 
 // Get greeting based on time of day
 function getGreeting(name?: string): string {
   const hour = new Date().getHours();
   let timeGreeting: string;
-  
+
   if (hour < 12) timeGreeting = 'Good morning';
   else if (hour < 17) timeGreeting = 'Good afternoon';
   else if (hour < 21) timeGreeting = 'Good evening';
   else timeGreeting = 'Late night gaming?';
-  
-  // Add name if available (use first name only for friendliness)
+
   if (name) {
     const firstName = name.split(' ')[0];
     return `${timeGreeting}, ${firstName}`;
   }
-  
+
   return timeGreeting;
 }
 
-// Record session start in backend
-async function recordSessionStart(sessionId: number): Promise<void> {
-  try {
-    await fetch(`${API_BASE}/sessions/${sessionId}/start`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    console.log(`📊 Session start recorded (ID: ${sessionId})`);
-  } catch (err) {
-    console.error('Failed to record session start:', err);
-  }
-}
-
-// Create session for alternative game selection
-async function createAlternativeSession(gameId: number): Promise<number | null> {
-  try {
-    const res = await fetch(`${API_BASE}/sessions/alternative/${gameId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const data = await res.json();
-    if (data.status === 'success') {
-      console.log(`🔀 Alternative session created (ID: ${data.sessionId})`);
-      return data.sessionId;
-    }
-    return null;
-  } catch (err) {
-    console.error('Failed to create alternative session:', err);
-    return null;
-  }
-}
-
 // Launch a game via Steam protocol or store URL
-// The setPendingFeedback parameter is optional - if provided, it will save feedback info for later
 async function launchGame(
   game: Game,
   sessionId?: number,
   setPendingFeedback?: (feedback: { sessionId: number; gameName: string; gameImageUrl?: string; startedAt: number }) => void
 ): Promise<void> {
-  // Record the session start (fire and forget)
   if (sessionId) {
-    recordSessionStart(sessionId);
+    sessionsApi.recordStart(sessionId).catch(() => {});
 
-    // Save pending feedback for when user returns
     if (setPendingFeedback) {
       setPendingFeedback({
         sessionId,
@@ -86,31 +49,22 @@ async function launchGame(
   }
 
   if (game.steamAppId) {
-    // Steam protocol - opens Steam and launches the game
     window.open(`steam://run/${game.steamAppId}`, '_self');
-    console.log(`🎮 Launching ${game.name} via Steam (appId: ${game.steamAppId})`);
   } else if (game.storeUrl) {
-    // Fallback to store page
     window.open(game.storeUrl, '_blank');
-    console.log(`🔗 Opening store page for ${game.name}`);
-  } else {
-    // No launch option available
-    console.log(`⚠️ No launch method available for ${game.name}`);
   }
 }
 
 // Launch alternative game (creates new session first)
 async function launchAlternative(game: Game): Promise<void> {
-  // Create a new session for this alternative
-  await createAlternativeSession(game.id);
-  
-  // Then launch the game
+  try {
+    await sessionsApi.createAlternative(game.id);
+  } catch { /* best-effort */ }
+
   if (game.steamAppId) {
     window.open(`steam://run/${game.steamAppId}`, '_self');
-    console.log(`🎮 Launching alternative ${game.name} via Steam`);
   } else if (game.storeUrl) {
     window.open(game.storeUrl, '_blank');
-    console.log(`🔗 Opening store page for ${game.name}`);
   }
 }
 

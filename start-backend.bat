@@ -2,10 +2,15 @@
 echo Starting Lutem Backend (Local Development)...
 cd /d "%~dp0backend"
 
-REM Set JAVA_HOME if not already set
+REM Set JAVA_HOME if not already set (auto-detect latest JDK)
 if "%JAVA_HOME%"=="" (
-    set "JAVA_HOME=C:\Program Files\Java\jdk-25"
-    echo JAVA_HOME not set, using default: %JAVA_HOME%
+    for /d %%d in ("C:\Program Files\Java\jdk-*") do set "JAVA_HOME=%%d"
+    if "%JAVA_HOME%"=="" (
+        echo WARNING: JAVA_HOME not set and no JDK found in C:\Program Files\Java\
+        echo Please set JAVA_HOME manually.
+    ) else (
+        echo JAVA_HOME not set, auto-detected: %JAVA_HOME%
+    )
 )
 
 echo Using JAVA_HOME: %JAVA_HOME%

@@ -9,6 +9,7 @@ import com.lutem.mvp.service.FriendshipService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -259,11 +260,9 @@ public class FriendshipController {
                 .body(Map.of("error", "Search query must be at least 2 characters"));
         }
 
-        List<User> users = userRepository.searchByDisplayName(q.trim(), currentUser.getId());
+        List<User> users = userRepository.searchByDisplayName(q.trim(), currentUser.getId(), PageRequest.of(0, 20));
 
-        // Return simple UserSummaryDTO list - frontend calculates friendship status separately
         List<UserSummaryDTO> results = users.stream()
-            .limit(20) // Limit results
             .map(UserSummaryDTO::new)
             .collect(Collectors.toList());
 

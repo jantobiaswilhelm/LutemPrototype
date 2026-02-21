@@ -1,6 +1,7 @@
 package com.lutem.mvp.repository;
 
 import com.lutem.mvp.model.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -51,6 +52,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
            "ORDER BY u.displayName")
     List<User> searchByDisplayName(
         @Param("query") String query,
-        @Param("excludeUserId") Long excludeUserId
+        @Param("excludeUserId") Long excludeUserId,
+        Pageable pageable
     );
 }

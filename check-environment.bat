@@ -69,7 +69,7 @@ if exist mvnw.cmd (
 ) else (
     echo [MANUAL] Until wrapper is added:
     echo   1. IntelliJ: Right-click LutemMvpApplication.java → Run
-    echo   2. Double-click: start-frontend-only.bat
+    echo   2. Double-click: start-frontend.bat
 )
 echo.
 echo ================================================

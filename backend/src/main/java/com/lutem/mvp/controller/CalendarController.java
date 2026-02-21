@@ -90,10 +90,7 @@ public class CalendarController {
             events = eventRepository.findPublicEventsInRange(startDate, endDate);
         }
 
-        List<CalendarEventDTO> dtos = events.stream()
-            .map(e -> enrichEventDTO(e, currentUser))
-            .collect(Collectors.toList());
-
+        List<CalendarEventDTO> dtos = enrichEventDTOList(events, currentUser);
         return ResponseEntity.ok(dtos);
     }
 
@@ -118,10 +115,7 @@ public class CalendarController {
 
         List<CalendarEvent> events = calendarService.getOwnEvents(currentUser, startDate, endDate);
 
-        List<CalendarEventDTO> dtos = events.stream()
-            .map(e -> enrichEventDTO(e, currentUser))
-            .collect(Collectors.toList());
-
+        List<CalendarEventDTO> dtos = enrichEventDTOList(events, currentUser);
         return ResponseEntity.ok(dtos);
     }
 
@@ -458,9 +452,7 @@ public class CalendarController {
         response.put("imported", imported);
         response.put("skipped", skipped);
         response.put("total", events.size());
-        response.put("events", savedEvents.stream()
-            .map(e -> enrichEventDTO(e, currentUser))
-            .collect(Collectors.toList()));
+        response.put("events", enrichEventDTOList(savedEvents, currentUser));
 
         return ResponseEntity.ok(response);
     }
@@ -498,6 +490,23 @@ public class CalendarController {
         return dto;
     }
 
+    /**
+     * Batch-optimized enrichment for lists. Uses a single query to load
+     * all game names instead of N+1 individual queries.
+     */
+    private List<CalendarEventDTO> enrichEventDTOList(List<CalendarEvent> events, User currentUser) {
+        List<CalendarEventDTO> dtos = events.stream()
+            .map(e -> {
+                CalendarEventDTO dto = new CalendarEventDTO(e);
+                setUserContext(dto, e, currentUser);
+                return dto;
+            })
+            .collect(Collectors.toList());
+
+        batchEnrichGameNames(dtos);
+        return dtos;
+    }
+
     private void setUserContext(CalendarEventDTO dto, CalendarEvent event, User currentUser) {
         if (currentUser == null) {
             dto.setUserContext(null, false, event.getVisibility() == EventVisibility.PUBLIC);
@@ -520,6 +529,28 @@ public class CalendarController {
         if (dto.getGameId() != null) {
             gameRepository.findById(dto.getGameId())
                 .ifPresent(game -> dto.setGameName(game.getName()));
+        }
+    }
+
+    /**
+     * Batch-enrich a list of DTOs with game names in a single query
+     * instead of N+1 individual findById calls.
+     */
+    private void batchEnrichGameNames(List<CalendarEventDTO> dtos) {
+        Set<Long> gameIds = dtos.stream()
+            .map(CalendarEventDTO::getGameId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        if (gameIds.isEmpty()) return;
+
+        Map<Long, String> gameNames = gameRepository.findAllById(gameIds).stream()
+            .collect(Collectors.toMap(g -> g.getId(), g -> g.getName()));
+
+        for (CalendarEventDTO dto : dtos) {
+            if (dto.getGameId() != null && gameNames.containsKey(dto.getGameId())) {
+                dto.setGameName(gameNames.get(dto.getGameId()));
+            }
         }
     }
 

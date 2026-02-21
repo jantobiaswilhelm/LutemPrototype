@@ -42,15 +42,20 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     @Value("${lutem.rate-limit.requests-per-minute:60}")
     private int requestsPerMinute;
 
+    @Value("${lutem.rate-limit.auth-requests-per-minute:10}")
+    private int authRequestsPerMinute;
+
     @Value("${lutem.rate-limit.enabled:true}")
     private boolean enabled;
 
     // Map of IP -> (timestamp_minute -> request_count)
     private final Map<String, Map<Long, AtomicInteger>> requestCounts = new ConcurrentHashMap<>();
+    private final Map<String, Map<Long, AtomicInteger>> authRequestCounts = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
-        logger.info("Rate limiter initialized: {} requests/min, enabled={}", requestsPerMinute, enabled);
+        logger.info("Rate limiter initialized: {} requests/min (auth: {}/min), enabled={}",
+                requestsPerMinute, authRequestsPerMinute, enabled);
     }
 
     @Override
@@ -80,7 +85,24 @@ public class RateLimitInterceptor implements HandlerInterceptor {
 
         int currentCount = count.incrementAndGet();
 
-        // Check if over limit
+        // Stricter limit for auth endpoints (login, callback, dev endpoints)
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/auth/")) {
+            Map<Long, AtomicInteger> authIpCounts = authRequestCounts.computeIfAbsent(clientIp, k -> new ConcurrentHashMap<>());
+            AtomicInteger authCount = authIpCounts.computeIfAbsent(currentMinute, k -> new AtomicInteger(0));
+            int currentAuthCount = authCount.incrementAndGet();
+
+            if (currentAuthCount > authRequestsPerMinute) {
+                logger.warn("Auth rate limit exceeded for IP: {} ({} auth requests/min)", clientIp, currentAuthCount);
+                response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+                response.setContentType("application/json");
+                response.getWriter().write(
+                    "{\"error\": \"Too many login attempts. Please try again later.\", \"retryAfterSeconds\": 60}");
+                return false;
+            }
+        }
+
+        // Check global limit
         if (currentCount > requestsPerMinute) {
             logger.warn("Rate limit exceeded for IP: {} ({} requests/min)", clientIp, currentCount);
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
@@ -125,9 +147,13 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         requestCounts.forEach((ip, minuteCounts) -> {
             minuteCounts.keySet().removeIf(minute -> minute < oldestAllowedMinute);
         });
+        authRequestCounts.forEach((ip, minuteCounts) -> {
+            minuteCounts.keySet().removeIf(minute -> minute < oldestAllowedMinute);
+        });
 
         // Remove IPs with no recent requests
         requestCounts.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+        authRequestCounts.entrySet().removeIf(entry -> entry.getValue().isEmpty());
 
         if (logger.isDebugEnabled()) {
             logger.debug("Rate limiter cleanup: tracking {} IPs", requestCounts.size());

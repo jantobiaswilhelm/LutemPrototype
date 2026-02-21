@@ -48,13 +48,14 @@ function getCsrfToken(): string | null {
 interface FetchOptions extends RequestInit {
   retries?: number;
   skipRetry?: boolean;
+  timeoutMs?: number;
 }
 
 async function fetchApi<T>(
   endpoint: string,
   options?: FetchOptions
 ): Promise<T> {
-  const { retries = DEFAULT_RETRY_CONFIG.maxRetries, skipRetry = false, ...fetchOptions } = options || {};
+  const { retries = DEFAULT_RETRY_CONFIG.maxRetries, skipRetry = false, timeoutMs = 15000, ...fetchOptions } = options || {};
 
   let lastError: Error | null = null;
 
@@ -76,15 +77,24 @@ async function fetchApi<T>(
         }
       }
 
-      const response = await fetch(`${API_BASE}${endpoint}`, {
-        ...fetchOptions,
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          ...csrfHeaders,
-          ...fetchOptions?.headers,
-        },
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+      let response: Response;
+      try {
+        response = await fetch(`${API_BASE}${endpoint}`, {
+          ...fetchOptions,
+          credentials: 'include',
+          signal: fetchOptions?.signal || controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+            ...csrfHeaders,
+            ...fetchOptions?.headers,
+          },
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       if (!response.ok) {
         let errorText: string;
@@ -117,6 +127,16 @@ async function fetchApi<T>(
       return data;
 
     } catch (error) {
+      // Timeout (AbortController)
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        const timeoutError = new ApiError(0, 'Timeout', `Request timed out after ${timeoutMs}ms`);
+        if (skipRetry || attempt >= retries) {
+          throw timeoutError;
+        }
+        lastError = timeoutError;
+        continue;
+      }
+
       // Network error (fetch failed)
       if (error instanceof TypeError && error.message.includes('fetch')) {
         const networkError = new ApiError(0, 'Network Error', 'Failed to connect to server');
@@ -163,6 +183,18 @@ export const feedbackApi = {
 export const sessionsApi = {
   getHistory: (limit = 20) =>
     fetchApi<SessionHistory[]>(`/sessions/history?limit=${limit}`),
+
+  recordStart: (sessionId: number) =>
+    fetchApi<void>(`/sessions/${sessionId}/start`, {
+      method: 'POST',
+      skipRetry: true,
+    }),
+
+  createAlternative: (gameId: number) =>
+    fetchApi<{ status: string; sessionId: number }>(`/sessions/alternative/${gameId}`, {
+      method: 'POST',
+      skipRetry: true,
+    }),
 };
 
 // Friends API

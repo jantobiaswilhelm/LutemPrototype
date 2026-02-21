@@ -12,9 +12,13 @@ import com.lutem.mvp.dto.SessionHistoryDTO;
 import com.lutem.mvp.dto.SatisfactionStats;
 import com.lutem.mvp.model.Game;
 import com.lutem.mvp.model.GameSession;
+import com.lutem.mvp.model.User;
 import com.lutem.mvp.repository.GameRepository;
+import com.lutem.mvp.repository.GameSessionRepository;
+import com.lutem.mvp.repository.UserRepository;
 import com.lutem.mvp.service.GameSessionService;
 import com.lutem.mvp.service.UserSatisfactionService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +39,16 @@ public class GameController {
 
     @Autowired
     private GameRepository gameRepository;
-    
+
+    @Autowired
+    private GameSessionRepository sessionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Autowired
     private GameSessionService sessionService;
-    
+
     @Autowired(required = false)
     private UserSatisfactionService satisfactionService;
 
@@ -227,7 +237,7 @@ public class GameController {
                 score += 15.0;
                 matchReasons.add("Easy to pause when needed");
             } else {
-                score -= 10.0;
+                score -= 3.0;
             }
         }
 
@@ -240,7 +250,7 @@ public class GameController {
                 score += 12.0;
                 matchReasons.add("Won't drain your energy");
             } else {
-                score -= 5.0;
+                score -= 2.0;
             }
         }
 
@@ -258,7 +268,7 @@ public class GameController {
                 score += 5.0;
                 matchReasons.add("Perfect for " + request.getSocialPreference().getDisplayName().toLowerCase() + " play");
             } else {
-                score -= 5.0;
+                score -= 2.0;
             }
         }
 
@@ -367,32 +377,56 @@ public class GameController {
                 .collect(Collectors.joining(" • "));
         }
         
-        return new ScoringResult(score, reason);
+        return new ScoringResult(Math.max(0, score), reason);
     }
 
-    // POST /sessions/feedback - **NEW: Saves to database**
+    // POST /sessions/feedback - Saves feedback to database
     @PostMapping("/sessions/feedback")
-    public Map<String, String> submitFeedback(@Valid @RequestBody SessionFeedback feedback) {
+    public Map<String, String> submitFeedback(
+            @Valid @RequestBody SessionFeedback feedback,
+            HttpServletRequest request) {
         Map<String, String> response = new HashMap<>();
 
-        // Save to database using session ID
-        if (feedback.getSessionId() != null) {
-            boolean success = sessionService.recordFeedback(
-                feedback.getSessionId(),
-                feedback.getSatisfactionScore()
-            ).isPresent();
+        if (feedback.getSessionId() == null) {
+            response.put("status", "error");
+            response.put("message", "No sessionId provided");
+            return response;
+        }
 
-            if (success) {
-                logger.info("Feedback saved - Session ID: {}, Score: {}",
-                    feedback.getSessionId(), feedback.getSatisfactionScore());
-                response.put("status", "success");
-                response.put("message", "Feedback recorded in database");
-                return response;
-            }
+        // Validate session ownership
+        GameSession session = sessionRepository.findById(feedback.getSessionId()).orElse(null);
+        if (session == null) {
+            response.put("status", "error");
+            response.put("message", "Session not found");
+            return response;
+        }
+
+        User currentUser = getCurrentUser(request);
+        if (session.getUser() != null && (currentUser == null || !session.getUser().getId().equals(currentUser.getId()))) {
+            logger.warn("Feedback rejected: user {} tried to submit for session {} owned by {}",
+                currentUser != null ? currentUser.getId() : "anonymous",
+                feedback.getSessionId(),
+                session.getUser().getId());
+            response.put("status", "error");
+            response.put("message", "Not authorized to submit feedback for this session");
+            return response;
+        }
+
+        boolean success = sessionService.recordFeedback(
+            feedback.getSessionId(),
+            feedback.getSatisfactionScore()
+        ).isPresent();
+
+        if (success) {
+            logger.info("Feedback saved - Session ID: {}, Score: {}",
+                feedback.getSessionId(), feedback.getSatisfactionScore());
+            response.put("status", "success");
+            response.put("message", "Feedback recorded");
+            return response;
         }
 
         response.put("status", "error");
-        response.put("message", "No sessionId provided");
+        response.put("message", "Failed to record feedback");
         return response;
     }
     
@@ -593,8 +627,14 @@ public class GameController {
             .collect(Collectors.toList());
     }
     
+    private User getCurrentUser(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) return null;
+        return userRepository.findById(userId).orElse(null);
+    }
+
     // Filter by content rating and NSFW preferences
-    private List<Game> filterByContentPreferences(List<Game> games, 
+    private List<Game> filterByContentPreferences(List<Game> games,
             com.lutem.mvp.model.ContentRating maxRating, Boolean allowNsfw) {
         
         return games.stream()
