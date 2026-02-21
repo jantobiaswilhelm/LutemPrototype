@@ -41,9 +41,10 @@ export function Taskbar() {
   const [currentX, setCurrentX] = useState(0);
   const taskbarRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const { user, isAuthenticated, logout } = useAuthStore();
 
   const SWIPE_THRESHOLD = 50;
@@ -51,6 +52,36 @@ export function Taskbar() {
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
+
+  // Hover open/close logic
+  const cancelClose = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const scheduleClose = () => {
+    cancelClose();
+    closeTimeoutRef.current = setTimeout(() => setIsOpen(false), 200);
+  };
+
+  const handleTriggerEnter = () => {
+    cancelClose();
+    setIsOpen(true);
+  };
+
+  const handlePanelEnter = () => {
+    cancelClose();
+  };
+
+  const handlePanelLeave = () => {
+    scheduleClose();
+  };
+
+  useEffect(() => {
+    return () => cancelClose();
+  }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
@@ -87,22 +118,6 @@ export function Taskbar() {
     return () => window.removeEventListener('touchstart', handleEdgeSwipe);
   }, [isOpen]);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        isOpen && 
-        taskbarRef.current && 
-        !taskbarRef.current.contains(e.target as Node) &&
-        triggerRef.current &&
-        !triggerRef.current.contains(e.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]);
-
   const getDragOffset = () => {
     if (!isDragging) return 0;
     const diff = currentX - startX;
@@ -126,10 +141,12 @@ export function Taskbar() {
       {/* Edge trigger button */}
       <button
         ref={triggerRef}
+        onMouseEnter={handleTriggerEnter}
+        onMouseLeave={scheduleClose}
         onClick={() => setIsOpen(!isOpen)}
         className={`
           fixed left-0 top-1/2 -translate-y-1/2 z-50
-          w-6 h-16 
+          w-6 h-16
           flex items-center justify-center
           bg-[var(--color-bg-secondary)]/80 backdrop-blur-sm
           border border-l-0 border-[var(--color-border)]
@@ -160,12 +177,14 @@ export function Taskbar() {
       {/* Taskbar panel */}
       <div
         ref={taskbarRef}
+        onMouseEnter={handlePanelEnter}
+        onMouseLeave={handlePanelLeave}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         style={{
-          transform: isOpen 
-            ? `translateX(${dragOffset}px)` 
+          transform: isOpen
+            ? `translateX(${dragOffset}px)`
             : `translateX(calc(-100% + ${dragOffset}px))`,
         }}
         className={`
@@ -235,11 +254,12 @@ export function Taskbar() {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => setIsOpen(false)}
               className={({ isActive }) => `
                 flex items-center gap-3 px-3 py-2.5 rounded-lg
                 transition-all duration-150
-                ${isActive 
-                  ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]' 
+                ${isActive
+                  ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
                   : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-primary)]'
                 }
               `}
@@ -256,11 +276,12 @@ export function Taskbar() {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => setIsOpen(false)}
               className={({ isActive }) => `
                 flex items-center gap-3 px-3 py-2.5 rounded-lg
                 transition-all duration-150
-                ${isActive 
-                  ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]' 
+                ${isActive
+                  ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
                   : 'text-[var(--color-text-muted)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-secondary)]'
                 }
               `}
