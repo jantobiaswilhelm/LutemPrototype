@@ -1,10 +1,10 @@
 package com.lutem.mvp.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -22,12 +22,11 @@ public class WebConfig {
     private String extraOrigins;
 
     /**
-     * Filter-level CORS so headers are added even when servlet filters
-     * (JwtAuthFilter, CsrfFilter) short-circuit the request.
+     * Filter-level CORS registered at highest precedence so headers are added
+     * even when JwtAuthFilter or CsrfFilter short-circuit the request.
      */
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public CorsFilter corsFilter() {
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
         List<String> origins = new ArrayList<>();
         origins.add(frontendUrl);
 
@@ -56,6 +55,9 @@ public class WebConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+
+        FilterRegistrationBean<CorsFilter> registration = new FilterRegistrationBean<>(new CorsFilter(source));
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return registration;
     }
 }
