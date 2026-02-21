@@ -126,9 +126,9 @@ public class GameController {
             }
         }
 
-        // Get only fully tagged games with all collections eagerly loaded (avoids N+1 queries)
-        List<Game> games = gameRepository.findAllFullyTaggedWithCollections();
-        logger.debug("Found {} fully tagged games for recommendations", games.size());
+        // Get only fully tagged games (batch fetching handles lazy collections efficiently)
+        List<Game> games = gameRepository.findAllFullyTagged();
+        logger.info("Found {} fully tagged games for recommendations", games.size());
 
         // Filter by audio availability
         if (request.getAudioAvailability() != null) {
