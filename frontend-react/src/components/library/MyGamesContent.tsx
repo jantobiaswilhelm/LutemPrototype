@@ -51,6 +51,7 @@ export function MyGamesContent() {
     isTagging,
     fetchGameStats,
     gameStats,
+    importLibrary,
   } = useSteamStore();
 
   useEffect(() => {
@@ -111,7 +112,11 @@ export function MyGamesContent() {
   }, [library?.games, searchQuery, filterBy, sortBy, sortDesc]);
 
   const handleRefresh = () => {
-    fetchLibrary();
+    if (isConnected) {
+      importLibrary();
+    } else {
+      fetchLibrary();
+    }
   };
 
   // Not logged in - show preview

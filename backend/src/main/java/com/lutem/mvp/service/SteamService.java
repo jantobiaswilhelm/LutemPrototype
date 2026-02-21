@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -250,10 +251,10 @@ public class SteamService {
             
             if (lutemGame != null) {
                 // Game already exists in Lutem database (curated or previously imported)
-                boolean exists = userLibraryRepository
-                    .existsByUserIdAndGameId(user.getId(), lutemGame.getId());
-                
-                if (!exists) {
+                Optional<UserLibrary> existingEntry = userLibraryRepository
+                    .findByUserIdAndGameId(user.getId(), lutemGame.getId());
+
+                if (existingEntry.isEmpty()) {
                     // Add to user's library
                     UserLibrary libraryEntry = new UserLibrary(
                         user, lutemGame, steamGame.getAppId(),
@@ -261,6 +262,12 @@ public class SteamService {
                     );
                     userLibraryRepository.save(libraryEntry);
                 } else {
+                    // Update playtime from Steam
+                    UserLibrary entry = existingEntry.get();
+                    entry.setSteamPlaytimeForever(steamGame.getPlaytimeForever());
+                    entry.setSteamPlaytime2Weeks(steamGame.getPlaytime2Weeks());
+                    entry.setLastSyncedAt(LocalDateTime.now());
+                    userLibraryRepository.save(entry);
                     alreadyInLibrary++;
                 }
                 
@@ -319,14 +326,20 @@ public class SteamService {
                     // Game was created by another concurrent request, fetch and link
                     Game existingGame = gameRepository.findBySteamAppId(steamGame.getAppId()).orElse(null);
                     if (existingGame != null) {
-                        boolean exists = userLibraryRepository
-                            .existsByUserIdAndGameId(user.getId(), existingGame.getId());
-                        if (!exists) {
+                        Optional<UserLibrary> existingEntry = userLibraryRepository
+                            .findByUserIdAndGameId(user.getId(), existingGame.getId());
+                        if (existingEntry.isEmpty()) {
                             UserLibrary libraryEntry = new UserLibrary(
                                 user, existingGame, steamGame.getAppId(),
                                 steamGame.getPlaytimeForever(), steamGame.getPlaytime2Weeks()
                             );
                             userLibraryRepository.save(libraryEntry);
+                        } else {
+                            UserLibrary entry = existingEntry.get();
+                            entry.setSteamPlaytimeForever(steamGame.getPlaytimeForever());
+                            entry.setSteamPlaytime2Weeks(steamGame.getPlaytime2Weeks());
+                            entry.setLastSyncedAt(LocalDateTime.now());
+                            userLibraryRepository.save(entry);
                         }
                         matched.add(new MatchedGame(
                             steamGame.getAppId(),
