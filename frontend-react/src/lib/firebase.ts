@@ -1,18 +1,18 @@
 /**
  * Firebase Configuration
- * These are public API keys - safe to expose in client code
+ * All values loaded from environment variables (VITE_ prefix for Vite).
  */
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDPiWoSxr-e9OO76xY7CRxNNe3CeGLc0hc",
-  authDomain: "lutem-68f3a.firebaseapp.com",
-  projectId: "lutem-68f3a",
-  storageBucket: "lutem-68f3a.firebasestorage.app",
-  messagingSenderId: "980654641414",
-  appId: "1:980654641414:web:5efe326e3d57c88294ce87",
-  measurementId: "G-0TXFY5MV82"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase

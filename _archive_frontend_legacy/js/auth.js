@@ -25,7 +25,7 @@ async function initAuth() {
     try {
         // Firebase config - these are safe to expose (they're like a public API key)
         const firebaseConfig = {
-            apiKey: "AIzaSyDPiWoSxr-e9OO76xY7CRxNNe3CeGLc0hc",
+            apiKey: "REMOVED-ROTATE-KEY-IN-GOOGLE-CONSOLE",
             authDomain: "lutem-68f3a.firebaseapp.com",
             projectId: "lutem-68f3a",
             storageBucket: "lutem-68f3a.firebasestorage.app",
