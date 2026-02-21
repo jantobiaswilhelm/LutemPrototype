@@ -43,7 +43,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       isAuthenticated: false,
       isLoading: false,
@@ -170,8 +170,6 @@ export const useAuthStore = create<AuthState>()(
        * Fetch current user (validates session cookie)
        */
       fetchCurrentUser: async () => {
-        const { isAuthenticated } = get();
-
         try {
           set({ isLoading: true });
 
