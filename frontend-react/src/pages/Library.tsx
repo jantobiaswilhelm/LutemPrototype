@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AllGamesContent } from '@/components/library/AllGamesContent';
 import { MyGamesContent } from '@/components/library/MyGamesContent';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 type LibraryTab = 'my-games' | 'all-games';
 
@@ -45,6 +46,11 @@ export function Library() {
   return (
     <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-6 pb-24">
       <div className="max-w-4xl mx-auto">
+        <Breadcrumbs items={[
+          { label: 'Library', to: '/library' },
+          { label: activeTab === 'my-games' ? 'My Games' : 'All Games' },
+        ]} />
+
         {/* Page Title */}
         <h1 className="text-2xl font-semibold text-[var(--color-text-primary)] text-center mb-6">
           Library

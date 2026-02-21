@@ -8,6 +8,8 @@ import { useAuthStore } from '@/stores/authStore';
 import Taskbar from '@/components/Taskbar';
 import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { ToastContainer } from '@/components/ToastContainer';
+import { PageTransition } from '@/components/PageTransition';
 
 // Lazy-loaded pages for code splitting
 const Home = lazy(() => import('@/pages/Home'));
@@ -68,22 +70,27 @@ function App() {
               Skip to main content
             </a>
             <Taskbar />
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                {/* All routes are public - pages handle their own auth state */}
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/stats" element={<Stats />} />
-                <Route path="/sessions" element={<Sessions />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/friends" element={<Friends />} />
-                <Route path="/calendar" element={<Calendar />} />
-              </Routes>
-            </Suspense>
-            <Footer />
+            <ToastContainer />
+            <div className="lg:ml-56">
+              <Suspense fallback={<PageLoader />}>
+                <PageTransition>
+                  <Routes>
+                    {/* All routes are public - pages handle their own auth state */}
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
+                    <Route path="/settings" element={<Settings />} />
+                    <Route path="/stats" element={<Stats />} />
+                    <Route path="/sessions" element={<Sessions />} />
+                    <Route path="/library" element={<Library />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/friends" element={<Friends />} />
+                    <Route path="/calendar" element={<Calendar />} />
+                  </Routes>
+                </PageTransition>
+              </Suspense>
+              <Footer />
+            </div>
           </BrowserRouter>
         </AppInitializer>
       </ErrorBoundary>

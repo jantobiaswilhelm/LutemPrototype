@@ -2,20 +2,23 @@ import { useState, useEffect, useMemo } from 'react';
 import {
   Search,
   Clock,
-  Gamepad2,
   AlertCircle,
-  Loader2,
   SortAsc,
   SortDesc,
   Grid,
   List,
   Globe,
 } from 'lucide-react';
+import { GameGridSkeleton } from '@/components/skeletons/GameCardSkeleton';
 import { gamesApi } from '@/api/client';
 import type { Game } from '@/types';
+import { EmptyLibrarySvg } from '@/components/illustrations';
+import { GamePreviewTooltip } from '@/components/library/GamePreviewTooltip';
 
 type AllGamesSortOption = 'name' | 'minTime' | 'maxTime';
 type ViewMode = 'grid' | 'list';
+
+const PAGE_SIZE = 40;
 
 export function AllGamesContent() {
   const [allGames, setAllGames] = useState<Game[]>([]);
@@ -25,6 +28,7 @@ export function AllGamesContent() {
   const [sortBy, setSortBy] = useState<AllGamesSortOption>('name');
   const [sortDesc, setSortDesc] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -69,13 +73,19 @@ export function AllGamesContent() {
     return games;
   }, [allGames, searchQuery, sortBy, sortDesc]);
 
+  // Reset pagination when filters change
+  useEffect(() => {
+    setDisplayCount(PAGE_SIZE);
+  }, [searchQuery, sortBy, sortDesc]);
+
+  const displayedGames = useMemo(
+    () => filteredGames.slice(0, displayCount),
+    [filteredGames, displayCount],
+  );
+  const hasMore = displayCount < filteredGames.length;
+
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <Loader2 className="w-8 h-8 text-[var(--color-accent)] animate-spin mb-4" />
-        <p className="text-[var(--color-text-muted)]">Loading all games...</p>
-      </div>
-    );
+    return <GameGridSkeleton count={12} />;
   }
 
   if (error) {
@@ -157,9 +167,7 @@ export function AllGamesContent() {
       {/* Empty state */}
       {filteredGames.length === 0 && (
         <div className="text-center py-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--color-bg-secondary)] mb-4">
-            <Gamepad2 className="w-8 h-8 text-[var(--color-text-muted)]" />
-          </div>
+          <EmptyLibrarySvg className="w-48 h-36 mx-auto mb-2" />
           <h3 className="text-lg font-medium text-[var(--color-text-primary)] mb-2">
             No games found
           </h3>
@@ -171,24 +179,37 @@ export function AllGamesContent() {
 
       {/* Games grid/list */}
       {filteredGames.length > 0 && (
-        <div className={
-          viewMode === 'grid'
-            ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'
-            : 'space-y-2'
-        }>
-          {filteredGames.map((game) => (
+        <>
+          <div className={
             viewMode === 'grid'
-              ? <AllGameCard key={game.id} game={game} />
-              : <AllGameRow key={game.id} game={game} />
-          ))}
-        </div>
-      )}
+              ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'
+              : 'space-y-2'
+          }>
+            {displayedGames.map((game) => (
+              viewMode === 'grid'
+                ? <GamePreviewTooltip key={game.id} game={game}><AllGameCard game={game} /></GamePreviewTooltip>
+                : <AllGameRow key={game.id} game={game} />
+            ))}
+          </div>
 
-      {/* Results count */}
-      {filteredGames.length > 0 && (
-        <p className="text-center text-sm text-[var(--color-text-muted)] mt-6">
-          Showing {filteredGames.length} of {allGames.length} games
-        </p>
+          {/* Load more */}
+          {hasMore && (
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => setDisplayCount((c) => c + PAGE_SIZE)}
+                className="px-6 py-2.5 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)] transition-colors font-medium text-sm"
+              >
+                Load More ({filteredGames.length - displayCount} remaining)
+              </button>
+            </div>
+          )}
+
+          {/* Results count */}
+          <p className="text-center text-sm text-[var(--color-text-muted)] mt-4">
+            Showing {displayedGames.length} of {filteredGames.length} games
+            {filteredGames.length !== allGames.length && ` (${allGames.length} total)`}
+          </p>
+        </>
       )}
     </>
   );

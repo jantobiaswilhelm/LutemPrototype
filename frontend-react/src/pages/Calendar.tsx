@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { EmptyCalendarSvg } from '@/components/illustrations';
 import {
   Calendar as CalendarIcon,
   Plus,
@@ -337,9 +338,7 @@ function EmptyState({ viewFilter, onCreateClick }: { viewFilter: ViewFilter; onC
 
   return (
     <div className="text-center py-12">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] mb-4">
-        <CalendarIcon className="w-8 h-8" />
-      </div>
+      <EmptyCalendarSvg className="w-48 h-36 mx-auto mb-2" />
       <h3 className="font-medium text-[var(--color-text-primary)] mb-1">
         {messages[viewFilter]}
       </h3>

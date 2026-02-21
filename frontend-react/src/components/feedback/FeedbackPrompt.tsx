@@ -32,8 +32,12 @@ export function FeedbackPrompt({ onSubmitted }: FeedbackPromptProps) {
 
       clearPendingFeedback();
       onSubmitted?.();
+      const { useToastStore } = await import('@/stores/toastStore');
+      useToastStore.getState().addToast('Feedback submitted — thanks!', 'success');
     } catch (error) {
       console.error('Failed to submit feedback:', error);
+      const { useToastStore } = await import('@/stores/toastStore');
+      useToastStore.getState().addToast('Failed to submit feedback', 'error');
     } finally {
       setIsSubmitting(false);
     }

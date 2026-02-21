@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useSyncExternalStore } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Home,
@@ -14,6 +14,20 @@ import {
   LogOut
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+
+const DESKTOP_QUERY = '(min-width: 1024px)';
+
+function useIsDesktop() {
+  return useSyncExternalStore(
+    (cb) => {
+      const mql = window.matchMedia(DESKTOP_QUERY);
+      mql.addEventListener('change', cb);
+      return () => mql.removeEventListener('change', cb);
+    },
+    () => window.matchMedia(DESKTOP_QUERY).matches,
+    () => false,
+  );
+}
 
 interface NavItem {
   icon: React.ReactNode;
@@ -35,6 +49,7 @@ const secondaryItems: NavItem[] = [
 ];
 
 export function Taskbar() {
+  const isDesktop = useIsDesktop();
   const [isOpen, setIsOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -49,9 +64,10 @@ export function Taskbar() {
 
   const SWIPE_THRESHOLD = 50;
 
+  // Close mobile overlay on route change
   useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
+    if (!isDesktop) setIsOpen(false);
+  }, [location.pathname, isDesktop]);
 
   // Hover open/close logic
   const cancelClose = () => {
@@ -132,72 +148,84 @@ export function Taskbar() {
 
   const handleLogout = async () => {
     await logout();
-    setIsOpen(false);
+    if (!isDesktop) setIsOpen(false);
     navigate('/');
   };
 
+  const showPanel = isDesktop || isOpen;
+
   return (
     <>
-      {/* Edge trigger button */}
-      <button
-        ref={triggerRef}
-        onMouseEnter={handleTriggerEnter}
-        onMouseLeave={scheduleClose}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`
-          fixed left-0 top-1/2 -translate-y-1/2 z-50
-          w-6 h-16
-          flex items-center justify-center
-          bg-[var(--color-bg-secondary)]/80 backdrop-blur-sm
-          border border-l-0 border-[var(--color-border)]
-          rounded-r-lg
-          text-[var(--color-text-muted)]
-          hover:text-[var(--color-accent)]
-          hover:bg-[var(--color-bg-secondary)]
-          transition-all duration-200
-          shadow-sm
-          ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
-        `}
-        aria-label={isOpen ? 'Close menu' : 'Open menu'}
-      >
-        <ChevronRight className="w-4 h-4" />
-      </button>
+      {/* Edge trigger button — mobile only */}
+      {!isDesktop && (
+        <button
+          ref={triggerRef}
+          onMouseEnter={handleTriggerEnter}
+          onMouseLeave={scheduleClose}
+          onClick={() => setIsOpen(!isOpen)}
+          className={`
+            fixed left-0 top-1/2 -translate-y-1/2 z-50
+            w-6 h-16
+            flex items-center justify-center
+            bg-[var(--color-bg-secondary)]/80 backdrop-blur-sm
+            border border-l-0 border-[var(--color-border)]
+            rounded-r-lg
+            text-[var(--color-text-muted)]
+            hover:text-[var(--color-accent)]
+            hover:bg-[var(--color-bg-secondary)]
+            transition-all duration-200
+            shadow-sm
+            ${isOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}
+          `}
+          aria-label={isOpen ? 'Close menu' : 'Open menu'}
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      )}
 
-      {/* Backdrop */}
-      <div
-        className={`
-          fixed inset-0 z-40
-          bg-black/20 backdrop-blur-[2px]
-          transition-opacity duration-300
-          ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
-        `}
-        onClick={() => setIsOpen(false)}
-        aria-hidden="true"
-      />
+      {/* Backdrop — mobile only */}
+      {!isDesktop && (
+        <div
+          className={`
+            fixed inset-0 z-40
+            bg-black/20 backdrop-blur-[2px]
+            transition-opacity duration-300
+            ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+          `}
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Taskbar panel */}
       <nav
         ref={taskbarRef}
         aria-label="Main navigation"
-        aria-hidden={!isOpen}
-        onMouseEnter={handlePanelEnter}
-        onMouseLeave={handlePanelLeave}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        style={{
-          transform: isOpen
-            ? `translateX(${dragOffset}px)`
-            : `translateX(calc(-100% + ${dragOffset}px))`,
-        }}
+        aria-hidden={!showPanel}
+        onMouseEnter={!isDesktop ? handlePanelEnter : undefined}
+        onMouseLeave={!isDesktop ? handlePanelLeave : undefined}
+        onTouchStart={!isDesktop ? handleTouchStart : undefined}
+        onTouchMove={!isDesktop ? handleTouchMove : undefined}
+        onTouchEnd={!isDesktop ? handleTouchEnd : undefined}
+        style={
+          isDesktop
+            ? undefined
+            : {
+                transform: isOpen
+                  ? `translateX(${dragOffset}px)`
+                  : `translateX(calc(-100% + ${dragOffset}px))`,
+              }
+        }
         className={`
           fixed left-0 top-0 bottom-0 z-50
           w-56
           bg-[var(--color-bg-secondary)]/95 backdrop-blur-md
           border-r border-[var(--color-border)]
-          shadow-xl
           flex flex-col
-          ${isDragging ? '' : 'transition-transform duration-300 ease-out'}
+          ${isDesktop
+            ? 'translate-x-0'
+            : `shadow-xl ${isDragging ? '' : 'transition-transform duration-300 ease-out'}`
+          }
         `}
       >
         {/* Header with user info */}
@@ -206,13 +234,15 @@ export function Taskbar() {
             <span className="text-lg font-semibold text-[var(--color-text-primary)]">
               Menu
             </span>
-            <button
-              onClick={() => setIsOpen(false)}
-              aria-label="Close navigation menu"
-              className="p-1.5 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
+            {!isDesktop && (
+              <button
+                onClick={() => setIsOpen(false)}
+                aria-label="Close navigation menu"
+                className="p-1.5 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
           </div>
           
           {/* User info or login button */}
@@ -241,7 +271,7 @@ export function Taskbar() {
           ) : (
             <button
               onClick={() => {
-                setIsOpen(false);
+                if (!isDesktop) setIsOpen(false);
                 navigate('/login');
               }}
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-[var(--color-accent)] text-white hover:bg-[var(--color-accent-hover)] transition-colors"
@@ -253,12 +283,12 @@ export function Taskbar() {
         </div>
 
         {/* Navigation items - ALL items always visible */}
-        <nav className="flex-1 p-3 space-y-1">
+        <div className="flex-1 p-3 space-y-1">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
-              onClick={() => setIsOpen(false)}
+              onClick={() => { if (!isDesktop) setIsOpen(false); }}
               className={({ isActive }) => `
                 flex items-center gap-3 px-3 py-2.5 rounded-lg
                 transition-all duration-150
@@ -272,7 +302,7 @@ export function Taskbar() {
               <span className="text-sm font-medium">{item.label}</span>
             </NavLink>
           ))}
-        </nav>
+        </div>
 
         {/* Secondary items */}
         <div className="p-3 border-t border-[var(--color-border)] space-y-1">
@@ -280,7 +310,7 @@ export function Taskbar() {
             <NavLink
               key={item.path}
               to={item.path}
-              onClick={() => setIsOpen(false)}
+              onClick={() => { if (!isDesktop) setIsOpen(false); }}
               className={({ isActive }) => `
                 flex items-center gap-3 px-3 py-2.5 rounded-lg
                 transition-all duration-150
@@ -308,11 +338,13 @@ export function Taskbar() {
         </div>
 
         {/* Swipe hint on mobile */}
-        <div className="p-3 text-center md:hidden">
-          <span className="text-xs text-[var(--color-text-muted)]">
-            Swipe left to close
-          </span>
-        </div>
+        {!isDesktop && (
+          <div className="p-3 text-center">
+            <span className="text-xs text-[var(--color-text-muted)]">
+              Swipe left to close
+            </span>
+          </div>
+        )}
       </nav>
     </>
   );

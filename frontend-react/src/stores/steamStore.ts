@@ -79,7 +79,7 @@ export const useSteamStore = create<SteamState>()(
         set({ isLoading: true, error: null });
         try {
           const result = await steamApi.importLibrary(steamId);
-          set({ 
+          set({
             lastImport: result,
             steamId: steamId || null,
             isConnected: true,
@@ -88,6 +88,13 @@ export const useSteamStore = create<SteamState>()(
           // Fetch updated library and stats after import
           await get().fetchLibrary();
           await get().fetchGameStats();
+          // Toast notification
+          const { useToastStore } = await import('./toastStore');
+          const added = result.stats.matched;
+          const msg = added > 0
+            ? `Library synced — ${added} new game${added === 1 ? '' : 's'} imported`
+            : 'Library synced — playtime updated';
+          useToastStore.getState().addToast(msg, 'success');
           return result;
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Failed to import Steam library';

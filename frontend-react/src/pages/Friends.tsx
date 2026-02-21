@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Users, UserPlus, UserCheck, UserX, Search, Clock, X, Loader2 } from 'lucide-react';
+import { EmptyFriendsSvg } from '@/components/illustrations';
 import { LoginPrompt } from '@/components/LoginPrompt';
 import { useAuthStore } from '@/stores/authStore';
 import {
@@ -404,19 +405,16 @@ function ErrorState({ message }: { message: string }) {
 }
 
 function EmptyState({
-  icon,
   title,
   description,
 }: {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   title: string;
   description: string;
 }) {
   return (
     <div className="text-center py-12">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)] mb-4">
-        {icon}
-      </div>
+      <EmptyFriendsSvg className="w-48 h-36 mx-auto mb-2" />
       <h3 className="font-medium text-[var(--color-text-primary)] mb-1">{title}</h3>
       <p className="text-sm text-[var(--color-text-muted)]">{description}</p>
     </div>

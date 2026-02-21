@@ -7,16 +7,18 @@ import {
   Gamepad2,
   CheckCircle,
   AlertCircle,
-  Loader2,
   Tag,
   SortAsc,
   SortDesc,
   Grid,
   List,
   RefreshCw,
+  Loader2,
 } from 'lucide-react';
+import { GameGridSkeleton } from '@/components/skeletons/GameCardSkeleton';
 import { useSteamStore } from '@/stores/steamStore';
 import { useAuthStore } from '@/stores/authStore';
+import { EmptyLibrarySvg } from '@/components/illustrations';
 import { SteamConnect } from '@/components/SteamConnect';
 import { AiGameImport } from '@/components/AiGameImport';
 import { LoginPrompt } from '@/components/LoginPrompt';
@@ -27,6 +29,8 @@ type SortOption = 'name' | 'playtime' | 'recent';
 type FilterOption = 'all' | 'tagged' | 'untagged' | 'steam';
 type ViewMode = 'grid' | 'list';
 
+const PAGE_SIZE = 40;
+
 export function MyGamesContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('playtime');
@@ -34,6 +38,7 @@ export function MyGamesContent() {
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [showFilters, setShowFilters] = useState(false);
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
 
   const { user, isAuthenticated } = useAuthStore();
   const {
@@ -110,6 +115,17 @@ export function MyGamesContent() {
 
     return games;
   }, [library?.games, searchQuery, filterBy, sortBy, sortDesc]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setDisplayCount(PAGE_SIZE);
+  }, [searchQuery, filterBy, sortBy, sortDesc]);
+
+  const displayedGames = useMemo(
+    () => filteredGames.slice(0, displayCount),
+    [filteredGames, displayCount],
+  );
+  const hasMore = displayCount < filteredGames.length;
 
   const handleRefresh = () => {
     if (isConnected) {
@@ -350,12 +366,7 @@ export function MyGamesContent() {
           </div>
 
           {/* Loading state */}
-          {isLoading && (
-            <div className="flex flex-col items-center justify-center py-16">
-              <Loader2 className="w-8 h-8 text-[var(--color-accent)] animate-spin mb-4" />
-              <p className="text-[var(--color-text-muted)]">Loading your library...</p>
-            </div>
-          )}
+          {isLoading && <GameGridSkeleton />}
 
           {/* Error state */}
           {error && !isLoading && (
@@ -368,9 +379,7 @@ export function MyGamesContent() {
           {/* Empty state */}
           {!isLoading && !error && filteredGames.length === 0 && (
             <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--color-bg-secondary)] mb-4">
-                <Gamepad2 className="w-8 h-8 text-[var(--color-text-muted)]" />
-              </div>
+              <EmptyLibrarySvg className="w-48 h-36 mx-auto mb-2" />
               <h3 className="text-lg font-medium text-[var(--color-text-primary)] mb-2">
                 {searchQuery ? 'No games found' : 'Your library is empty'}
               </h3>
@@ -384,24 +393,37 @@ export function MyGamesContent() {
 
           {/* Games grid/list */}
           {!isLoading && filteredGames.length > 0 && (
-            <div className={
-              viewMode === 'grid'
-                ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'
-                : 'space-y-2'
-            }>
-              {filteredGames.map((game) => (
+            <>
+              <div className={
                 viewMode === 'grid'
-                  ? <LibraryGameCard key={game.libraryEntryId} game={game} />
-                  : <LibraryGameRow key={game.libraryEntryId} game={game} />
-              ))}
-            </div>
-          )}
+                  ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'
+                  : 'space-y-2'
+              }>
+                {displayedGames.map((game) => (
+                  viewMode === 'grid'
+                    ? <LibraryGameCard key={game.libraryEntryId} game={game} />
+                    : <LibraryGameRow key={game.libraryEntryId} game={game} />
+                ))}
+              </div>
 
-          {/* Results count */}
-          {!isLoading && filteredGames.length > 0 && (
-            <p className="text-center text-sm text-[var(--color-text-muted)] mt-6">
-              Showing {filteredGames.length} of {library?.games.length || 0} games
-            </p>
+              {/* Load more */}
+              {hasMore && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => setDisplayCount((c) => c + PAGE_SIZE)}
+                    className="px-6 py-2.5 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)] transition-colors font-medium text-sm"
+                  >
+                    Load More ({filteredGames.length - displayCount} remaining)
+                  </button>
+                </div>
+              )}
+
+              {/* Results count */}
+              <p className="text-center text-sm text-[var(--color-text-muted)] mt-4">
+                Showing {displayedGames.length} of {filteredGames.length} games
+                {filteredGames.length !== (library?.games.length || 0) && ` (${library?.games.length || 0} total)`}
+              </p>
+            </>
           )}
         </>
       )}

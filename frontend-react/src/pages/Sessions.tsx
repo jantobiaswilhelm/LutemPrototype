@@ -1,5 +1,8 @@
 import { useState, useMemo } from 'react';
-import { Calendar, Clock, Star, Loader2, AlertCircle, Gamepad2 } from 'lucide-react';
+import { Calendar, Clock, Star, AlertCircle, Gamepad2 } from 'lucide-react';
+import { SessionListSkeleton } from '@/components/skeletons/SessionCardSkeleton';
+import { EmptySessionsSvg } from '@/components/illustrations';
+import { WeeklyBarChart } from '@/components/charts/WeeklyBarChart';
 import { useAuthStore } from '@/stores/authStore';
 import { useSessionHistory, useSubmitFeedback } from '@/api/hooks';
 import { LoginPrompt } from '@/components/LoginPrompt';
@@ -80,16 +83,18 @@ export function Sessions() {
                 <div className="text-xs text-[var(--color-text-muted)]">Rated</div>
               </div>
             </div>
+
+            {/* Weekly bar chart */}
+            {sessions && sessions.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
+                <WeeklyBarChart sessions={sessions} />
+              </div>
+            )}
           </div>
         )}
 
         {/* Loading State */}
-        {isLoading && (
-          <div className="flex flex-col items-center justify-center py-12" role="status" aria-live="polite">
-            <Loader2 className="w-8 h-8 text-[var(--color-accent)] animate-spin mb-4" aria-hidden="true" />
-            <p className="text-[var(--color-text-muted)]">Loading sessions...</p>
-          </div>
-        )}
+        {isLoading && <SessionListSkeleton />}
 
         {/* Error State */}
         {error && (
@@ -141,9 +146,7 @@ function EmptyState({ isAuthenticated }: { isAuthenticated: boolean }) {
       bg-[var(--color-bg-secondary)]
       border border-[var(--color-border)]
     ">
-      <div className="mb-4">
-        <Gamepad2 className="w-12 h-12 mx-auto text-[var(--color-text-muted)]" />
-      </div>
+      <EmptySessionsSvg className="w-48 h-36 mx-auto mb-2" />
       <h3 className="text-lg font-medium text-[var(--color-text-primary)] mb-2">
         No sessions yet
       </h3>
@@ -188,8 +191,12 @@ function SessionCard({ session }: { session: SessionHistory }) {
         satisfactionScore: rating,
       });
       setIsRating(false);
+      const { useToastStore } = await import('@/stores/toastStore');
+      useToastStore.getState().addToast('Rating saved', 'success');
     } catch (error) {
       console.error('Failed to submit rating:', error);
+      const { useToastStore } = await import('@/stores/toastStore');
+      useToastStore.getState().addToast('Failed to save rating', 'error');
     }
   };
 
