@@ -87,7 +87,16 @@ async function fetchApi<T>(
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
+        let errorText: string;
+        try {
+          errorText = await response.text();
+          // Don't expose raw HTML error pages to callers
+          if (errorText.startsWith('<!') || errorText.startsWith('<html')) {
+            errorText = `Server error (${response.status})`;
+          }
+        } catch {
+          errorText = `Server error (${response.status})`;
+        }
         const error = new ApiError(response.status, response.statusText, errorText);
 
         // Don't retry if skipRetry is true or error is not retryable

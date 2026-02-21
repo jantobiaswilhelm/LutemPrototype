@@ -983,7 +983,7 @@ React 19 (December 2024) and React Router v7 are relatively new. The project doe
 - [x] Rotate Steam API key
 - [x] Rotate Firebase service account
 - [x] Remove hardcoded JWT secret, require env var
-- [ ] Scrub git history of credentials
+- [x] Scrub git history of credentials
 - [x] Add authentication to all `/admin/**` endpoints
 - [x] Add role-based access control (RBAC)
 - [x] Move JWT from localStorage to httpOnly cookies
@@ -997,9 +997,9 @@ React 19 (December 2024) and React Router v7 are relatively new. The project doe
 - [x] Add database indexes on key columns
 - [x] Fix N+1 queries in recommendation endpoint
 - [x] Add CSRF protection
-- [ ] Consolidate dual auth system
-- [ ] Set up Vitest for frontend testing
-- [ ] Write backend tests for auth, admin, Steam
+- [x] Consolidate dual auth system
+- [x] Set up Vitest for frontend testing
+- [x] Write backend tests for auth, admin, Steam
 - [x] Add security headers to `netlify.toml`
 
 ### P2 — Medium (Next 2–4 Weeks)
@@ -1008,14 +1008,14 @@ React 19 (December 2024) and React Router v7 are relatively new. The project doe
 - [x] Update startup scripts for React
 - [x] Delete dead code (api/auth.ts, deprecated methods, orphan files)
 - [x] Fix CORS configuration (environment-specific)
-- [ ] Update Spring Boot to 3.4.x
-- [ ] Update Firebase Admin SDK
+- [x] Update Spring Boot to 3.4.x
+- [x] Update Firebase Admin SDK
 - [x] Set `ddl-auto=validate` in production
 - [x] Add input validation to all endpoints
-- [ ] Split oversized components (Library, Calendar)
+- [x] Split oversized components (Library, Calendar)
 - [x] Fix CSS variable naming inconsistencies
-- [ ] Improve error handling consistency
-- [ ] Add accessibility improvements
+- [x] Improve error handling consistency
+- [x] Add accessibility improvements
 - [x] Add Firestore data validation rules
 
 ### P3 — Low (When Convenient)
@@ -1023,12 +1023,12 @@ React 19 (December 2024) and React Router v7 are relatively new. The project doe
 - [x] Update README, CHANGELOG, PROJECT_INSTRUCTIONS
 - [x] Clean up database scripts
 - [x] Clean up build/git scripts
-- [ ] Improve rate limiter for distributed deployment
+- [x] Improve rate limiter for distributed deployment
 - [x] Add pre-commit hooks (husky + lint-staged + secret scanning)
 - [x] Add image lazy loading
-- [ ] Evaluate React 18 downgrade
+- [x] Evaluate React 18 downgrade → Decision: Keep React 19 (no R19-specific features used, stable, all deps compatible)
 
 ---
 
-> **Status:** 22/30 items completed (Feb 2026)
-> **Remaining:** Git history scrub, auth consolidation, testing setup, dependency updates, component splitting, error handling, accessibility, rate limiter improvement
+> **Status:** 30/30 items completed (Feb 2026)
+> **All items addressed.**

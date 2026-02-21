@@ -161,6 +161,7 @@ export default function Home() {
           <button
             onClick={toggleMode}
             className="p-2 rounded-lg text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)] hover:text-[var(--color-text-primary)] transition-all"
+            aria-label={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
           >
             {mode === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
           </button>
@@ -184,19 +185,19 @@ export default function Home() {
 
         {/* Error display */}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 flex items-start gap-3">
+          <div role="alert" className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
               <p className="text-xs text-red-500 dark:text-red-400 mt-1">
-                Make sure the backend is running at localhost:8080
+                Please try again later. If the problem persists, check your connection.
               </p>
             </div>
           </div>
         )}
 
         {/* MAIN CONTENT AREA */}
-        <div className="mb-6">
+        <div className="mb-6" aria-live="polite">
           {isWizardActive ? (
             /* Wizard steps - inline */
             <InlineWizard />

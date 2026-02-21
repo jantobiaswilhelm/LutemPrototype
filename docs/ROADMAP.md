@@ -1,6 +1,6 @@
 # LUTEM - Project Roadmap
 
-**Last Updated:** December 6, 2025  
+**Last Updated:** February 2026
 **Project Type:** Side Project → Potential Startup  
 **Goal:** Real users, scalable architecture, satisfaction-driven gaming discovery
 
@@ -23,17 +23,15 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 ## Technical Architecture
 
 ### Current Stack
-- **Frontend:** Vanilla HTML/CSS/JS → Netlify
-- **Backend:** Spring Boot + PostgreSQL → Railway
+- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS 4 → Netlify
+- **Backend:** Spring Boot 3.4.5 + PostgreSQL → Railway
 - **User Data:** Firestore (profiles, sessions, feedback)
-- **Auth:** Firebase Authentication
+- **Auth:** Dual auth (Steam OpenID + Google/Firebase) with JWT httpOnly cookies
+- **State:** Zustand + TanStack Query v5
 
 ### Target Stack (Scalable)
-- **Frontend:** Vanilla JS → Netlify (CDN)
-- **Backend:** Spring Boot + **PostgreSQL** → Railway
-- **User Data:** **Firestore** (profiles, preferences, sessions, feedback)
-- **Auth:** Firebase Authentication
-- **Cache:** Redis (future, when needed)
+- **Cache:** Redis (when scaling to multi-instance)
+- **Rate Limiting:** Redis-backed (currently in-memory)
 
 ### Data Architecture
 
@@ -84,7 +82,7 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 
 ### Core MVP
 - [x] Spring Boot backend with PostgreSQL (prod) / H2 (local)
-- [x] 57 curated games with 8-dimensional mood scoring
+- [x] 100+ curated games with 8-dimensional mood scoring
 - [x] Multi-factor recommendation engine (time, mood, energy, social, interruptibility)
 - [x] Progressive disclosure wizard UI
 - [x] Alternative recommendations (top 3)
@@ -92,33 +90,38 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 - [x] Game library with filtering and search
 - [x] Store links for each game
 
-### Authentication & Deployment
-- [x] Firebase authentication with Google sign-in
-- [x] Locked tabs requiring auth (Calendar, Profile)
+### Authentication & Security
+- [x] Dual auth: Steam OpenID + Google/Firebase
+- [x] JWT httpOnly cookies (migrated from localStorage)
+- [x] CSRF protection (double-submit cookie)
+- [x] RBAC (USER/ADMIN roles)
+- [x] Security headers (CSP, X-Frame-Options, etc.)
+- [x] Input validation on all API endpoints
+- [x] Rate limiting with scheduled cleanup
+
+### Infrastructure
 - [x] Frontend deployed to Netlify
-- [x] Backend deployed to Railway
-- [x] Custom domain option (lutem.3lands.ch)
-
-### Database & Infrastructure (Phase 7-8)
-- [x] PostgreSQL migration on Railway (replaced SQLite)
+- [x] Backend deployed to Railway with PostgreSQL
+- [x] Custom domain (lutem.3lands.ch)
 - [x] Firestore integration for user data
-- [x] firestore.js module with CRUD operations
-- [x] Auto profile creation on first sign-in
-- [x] Local dev setup with H2 database
+- [x] Database indexes on key columns
+- [x] N+1 query optimization (EntityGraph)
+- [x] Production ddl-auto=validate
 
-### Calendar System
-- [x] ICS file import with duplicate detection
-- [x] Manual task creation
-- [x] Gaming session scheduling with game selection
-- [x] Three game selection modes: Browse, Wizard, Random
-- [x] FullCalendar integration with themed styling
-- [x] Visual overhaul complete
+### Social Features
+- [x] Friends system (search, request, accept/decline)
+- [x] Calendar with social events (invites, join/leave)
+- [x] Event visibility controls (private, friends-only, public)
+- [x] ICS file import
 
-### UI/UX
-- [x] 4 color themes (Café, Lavender, Earth, Ocean)
-- [x] Light/dark mode with persistence
-- [x] Responsive desktop layout
-- [x] Frontend modularization (81% HTML reduction)
+### Frontend (React 19)
+- [x] Complete rewrite from vanilla JS to React 19 + TypeScript + Vite
+- [x] 4 color themes x 2 modes (8 combinations)
+- [x] All pages: Home, Library, Calendar, Friends, Sessions, Stats, Settings, Profile
+- [x] Zustand state management + TanStack Query
+- [x] Swipeable taskbar navigation
+- [x] Vitest + Testing Library (22 tests)
+- [x] Accessibility improvements (aria-labels, keyboard nav, screen reader support)
 
 ---
 
@@ -197,153 +200,44 @@ Lutem is an AI-powered gaming recommendation platform that matches games to user
 
 ---
 
-## 🟡 PHASE 10: Session Tracking & Feedback (CORE FEATURE)
-**Priority:** HIGH — Enables learning  
-**Estimated:** 2-3 sessions (8-12 hours)  
-**Depends on:** Phase 8 (Firestore)
-
-### 10.1 Session Logging
-- [ ] Log session when user accepts a recommendation
-- [ ] Log session when user schedules game via calendar
-- [ ] Store: gameId, gameName, startTime, source
-
-### 10.2 Feedback Collection UI
-- [ ] After recommendation: "Did you play? How was it?"
-- [ ] Simple satisfaction rating (1-5 stars or emoji scale)
-- [ ] Optional mood tag selection
-- [ ] Non-intrusive — don't ask every time
-
-### 10.3 Session History View
-- [ ] Add "History" section to Profile tab
-- [ ] Show recent sessions with games, ratings
-- [ ] Basic filtering (last 7 days, last 30 days)
-
-### 10.4 Connect Feedback to Recommendations
-- [ ] Include past satisfaction data in recommendation request
-- [ ] Backend boosts games user rated highly
-- [ ] Backend slightly penalizes games rated poorly
-
-**Checkpoint:** Users can rate sessions, history is visible, recommendations consider past satisfaction.
-
----
-
-## 🟡 PHASE 11: Weekly Dashboard (DIFFERENTIATOR)
-**Priority:** MEDIUM-HIGH — Key feature from paper  
-**Estimated:** 2 sessions (6-8 hours)  
-**Depends on:** Phase 10 (Session Tracking)
-
-### 11.1 Stats Calculation
-- [ ] Calculate weekly stats from session data
-- [ ] Sessions completed, total time played
-- [ ] Average satisfaction
-- [ ] Most played games
-- [ ] Store in Firestore `stats/weekly/{weekId}`
-
-### 11.2 Dashboard UI
-- [ ] Weekly recap card on Home tab
-- [ ] Visual indicators (up/down arrows for trends)
-- [ ] Highlight: "Your most satisfying game this week"
-- [ ] Upcoming scheduled sessions
-
-### 11.3 Insights
-- [ ] Pattern detection: "You enjoy puzzle games in the evening"
-- [ ] Suggestions: "Try scheduling shorter sessions on weekdays"
-
-**Checkpoint:** Users see their gaming patterns, feel value in tracking.
-
----
-
-## 🟢 PHASE 12: Google Calendar OAuth
-**Priority:** MEDIUM — Nice to have, ICS import works  
-**Estimated:** 3-4 sessions (10-15 hours)  
-**Documentation:** See `docs/CALENDAR_IMPLEMENTATION_PLAN.md` Phase 4
-
-Already planned in detail. Lower priority now that we have ICS import.
-
----
-
 ## 🔵 FUTURE PHASES (Backlog)
 
-### Phase 13: Steam Integration
-- Steam Web API for library import
-- Match Steam games to Lutem database
-- Fetch playtime data
+### Google Calendar OAuth
+- Two-way calendar sync via Google Calendar API
+- Lower priority since ICS import already works
 
-### Phase 14: Expanded Game Library
-- RAWG API integration OR
-- Manual curation of 100+ more games
+### Expanded Game Library
+- RAWG API integration for broader catalog
+- Community-submitted games
 
-### Phase 15: Mobile PWA
-- Responsive mobile layout
-- Add to Home Screen support
+### Mobile PWA
+- Service worker for offline support
+- Add to Home Screen
 - Push notifications (Firebase Cloud Messaging)
 
-### Phase 16: Advanced Features
-- Xbox/PlayStation integration (limited APIs)
+### Advanced Features
+- Xbox/PlayStation integration
 - Health app integration (mood inference)
-- Two-way calendar sync
-- Social features (share recommendations)
-
----
-
-## Priority Matrix
-
-| Phase | Effort | Impact | Priority | Status |
-|-------|--------|--------|----------|--------|
-| 7: PostgreSQL Migration | Low | High | 🔴 Critical | ✅ Complete |
-| 8: Firestore Setup | Medium | High | 🔴 Critical | ✅ Complete |
-| 9: User Profiles | Low | High | 🟡 High | ✅ Complete |
-| 10: Session Tracking | Medium | High | 🟡 High | Not Started |
-| 11: Weekly Dashboard | Medium | Medium | 🟡 High | Backend ✅ |
-| 12: Google OAuth | High | Medium | 🟢 Medium | Not Started |
-| 13-16: Future | High | Variable | 🔵 Low | Backlog |
-
----
-
-## Realistic Timeline
-
-### December 2025
-**Focus:** Foundation
-
-- ~~Week 1: Phase 7 (PostgreSQL migration)~~ ✅ DONE
-- ~~Week 2: Phase 8 (Firestore setup)~~ ✅ DONE
-- ~~Week 3-4: Phase 9 (User profiles)~~ ✅ DONE
-
-### January 2026
-**Focus:** Core loop
-
-- Week 1-2: Phase 10 (Session tracking & feedback)
-- Week 3-4: Phase 11 (Weekly dashboard)
-
-### February 2026+
-**Focus:** Growth features
-
-- Google Calendar OAuth
-- Steam integration
-- Mobile optimization
-- Marketing / user acquisition
+- AI-powered insights ("You enjoy puzzle games in the evening")
 
 ---
 
 ## Success Metrics
 
 ### Technical
-- [ ] Backend runs on PostgreSQL
-- [ ] User data in Firestore
-- [ ] < 500ms recommendation response time
+- [x] Backend runs on PostgreSQL
+- [x] User data in Firestore
+- [x] < 500ms recommendation response time
+- [x] Frontend + backend testing infrastructure
 - [ ] 99% uptime
 
 ### Product
-- [ ] Users can save preferences (persist across devices)
-- [ ] Users can rate sessions
-- [ ] Recommendations improve with feedback
-- [ ] Weekly summary provides value
-
-### Growth (Future)
+- [x] Users can save preferences (persist across devices)
+- [x] Users can rate sessions
+- [x] Recommendations improve with feedback
+- [x] Session history + stats page
 - [ ] 100 registered users
-- [ ] 50% weekly active rate
 - [ ] 4+ average satisfaction rating
-- [ ] Positive user feedback
 
 ---
 
@@ -359,20 +253,18 @@ Already planned in detail. Lower priority now that we have ICS import.
 
 ### Start Development
 ```bash
-# Backend
-D:\Lutem\LutemPrototype\start-backend.bat
+# Both backend + frontend
+start-lutem.bat
 
-# Frontend  
-cd D:\Lutem\LutemPrototype\frontend
-python -m http.server 5500
-# Access: http://localhost:5500
+# Or individually:
+start-backend.bat               # Backend on http://localhost:8080
+cd frontend-react && npm run dev # Frontend on http://localhost:5173
 ```
 
 ### Key Documentation
-- `docs/CALENDAR_IMPLEMENTATION_PLAN.md` — Calendar phases
-- `docs/USER_PROFILE_IMPLEMENTATION_PLAN.md` — Profile system (needs update for Firestore)
 - `docs/API.md` — API reference
 - `docs/ARCHITECTURE.md` — System design
+- `docs/CODEBASE_ACTION_PLAN.md` — Quality checklist (30/30 complete)
 
 ---
 

@@ -5,8 +5,8 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.lutem.mvp.model.User;
 import com.lutem.mvp.security.JwtService;
+import com.lutem.mvp.service.AuthService;
 import com.lutem.mvp.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -34,6 +34,7 @@ public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final UserService userService;
+    private final AuthService authService;
     private final JwtService jwtService;
     private final FirebaseAuth firebaseAuth;
     private final Environment environment;
@@ -42,10 +43,11 @@ public class AuthController {
     private boolean devMode;
 
     @Autowired
-    public AuthController(UserService userService, JwtService jwtService,
+    public AuthController(UserService userService, AuthService authService, JwtService jwtService,
                           @Autowired(required = false) FirebaseAuth firebaseAuth,
                           Environment environment) {
         this.userService = userService;
+        this.authService = authService;
         this.jwtService = jwtService;
         this.firebaseAuth = firebaseAuth;
         this.environment = environment;
@@ -83,14 +85,7 @@ public class AuthController {
         
         return userService.findById(userId)
             .map(user -> {
-                Map<String, Object> response = new HashMap<>();
-                response.put("id", user.getId());
-                response.put("displayName", user.getDisplayName());
-                response.put("email", user.getEmail());
-                response.put("steamId", user.getSteamId());
-                response.put("googleId", user.getGoogleId());
-                response.put("avatarUrl", user.getAvatarUrl());
-                response.put("authProvider", user.getAuthProvider());
+                Map<String, Object> response = authService.buildUserResponse(user);
                 response.put("createdAt", user.getCreatedAt());
                 response.put("lastLoginAt", user.getLastLoginAt());
                 return ResponseEntity.ok(response);
@@ -174,27 +169,9 @@ public class AuthController {
 
             logger.info("Google login successful: {} (ID: {})", user.getDisplayName(), user.getId());
 
-            // Generate JWT and set as httpOnly cookie
-            String token = jwtService.generateToken(user);
+            authService.issueTokenCookie(user, httpResponse);
 
-            Cookie cookie = new Cookie("lutem_token", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-            cookie.setAttribute("SameSite", "Lax");
-            httpResponse.addCookie(cookie);
-
-            return ResponseEntity.ok(Map.of(
-                "user", Map.of(
-                    "id", user.getId(),
-                    "displayName", user.getDisplayName(),
-                    "email", user.getEmail() != null ? user.getEmail() : "",
-                    "googleId", user.getGoogleId(),
-                    "avatarUrl", user.getAvatarUrl() != null ? user.getAvatarUrl() : "",
-                    "authProvider", user.getAuthProvider()
-                )
-            ));
+            return ResponseEntity.ok(Map.of("user", authService.buildUserResponse(user)));
 
         } catch (Exception e) {
             logger.error("Google login failed", e);
@@ -208,14 +185,7 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie cookie = new Cookie("lutem_token", "");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // Delete cookie
-        cookie.setAttribute("SameSite", "Lax");
-        response.addCookie(cookie);
-        
+        authService.clearTokenCookie(response);
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
     
@@ -246,16 +216,10 @@ public class AuthController {
 
         String token = jwtService.generateToken(user);
 
-        return ResponseEntity.ok(Map.of(
-            "id", user.getId(),
-            "steamId", user.getSteamId(),
-            "googleId", user.getGoogleId(),
-            "email", user.getEmail(),
-            "displayName", user.getDisplayName(),
-            "authProvider", user.getAuthProvider(),
-            "token", token,
-            "message", "User created/updated successfully"
-        ));
+        Map<String, Object> response = new HashMap<>(authService.buildUserResponse(user));
+        response.put("token", token);
+        response.put("message", "User created/updated successfully");
+        return ResponseEntity.ok(response);
     }
 
     /**

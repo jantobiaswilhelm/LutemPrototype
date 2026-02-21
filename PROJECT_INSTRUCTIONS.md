@@ -32,7 +32,7 @@ LutemPrototype/
 ├── backend/                    # Spring Boot backend (Java 17)
 │   ├── src/main/java/         # Application code (controllers, services, models, security)
 │   ├── src/main/resources/    # Config files, games-seed.json
-│   └── pom.xml                # Maven (Spring Boot 3.2)
+│   └── pom.xml                # Maven (Spring Boot 3.4.5)
 ├── frontend-react/             # React 19 + TypeScript + Vite + Tailwind CSS 4
 │   ├── src/
 │   │   ├── api/               # API client (client.ts, steam.ts, hooks.ts)
@@ -85,7 +85,7 @@ Dual auth system:
 | Layer | Technology |
 |-------|------------|
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, Zustand, TanStack Query |
-| Backend | Spring Boot 3.2, Java 17, JPA/Hibernate |
+| Backend | Spring Boot 3.4.5, Java 17, JPA/Hibernate |
 | Database | PostgreSQL (prod via Railway), H2 (local dev) |
 | User Data | Firestore |
 | Auth | JWT httpOnly cookies, Firebase Admin SDK, Steam OpenID |

@@ -135,7 +135,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             path.startsWith("/auth/steam/config") ||
             path.startsWith("/auth/google") ||
             path.startsWith("/auth/dev/") ||
+            path.startsWith("/games") ||
             path.startsWith("/api/games") ||
+            path.startsWith("/recommendations") ||
             path.startsWith("/api/recommendations") ||
             path.equals("/api/steam/status")) {
             return false;
@@ -152,6 +154,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             path.startsWith("/api/steam/import") ||
             path.startsWith("/api/steam/library") ||
             path.startsWith("/api/library") ||
+            path.startsWith("/sessions") ||
             path.startsWith("/api/sessions") ||
             path.startsWith("/api/calendar") ||
             path.startsWith("/api/friends")) {

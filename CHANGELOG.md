@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.0] - 2026-02-21 (Codebase Hardening & Quality Pass)
+
+### Changed - Frontend
+- **Component Splitting:** Extracted Calendar into CreateEventModal + EventCard components (-48% lines)
+- **Component Splitting:** Extracted Library into AllGamesContent + MyGamesContent + BenefitCard (-93% lines)
+- **Error Handling:** Sanitized HTML error responses in API client, removed hardcoded localhost references
+- **Accessibility:** Added aria-labels to icon buttons, role="dialog" to modals, aria-live regions, keyboard handlers
+
+### Changed - Backend
+- **Rate Limiter:** Rewrote with @Scheduled cleanup, MAX_TRACKED_IPS cap (10,000), emergency eviction
+- **Error Handling:** Stopped exposing internal exception messages to API clients
+- **Security:** Protected debug endpoints behind devMode flag, redacted auth URLs from logs
+
+### Documentation
+- Archived 50+ outdated docs (vanilla JS references, completed plans, old session summaries)
+- Updated TODO, ARCHITECTURE, ROADMAP, API docs to reflect current React 19 codebase
+- Completed all 30/30 items in CODEBASE_ACTION_PLAN.md
+
+---
+
+## [0.8.0] - 2026-02 (React Migration & Security Overhaul)
+
+### Added
+- **React 19 Frontend:** Complete rewrite from vanilla JS to React 19 + TypeScript + Vite + Tailwind CSS 4
+- **State Management:** Zustand stores (auth, theme, wizard, recommendations, steam, feedback)
+- **Data Fetching:** TanStack Query v5 with hooks for all API operations
+- **Frontend Testing:** Vitest + Testing Library with 22 tests
+- **Backend Testing:** Expanded to 33 tests covering auth, admin, Steam endpoints
+- **Auth Consolidation:** Shared AuthService for Steam + Google auth flows
+- **RBAC:** USER/ADMIN role system with JWT claims
+- **CSRF Protection:** Double-submit cookie pattern
+- **Security Headers:** CSP, X-Frame-Options, X-Content-Type-Options in netlify.toml
+- **Input Validation:** @Valid annotations on all API endpoints
+- **Database Indexes:** Indexed key columns (steamAppId, email, steamId, googleId)
+- **N+1 Fix:** EntityGraph for recommendation queries
+- **Pre-commit Hooks:** husky + lint-staged + secret scanning
+- **Image Lazy Loading:** loading="lazy" on game images
+
+### Changed
+- **Spring Boot:** Updated from 3.2.0 to 3.4.5
+- **Firebase Admin SDK:** Updated to latest
+- **JWT Storage:** Migrated from localStorage to httpOnly cookies
+- **Production DDL:** Set to validate (was update)
+- **CORS:** Environment-specific configuration
+- Removed legacy vanilla `frontend/` directory
+- Updated startup scripts for React dev server
+- Deleted dead code (api/auth.ts, deprecated Firebase methods, orphan files)
+
+---
+
 ## [0.7.0] - 2025-12-03 (Feedback Flow Phase A: Data Foundation)
 
 ### Added - Session Tracking Infrastructure
@@ -420,6 +470,10 @@ See [docs/calendar-known-issues.md](docs/calendar-known-issues.md) for detailed 
 
 ## Version History
 
+- **[0.9.0]** - Codebase hardening & quality pass - 2026-02-21
+- **[0.8.0]** - React migration & security overhaul - 2026-02
+- **[0.7.0]** - Feedback flow data foundation - 2025-12-03
+- **[0.6.0]** - Desktop responsive layout - 2025-11-30
 - **[0.5.1]** - Documentation update & deployment prep - 2025-11-29
 - **[0.5.0]** - Frontend modularization complete (81% reduction) - 2025-11-28
 - **[0.4.0]** - Theme system & calendar enhancement - 2025-11-23

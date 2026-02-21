@@ -207,6 +207,9 @@ export function Settings() {
                 </div>
                 <button
                   onClick={toggleNsfw}
+                  role="switch"
+                  aria-checked={allowNsfw}
+                  aria-label="Allow NSFW content"
                   className={`relative w-12 h-7 rounded-full transition-colors ${
                     allowNsfw ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border-strong)]'
                   }`}

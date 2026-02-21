@@ -30,7 +30,7 @@
 
 Local Development:
 - Backend: H2 in-memory database (application-local.properties)
-- Frontend: python -m http.server 5500
+- Frontend: npm run dev (Vite on http://localhost:5173)
 ```
 
 ### Target Architecture (Scalable)
@@ -58,7 +58,7 @@ Local Development:
 
 | Data Type | Storage | Why |
 |-----------|---------|-----|
-| **Games** (57+) | PostgreSQL | Relational, backend-managed, static |
+| **Games** (100+) | PostgreSQL | Relational, backend-managed, static |
 | **Calendar Events** | PostgreSQL | Backend-managed, linked to games |
 | **User Profiles** | Firestore | User-owned, real-time sync, scales |
 | **Session History** | Firestore | User-owned, real-time sync |
@@ -99,26 +99,24 @@ lutem-mvp/
 │   │   ├── repository/
 │   │   │   └── [JPA repositories]
 │   │   ├── security/
-│   │   │   └── FirebaseAuthFilter.java
+│   │   │   ├── JwtService.java
+│   │   │   ├── JwtAuthFilter.java
+│   │   │   └── CsrfCookieFilter.java
 │   │   └── service/
 │   │       └── [business logic]
 │   └── pom.xml
-├── frontend/
-│   ├── index.html
-│   ├── css/
-│   │   ├── variables.css
-│   │   ├── themes.css
-│   │   └── [component styles]
-│   └── js/
-│       ├── main.js
-│       ├── config.js
-│       ├── api.js
-│       ├── auth.js
-│       ├── firestore.js           # NEW: User data operations
-│       ├── wizard.js
-│       ├── calendar.js
-│       ├── profile.js
-│       └── [other modules]
+├── frontend-react/              # React 19 + TypeScript + Vite + Tailwind CSS 4
+│   ├── src/
+│   │   ├── api/                # API client (client.ts, steam.ts, hooks.ts)
+│   │   ├── components/         # UI components (wizard/, calendar/, library/, feedback/)
+│   │   ├── hooks/              # Custom React hooks
+│   │   ├── lib/                # Shared utilities (config.ts)
+│   │   ├── pages/              # Route pages (Home, Library, Calendar, Friends, etc.)
+│   │   ├── stores/             # Zustand stores (auth, theme, wizard, recommendations, steam)
+│   │   ├── styles/themes/      # 4 color themes (cafe, lavender, earth, ocean)
+│   │   ├── test/               # Vitest setup + test utilities
+│   │   └── types/              # TypeScript type definitions
+│   └── index.html
 └── docs/
     ├── ROADMAP.md
     ├── ARCHITECTURE.md
@@ -243,36 +241,39 @@ CREATE INDEX idx_calendar_time ON calendar_events(start_time, end_time);
 
 ## Authentication Flow
 
+Dual auth with JWT httpOnly cookies:
+
 ```
-1. User clicks "Sign in with Google"
-         │
-         ▼
-2. Frontend → Firebase Client SDK → Google OAuth
-         │
-         ▼
-3. Firebase returns ID token
-         │
-         ▼
-4. Frontend stores auth state
-         │
-    ┌────┴────┐
-    │         │
-    ▼         ▼
-5a. Firestore     5b. Backend API
-    (user data)       (protected endpoints)
-    Direct access     Authorization header
+Steam OpenID Flow:
+1. User clicks "Sign in with Steam" → redirects to Steam login
+2. Steam validates → redirects back with OpenID params
+3. Backend validates OpenID, creates/finds user, generates JWT
+4. JWT set as httpOnly cookie, user redirected to frontend
+
+Google/Firebase Flow:
+1. User clicks "Sign in with Google" → Firebase Client SDK → Google OAuth
+2. Firebase returns ID token
+3. Frontend sends token to backend /auth/google
+4. Backend verifies with Firebase Admin SDK, creates/finds user, generates JWT
+5. JWT set as httpOnly cookie
 ```
+
+### Security Features
+- **JWT httpOnly cookies** (not localStorage — XSS-safe)
+- **CSRF protection** via double-submit cookie pattern
+- **RBAC** with USER/ADMIN roles in JWT claims
+- **Rate limiting** with scheduled cleanup and IP cap
 
 ### Endpoint Authentication
 
-| Endpoint | Auth | Data Source |
-|----------|------|-------------|
-| `GET /games` | ❌ | PostgreSQL |
-| `POST /recommendations` | ❌ | PostgreSQL + request body |
-| `GET /calendar/events` | ✅ | PostgreSQL |
-| `POST /calendar/events` | ✅ | PostgreSQL |
-| User preferences | N/A | Firestore (frontend direct) |
-| Session history | N/A | Firestore (frontend direct) |
+| Endpoint | Auth | Role |
+|----------|------|------|
+| `GET /games` | No | - |
+| `POST /recommendations` | No | - |
+| `GET /api/calendar/events` | Yes | USER |
+| `POST /api/steam/import` | Yes | USER |
+| `POST /admin/games` | Yes | ADMIN |
+| `DELETE /admin/games/{id}` | Yes | ADMIN |
 
 ---
 
@@ -310,27 +311,26 @@ if (userPreferredGenres.contains(game.genre)) {
 
 ---
 
-## Frontend Module System
+## Frontend Architecture
 
-### Load Order (Critical)
+### State Management
+- **Zustand** stores with persist middleware (auth, theme, wizard, recommendations, steam, feedback)
+- **TanStack Query v5** for server state (API data fetching, caching, mutations)
 
-```html
-<script src="js/config.js"></script>      <!-- 1st: Environment -->
-<script src="js/state.js"></script>       <!-- 2nd: State -->
-<script src="js/api.js"></script>         <!-- 3rd: API client -->
-<script src="js/auth.js"></script>        <!-- 4th: Firebase Auth -->
-<script src="js/firestore.js"></script>   <!-- 5th: Firestore (NEW) -->
-<!-- ... other modules ... -->
-<script src="js/main.js"></script>        <!-- Last: Init -->
-```
+### Key Stores
+| Store | Purpose |
+|-------|---------|
+| `authStore` | User session, JWT cookie auth |
+| `themeStore` | Theme (4 palettes) + mode (light/dark) |
+| `wizardStore` | Recommendation wizard state |
+| `recommendationStore` | Current recommendation + alternatives |
+| `steamStore` | Steam library import state |
+| `feedbackStore` | Post-session feedback prompts |
 
 ### Theme System
 
-4 palettes × 2 modes = 8 combinations
-- Warm Café
-- Soft Lavender
-- Natural Earth
-- Ocean Breeze
+4 palettes x 2 modes = 8 combinations via CSS custom properties:
+- Warm Cafe, Soft Lavender, Natural Earth, Ocean Breeze
 
 ---
 
@@ -361,22 +361,6 @@ SPRING_PROFILES_ACTIVE=prod
 
 ---
 
-## Migration Path
-
-### Current → Target
-
-1. ✅ SQLite working (legacy)
-2. ✅ Migrated to PostgreSQL (Railway) + H2 (local dev)
-3. ⬜ Add Firestore for user data (2-3 hours)
-4. ⬜ Update frontend for Firestore (2-3 hours)
-5. ⬜ Connect preferences to recommendations (2 hours)
-
-See:
-- `docs/POSTGRESQL_MIGRATION_PLAN.md` (completed)
-- `docs/USER_PROFILE_IMPLEMENTATION_PLAN.md`
-
----
-
 ## Scaling Considerations
 
 ### Current Capacity (Free Tiers)
@@ -390,7 +374,7 @@ See:
 - 100,000+ users → Consider CDN for API, read replicas
 
 ### What Doesn't Need to Scale Yet
-- Game catalog (57 games, static)
+- Game catalog (100+ games, static)
 - Recommendation algorithm (in-memory, fast)
 - Frontend (Netlify CDN handles it)
 

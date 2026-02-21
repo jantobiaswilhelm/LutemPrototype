@@ -42,7 +42,7 @@ The result: **One confident recommendation** that fits your life right now.
 ## Features
 
 ### Backend (Spring Boot + PostgreSQL on Railway)
-- 57+ curated games with rich metadata (mood tags, energy levels, time ranges, interruptibility, popularity scores)
+- Curated game catalog with rich metadata (mood tags, energy levels, time ranges, interruptibility, popularity scores)
 - Multi-dimensional recommendation engine (11 scoring factors including personalized satisfaction data)
 - Dual authentication: Steam OpenID + Google/Firebase with JWT httpOnly cookies
 - Firestore integration for user satisfaction analytics
@@ -88,7 +88,7 @@ The result: **One confident recommendation** that fits your life right now.
 ## Tech Stack
 
 ### Backend
-- **Framework:** Spring Boot 3.2 (Java 17)
+- **Framework:** Spring Boot 3.4.5 (Java 17)
 - **Database:** PostgreSQL (Railway) / H2 (local dev)
 - **Auth:** JWT (httpOnly cookies) + Firebase Admin SDK + Steam OpenID
 - **User Data:** Firestore
@@ -96,7 +96,7 @@ The result: **One confident recommendation** that fits your life right now.
 - **Hosting:** Railway
 
 ### Frontend
-- **Build:** Vite 6.x
+- **Build:** Vite 7.x
 - **Framework:** React 19
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS 4 + CSS Variables (custom design tokens)

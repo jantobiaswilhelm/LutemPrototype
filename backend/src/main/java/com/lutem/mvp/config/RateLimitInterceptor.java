@@ -1,11 +1,13 @@
 package com.lutem.mvp.config;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -14,15 +16,28 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Simple in-memory rate limiter to prevent API abuse.
+ * In-memory rate limiter to prevent API abuse.
  * Uses a sliding window approach based on client IP.
  *
- * Note: For production at scale, consider using Redis-based rate limiting.
+ * Features:
+ * - Configurable requests-per-minute limit
+ * - Scheduled cleanup to prevent memory leaks
+ * - Max tracked IPs cap to bound memory usage
+ * - X-Forwarded-For / X-Real-IP proxy support
+ * - Rate limit headers on responses
+ *
+ * Note: For multi-instance deployment, replace with Redis-backed rate limiting.
  */
 @Component
 public class RateLimitInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(RateLimitInterceptor.class);
+
+    /**
+     * Maximum number of tracked IPs before evicting oldest entries.
+     * Prevents unbounded memory growth under attack.
+     */
+    private static final int MAX_TRACKED_IPS = 10_000;
 
     @Value("${lutem.rate-limit.requests-per-minute:60}")
     private int requestsPerMinute;
@@ -33,9 +48,10 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     // Map of IP -> (timestamp_minute -> request_count)
     private final Map<String, Map<Long, AtomicInteger>> requestCounts = new ConcurrentHashMap<>();
 
-    // Cleanup old entries every 5 minutes
-    private long lastCleanup = System.currentTimeMillis();
-    private static final long CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
+    @PostConstruct
+    public void init() {
+        logger.info("Rate limiter initialized: {} requests/min, enabled={}", requestsPerMinute, enabled);
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -53,8 +69,10 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         String clientIp = getClientIp(request);
         long currentMinute = System.currentTimeMillis() / 60000;
 
-        // Periodic cleanup of old entries
-        cleanupOldEntries();
+        // Evict if too many tracked IPs (protection against memory exhaustion)
+        if (requestCounts.size() > MAX_TRACKED_IPS) {
+            evictOldestEntries();
+        }
 
         // Get or create counter for this IP and minute
         Map<Long, AtomicInteger> ipCounts = requestCounts.computeIfAbsent(clientIp, k -> new ConcurrentHashMap<>());
@@ -67,7 +85,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
             logger.warn("Rate limit exceeded for IP: {} ({} requests/min)", clientIp, currentCount);
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Rate limit exceeded. Please try again later.\", \"retryAfterSeconds\": 60}");
+            response.getWriter().write(
+                "{\"error\": \"Rate limit exceeded. Please try again later.\", \"retryAfterSeconds\": 60}");
             return false;
         }
 
@@ -95,16 +114,12 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * Clean up old minute entries to prevent memory leaks.
+     * Scheduled cleanup of stale minute entries.
+     * Runs every 2 minutes to keep memory bounded.
      */
-    private void cleanupOldEntries() {
-        long now = System.currentTimeMillis();
-        if (now - lastCleanup < CLEANUP_INTERVAL_MS) {
-            return;
-        }
-
-        lastCleanup = now;
-        long currentMinute = now / 60000;
+    @Scheduled(fixedRate = 120_000)
+    public void cleanupOldEntries() {
+        long currentMinute = System.currentTimeMillis() / 60000;
         long oldestAllowedMinute = currentMinute - 2; // Keep last 2 minutes
 
         requestCounts.forEach((ip, minuteCounts) -> {
@@ -114,6 +129,21 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         // Remove IPs with no recent requests
         requestCounts.entrySet().removeIf(entry -> entry.getValue().isEmpty());
 
-        logger.debug("Rate limiter cleanup complete. Tracking {} IPs", requestCounts.size());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Rate limiter cleanup: tracking {} IPs", requestCounts.size());
+        }
+    }
+
+    /**
+     * Emergency eviction when MAX_TRACKED_IPS is exceeded.
+     * Removes all entries older than the current minute.
+     */
+    private void evictOldestEntries() {
+        long currentMinute = System.currentTimeMillis() / 60000;
+        requestCounts.forEach((ip, minuteCounts) -> {
+            minuteCounts.keySet().removeIf(minute -> minute < currentMinute);
+        });
+        requestCounts.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+        logger.warn("Rate limiter eviction triggered: {} IPs after cleanup", requestCounts.size());
     }
 }

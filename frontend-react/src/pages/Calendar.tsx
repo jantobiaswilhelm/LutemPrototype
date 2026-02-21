@@ -5,14 +5,10 @@ import {
   Users,
   User,
   Globe,
-  Lock,
   UserPlus,
-  LogOut,
   Loader2,
-  Clock,
-  Gamepad2,
-  X,
   Check,
+  X,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -21,14 +17,11 @@ import { useAuthStore } from '@/stores/authStore';
 import {
   useCalendarEvents,
   useCalendarInvitations,
-  useCreateCalendarEvent,
-  useJoinCalendarEvent,
-  useLeaveCalendarEvent,
   useRespondToCalendarInvitation,
-  useDeleteCalendarEvent,
-  useGames,
 } from '@/api/hooks';
-import type { CalendarEvent, CreateEventRequest, EventVisibility, EventType, CalendarInvitation } from '@/types';
+import { CreateEventModal } from '@/components/calendar/CreateEventModal';
+import { EventCard } from '@/components/calendar/EventCard';
+import type { CalendarEvent, CalendarInvitation } from '@/types';
 
 type ViewFilter = 'all' | 'friends' | 'mine';
 
@@ -167,6 +160,7 @@ export function Calendar() {
           <button
             onClick={() => setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1))}
             className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)]"
+            aria-label="Previous month"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -176,6 +170,7 @@ export function Calendar() {
           <button
             onClick={() => setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1))}
             className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)]"
+            aria-label="Next month"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -312,6 +307,7 @@ function InvitationsBanner({ invitations }: { invitations: CalendarInvitation[] 
                   onClick={() => respondToInvitation.mutate({ id: inv.invitationId, accept: true })}
                   disabled={respondToInvitation.isPending}
                   className="p-2 rounded-lg text-green-500 hover:bg-green-500/10"
+                  aria-label={`Accept invitation to ${inv.event.title}`}
                 >
                   <Check className="w-5 h-5" />
                 </button>
@@ -319,6 +315,7 @@ function InvitationsBanner({ invitations }: { invitations: CalendarInvitation[] 
                   onClick={() => respondToInvitation.mutate({ id: inv.invitationId, accept: false })}
                   disabled={respondToInvitation.isPending}
                   className="p-2 rounded-lg text-red-500 hover:bg-red-500/10"
+                  aria-label={`Decline invitation to ${inv.event.title}`}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -327,114 +324,6 @@ function InvitationsBanner({ invitations }: { invitations: CalendarInvitation[] 
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function EventCard({ event, compact = false }: { event: CalendarEvent; compact?: boolean }) {
-  const joinEvent = useJoinCalendarEvent();
-  const leaveEvent = useLeaveCalendarEvent();
-  const deleteEvent = useDeleteCalendarEvent();
-
-  const eventDate = new Date(event.startTime);
-  const timeStr = eventDate.toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-
-  const VisibilityIcon = event.visibility === 'PUBLIC'
-    ? Globe
-    : event.visibility === 'FRIENDS_ONLY'
-    ? Users
-    : Lock;
-
-  return (
-    <div className={`
-      rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-      ${compact ? 'p-3' : 'p-4'}
-    `}>
-      <div className="flex items-start gap-3">
-        {/* Type Icon */}
-        <div className={`
-          rounded-lg flex items-center justify-center flex-shrink-0
-          ${event.type === 'GAME' ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]' : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)]'}
-          ${compact ? 'w-10 h-10' : 'w-12 h-12'}
-        `}>
-          {event.type === 'GAME' ? (
-            <Gamepad2 className={compact ? 'w-5 h-5' : 'w-6 h-6'} />
-          ) : (
-            <CalendarIcon className={compact ? 'w-5 h-5' : 'w-6 h-6'} />
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <h4 className={`font-medium text-[var(--color-text-primary)] truncate ${compact ? 'text-sm' : ''}`}>
-                {event.title}
-              </h4>
-              {event.gameName && (
-                <p className="text-xs text-[var(--color-accent)]">{event.gameName}</p>
-              )}
-            </div>
-            <VisibilityIcon className="w-4 h-4 text-[var(--color-text-muted)] flex-shrink-0" />
-          </div>
-
-          <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-text-muted)]">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {timeStr}
-            </span>
-            {event.owner && !event.isOwner && (
-              <span className="truncate">by {event.owner.displayName}</span>
-            )}
-            {event.participantCount > 0 && (
-              <span className="flex items-center gap-1">
-                <Users className="w-3 h-3" />
-                {event.participantCount}
-                {event.maxParticipants && `/${event.maxParticipants}`}
-              </span>
-            )}
-          </div>
-
-          {/* Actions */}
-          {!compact && (
-            <div className="flex items-center gap-2 mt-3">
-              {event.isOwner ? (
-                <button
-                  onClick={() => {
-                    if (confirm('Delete this event?')) {
-                      deleteEvent.mutate(event.id);
-                    }
-                  }}
-                  className="text-xs px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-500/10"
-                >
-                  Delete
-                </button>
-              ) : event.hasJoined ? (
-                <button
-                  onClick={() => leaveEvent.mutate(event.id)}
-                  disabled={leaveEvent.isPending}
-                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg text-[var(--color-text-muted)] hover:bg-[var(--color-bg-tertiary)]"
-                >
-                  <LogOut className="w-3 h-3" />
-                  Leave
-                </button>
-              ) : event.canJoin ? (
-                <button
-                  onClick={() => joinEvent.mutate(event.id)}
-                  disabled={joinEvent.isPending}
-                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-[var(--color-accent)] text-white hover:opacity-90"
-                >
-                  <UserPlus className="w-3 h-3" />
-                  Join
-                </button>
-              ) : null}
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
@@ -466,232 +355,6 @@ function EmptyState({ viewFilter, onCreateClick }: { viewFilter: ViewFilter; onC
       </button>
     </div>
   );
-}
-
-function CreateEventModal({ onClose }: { onClose: () => void }) {
-  const createEvent = useCreateCalendarEvent();
-  const { data: games } = useGames();
-
-  const [form, setForm] = useState<CreateEventRequest>({
-    title: '',
-    startTime: getDefaultDateTime(),
-    type: 'GAME',
-    visibility: 'FRIENDS_ONLY',
-    maxParticipants: undefined,
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await createEvent.mutateAsync(form);
-      onClose();
-    } catch (error) {
-      console.error('Failed to create event:', error);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-
-      <div className="relative w-full max-w-md bg-[var(--color-bg-primary)] rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
-          <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
-            New Event
-          </h2>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg text-[var(--color-text-muted)] hover:bg-[var(--color-bg-secondary)]"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-              Title
-            </label>
-            <input
-              type="text"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              placeholder="Gaming session..."
-              required
-              className="
-                w-full px-4 py-2.5 rounded-xl
-                bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-                text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]
-                focus:outline-none focus:border-[var(--color-accent)]
-              "
-            />
-          </div>
-
-          {/* Type & Game */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-                Type
-              </label>
-              <select
-                value={form.type}
-                onChange={(e) => setForm({ ...form, type: e.target.value as EventType })}
-                className="
-                  w-full px-4 py-2.5 rounded-xl
-                  bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-                  text-[var(--color-text-primary)]
-                  focus:outline-none focus:border-[var(--color-accent)]
-                "
-              >
-                <option value="GAME">Game</option>
-                <option value="REMINDER">Reminder</option>
-                <option value="TASK">Task</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-                Visibility
-              </label>
-              <select
-                value={form.visibility}
-                onChange={(e) => setForm({ ...form, visibility: e.target.value as EventVisibility })}
-                className="
-                  w-full px-4 py-2.5 rounded-xl
-                  bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-                  text-[var(--color-text-primary)]
-                  focus:outline-none focus:border-[var(--color-accent)]
-                "
-              >
-                <option value="PRIVATE">Private</option>
-                <option value="FRIENDS_ONLY">Friends Only</option>
-                <option value="PUBLIC">Public</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Game Selection (if type is GAME) */}
-          {form.type === 'GAME' && games && games.length > 0 && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-                Game (optional)
-              </label>
-              <select
-                value={form.gameId || ''}
-                onChange={(e) => setForm({ ...form, gameId: e.target.value ? Number(e.target.value) : undefined })}
-                className="
-                  w-full px-4 py-2.5 rounded-xl
-                  bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-                  text-[var(--color-text-primary)]
-                  focus:outline-none focus:border-[var(--color-accent)]
-                "
-              >
-                <option value="">Select a game</option>
-                {games.map((game) => (
-                  <option key={game.id} value={game.id}>
-                    {game.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Date/Time */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-              When
-            </label>
-            <input
-              type="datetime-local"
-              value={form.startTime}
-              onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-              required
-              className="
-                w-full px-4 py-2.5 rounded-xl
-                bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-                text-[var(--color-text-primary)]
-                focus:outline-none focus:border-[var(--color-accent)]
-              "
-            />
-          </div>
-
-          {/* Max Participants */}
-          {form.visibility !== 'PRIVATE' && form.type === 'GAME' && (
-            <div>
-              <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-                Max Participants (optional)
-              </label>
-              <input
-                type="number"
-                min="2"
-                max="100"
-                value={form.maxParticipants || ''}
-                onChange={(e) => setForm({ ...form, maxParticipants: e.target.value ? Number(e.target.value) : undefined })}
-                placeholder="No limit"
-                className="
-                  w-full px-4 py-2.5 rounded-xl
-                  bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-                  text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]
-                  focus:outline-none focus:border-[var(--color-accent)]
-                "
-              />
-            </div>
-          )}
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-              Description (optional)
-            </label>
-            <textarea
-              value={form.description || ''}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-              placeholder="What's the plan?"
-              rows={3}
-              className="
-                w-full px-4 py-2.5 rounded-xl
-                bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-                text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]
-                focus:outline-none focus:border-[var(--color-accent)]
-                resize-none
-              "
-            />
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={createEvent.isPending || !form.title}
-            className="
-              w-full py-3 rounded-xl
-              bg-[var(--color-accent)] text-white font-medium
-              hover:opacity-90 transition-opacity
-              disabled:opacity-50 disabled:cursor-not-allowed
-              flex items-center justify-center gap-2
-            "
-          >
-            {createEvent.isPending ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              <>
-                <Plus className="w-5 h-5" />
-                Create Event
-              </>
-            )}
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function getDefaultDateTime(): string {
-  const now = new Date();
-  now.setHours(now.getHours() + 1, 0, 0, 0);
-  return now.toISOString().slice(0, 16);
 }
 
 function formatDateHeader(dateKey: string): string {

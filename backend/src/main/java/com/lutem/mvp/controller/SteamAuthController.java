@@ -1,10 +1,9 @@
 package com.lutem.mvp.controller;
 
 import com.lutem.mvp.model.User;
-import com.lutem.mvp.security.JwtService;
+import com.lutem.mvp.service.AuthService;
 import com.lutem.mvp.service.SteamService;
 import com.lutem.mvp.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -48,21 +47,24 @@ public class SteamAuthController {
     
     private final UserService userService;
     private final SteamService steamService;
-    private final JwtService jwtService;
-    
+    private final AuthService authService;
+
     @Value("${steam.return-url:http://localhost:8080/auth/steam/callback}")
     private String returnUrl;
-    
+
     @Value("${steam.realm:http://localhost:8080}")
     private String realm;
-    
+
     @Value("${frontend.url:http://localhost:5173}")
     private String frontendUrl;
-    
-    public SteamAuthController(UserService userService, SteamService steamService, JwtService jwtService) {
+
+    @Value("${lutem.dev-mode:false}")
+    private boolean devMode;
+
+    public SteamAuthController(UserService userService, SteamService steamService, AuthService authService) {
         this.userService = userService;
         this.steamService = steamService;
-        this.jwtService = jwtService;
+        this.authService = authService;
     }
 
     /**
@@ -79,7 +81,7 @@ public class SteamAuthController {
             "&openid.identity=" + encode("http://specs.openid.net/auth/2.0/identifier_select") +
             "&openid.claimed_id=" + encode("http://specs.openid.net/auth/2.0/identifier_select");
         
-        logger.info("Redirecting to Steam OpenID: {}", openIdUrl);
+        logger.info("Redirecting to Steam OpenID login");
         response.sendRedirect(openIdUrl);
     }
     
@@ -132,18 +134,8 @@ public class SteamAuthController {
             // Find or create user
             User user = userService.findOrCreateBySteamId(steamId64, personaName, avatarUrl);
             logger.info("User authenticated: {} (ID: {})", user.getDisplayName(), user.getId());
-            
-            // Generate JWT
-            String token = jwtService.generateToken(user);
-            
-            // Set token as httpOnly cookie
-            Cookie cookie = new Cookie("lutem_token", token);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-            cookie.setAttribute("SameSite", "Lax");
-            response.addCookie(cookie);
+
+            authService.issueTokenCookie(user, response);
 
             // Redirect to frontend — cookie is set, no token in URL
             String redirectUrl = frontendUrl + "/auth/callback?success=true";
@@ -197,7 +189,7 @@ public class SteamAuthController {
             
             String result = responseBody.toString();
             boolean isValid = result.contains("is_valid:true");
-            logger.info("Steam validation result: {} (response: {})", isValid, result.trim());
+            logger.info("Steam validation result: {}", isValid);
             return isValid;
             
         } catch (Exception e) {
@@ -220,9 +212,13 @@ public class SteamAuthController {
     
     /**
      * Debug endpoint to check auth config.
+     * Only available when lutem.dev-mode=true
      */
     @GetMapping("/config")
     public ResponseEntity<?> getConfig() {
+        if (!devMode) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(Map.of(
             "returnUrl", returnUrl,
             "realm", realm,

@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "An unexpected error occurred",
-            ex.getMessage(),
+            "An unexpected error occurred. Please try again later.",
             request
         );
     }
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(
             HttpStatus.NOT_FOUND,
             "Resource not found",
-            ex.getMessage(),
+            "The requested resource does not exist.",
             request
         );
     }
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(
             HttpStatus.CONFLICT,
             "Operation not allowed in current state",
-            ex.getMessage(),
+            "This operation cannot be performed right now.",
             request
         );
     }

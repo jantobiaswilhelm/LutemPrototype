@@ -28,7 +28,9 @@ function loadPreferences(): GamingPreferences {
       const parsed = JSON.parse(stored);
       return { ...defaultPreferences, ...parsed };
     }
-  } catch {}
+  } catch (error) {
+    console.warn('Failed to load gaming preferences from localStorage:', error);
+  }
   return defaultPreferences;
 }
 

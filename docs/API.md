@@ -8,18 +8,27 @@ Base URL: `http://localhost:8080`
 
 ## Endpoints Overview
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/games` | GET | List all games with metadata |
-| `/recommendations` | POST | Get personalized game recommendations |
-| `/sessions/feedback` | POST | Submit satisfaction rating |
-| `/admin/games` | POST | Create new game |
-| `/admin/games/{id}` | PUT | Update game |
-| `/admin/games/{id}` | DELETE | Delete game |
-| `/calendar/events` | GET | List calendar events |
-| `/calendar/events` | POST | Create calendar event |
-| `/calendar/events/{id}` | PUT | Update calendar event |
-| `/calendar/events/{id}` | DELETE | Delete calendar event |
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/games` | GET | No | List all games with metadata |
+| `/games/paged` | GET | No | Paginated game list |
+| `/recommendations` | POST | No | Get personalized game recommendations |
+| `/sessions/feedback` | POST | No | Submit satisfaction rating |
+| `/auth/google` | POST | No | Google/Firebase login |
+| `/auth/steam/login` | GET | No | Steam OpenID login redirect |
+| `/auth/me` | GET | Yes | Current user info |
+| `/auth/logout` | POST | Yes | Logout |
+| `/api/steam/import` | POST | Yes | Import Steam library |
+| `/api/steam/library` | GET | Yes | Get user's Steam library |
+| `/api/sessions/history` | GET | Yes | Session history |
+| `/api/calendar/events` | GET | Yes | List calendar events |
+| `/api/calendar/events` | POST | Yes | Create calendar event |
+| `/api/friends/list` | GET | Yes | Friends list |
+| `/api/friends/request/{id}` | POST | Yes | Send friend request |
+| `/admin/games` | POST | Admin | Create new game |
+| `/admin/games/bulk` | POST | Admin | Bulk import games |
+| `/admin/tag` | POST | Admin | AI tag games via Claude |
+| `/admin/games/{id}` | DELETE | Admin | Delete game |
 
 ---
 
@@ -264,18 +273,9 @@ COMPETITIVE - PvP, ranked play
 
 ---
 
-## Game Library (41 Games)
+## Game Library
 
-### Casual (5-30 min) - 7 Games
-Unpacking • Dorfromantik • Tetris Effect • Dead Cells • Rocket League • Baba Is You • A Short Hike
-
-### Mid-Range (30-60 min) - 9 Games
-Hades • Stardew Valley • Slay the Spire • Apex Legends • PowerWash Simulator • Into the Breach • Loop Hero • The Witness • Valorant
-
-### Long-Form (60+ min) - 4 Games
-The Witcher 3 • Minecraft • Dark Souls III • Civilization VI
-
-*(Plus 21 additional games across all categories)*
+100+ games across all categories (casual, mid-range, long-form) with rich emotional metadata, Steam integration, and AI-powered tagging via Claude API. The catalog continues to grow via admin bulk import and AI tagging tools.
 
 ---
 

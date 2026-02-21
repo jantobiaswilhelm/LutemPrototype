@@ -119,6 +119,7 @@ export function FeedbackPrompt({ onSubmitted }: FeedbackPromptProps) {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="What made this session satisfying or not?"
+            aria-label="Session feedback note"
             className="
               w-full mt-2 p-3 rounded-lg
               bg-[var(--color-bg-tertiary)]
