@@ -1,7 +1,7 @@
 import type { Game, RecommendationRequest, RecommendationResponse, SessionFeedback, SessionHistory, UserSummary, FriendRequest, Friendship, CalendarEvent, CalendarInvitation, CreateEventRequest, EventParticipant } from '@/types';
 
 import { API_BASE } from '@/lib/config';
-import { getCsrfToken } from './csrf';
+import { getCsrfToken, captureCsrfToken } from './csrf';
 
 // Configuration for retry logic
 const DEFAULT_RETRY_CONFIG = {
@@ -90,6 +90,9 @@ async function fetchApi<T>(
       } finally {
         clearTimeout(timeoutId);
       }
+
+      // Capture CSRF token from response header (cross-origin support)
+      captureCsrfToken(response);
 
       if (!response.ok) {
         let errorText: string;
@@ -192,37 +195,37 @@ export const sessionsApi = {
     }),
 };
 
-// Friends API
+// Friends API (backend controller at /api/friends)
 export const friendsApi = {
   getFriends: () =>
-    fetchApi<UserSummary[]>('/friends'),
+    fetchApi<UserSummary[]>('/api/friends'),
 
   getIncomingRequests: () =>
-    fetchApi<FriendRequest[]>('/friends/requests'),
+    fetchApi<FriendRequest[]>('/api/friends/requests'),
 
   getOutgoingRequests: () =>
-    fetchApi<FriendRequest[]>('/friends/requests/sent'),
+    fetchApi<FriendRequest[]>('/api/friends/requests/sent'),
 
   searchUsers: (query: string) =>
-    fetchApi<UserSummary[]>(`/friends/search?q=${encodeURIComponent(query)}`),
+    fetchApi<UserSummary[]>(`/api/friends/search?q=${encodeURIComponent(query)}`),
 
   sendRequest: (userId: number) =>
-    fetchApi<Friendship>(`/friends/request/${userId}`, { method: 'POST' }),
+    fetchApi<Friendship>(`/api/friends/request/${userId}`, { method: 'POST' }),
 
   acceptRequest: (requesterId: number) =>
-    fetchApi<Friendship>(`/friends/accept/${requesterId}`, { method: 'POST' }),
+    fetchApi<Friendship>(`/api/friends/accept/${requesterId}`, { method: 'POST' }),
 
   declineRequest: (requesterId: number) =>
-    fetchApi<void>(`/friends/decline/${requesterId}`, { method: 'POST' }),
+    fetchApi<void>(`/api/friends/decline/${requesterId}`, { method: 'POST' }),
 
   removeFriend: (friendId: number) =>
-    fetchApi<void>(`/friends/${friendId}`, { method: 'DELETE' }),
+    fetchApi<void>(`/api/friends/${friendId}`, { method: 'DELETE' }),
 
   cancelRequest: (addresseeId: number) =>
-    fetchApi<void>(`/friends/request/${addresseeId}`, { method: 'DELETE' }),
+    fetchApi<void>(`/api/friends/request/${addresseeId}`, { method: 'DELETE' }),
 };
 
-// Calendar API
+// Calendar API (backend controller at /api/calendar)
 export const calendarApi = {
   getEvents: (start?: string, end?: string, friendsOnly = false) => {
     const params = new URLSearchParams();
@@ -230,7 +233,7 @@ export const calendarApi = {
     if (end) params.set('end', end);
     if (friendsOnly) params.set('friendsOnly', 'true');
     const query = params.toString();
-    return fetchApi<CalendarEvent[]>(`/calendar/events${query ? `?${query}` : ''}`);
+    return fetchApi<CalendarEvent[]>(`/api/calendar/events${query ? `?${query}` : ''}`);
   },
 
   getMyEvents: (start?: string, end?: string) => {
@@ -238,48 +241,48 @@ export const calendarApi = {
     if (start) params.set('start', start);
     if (end) params.set('end', end);
     const query = params.toString();
-    return fetchApi<CalendarEvent[]>(`/calendar/events/mine${query ? `?${query}` : ''}`);
+    return fetchApi<CalendarEvent[]>(`/api/calendar/events/mine${query ? `?${query}` : ''}`);
   },
 
   getEvent: (id: number) =>
-    fetchApi<CalendarEvent>(`/calendar/events/${id}`),
+    fetchApi<CalendarEvent>(`/api/calendar/events/${id}`),
 
   createEvent: (event: CreateEventRequest) =>
-    fetchApi<CalendarEvent>('/calendar/events', {
+    fetchApi<CalendarEvent>('/api/calendar/events', {
       method: 'POST',
       body: JSON.stringify(event),
     }),
 
   updateEvent: (id: number, event: Partial<CreateEventRequest>) =>
-    fetchApi<CalendarEvent>(`/calendar/events/${id}`, {
+    fetchApi<CalendarEvent>(`/api/calendar/events/${id}`, {
       method: 'PUT',
       body: JSON.stringify(event),
     }),
 
   deleteEvent: (id: number) =>
-    fetchApi<void>(`/calendar/events/${id}`, { method: 'DELETE' }),
+    fetchApi<void>(`/api/calendar/events/${id}`, { method: 'DELETE' }),
 
   joinEvent: (id: number) =>
-    fetchApi<{ message: string; participant: EventParticipant }>(`/calendar/events/${id}/join`, {
+    fetchApi<{ message: string; participant: EventParticipant }>(`/api/calendar/events/${id}/join`, {
       method: 'POST',
     }),
 
   leaveEvent: (id: number) =>
-    fetchApi<{ message: string }>(`/calendar/events/${id}/leave`, { method: 'POST' }),
+    fetchApi<{ message: string }>(`/api/calendar/events/${id}/leave`, { method: 'POST' }),
 
   getParticipants: (id: number) =>
-    fetchApi<EventParticipant[]>(`/calendar/events/${id}/participants`),
+    fetchApi<EventParticipant[]>(`/api/calendar/events/${id}/participants`),
 
   getInvitations: () =>
-    fetchApi<CalendarInvitation[]>('/calendar/invitations'),
+    fetchApi<CalendarInvitation[]>('/api/calendar/invitations'),
 
   respondToInvitation: (id: number, accept: boolean) =>
-    fetchApi<{ message: string; status: string }>(`/calendar/invitations/${id}/respond?accept=${accept}`, {
+    fetchApi<{ message: string; status: string }>(`/api/calendar/invitations/${id}/respond?accept=${accept}`, {
       method: 'POST',
     }),
 
   inviteToEvent: (eventId: number, userId: number) =>
-    fetchApi<{ message: string; invitation: EventParticipant }>(`/calendar/events/${eventId}/invite/${userId}`, {
+    fetchApi<{ message: string; invitation: EventParticipant }>(`/api/calendar/events/${eventId}/invite/${userId}`, {
       method: 'POST',
     }),
 };

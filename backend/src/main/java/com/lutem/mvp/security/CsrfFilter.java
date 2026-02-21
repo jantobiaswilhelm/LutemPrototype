@@ -52,6 +52,9 @@ public class CsrfFilter extends OncePerRequestFilter {
             cookieToken = generateToken();
             setCsrfCookie(response, cookieToken);
         }
+        // Also expose token via response header for cross-origin scenarios
+        // (document.cookie can't read cookies from a different domain)
+        response.setHeader(CSRF_HEADER_NAME, cookieToken);
 
         // Safe methods don't need CSRF validation
         if (SAFE_METHODS.contains(method)) {

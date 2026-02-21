@@ -1,7 +1,7 @@
 import type { SteamStatus, SteamImportResponse, UserLibraryResponse, TaggingResult, GameStats, UnmatchedGame, AiImportResult } from '@/types/steam';
 
 import { API_BASE } from '@/lib/config';
-import { getCsrfToken } from './csrf';
+import { getCsrfToken, captureCsrfToken } from './csrf';
 
 async function fetchSteamApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   // In dev, use endpoint directly (Vite proxy handles /api/steam/*)
@@ -27,6 +27,9 @@ async function fetchSteamApi<T>(endpoint: string, options?: RequestInit): Promis
       ...options?.headers,
     },
   });
+
+  // Capture CSRF token from response header (cross-origin support)
+  captureCsrfToken(response);
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: response.statusText }));

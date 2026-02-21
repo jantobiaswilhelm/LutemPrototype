@@ -51,6 +51,7 @@ public class WebConfig {
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.addExposedHeader("Set-Cookie");
+        config.addExposedHeader("X-XSRF-TOKEN");
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

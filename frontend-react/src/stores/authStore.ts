@@ -11,7 +11,7 @@ import { persist } from 'zustand/middleware';
 import { signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { API_BASE } from '@/lib/config';
-import { getCsrfToken } from '@/api/csrf';
+import { getCsrfToken, captureCsrfToken } from '@/api/csrf';
 
 export interface LutemUser {
   id: number;
@@ -81,6 +81,7 @@ export const useAuthStore = create<AuthState>()(
               photoURL: result.user.photoURL
             })
           });
+          captureCsrfToken(response);
 
           if (!response.ok) {
             throw new Error('Failed to authenticate with server');
@@ -114,6 +115,7 @@ export const useAuthStore = create<AuthState>()(
           const response = await fetch(`${API_BASE}/auth/me`, {
             credentials: 'include'
           });
+          captureCsrfToken(response);
 
           if (!response.ok) {
             throw new Error('Failed to fetch user info');
@@ -176,6 +178,7 @@ export const useAuthStore = create<AuthState>()(
           const response = await fetch(`${API_BASE}/auth/me`, {
             credentials: 'include'
           });
+          captureCsrfToken(response);
 
           if (!response.ok) {
             // Cookie invalid/expired
