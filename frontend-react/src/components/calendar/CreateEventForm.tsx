@@ -45,7 +45,14 @@ export function CreateEventForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createEvent.mutateAsync(form);
+      // Compute endTime (1 hour after startTime) if not set
+      const payload = { ...form };
+      if (!payload.endTime && payload.startTime) {
+        const start = new Date(payload.startTime);
+        start.setHours(start.getHours() + 1);
+        payload.endTime = start.toISOString().slice(0, 16);
+      }
+      await createEvent.mutateAsync(payload);
       const { useToastStore } = await import('@/stores/toastStore');
       useToastStore.getState().addToast('Event added to calendar', 'success');
       onSuccess?.();
