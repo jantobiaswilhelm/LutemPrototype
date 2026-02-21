@@ -24,11 +24,13 @@ public class AuthService {
 
     private final JwtService jwtService;
     private final boolean secureCookies;
+    private final boolean localDev;
 
     public AuthService(JwtService jwtService,
                        @Value("${frontend.url:http://localhost:5173}") String frontendUrl) {
         this.jwtService = jwtService;
-        this.secureCookies = !frontendUrl.startsWith("http://localhost");
+        this.localDev = frontendUrl.startsWith("http://localhost");
+        this.secureCookies = !localDev;
     }
 
     /**
@@ -43,7 +45,7 @@ public class AuthService {
         cookie.setSecure(secureCookies);
         cookie.setPath("/");
         cookie.setMaxAge(COOKIE_MAX_AGE);
-        cookie.setAttribute("SameSite", "Lax");
+        cookie.setAttribute("SameSite", localDev ? "Lax" : "None");
         response.addCookie(cookie);
 
         logger.info("Issued auth cookie for user {} (ID: {})", user.getDisplayName(), user.getId());
@@ -59,7 +61,7 @@ public class AuthService {
         cookie.setSecure(secureCookies);
         cookie.setPath("/");
         cookie.setMaxAge(0);
-        cookie.setAttribute("SameSite", "Lax");
+        cookie.setAttribute("SameSite", localDev ? "Lax" : "None");
         response.addCookie(cookie);
     }
 

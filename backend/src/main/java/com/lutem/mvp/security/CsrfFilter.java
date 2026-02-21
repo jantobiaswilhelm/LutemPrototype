@@ -95,10 +95,11 @@ public class CsrfFilter extends OncePerRequestFilter {
     private void setCsrfCookie(HttpServletResponse response, String token) {
         Cookie cookie = new Cookie(CSRF_COOKIE_NAME, token);
         cookie.setHttpOnly(false); // Must be readable by JavaScript
-        cookie.setSecure(!frontendUrl.startsWith("http://localhost"));
+        boolean localDev = frontendUrl.startsWith("http://localhost");
+        cookie.setSecure(!localDev);
         cookie.setPath("/");
         cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
-        cookie.setAttribute("SameSite", "Lax");
+        cookie.setAttribute("SameSite", localDev ? "Lax" : "None");
         response.addCookie(cookie);
     }
 
