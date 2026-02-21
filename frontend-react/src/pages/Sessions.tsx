@@ -35,7 +35,7 @@ export function Sessions() {
   }, [sessions]);
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
+    <main id="main-content" className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -57,9 +57,9 @@ export function Sessions() {
             bg-[var(--color-bg-secondary)]
             border border-[var(--color-border)]
           ">
-            <h3 className="text-sm font-medium text-[var(--color-text-muted)] mb-4">
+            <h2 className="text-sm font-medium text-[var(--color-text-muted)] mb-4">
               This Week
-            </h3>
+            </h2>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold text-[var(--color-text-primary)]">
@@ -85,15 +85,15 @@ export function Sessions() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 text-[var(--color-accent)] animate-spin mb-4" />
+          <div className="flex flex-col items-center justify-center py-12" role="status" aria-live="polite">
+            <Loader2 className="w-8 h-8 text-[var(--color-accent)] animate-spin mb-4" aria-hidden="true" />
             <p className="text-[var(--color-text-muted)]">Loading sessions...</p>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 flex items-start gap-3 mb-6">
+          <div role="alert" className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 flex items-start gap-3 mb-6">
             <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm text-red-700 dark:text-red-300">
@@ -114,9 +114,9 @@ export function Sessions() {
         {/* Session List */}
         {sessions && sessions.length > 0 && (
           <div className="space-y-3">
-            <h3 className="text-sm font-medium text-[var(--color-text-muted)] px-1">
+            <h2 className="text-sm font-medium text-[var(--color-text-muted)] px-1">
               Recent Sessions
-            </h3>
+            </h2>
             {sessions.map((session) => (
               <SessionCard key={session.id} session={session} />
             ))}

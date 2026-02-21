@@ -27,6 +27,8 @@ export function StarRating({
 
   return (
     <div
+      role="group"
+      aria-label={readonly ? `Rating: ${value} out of 5 stars` : 'Rate this session'}
       className="flex gap-1"
       onMouseLeave={() => !readonly && setHoverValue(null)}
     >
@@ -42,7 +44,7 @@ export function StarRating({
             ${readonly ? 'cursor-default' : 'cursor-pointer hover:scale-110'}
             disabled:opacity-100
           `}
-          aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
+          aria-label={`${star} out of 5 stars`}
         >
           <Star
             className={`

@@ -83,7 +83,7 @@ export function MoodShortcuts() {
   };
 
   return (
-    <div className="mb-6">
+    <div className="mb-6" role="group" aria-label="Quick mood shortcuts">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {MOOD_SHORTCUTS.map((shortcut) => {
           const isLoading = loadingId === shortcut.id;
@@ -92,6 +92,8 @@ export function MoodShortcuts() {
               key={shortcut.id}
               onClick={() => handleShortcutClick(shortcut)}
               disabled={loadingId !== null}
+              aria-busy={isLoading}
+              aria-label={`${shortcut.label}: ${shortcut.description}`}
               className={`
                 flex items-center justify-center gap-2 px-3 py-2.5 rounded-full
                 bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
@@ -101,12 +103,11 @@ export function MoodShortcuts() {
                 transition-all duration-200
                 ${isLoading ? 'border-[var(--color-accent)]' : ''}
               `}
-              title={shortcut.description}
             >
               {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
               ) : (
-                <span className="text-base">{shortcut.emoji}</span>
+                <span className="text-base" aria-hidden="true">{shortcut.emoji}</span>
               )}
               <span className="text-sm font-medium whitespace-nowrap">{shortcut.label}</span>
             </button>

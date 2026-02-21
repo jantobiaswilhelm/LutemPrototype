@@ -41,17 +41,18 @@ export function CreateEventModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Create new event">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="event-dialog-title">
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
 
       <div className="relative w-full max-w-md bg-[var(--color-bg-primary)] rounded-2xl shadow-xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
-          <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
+          <h2 id="event-dialog-title" className="text-lg font-semibold text-[var(--color-text-primary)]">
             New Event
           </h2>
           <button
             onClick={onClose}
+            aria-label="Close event creation dialog"
             className="p-2 rounded-lg text-[var(--color-text-muted)] hover:bg-[var(--color-bg-secondary)]"
           >
             <X className="w-5 h-5" />

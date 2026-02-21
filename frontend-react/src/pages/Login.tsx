@@ -51,7 +51,7 @@ export default function Login() {
   }, [clearError]);
 
   return (
-    <main className="content-area flex items-center justify-center min-h-screen">
+    <main id="main-content" className="content-area flex items-center justify-center min-h-screen">
       <div className="max-w-md w-full mx-4">
         {/* Card */}
         <div 
@@ -76,9 +76,10 @@ export default function Login() {
 
           {/* Error message */}
           {error && (
-            <div 
+            <div
+              role="alert"
               className="mb-6 p-4 rounded-xl text-center"
-              style={{ 
+              style={{
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 color: '#ef4444'
               }}
@@ -133,15 +134,16 @@ export default function Login() {
 
           {/* Loading state */}
           {isLoading && (
-            <div className="mt-6 text-center">
-              <div 
+            <div className="mt-6 text-center" role="status" aria-live="polite">
+              <div
                 className="inline-block w-6 h-6 border-2 rounded-full animate-spin"
                 style={{
                   borderColor: 'var(--color-border)',
                   borderTopColor: 'var(--color-accent)'
                 }}
+                aria-hidden="true"
               />
-              <p 
+              <p
                 className="mt-2 text-sm"
                 style={{ color: 'var(--color-text-secondary)' }}
               >
@@ -162,13 +164,13 @@ export default function Login() {
         </div>
 
         {/* Skip login for browsing */}
-        <p 
-          className="mt-6 text-center text-sm cursor-pointer hover:underline"
+        <button
+          className="mt-6 w-full text-center text-sm cursor-pointer hover:underline bg-transparent border-none"
           style={{ color: 'var(--color-text-secondary)' }}
           onClick={() => navigate('/')}
         >
           Continue without signing in
-        </p>
+        </button>
       </div>
     </main>
   );

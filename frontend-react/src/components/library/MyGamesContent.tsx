@@ -262,9 +262,11 @@ export function MyGamesContent() {
           {/* Search and filters */}
           <div className="mb-6 space-y-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)]" />
+              <label htmlFor="game-search" className="sr-only">Search your games</label>
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)]" aria-hidden="true" />
               <input
-                type="text"
+                id="game-search"
+                type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search your games..."
@@ -275,20 +277,23 @@ export function MyGamesContent() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setShowFilters(!showFilters)}
+                aria-expanded={showFilters}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors ${
                   showFilters
                     ? 'bg-[var(--color-accent)] text-white border-[var(--color-accent)]'
                     : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] border-[var(--color-border)] hover:border-[var(--color-accent)]'
                 }`}
               >
-                <Filter className="w-4 h-4" />
+                <Filter className="w-4 h-4" aria-hidden="true" />
                 Filters
               </button>
 
-              <div className="flex gap-1.5 flex-wrap">
+              <div className="flex gap-1.5 flex-wrap" role="tablist" aria-label="Filter games">
                 {(['all', 'tagged', 'untagged'] as FilterOption[]).map((filter) => (
                   <button
                     key={filter}
+                    role="tab"
+                    aria-selected={filterBy === filter}
                     onClick={() => setFilterBy(filter)}
                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                       filterBy === filter
@@ -303,7 +308,9 @@ export function MyGamesContent() {
 
               <div className="flex-1" />
 
+              <label htmlFor="sort-select" className="sr-only">Sort by</label>
               <select
+                id="sort-select"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
                 className="px-3 py-2 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] text-sm focus:outline-none focus:border-[var(--color-accent)]"
@@ -315,20 +322,25 @@ export function MyGamesContent() {
 
               <button
                 onClick={() => setSortDesc(!sortDesc)}
+                aria-label={sortDesc ? 'Sort ascending' : 'Sort descending'}
                 className="p-2 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] transition-colors"
               >
                 {sortDesc ? <SortDesc className="w-4 h-4" /> : <SortAsc className="w-4 h-4" />}
               </button>
 
-              <div className="flex rounded-lg border border-[var(--color-border)] overflow-hidden">
+              <div className="flex rounded-lg border border-[var(--color-border)] overflow-hidden" role="group" aria-label="View mode">
                 <button
                   onClick={() => setViewMode('grid')}
+                  aria-label="Grid view"
+                  aria-pressed={viewMode === 'grid'}
                   className={`p-2 ${viewMode === 'grid' ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]'}`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
+                  aria-label="List view"
+                  aria-pressed={viewMode === 'list'}
                   className={`p-2 ${viewMode === 'list' ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]'}`}
                 >
                   <List className="w-4 h-4" />

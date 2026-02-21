@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { useWizardStore } from '@/stores/wizardStore';
 import SourceStep from './SourceStep';
@@ -14,17 +14,49 @@ const STEPS = ['source', 'time', 'mood', 'energy', 'interruption', 'social', 'au
 
 export default function WizardModal() {
   const { isOpen, closeWizard, resetWizard, currentStep } = useWizardStore();
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // Close on escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        closeWizard();
+  // Focus trap
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (!isOpen) return;
+    if (e.key === 'Escape') {
+      closeWizard();
+      return;
+    }
+    if (e.key === 'Tab' && modalRef.current) {
+      const focusable = modalRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
       }
-    };
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
+    }
   }, [isOpen, closeWizard]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
+  // Save and restore focus
+  useEffect(() => {
+    if (isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      // Focus the modal after render
+      requestAnimationFrame(() => modalRef.current?.focus());
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
+  }, [isOpen]);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -77,19 +109,27 @@ export default function WizardModal() {
       <div
         className="absolute inset-0 bg-black/50 animate-fadeIn"
         onClick={handleClose}
+        aria-hidden="true"
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-lg mx-4 bg-[var(--color-bg-secondary)] rounded-2xl shadow-xl animate-scaleIn max-h-[90vh] overflow-hidden flex flex-col">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="wizard-title"
+        tabIndex={-1}
+        className="relative w-full max-w-lg mx-4 bg-[var(--color-bg-secondary)] rounded-2xl shadow-xl animate-scaleIn max-h-[90vh] overflow-hidden flex flex-col outline-none"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
-          <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">
+          <h2 id="wizard-title" className="text-lg font-semibold text-[var(--color-text-primary)]">
             {currentStep === 'result' ? 'Your Recommendation' : 'Find Your Game'}
           </h2>
           <button
             onClick={handleClose}
             className="btn-icon"
-            aria-label="Close"
+            aria-label="Close recommendation wizard"
           >
             <X className="w-5 h-5" />
           </button>
@@ -97,7 +137,7 @@ export default function WizardModal() {
 
         {/* Progress dots (hidden on result step) */}
         {currentStep !== 'result' && (
-          <div className="flex justify-center gap-2 py-3 border-b border-[var(--color-border)]">
+          <div className="flex justify-center gap-2 py-3 border-b border-[var(--color-border)]" role="progressbar" aria-valuenow={currentStepIndex + 1} aria-valuemin={1} aria-valuemax={STEPS.length - 1} aria-label={`Step ${currentStepIndex + 1} of ${STEPS.length - 1}`}>
             {STEPS.slice(0, -1).map((step, index) => (
               <div
                 key={step}
@@ -106,6 +146,7 @@ export default function WizardModal() {
                     ? 'bg-[var(--color-accent)]'
                     : 'bg-[var(--color-border-strong)]'
                 }`}
+                aria-hidden="true"
               />
             ))}
           </div>

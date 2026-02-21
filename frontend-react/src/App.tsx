@@ -24,9 +24,9 @@ const AuthCallback = lazy(() => import('@/pages/AuthCallback'));
 // Loading fallback component
 function PageLoader() {
   return (
-    <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="min-h-[60vh] flex items-center justify-center" role="status" aria-label="Loading page">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" aria-hidden="true" />
         <span className="text-[var(--color-text-secondary)] text-sm">Loading...</span>
       </div>
     </div>
@@ -61,6 +61,12 @@ function App() {
       <ErrorBoundary>
         <AppInitializer>
           <BrowserRouter>
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[var(--color-accent)] focus:text-white focus:text-sm focus:font-medium"
+            >
+              Skip to main content
+            </a>
             <Taskbar />
             <Suspense fallback={<PageLoader />}>
               <Routes>

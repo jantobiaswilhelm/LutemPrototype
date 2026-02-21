@@ -7,8 +7,8 @@ import { getContentPreferences } from '@/hooks/useContentPreferences';
 
 function LoadingState() {
   return (
-    <div className="text-center py-12">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--color-accent-soft)] mb-4 animate-pulse">
+    <div className="text-center py-12" role="status" aria-live="polite">
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--color-accent-soft)] mb-4 animate-pulse" aria-hidden="true">
         <Sparkles className="w-8 h-8 text-[var(--color-accent)]" />
       </div>
       <h3 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
@@ -32,7 +32,7 @@ function LoadingState() {
 
 function ErrorState({ error, onRetry, onBack }: { error: string; onRetry: () => void; onBack: () => void }) {
   return (
-    <div className="text-center py-12">
+    <div className="text-center py-12" role="alert">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 mb-4">
         <span className="text-3xl">😕</span>
       </div>

@@ -101,7 +101,9 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-3">
+          <label htmlFor="theme-select" className="sr-only">Theme</label>
           <select
+            id="theme-select"
             value={theme}
             onChange={(e) => setTheme(e.target.value as 'cafe' | 'lavender' | 'earth' | 'ocean')}
             className="bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] border border-[var(--color-border)] rounded-lg px-3 py-1.5 text-sm"
@@ -123,7 +125,7 @@ export default function Home() {
       </header>
 
       {/* Main content */}
-      <main className="max-w-2xl mx-auto p-6">
+      <main id="main-content" className="max-w-2xl mx-auto p-6">
         {/* Greeting */}
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">
@@ -197,9 +199,9 @@ export default function Home() {
               {/* Alternatives list */}
               {showAlternatives && alternatives.length > 0 && (
                 <div className="mt-4 space-y-2">
-                  <h4 className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide px-1">
+                  <h3 className="text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide px-1">
                     Other options
-                  </h4>
+                  </h3>
                   {alternatives.map((game) => (
                     <AlternativeCard 
                       key={game.id} 
@@ -235,9 +237,9 @@ export default function Home() {
         {/* Weekly stats - Placeholder */}
         <div className={`${cardStyles} p-4 opacity-60`}>
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-medium text-[var(--color-text-muted)]">
+            <h3 className="text-sm font-medium text-[var(--color-text-muted)]">
               This Week
-            </h4>
+            </h3>
             <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
               Coming Soon
             </span>

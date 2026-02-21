@@ -172,11 +172,14 @@ export function Taskbar() {
           ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}
         `}
         onClick={() => setIsOpen(false)}
+        aria-hidden="true"
       />
 
       {/* Taskbar panel */}
-      <div
+      <nav
         ref={taskbarRef}
+        aria-label="Main navigation"
+        aria-hidden={!isOpen}
         onMouseEnter={handlePanelEnter}
         onMouseLeave={handlePanelLeave}
         onTouchStart={handleTouchStart}
@@ -205,6 +208,7 @@ export function Taskbar() {
             </span>
             <button
               onClick={() => setIsOpen(false)}
+              aria-label="Close navigation menu"
               className="p-1.5 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -309,7 +313,7 @@ export function Taskbar() {
             Swipe left to close
           </span>
         </div>
-      </div>
+      </nav>
     </>
   );
 }

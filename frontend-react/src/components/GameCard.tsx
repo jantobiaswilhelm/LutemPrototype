@@ -30,7 +30,7 @@ export const GameCard = memo(function GameCard({ game, reason, showDetails = tru
         {game.imageUrl ? (
           <img
             src={game.imageUrl}
-            alt={game.name}
+            alt={`${game.name} cover art`}
             className="w-full h-full object-cover"
             loading="lazy"
             onError={(e) => {
@@ -40,7 +40,7 @@ export const GameCard = memo(function GameCard({ game, reason, showDetails = tru
             }}
           />
         ) : null}
-        <span className={`text-6xl ${game.imageUrl ? 'hidden' : ''}`}>🎮</span>
+        <span className={`text-6xl ${game.imageUrl ? 'hidden' : ''}`} aria-hidden="true">🎮</span>
         {/* Genre badge */}
         <span className="absolute top-3 left-3 text-xs font-medium px-2 py-1 rounded-full bg-black/20 text-white backdrop-blur-sm">
           {game.genres?.[0] || 'Game'}
@@ -132,6 +132,7 @@ export const AlternativeCard = memo(function AlternativeCard({ game, onSelect }:
   return (
     <button
       onClick={onSelect}
+      aria-label={`Play ${game.name}`}
       className="w-full flex items-center gap-4 p-3 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-all text-left"
     >
       {/* Small image */}
@@ -139,7 +140,7 @@ export const AlternativeCard = memo(function AlternativeCard({ game, onSelect }:
         {game.imageUrl ? (
           <img
             src={game.imageUrl}
-            alt={game.name}
+            alt=""
             className="w-full h-full object-cover"
             loading="lazy"
             onError={(e) => {
@@ -148,7 +149,7 @@ export const AlternativeCard = memo(function AlternativeCard({ game, onSelect }:
             }}
           />
         ) : null}
-        <span className={`text-2xl ${game.imageUrl ? 'hidden' : ''}`}>🕹️</span>
+        <span className={`text-2xl ${game.imageUrl ? 'hidden' : ''}`} aria-hidden="true">🕹️</span>
       </div>
       
       <div className="flex-1 min-w-0">
