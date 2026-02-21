@@ -27,16 +27,23 @@ public class JwtService {
     private final long expirationMs;
     
     public JwtService(
-            @Value("${jwt.secret:REDACTED_JWT_SECRET}") String secret,
+            @Value("${jwt.secret:}") String secret,
             @Value("${jwt.expiration-ms:604800000}") long expirationMs) { // 7 days default
-        
-        // Ensure secret is at least 256 bits (32 bytes)
-        if (secret.length() < 32) {
-            secret = secret + "0".repeat(32 - secret.length());
+
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException(
+                "JWT_SECRET is not configured. Set the jwt.secret property or JWT_SECRET environment variable. " +
+                "Generate one with: openssl rand -base64 32");
         }
+
+        if (secret.length() < 32) {
+            throw new IllegalStateException(
+                "JWT_SECRET must be at least 32 characters (256 bits). Current length: " + secret.length());
+        }
+
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expirationMs = expirationMs;
-        
+
         logger.info("JwtService initialized with {}ms expiration", expirationMs);
     }
     
@@ -51,6 +58,7 @@ public class JwtService {
         claims.put("userId", user.getId());
         claims.put("displayName", user.getDisplayName());
         claims.put("authProvider", user.getAuthProvider());
+        claims.put("role", user.getRole() != null ? user.getRole().name() : "USER");
         
         if (user.getSteamId() != null) {
             claims.put("steamId", user.getSteamId());

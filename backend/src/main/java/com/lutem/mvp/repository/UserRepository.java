@@ -27,14 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByGoogleId(String googleId);
     
     /**
-     * @deprecated Use findByGoogleId() instead
-     */
-    @Deprecated
-    default Optional<User> findByFirebaseUid(String firebaseUid) {
-        return findByGoogleId(firebaseUid);
-    }
-    
-    /**
      * Find user by email
      */
     Optional<User> findByEmail(String email);
@@ -49,14 +41,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     boolean existsByGoogleId(String googleId);
     
-    /**
-     * @deprecated Use existsByGoogleId() instead
-     */
-    @Deprecated
-    default boolean existsByFirebaseUid(String firebaseUid) {
-        return existsByGoogleId(firebaseUid);
-    }
-
     /**
      * Search users by display name (case-insensitive, partial match)
      * Excludes the searching user from results

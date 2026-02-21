@@ -41,9 +41,6 @@ public class GameController {
     
     @Autowired(required = false)
     private UserSatisfactionService satisfactionService;
-    
-    // In-memory feedback storage for backward compatibility
-    private Map<Long, List<Integer>> feedbackMap = new HashMap<>();
 
     // GET /games - Returns only fully tagged games (for frontend recommendation UI)
     @GetMapping("/games")
@@ -116,8 +113,8 @@ public class GameController {
             }
         }
 
-        // Get only fully tagged games for recommendations (excludes PENDING)
-        List<Game> games = gameRepository.findAllFullyTagged();
+        // Get only fully tagged games with all collections eagerly loaded (avoids N+1 queries)
+        List<Game> games = gameRepository.findAllFullyTaggedWithCollections();
         logger.debug("Found {} fully tagged games for recommendations", games.size());
 
         // Filter by audio availability
@@ -375,7 +372,7 @@ public class GameController {
 
     // POST /sessions/feedback - **NEW: Saves to database**
     @PostMapping("/sessions/feedback")
-    public Map<String, String> submitFeedback(@RequestBody SessionFeedback feedback) {
+    public Map<String, String> submitFeedback(@Valid @RequestBody SessionFeedback feedback) {
         Map<String, String> response = new HashMap<>();
 
         // Save to database using session ID
@@ -394,20 +391,8 @@ public class GameController {
             }
         }
 
-        // Fallback: in-memory storage for backward compatibility
-        if (feedback.getGameId() != null) {
-            feedbackMap.computeIfAbsent(feedback.getGameId(), k -> new ArrayList<>())
-                       .add(feedback.getSatisfactionScore());
-
-            logger.warn("Feedback saved to memory (no sessionId) - Game ID: {}, Score: {}",
-                feedback.getGameId(), feedback.getSatisfactionScore());
-            response.put("status", "success");
-            response.put("message", "Feedback recorded in memory");
-            return response;
-        }
-
         response.put("status", "error");
-        response.put("message", "No sessionId or gameId provided");
+        response.put("message", "No sessionId provided");
         return response;
     }
     
@@ -497,20 +482,10 @@ public class GameController {
         return response;
     }
 
-    // Helper method to get average satisfaction from both database and memory
+    // Helper method to get average satisfaction from database
     private double getAverageSatisfaction(Long gameId) {
-        // Try database first
         Double dbAverage = sessionService.getAverageSatisfaction(gameId);
-        if (dbAverage != null && dbAverage > 0) {
-            return dbAverage;
-        }
-        
-        // Fallback to in-memory
-        List<Integer> scores = feedbackMap.get(gameId);
-        if (scores == null || scores.isEmpty()) {
-            return 0.0;
-        }
-        return scores.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+        return (dbAverage != null && dbAverage > 0) ? dbAverage : 0.0;
     }
 
     // Validation helper

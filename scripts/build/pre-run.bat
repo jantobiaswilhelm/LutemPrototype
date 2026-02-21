@@ -3,13 +3,14 @@ echo ================================================
 echo Lutem MVP - IntelliJ Integration
 echo ================================================
 echo.
-echo This script runs BEFORE your Spring Boot app starts
-echo Opening frontend in browser...
+echo This script runs BEFORE your Spring Boot app starts.
+echo Starting React dev server...
 echo.
 
-start "" "%~dp0..\frontend\index.html"
+cd /d "%~dp0..\..\frontend-react"
+start cmd /k "npm run dev"
 
 echo.
-echo Frontend opened!
+echo Frontend dev server starting on http://localhost:5173
 echo Backend is starting via IntelliJ...
 echo.

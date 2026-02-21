@@ -8,8 +8,12 @@ import java.time.LocalDateTime;
  * Links users to games they own (imported from Steam or manually added).
  */
 @Entity
-@Table(name = "user_library", 
-       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "game_id"}))
+@Table(name = "user_library",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "game_id"}),
+       indexes = {
+           @Index(name = "idx_library_user", columnList = "user_id"),
+           @Index(name = "idx_library_steam_app_id", columnList = "steamAppId")
+       })
 public class UserLibrary {
     
     @Id

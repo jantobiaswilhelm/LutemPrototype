@@ -12,6 +12,7 @@ import com.lutem.mvp.repository.UserRepository;
 import com.lutem.mvp.service.CalendarService;
 import com.lutem.mvp.service.FriendshipService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -129,7 +130,7 @@ public class CalendarController {
      */
     @PostMapping("/events")
     public ResponseEntity<?> createEvent(
-            @RequestBody CalendarEvent event,
+            @Valid @RequestBody CalendarEvent event,
             HttpServletRequest request) {
 
         User currentUser = getCurrentUser(request);
@@ -155,7 +156,7 @@ public class CalendarController {
     @PutMapping("/events/{id}")
     public ResponseEntity<?> updateEvent(
             @PathVariable Long id,
-            @RequestBody CalendarEvent eventUpdates,
+            @Valid @RequestBody CalendarEvent eventUpdates,
             HttpServletRequest request) {
 
         User currentUser = getCurrentUser(request);

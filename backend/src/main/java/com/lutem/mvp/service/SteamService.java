@@ -213,28 +213,6 @@ public class SteamService {
     }
     
     /**
-     * Fetch and import user's Steam library.
-     * 
-     * @param steamId64 User's Steam ID (64-bit format)
-     * @param firebaseUid Firebase UID of the authenticated user
-     * @return Import results with matched and unmatched games
-     * @deprecated Use importSteamLibraryByUserId instead
-     */
-    @Deprecated
-    @Transactional
-    public SteamImportResponse importSteamLibrary(String steamId64, String firebaseUid) {
-        if (!isConfigured()) {
-            throw new IllegalStateException("Steam API key not configured");
-        }
-        
-        // Get or validate user
-        User user = userRepository.findByGoogleId(firebaseUid)
-            .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        
-        return doImportSteamLibrary(steamId64, user);
-    }
-    
-    /**
      * Internal method to import Steam library for a user.
      * Phase S-Import: Now creates Game entities for ALL Steam games (matched and unmatched).
      */

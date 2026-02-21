@@ -26,8 +26,8 @@ function PageLoader() {
   return (
     <div className="min-h-[60vh] flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-2 border-[var(--accent-primary)] border-t-transparent rounded-full animate-spin" />
-        <span className="text-[var(--text-secondary)] text-sm">Loading...</span>
+        <div className="w-8 h-8 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+        <span className="text-[var(--color-text-secondary)] text-sm">Loading...</span>
       </div>
     </div>
   );

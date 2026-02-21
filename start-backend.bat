@@ -11,9 +11,12 @@ if "%JAVA_HOME%"=="" (
 echo Using JAVA_HOME: %JAVA_HOME%
 echo Using Profile: local (H2 database)
 
-REM Set Steam API Key for local development
-set STEAM_API_KEY=REDACTED_STEAM_API_KEY
-echo Steam API: Configured
+REM Steam API Key - set in .env.local or as environment variable
+if "%STEAM_API_KEY%"=="" (
+    echo WARNING: STEAM_API_KEY not set. Steam features will be unavailable.
+) else (
+    echo Steam API: Configured
+)
 
 REM Try Maven wrapper
 if exist mvnw.cmd (

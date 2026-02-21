@@ -1,6 +1,6 @@
 import type { Game, RecommendationRequest, RecommendationResponse, SessionFeedback, SessionHistory, UserSummary, FriendRequest, Friendship, CalendarEvent, CalendarInvitation, CreateEventRequest, EventParticipant } from '@/types';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+import { API_BASE } from '@/lib/config';
 
 // Configuration for retry logic
 const DEFAULT_RETRY_CONFIG = {
@@ -39,6 +39,12 @@ function calculateRetryDelay(attempt: number, config = DEFAULT_RETRY_CONFIG): nu
 // Sleep helper
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Read CSRF token from cookie (set by backend as non-httpOnly)
+function getCsrfToken(): string | null {
+  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 interface FetchOptions extends RequestInit {
   retries?: number;
   skipRetry?: boolean;
@@ -60,10 +66,22 @@ async function fetchApi<T>(
         await sleep(delay);
       }
 
+      // Attach CSRF token on mutating requests
+      const method = (fetchOptions?.method || 'GET').toUpperCase();
+      const csrfHeaders: Record<string, string> = {};
+      if (method !== 'GET' && method !== 'HEAD') {
+        const csrfToken = getCsrfToken();
+        if (csrfToken) {
+          csrfHeaders['X-XSRF-TOKEN'] = csrfToken;
+        }
+      }
+
       const response = await fetch(`${API_BASE}${endpoint}`, {
         ...fetchOptions,
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          ...csrfHeaders,
           ...fetchOptions?.headers,
         },
       });

@@ -1,35 +1,41 @@
 import type { SteamStatus, SteamImportResponse, UserLibraryResponse, TaggingResult, GameStats, UnmatchedGame, AiImportResult } from '@/types/steam';
-import { useAuthStore } from '@/stores/authStore';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
-
-/**
- * Get JWT token from auth store
- */
-function getAuthToken(): string | null {
-  return useAuthStore.getState().token;
-}
+import { API_BASE } from '@/lib/config';
 
 /**
  * Steam API fetch wrapper
- * 
+ *
  * Dev: Vite proxy forwards /api/steam/* to localhost:8080 without rewriting
  * Prod: Prepend the full backend URL
+ * Auth: Uses httpOnly cookie (sent automatically with credentials: 'include')
  */
+// Read CSRF token from cookie
+function getCsrfToken(): string | null {
+  const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 async function fetchSteamApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   // In dev, use endpoint directly (Vite proxy handles /api/steam/*)
   // In prod, prepend the backend URL
   const url = API_BASE.startsWith('http') ? `${API_BASE}${endpoint}` : endpoint;
-  
-  const token = getAuthToken();
-  
-  console.log(`[Steam API] Calling ${url}`, token ? '(with auth)' : '(no auth)');
-  
+
+  // Attach CSRF token on mutating requests
+  const method = (options?.method || 'GET').toUpperCase();
+  const csrfHeaders: Record<string, string> = {};
+  if (method !== 'GET' && method !== 'HEAD') {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      csrfHeaders['X-XSRF-TOKEN'] = csrfToken;
+    }
+  }
+
   const response = await fetch(url, {
     ...options,
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...csrfHeaders,
       ...options?.headers,
     },
   });

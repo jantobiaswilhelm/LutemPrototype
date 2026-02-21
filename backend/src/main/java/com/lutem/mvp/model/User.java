@@ -2,6 +2,7 @@ package com.lutem.mvp.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.lutem.mvp.model.Role;
 
 /**
  * User entity representing authenticated users.
@@ -9,7 +10,11 @@ import java.time.LocalDateTime;
  * At least one of steamId or googleId must be set.
  */
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+    @Index(name = "idx_user_email", columnList = "email"),
+    @Index(name = "idx_user_steam_id", columnList = "steam_id"),
+    @Index(name = "idx_user_google_id", columnList = "firebase_uid")
+})
 public class User {
     
     @Id
@@ -49,6 +54,10 @@ public class User {
     private LocalDateTime createdAt;
     
     private LocalDateTime lastLoginAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;
     
     // Constructors
     public User() {
@@ -88,22 +97,6 @@ public class User {
     
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    /**
-     * @deprecated Use getGoogleId() instead
-     */
-    @Deprecated
-    public String getFirebaseUid() {
-        return googleId;
-    }
-    
-    /**
-     * @deprecated Use setGoogleId() instead
-     */
-    @Deprecated
-    public void setFirebaseUid(String firebaseUid) {
-        this.googleId = firebaseUid;
     }
     
     public String getGoogleId() {
@@ -168,5 +161,13 @@ public class User {
     
     public void setLastLoginAt(LocalDateTime lastLoginAt) {
         this.lastLoginAt = lastLoginAt;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

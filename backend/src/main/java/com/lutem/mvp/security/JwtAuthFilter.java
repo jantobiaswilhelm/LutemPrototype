@@ -77,13 +77,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         request.setAttribute("email", claims.get("email", String.class));
         request.setAttribute("displayName", claims.get("displayName", String.class));
         request.setAttribute("avatarUrl", claims.get("avatarUrl", String.class));
-        
+
+        String role = claims.get("role", String.class);
+        request.setAttribute("role", role != null ? role : "USER");
+
         // Also set firebaseUid for backwards compatibility
         String googleId = claims.get("googleId", String.class);
         if (googleId != null) {
             request.setAttribute("firebaseUid", googleId);
         }
-        
+
+        // Check admin-only paths
+        if (requiresAdmin(path)) {
+            if (!"ADMIN".equals(role)) {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Admin access required\"}");
+                return;
+            }
+        }
+
         filterChain.doFilter(request, response);
     }
     
@@ -119,6 +132,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             path.startsWith("/h2-console") ||
             path.startsWith("/auth/steam/login") ||
             path.startsWith("/auth/steam/callback") ||
+            path.startsWith("/auth/steam/config") ||
             path.startsWith("/auth/google") ||
             path.startsWith("/auth/dev/") ||
             path.startsWith("/api/games") ||
@@ -126,7 +140,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             path.equals("/api/steam/status")) {
             return false;
         }
-        
+
+        // Admin paths require auth (and admin role, checked separately)
+        if (path.startsWith("/admin")) {
+            return true;
+        }
+
         // Protected paths
         if (path.startsWith("/auth/me") ||
             path.startsWith("/auth/logout") ||
@@ -138,8 +157,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             path.startsWith("/api/friends")) {
             return true;
         }
-        
-        // Default: don't require auth for unspecified paths
-        return false;
+
+        // Default: require auth for unspecified paths (secure by default)
+        return true;
+    }
+
+    /**
+     * Determine which paths require admin role.
+     */
+    private boolean requiresAdmin(String path) {
+        return path.startsWith("/admin");
     }
 }

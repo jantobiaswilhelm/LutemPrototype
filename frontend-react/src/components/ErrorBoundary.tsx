@@ -60,26 +60,26 @@ class ErrorBoundary extends Component<Props, State> {
       // Default fallback UI
       return (
         <div className="min-h-[60vh] flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-color)] p-6 text-center">
+          <div className="max-w-md w-full bg-[var(--color-bg-secondary)] rounded-lg border border-[var(--color-border)] p-6 text-center">
             <div className="flex justify-center mb-4">
               <AlertTriangle className="w-12 h-12 text-amber-500" />
             </div>
 
-            <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
+            <h2 className="text-xl font-semibold text-[var(--color-text-primary)] mb-2">
               Something went wrong
             </h2>
 
-            <p className="text-[var(--text-secondary)] mb-4">
+            <p className="text-[var(--color-text-secondary)] mb-4">
               We're sorry, but something unexpected happened. Please try again or return to the home page.
             </p>
 
             {/* Show error details in development */}
             {import.meta.env.DEV && this.state.error && (
               <details className="mb-4 text-left">
-                <summary className="cursor-pointer text-sm text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">
+                <summary className="cursor-pointer text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]">
                   Error details
                 </summary>
-                <pre className="mt-2 p-2 bg-[var(--bg-tertiary)] rounded text-xs overflow-auto max-h-32 text-red-400">
+                <pre className="mt-2 p-2 bg-[var(--color-bg-tertiary)] rounded text-xs overflow-auto max-h-32 text-red-400">
                   {this.state.error.toString()}
                   {this.state.errorInfo?.componentStack}
                 </pre>
@@ -89,7 +89,7 @@ class ErrorBoundary extends Component<Props, State> {
             <div className="flex gap-3 justify-center">
               <button
                 onClick={this.handleReset}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-primary)] text-white rounded-lg hover:bg-[var(--accent-primary-hover)] transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--color-accent)] text-white rounded-lg hover:bg-[var(--color-accent-hover)] transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 Try Again
@@ -97,7 +97,7 @@ class ErrorBoundary extends Component<Props, State> {
 
               <button
                 onClick={this.handleGoHome}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--bg-tertiary)] text-[var(--text-primary)] rounded-lg hover:bg-[var(--bg-hover)] transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--color-bg-tertiary)] text-[var(--color-text-primary)] rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors"
               >
                 <Home className="w-4 h-4" />
                 Go Home

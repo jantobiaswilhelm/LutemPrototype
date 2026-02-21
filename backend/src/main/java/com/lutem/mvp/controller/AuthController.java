@@ -16,6 +16,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.annotation.PostConstruct;
+import org.springframework.core.env.Environment;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,16 +36,36 @@ public class AuthController {
     private final UserService userService;
     private final JwtService jwtService;
     private final FirebaseAuth firebaseAuth;
+    private final Environment environment;
 
     @Value("${lutem.dev-mode:false}")
     private boolean devMode;
 
     @Autowired
     public AuthController(UserService userService, JwtService jwtService,
-                          @Autowired(required = false) FirebaseAuth firebaseAuth) {
+                          @Autowired(required = false) FirebaseAuth firebaseAuth,
+                          Environment environment) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.firebaseAuth = firebaseAuth;
+        this.environment = environment;
+    }
+
+    @PostConstruct
+    public void validateConfig() {
+        String[] activeProfiles = environment.getActiveProfiles();
+        boolean isProduction = Arrays.stream(activeProfiles)
+            .anyMatch(p -> p.equalsIgnoreCase("prod") || p.equalsIgnoreCase("production"));
+
+        if (devMode && isProduction) {
+            throw new IllegalStateException(
+                "FATAL: lutem.dev-mode=true is not allowed with production profile. " +
+                "Set LUTEM_DEV_MODE=false or remove it from environment.");
+        }
+
+        if (devMode) {
+            logger.warn("=== DEV MODE ENABLED === Dev auth endpoints are accessible. Do NOT use in production.");
+        }
     }
     
     /**
@@ -80,7 +104,7 @@ public class AuthController {
      * Verifies the Firebase token server-side before issuing our own JWT.
      */
     @PostMapping("/google/login")
-    public ResponseEntity<?> loginWithGoogle(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> loginWithGoogle(@RequestBody Map<String, String> request, HttpServletResponse httpResponse) {
         String idToken = request.get("idToken");
         String email = request.get("email");
         String displayName = request.get("displayName");
@@ -150,11 +174,18 @@ public class AuthController {
 
             logger.info("Google login successful: {} (ID: {})", user.getDisplayName(), user.getId());
 
-            // Generate JWT
+            // Generate JWT and set as httpOnly cookie
             String token = jwtService.generateToken(user);
 
+            Cookie cookie = new Cookie("lutem_token", token);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+            cookie.setAttribute("SameSite", "Lax");
+            httpResponse.addCookie(cookie);
+
             return ResponseEntity.ok(Map.of(
-                "token", token,
                 "user", Map.of(
                     "id", user.getId(),
                     "displayName", user.getDisplayName(),
@@ -179,8 +210,10 @@ public class AuthController {
     public ResponseEntity<?> logout(HttpServletResponse response) {
         Cookie cookie = new Cookie("lutem_token", "");
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(0); // Delete cookie
+        cookie.setAttribute("SameSite", "Lax");
         response.addCookie(cookie);
         
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
@@ -193,9 +226,7 @@ public class AuthController {
     @PostMapping("/dev/create-user")
     public ResponseEntity<?> createDevUser(@RequestBody Map<String, String> request) {
         if (!devMode) {
-            logger.warn("Attempted to access dev endpoint in production mode");
-            return ResponseEntity.status(403)
-                .body(Map.of("error", "This endpoint is only available in development mode"));
+            return ResponseEntity.notFound().build();
         }
 
         String firebaseUid = request.get("firebaseUid");
@@ -234,9 +265,7 @@ public class AuthController {
     @GetMapping("/dev/validate")
     public ResponseEntity<?> validateToken(@RequestParam String token) {
         if (!devMode) {
-            logger.warn("Attempted to access dev endpoint in production mode");
-            return ResponseEntity.status(403)
-                .body(Map.of("error", "This endpoint is only available in development mode"));
+            return ResponseEntity.notFound().build();
         }
 
         var claims = jwtService.validateToken(token);

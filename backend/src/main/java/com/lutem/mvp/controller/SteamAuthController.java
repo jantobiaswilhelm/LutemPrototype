@@ -139,14 +139,15 @@ public class SteamAuthController {
             // Set token as httpOnly cookie
             Cookie cookie = new Cookie("lutem_token", token);
             cookie.setHttpOnly(true);
-            cookie.setSecure(request.isSecure());
+            cookie.setSecure(true);
             cookie.setPath("/");
             cookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+            cookie.setAttribute("SameSite", "Lax");
             response.addCookie(cookie);
-            
-            // Redirect to frontend with token in URL (for localStorage if preferred)
-            String redirectUrl = frontendUrl + "/auth/callback?token=" + token;
-            logger.info("Redirecting to: {}", redirectUrl);
+
+            // Redirect to frontend — cookie is set, no token in URL
+            String redirectUrl = frontendUrl + "/auth/callback?success=true";
+            logger.info("Redirecting to frontend after Steam login");
             response.sendRedirect(redirectUrl);
             
         } catch (Exception e) {

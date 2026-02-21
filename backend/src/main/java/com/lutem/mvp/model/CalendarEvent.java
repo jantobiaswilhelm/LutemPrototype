@@ -1,6 +1,9 @@
 package com.lutem.mvp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,21 +16,27 @@ public class CalendarEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Title is required")
+    @Size(max = 255, message = "Title must be under 255 characters")
     @Column(nullable = false)
     private String title;
 
+    @NotNull(message = "Start time is required")
     @Column(nullable = false)
     private LocalDateTime startTime;
 
+    @NotNull(message = "End time is required")
     @Column(nullable = false)
     private LocalDateTime endTime;
 
+    @NotNull(message = "Event type is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EventType type;
 
     private Long gameId;
 
+    @Size(max = 1000, message = "Description must be under 1000 characters")
     @Column(length = 1000)
     private String description;
 

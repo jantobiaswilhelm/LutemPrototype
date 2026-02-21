@@ -1,20 +1,45 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // User profiles - only accessible by owner
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      // Sessions subcollection - only accessible by owner
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
+
+      // Sessions subcollection - only accessible by owner, with data validation
       match /sessions/{sessionId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null
+          && request.auth.uid == userId
+          && isValidSession(request.resource.data);
+        allow update: if request.auth != null
+          && request.auth.uid == userId
+          && isValidSession(request.resource.data);
+        allow delete: if request.auth != null && request.auth.uid == userId;
       }
     }
-    
+
     // Block all other access
     match /{document=**} {
       allow read, write: if false;
+    }
+
+    // Session data validation
+    function isValidSession(data) {
+      return data.keys().hasAll(['status', 'timestamp'])
+        // Status must be a known value
+        && data.status in ['COMPLETED', 'SKIPPED', 'IN_PROGRESS']
+        // Rating must be 1-5 if present
+        && (!('rating' in data) || (data.rating is number && data.rating >= 1 && data.rating <= 5))
+        // Duration must be positive if present
+        && (!('actualDuration' in data) || (data.actualDuration is number && data.actualDuration >= 0 && data.actualDuration <= 1440))
+        // gameId must be a number if present
+        && (!('gameId' in data) || data.gameId is number)
+        // gameName must be a string under 255 chars if present
+        && (!('gameName' in data) || (data.gameName is string && data.gameName.size() <= 255))
+        // Timestamp must be a timestamp
+        && data.timestamp is timestamp;
     }
   }
 }

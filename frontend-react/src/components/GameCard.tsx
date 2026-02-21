@@ -27,10 +27,11 @@ export function GameCard({ game, reason, showDetails = true, onStart }: GameCard
       {/* Game image */}
       <div className="h-48 bg-gradient-to-br from-[var(--color-accent-soft)] to-[var(--color-bg-tertiary)] flex items-center justify-center relative overflow-hidden">
         {game.imageUrl ? (
-          <img 
-            src={game.imageUrl} 
+          <img
+            src={game.imageUrl}
             alt={game.name}
             className="w-full h-full object-cover"
+            loading="lazy"
             onError={(e) => {
               // Fallback to emoji if image fails to load
               e.currentTarget.style.display = 'none';
@@ -135,10 +136,11 @@ export function AlternativeCard({ game, onSelect }: AlternativeCardProps) {
       {/* Small image */}
       <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-[var(--color-accent-soft)] to-[var(--color-bg-tertiary)] flex items-center justify-center flex-shrink-0 overflow-hidden">
         {game.imageUrl ? (
-          <img 
-            src={game.imageUrl} 
+          <img
+            src={game.imageUrl}
             alt={game.name}
             className="w-full h-full object-cover"
+            loading="lazy"
             onError={(e) => {
               e.currentTarget.style.display = 'none';
               e.currentTarget.nextElementSibling?.classList.remove('hidden');

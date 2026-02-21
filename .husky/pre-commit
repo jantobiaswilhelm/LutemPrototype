@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# --- Secret scanning ---
+# Check staged files for common secret patterns
+SECRETS_FOUND=0
+
+# Patterns that indicate hardcoded secrets
+PATTERNS=(
+  "AKIA[0-9A-Z]{16}"                    # AWS Access Key
+  "-----BEGIN (RSA |EC )?PRIVATE KEY"    # Private keys
+  "sk-[a-zA-Z0-9]{20,}"                 # OpenAI/Anthropic API keys
+  "ghp_[a-zA-Z0-9]{36}"                 # GitHub personal access tokens
+  "firebase.*private_key"               # Firebase service account keys
+)
+
+for pattern in "${PATTERNS[@]}"; do
+  if git diff --cached --diff-filter=ACM -z -- '*.ts' '*.tsx' '*.js' '*.json' '*.properties' '*.java' '*.env' '*.yml' '*.yaml' | \
+     grep -qE "$pattern" 2>/dev/null; then
+    echo "ERROR: Possible secret detected matching pattern: $pattern"
+    SECRETS_FOUND=1
+  fi
+done
+
+# Check for common secret file names being staged
+SECRET_FILES=$(git diff --cached --name-only | grep -iE '\.env$|\.env\.local|firebase.*account.*\.json|credentials\.json|\.pem$|\.key$' || true)
+if [ -n "$SECRET_FILES" ]; then
+  echo "ERROR: Potentially sensitive files staged for commit:"
+  echo "$SECRET_FILES"
+  SECRETS_FOUND=1
+fi
+
+if [ "$SECRETS_FOUND" -eq 1 ]; then
+  echo ""
+  echo "Commit blocked: potential secrets detected."
+  echo "If this is a false positive, use: git commit --no-verify"
+  exit 1
+fi
+
+# --- Lint staged files ---
+npx lint-staged 2>/dev/null || true

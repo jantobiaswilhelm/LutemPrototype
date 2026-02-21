@@ -1,7 +1,10 @@
 /**
  * Auth Callback Page
  * Handles redirect from Steam OpenID login
- * URL: /auth/callback?token=xxx or /auth/callback?error=xxx
+ * URL: /auth/callback?success=true or /auth/callback?error=xxx
+ *
+ * The JWT is set as an httpOnly cookie by the backend.
+ * This page just validates the session and redirects.
  */
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -16,45 +19,42 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const processCallback = async () => {
-      const token = searchParams.get('token');
       const error = searchParams.get('error');
+      const success = searchParams.get('success');
 
       if (error) {
-        console.error('❌ Auth callback error:', error);
+        console.error('Auth callback error:', error);
         setStatus('error');
         setMessage(decodeURIComponent(error));
         setError(error);
-        
-        // Redirect to login after delay
+
         setTimeout(() => navigate('/login', { replace: true }), 3000);
         return;
       }
 
-      if (!token) {
-        console.error('❌ No token in callback');
+      if (!success) {
         setStatus('error');
-        setMessage('No authentication token received');
-        setError('No authentication token received');
-        
+        setMessage('No authentication response received');
+        setError('No authentication response received');
+
         setTimeout(() => navigate('/login', { replace: true }), 3000);
         return;
       }
 
       try {
-        console.log('🔄 Processing auth callback...');
-        await handleAuthCallback(token);
-        
+        // Cookie was set by the backend redirect — validate session
+        await handleAuthCallback();
+
         setStatus('success');
         setMessage('Login successful! Redirecting...');
-        
-        // Redirect to home
+
         setTimeout(() => navigate('/', { replace: true }), 1000);
-        
+
       } catch (err) {
-        console.error('❌ Failed to process callback:', err);
+        console.error('Failed to process callback:', err);
         setStatus('error');
         setMessage('Failed to complete login');
-        
+
         setTimeout(() => navigate('/login', { replace: true }), 3000);
       }
     };
@@ -68,7 +68,7 @@ export default function AuthCallback() {
         {/* Status indicator */}
         <div className="mb-6">
           {status === 'processing' && (
-            <div 
+            <div
               className="w-12 h-12 border-4 rounded-full animate-spin mx-auto"
               style={{
                 borderColor: 'var(--color-border)',
@@ -77,7 +77,7 @@ export default function AuthCallback() {
             />
           )}
           {status === 'success' && (
-            <div 
+            <div
               className="w-12 h-12 rounded-full mx-auto flex items-center justify-center"
               style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)' }}
             >
@@ -87,7 +87,7 @@ export default function AuthCallback() {
             </div>
           )}
           {status === 'error' && (
-            <div 
+            <div
               className="w-12 h-12 rounded-full mx-auto flex items-center justify-center"
               style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)' }}
             >
@@ -99,7 +99,7 @@ export default function AuthCallback() {
         </div>
 
         {/* Message */}
-        <h1 
+        <h1
           className="text-xl font-semibold mb-2"
           style={{ color: 'var(--color-text-primary)' }}
         >

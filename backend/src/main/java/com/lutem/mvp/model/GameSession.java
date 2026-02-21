@@ -4,7 +4,11 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "game_sessions")
+@Table(name = "game_sessions", indexes = {
+    @Index(name = "idx_session_user", columnList = "user_id_fk"),
+    @Index(name = "idx_session_game", columnList = "game_id"),
+    @Index(name = "idx_session_recommended_at", columnList = "recommended_at")
+})
 public class GameSession {
     
     @Id
@@ -64,7 +68,7 @@ public class GameSession {
     public GameSession(Game game, Integer availableMinutes, String desiredMood, User user) {
         this(game, availableMinutes, desiredMood);
         this.user = user;
-        this.legacyUserId = user != null ? user.getFirebaseUid() : "anonymous";
+        this.legacyUserId = user != null ? user.getGoogleId() : "anonymous";
     }
     
     // Getters and Setters
@@ -78,7 +82,7 @@ public class GameSession {
     public void setUser(User user) { 
         this.user = user;
         if (user != null) {
-            this.legacyUserId = user.getFirebaseUid();
+            this.legacyUserId = user.getGoogleId();
         }
     }
     

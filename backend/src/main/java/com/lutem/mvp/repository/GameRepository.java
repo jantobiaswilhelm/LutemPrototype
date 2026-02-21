@@ -4,6 +4,7 @@ import com.lutem.mvp.model.Game;
 import com.lutem.mvp.model.TaggingSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -48,6 +49,14 @@ public interface GameRepository extends JpaRepository<Game, Long> {
      */
     @Query("SELECT g FROM Game g WHERE g.taggingSource IS NOT NULL AND g.taggingSource != 'PENDING'")
     List<Game> findAllFullyTagged();
+
+    /**
+     * Find all fully tagged games with all collections eagerly fetched.
+     * Use this for recommendation scoring to avoid N+1 queries.
+     */
+    @EntityGraph(value = "Game.withCollections")
+    @Query("SELECT DISTINCT g FROM Game g WHERE g.taggingSource IS NOT NULL AND g.taggingSource != 'PENDING'")
+    List<Game> findAllFullyTaggedWithCollections();
     
     /**
      * Find untagged/pending games that need AI tagging.

@@ -10,7 +10,7 @@ import { InlineWizard } from '@/components/wizard';
 import { FeedbackPrompt } from '@/components/feedback';
 import type { Game } from '@/types';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+import { API_BASE } from '@/lib/config';
 
 // Get greeting based on time of day
 function getGreeting(name?: string): string {

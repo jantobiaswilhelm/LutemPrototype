@@ -1,124 +1,90 @@
 # Lutem MVP - Project Tracker
 
-## 📍 Current Status
+## Current Status
 
-**✅ PRODUCTION DEPLOYED** - [lutembeta.netlify.app](https://lutembeta.netlify.app)
-- **Backend:** Spring Boot on Railway with PostgreSQL
-- **Frontend:** Vanilla HTML/CSS/JS on Netlify  
-- **Auth:** Firebase Authentication (Google Sign-in)
-- **User Data:** Firestore (profiles, preferences)
-- **Games:** 57 titles in database
+**PRODUCTION DEPLOYED** - [lutembeta.netlify.app](https://lutembeta.netlify.app)
+- **Backend:** Spring Boot 3.2 on Railway with PostgreSQL
+- **Frontend:** React 19 + TypeScript + Vite on Netlify
+- **Auth:** Dual auth (Steam OpenID + Google/Firebase) with JWT httpOnly cookies
+- **User Data:** Firestore (profiles, satisfaction analytics)
+- **Games:** 57+ titles in database
 
-**Last Updated:** December 7, 2025
-
----
-
-## 🗺️ Phase Completion Status
-
-### ✅ PHASE 0-4 — Core MVP
-- [x] Multi-dimensional recommendation engine (8 scoring factors)
-- [x] 57 curated games with emotional metadata
-- [x] Quick Start wizard (4-step onboarding)
-- [x] Top pick + 3 alternatives display
-- [x] Progressive disclosure for 9 total recommendations
-- [x] "Touch Grass" wellness modal for 3+ hour sessions
-- [x] Loading spinner with rotating gaming quotes
-
-### ✅ PHASE 5 — UI/UX Enhancement
-- [x] 4 color themes (Café, Lavender, Earth, Ocean)
-- [x] Light/Dark mode with system detection
-- [x] Games Library with filtering and search
-- [x] Frontend modularization (20+ JS modules, 6 CSS files)
-- [x] Responsive desktop layout with sidebar navigation
-
-### ✅ PHASE 6 — Deployment
-- [x] Backend deployed to Railway
-- [x] Frontend deployed to Netlify
-- [x] Custom domain configured (lutem.3lands.ch)
-
-### ✅ PHASE 7 — PostgreSQL Migration
-- [x] PostgreSQL on Railway (production)
-- [x] H2 for local development
-- [x] 57 games auto-loaded from seed file
-
-### ✅ PHASE 8 — Firestore Integration
-- [x] Firebase SDK integrated
-- [x] Firestore CRUD operations
-- [x] Security rules configured
-
-### ✅ PHASE 9 — User Profiles
-- [x] Profile save/load to Firestore
-- [x] Cross-device sync
-- [x] Auto-create on first sign-in
-
-### 🟡 PHASE 10 — Session Tracking (NEXT)
-- [ ] Log sessions when user accepts recommendation
-- [ ] Post-session feedback collection UI
-- [ ] Session history view in Profile tab
-- [ ] Connect feedback to recommendation scoring
-
-### 🟡 PHASE 11 — Weekly Dashboard
-- [x] Backend stats calculation (UserSatisfactionService)
-- [ ] Dashboard UI on Home tab
-- [ ] Satisfaction trends visualization
-- [ ] Gaming pattern insights
+**Last Updated:** February 2026
 
 ---
 
-## 📦 Game Library
+## Completed
 
-**Current:** 57 Games  
-**Categories:** Casual, Mid-Range, Long-Form, Competitive, Cozy
+### Core Platform
+- [x] Multi-dimensional recommendation engine (11 scoring factors)
+- [x] 57+ curated games with emotional metadata
+- [x] Inline wizard with 6 recommendation steps
+- [x] Mood shortcuts for quick recommendations
+- [x] Steam library import + game matching
+- [x] Session tracking with feedback collection
+- [x] Satisfaction analytics via Firestore
 
-**Emotional Goal Coverage:**
-- UNWIND, RECHARGE, ENGAGE, CHALLENGE, ACHIEVE, EXPLORE
+### Authentication & Security
+- [x] Dual auth: Steam OpenID + Google/Firebase
+- [x] JWT httpOnly cookies (migrated from localStorage)
+- [x] CSRF protection (double-submit cookie)
+- [x] RBAC (USER/ADMIN roles)
+- [x] Security headers (CSP, X-Frame-Options, etc.)
+- [x] Input validation on API endpoints
+- [x] Firestore data validation rules
+
+### Social Features
+- [x] Friends system (search, request, accept/decline)
+- [x] Calendar with social events (invites, join/leave)
+- [x] Event visibility controls (private, friends-only, public)
+
+### Frontend
+- [x] 4 themes x 2 modes (8 total)
+- [x] All pages complete (Home, Library, Calendar, Friends, Sessions, Stats, Settings, Profile)
+- [x] Swipeable taskbar navigation
+- [x] TanStack Query + Zustand state management
+
+### Infrastructure
+- [x] Railway deployment (backend + PostgreSQL)
+- [x] Netlify deployment (frontend)
+- [x] Custom domain (lutem.3lands.ch)
+- [x] Environment-specific CORS config
+- [x] Database indexes on key columns
+- [x] N+1 query optimization (EntityGraph)
+- [x] Production ddl-auto=validate
 
 ---
 
-## ✅ Completed Quick Wins
+## Remaining Items
 
-| # | Feature | Status |
-|---|---------|--------|
-| 1 | Loading Spinner | ✅ Done |
-| 2 | Time Slider | ✅ Done |
-| 3 | Display Alternatives | ✅ Done |
-| 4 | Input Validation | ✅ Done |
-| 5 | Required Interruptibility | ✅ Done |
-| 6 | Games Library | ✅ Done |
+### P1 - High Priority (Skipped)
+- [ ] Consolidate dual auth into shared AuthService
+- [ ] Set up Vitest for frontend testing
+- [ ] Expand backend test coverage (auth, admin, Steam)
+
+### P2 - Medium Priority (Skipped)
+- [ ] Update Spring Boot to 3.4.x + Firebase Admin SDK
+- [ ] Split oversized components (Library.tsx 33KB, Calendar.tsx 26KB)
+- [ ] Improve error handling consistency (frontend + backend)
+- [ ] Accessibility improvements (aria-labels, focus management, keyboard nav)
+
+### P3 - Low Priority
+- [x] Update documentation (README, PROJECT_INSTRUCTIONS, TODO)
+- [ ] Clean up database/build/git scripts
+- [ ] Add pre-commit hooks (husky + lint-staged + secret scanning)
+- [ ] Image lazy loading optimization
+- [ ] Improve rate limiter for distributed deployment (Redis-backed)
 
 ---
 
-## 🐛 Known Issues
-
-All production bugs resolved as of November 30, 2025.
-See [docs/BUGS.md](docs/BUGS.md) for history.
-
----
-
-## 📊 Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | Vanilla HTML/CSS/JS (20+ modules) |
-| Backend | Spring Boot 3.2, Java 17 |
-| Database | PostgreSQL (Railway) |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, Zustand, TanStack Query |
+| Backend | Spring Boot 3.2, Java 17, JPA/Hibernate |
+| Database | PostgreSQL (Railway), H2 (local dev) |
 | User Data | Firestore |
-| Auth | Firebase Authentication |
+| Auth | JWT httpOnly cookies, Firebase Admin SDK, Steam OpenID |
+| AI | Anthropic Claude API (game tagging) |
 | Hosting | Netlify + Railway |
-
----
-
-## 📝 Documentation
-
-| Doc | Purpose |
-|-----|---------|
-| [README.md](README.md) | Project overview |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | Detailed development roadmap |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design |
-| [docs/API.md](docs/API.md) | API reference |
-| [CHANGELOG.md](CHANGELOG.md) | Version history |
-
----
-
-*Last Updated: December 7, 2025*  
-*Status: ✅ Phases 1-9 Complete — Phase 10 (Session Tracking) Next*

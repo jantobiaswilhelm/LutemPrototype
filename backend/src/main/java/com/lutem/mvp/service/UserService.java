@@ -71,15 +71,6 @@ public class UserService {
     }
     
     /**
-     * @deprecated Use findOrCreateByGoogleId() instead
-     */
-    @Deprecated
-    @Transactional
-    public User findOrCreateByFirebaseUid(String firebaseUid, String email, String displayName) {
-        return findOrCreateByGoogleId(firebaseUid, email, displayName);
-    }
-    
-    /**
      * Find user by Steam ID
      */
     public Optional<User> findBySteamId(String steamId) {
@@ -91,14 +82,6 @@ public class UserService {
      */
     public Optional<User> findByGoogleId(String googleId) {
         return userRepository.findByGoogleId(googleId);
-    }
-    
-    /**
-     * @deprecated Use findByGoogleId() instead
-     */
-    @Deprecated
-    public Optional<User> findByFirebaseUid(String firebaseUid) {
-        return findByGoogleId(firebaseUid);
     }
     
     /**

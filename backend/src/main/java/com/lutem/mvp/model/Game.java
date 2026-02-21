@@ -5,7 +5,20 @@ import java.util.List;
 import java.util.ArrayList;
 
 @Entity
-@Table(name = "games")
+@Table(name = "games", indexes = {
+    @Index(name = "idx_game_steam_app_id", columnList = "steamAppId"),
+    @Index(name = "idx_game_tagging_source", columnList = "taggingSource"),
+    @Index(name = "idx_game_name", columnList = "name")
+})
+@NamedEntityGraph(
+    name = "Game.withCollections",
+    attributeNodes = {
+        @NamedAttributeNode("emotionalGoals"),
+        @NamedAttributeNode("bestTimeOfDay"),
+        @NamedAttributeNode("socialPreferences"),
+        @NamedAttributeNode("genres")
+    }
+)
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

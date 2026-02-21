@@ -3,81 +3,101 @@
 ## Project Overview
 Lutem is an AI-powered gaming recommendation platform that helps users find the perfect game based on their available time, mood, energy level, and preferences.
 
-**Location:** `D:\Lutem\LutemPrototype`
+**Location:** `D:\Projects\Lutem\LutemPrototype`
 **Branch:** `main`
 **GitHub:** https://github.com/jantobiaswilhelm/LutemPrototype
-**Games:** 57 games in database
 
-## Quick Start Commands
-
-### Starting the Application
+## Quick Start
 
 ```bash
-# Start backend
-D:\Lutem\LutemPrototype\start-backend.bat
+# Start everything (backend + frontend)
+start-lutem.bat
 
-# Start frontend
-D:\Lutem\LutemPrototype\start-frontend.bat
-
-# Or start everything at once
-D:\Lutem\LutemPrototype\start-lutem.bat
+# Or start individually:
+start-backend.bat        # Backend on http://localhost:8080
+start-frontend.bat       # Frontend on http://localhost:5173
 ```
 
-### Testing the Application
-
-After starting:
-1. Backend runs on `http://localhost:8080`
-2. Frontend opens in browser
-3. Test: Select preferences → Click "Get Recommendation" → Verify game appears
+### Environment Setup
+Create `backend/.env.local` with:
+```
+STEAM_API_KEY=your-steam-api-key
+JWT_SECRET=your-secret-at-least-32-characters-long
+```
 
 ## Project Structure
 
 ```
-D:\Lutem\LutemPrototype\
-├── backend/                    # Spring Boot backend (Java)
-│   ├── src/main/java/         # Application code
-│   ├── src/main/resources/    # games-seed.json (57 games)
-│   └── pom.xml                # Maven configuration
-├── frontend/                   # Frontend (HTML/CSS/JS)
-│   ├── js/
-│   │   ├── config.js          # Environment detection (localhost vs production)
-│   │   ├── api.js             # Backend API calls
-│   │   └── ...                # Other modules
-│   ├── css/                   # Stylesheets
-│   └── index.html             # Main page
-├── docs/
-│   ├── DEPLOYMENT_PLAN.md     # Full deployment guide
-│   └── sessions/              # Session handoff docs
-├── start-backend.bat
-├── start-frontend.bat
-└── start-lutem.bat
+LutemPrototype/
+├── backend/                    # Spring Boot backend (Java 17)
+│   ├── src/main/java/         # Application code (controllers, services, models, security)
+│   ├── src/main/resources/    # Config files, games-seed.json
+│   └── pom.xml                # Maven (Spring Boot 3.2)
+├── frontend-react/             # React 19 + TypeScript + Vite + Tailwind CSS 4
+│   ├── src/
+│   │   ├── api/               # API client (client.ts, steam.ts, hooks.ts)
+│   │   ├── components/        # UI components + wizard steps
+│   │   ├── pages/             # Route pages (Home, Library, Calendar, Friends, etc.)
+│   │   ├── stores/            # Zustand stores (auth, theme, wizard, recommendations, steam)
+│   │   └── styles/themes/     # 4 color themes x 2 modes
+│   └── package.json
+├── docs/                       # Documentation
+├── scripts/                    # Database and build scripts
+├── firestore.rules            # Firestore security rules with data validation
+└── start-*.bat                # Startup scripts
 ```
 
-## API Endpoints
+## Key API Endpoints
 
-- `GET /games` - List all 57 games
-- `POST /recommendations` - Get game recommendation
-  - Body: `{"availableMinutes": 30, "desiredEmotionalGoals": ["UNWIND"], ...}`
-- `POST /sessions/feedback` - Submit satisfaction score
-  - Body: `{"gameId": 1, "satisfactionScore": 5}`
+### Public
+- `GET /games` - List fully tagged games
+- `GET /games/paged` - Paginated game list
+- `POST /recommendations` - Get recommendation (body: availableMinutes, desiredEmotionalGoals, etc.)
 
-## Key Technical Details
+### Authenticated (cookie-based JWT)
+- `GET /auth/me` - Current user info
+- `POST /auth/logout` - Logout
+- `POST /api/steam/import` - Import Steam library
+- `GET /api/steam/library` - Get user's Steam library
+- `GET /api/sessions/history` - Session history
+- `POST /sessions/feedback` - Submit satisfaction score (body: sessionId, satisfactionScore 1-5)
+- `GET /api/calendar/events` - Calendar events
+- `POST /api/calendar/events` - Create calendar event
+- `GET /api/friends/list` - Friends list
+- `POST /api/friends/request/{userId}` - Send friend request
 
-- **Backend:** Spring Boot 3.2 + Java 17+
-- **Frontend:** Vanilla HTML/CSS/JS (no framework)
-- **Database:** PostgreSQL (prod on Railway) / H2 (local dev), games loaded from `games-seed.json` on startup
-- **Environment:** `config.js` auto-detects localhost vs production
+### Admin (requires ADMIN role)
+- `POST /admin/games` - Add game
+- `POST /admin/games/bulk` - Bulk import
+- `POST /admin/tag` - AI tag games via Claude
+- `DELETE /admin/games/{id}` - Delete game
 
-## Deployment Status
+## Authentication
 
-- **Live:** `lutem.3lands.ch`
-- **Architecture:** Netlify (frontend) + Railway (backend + PostgreSQL)
-- **Phase 1:** ✅ Environment config complete
-- **Phase 2:** ✅ Railway backend deployment
-- **Phase 3:** ✅ Netlify frontend deployment
-- **Phase 4:** ✅ Custom domain setup
+Dual auth system:
+- **Steam:** OpenID 2.0 flow → JWT httpOnly cookie
+- **Google:** Firebase token exchange → JWT httpOnly cookie
+- **CSRF:** Double-submit cookie pattern (XSRF-TOKEN cookie + X-XSRF-TOKEN header)
+- **RBAC:** USER and ADMIN roles stored in JWT claims
 
-See `docs/DEPLOYMENT_PLAN.md` for full deployment guide.
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS 4, Zustand, TanStack Query |
+| Backend | Spring Boot 3.2, Java 17, JPA/Hibernate |
+| Database | PostgreSQL (prod via Railway), H2 (local dev) |
+| User Data | Firestore |
+| Auth | JWT httpOnly cookies, Firebase Admin SDK, Steam OpenID |
+| AI | Anthropic Claude API (game tagging) |
+| Hosting | Netlify (frontend) + Railway (backend) |
+
+## Deployment
+
+- **Frontend:** Netlify at [lutembeta.netlify.app](https://lutembeta.netlify.app)
+- **Backend:** Railway at lutemprototype-production.up.railway.app
+- **Database:** PostgreSQL on Railway
+- **Domain:** lutem.3lands.ch
 
 ## User Preferences
 
@@ -85,10 +105,3 @@ See `docs/DEPLOYMENT_PLAN.md` for full deployment guide.
 - Call out mistakes directly
 - Deny overly complex solutions
 - **NEVER KILL ALL NODE PROCESSES**
-
-## Working with This Project
-
-1. Always use the bat files to start backend/frontend
-2. Check `docs/sessions/` for current state and next steps
-3. Backend must be running for recommendations to work (otherwise falls back to demo mode)
-4. After changes, test locally before committing
