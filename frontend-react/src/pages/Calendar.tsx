@@ -20,7 +20,7 @@ import {
   useCalendarInvitations,
   useRespondToCalendarInvitation,
 } from '@/api/hooks';
-import { CreateEventModal } from '@/components/calendar/CreateEventModal';
+import { CreateEventForm } from '@/components/calendar/CreateEventForm';
 import { EventCard } from '@/components/calendar/EventCard';
 import type { CalendarEvent, CalendarInvitation } from '@/types';
 
@@ -29,7 +29,7 @@ type ViewFilter = 'all' | 'friends' | 'mine';
 export function Calendar() {
   const { isAuthenticated } = useAuthStore();
   const [viewFilter, setViewFilter] = useState<ViewFilter>('all');
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Calculate date range for current view (month view)
@@ -121,13 +121,23 @@ export function Calendar() {
             </p>
           </div>
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={() => setShowCreateForm(!showCreateForm)}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-accent)] text-white font-medium hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">New Event</span>
           </button>
         </div>
+
+        {/* Inline Create Event Form */}
+        {showCreateForm && (
+          <div className="mb-6">
+            <CreateEventForm
+              onSuccess={() => setShowCreateForm(false)}
+              onCancel={() => setShowCreateForm(false)}
+            />
+          </div>
+        )}
 
         {/* Invitations Banner */}
         {invitations && invitations.length > 0 && (
@@ -207,7 +217,7 @@ export function Calendar() {
                 All Events
               </h3>
               {Object.keys(eventsByDate).length === 0 ? (
-                <EmptyState viewFilter={viewFilter} onCreateClick={() => setShowCreateModal(true)} />
+                <EmptyState viewFilter={viewFilter} onCreateClick={() => setShowCreateForm(true)} />
               ) : (
                 <div className="space-y-4">
                   {Object.entries(eventsByDate)
@@ -230,10 +240,6 @@ export function Calendar() {
           </div>
         )}
 
-        {/* Create Event Modal */}
-        {showCreateModal && (
-          <CreateEventModal onClose={() => setShowCreateModal(false)} />
-        )}
       </div>
     </main>
   );

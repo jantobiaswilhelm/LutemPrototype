@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Clock, Zap, ChevronDown, Play, ExternalLink } from 'lucide-react';
+import { Clock, Zap, ChevronDown, Play, ExternalLink, CalendarPlus } from 'lucide-react';
 import { EMOTIONAL_GOALS, ENERGY_LEVELS } from '@/types';
 import type { Game } from '@/types';
 
@@ -20,9 +20,10 @@ interface GameCardProps {
   reason?: string;
   showDetails?: boolean;
   onStart?: () => void;
+  onSchedule?: () => void;
 }
 
-export const GameCard = memo(function GameCard({ game, reason, showDetails = true, onStart }: GameCardProps) {
+export const GameCard = memo(function GameCard({ game, reason, showDetails = true, onStart, onSchedule }: GameCardProps) {
   return (
     <div className="rounded-2xl overflow-hidden bg-[var(--color-bg-secondary)] border border-[var(--color-border)] shadow-lg">
       {/* Game image */}
@@ -105,6 +106,16 @@ export const GameCard = memo(function GameCard({ game, reason, showDetails = tru
           )}
           {getButtonText(game)}
         </button>
+
+        {onSchedule && (
+          <button
+            onClick={onSchedule}
+            className="w-full py-2.5 mt-2 rounded-xl font-medium text-sm transition-all flex items-center justify-center gap-2 border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+          >
+            <CalendarPlus className="w-4 h-4" />
+            Schedule for Later
+          </button>
+        )}
       </div>
 
       {/* Match reason */}

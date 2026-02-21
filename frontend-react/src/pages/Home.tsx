@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Coffee, Moon, Sun, RefreshCw, ChevronDown, ChevronUp, AlertCircle, Sparkles } from 'lucide-react';
 import { useThemeStore } from '@/stores/themeStore';
 import { useWizardStore } from '@/stores/wizardStore';
@@ -8,6 +9,7 @@ import { GameCard, AlternativeCard } from '@/components/GameCard';
 import { MoodShortcuts } from '@/components/MoodShortcuts';
 import { InlineWizard } from '@/components/wizard';
 import { FeedbackPrompt } from '@/components/feedback';
+import { CreateEventForm } from '@/components/calendar/CreateEventForm';
 import { sessionsApi } from '@/api/client';
 import type { Game } from '@/types';
 
@@ -79,6 +81,7 @@ export default function Home() {
     error,
   } = useRecommendationStore();
   const { setPendingFeedback, shouldShowPrompt } = useFeedbackStore();
+  const [schedulingGame, setSchedulingGame] = useState<Game | null>(null);
 
   const greeting = getGreeting(user?.displayName);
   const primaryGame = currentRecommendation?.topRecommendation;
@@ -167,7 +170,21 @@ export default function Home() {
                 game={primaryGame}
                 reason={currentRecommendation?.reason}
                 onStart={() => launchGame(primaryGame, currentRecommendation?.sessionId, setPendingFeedback)}
+                onSchedule={user ? () => setSchedulingGame(primaryGame) : undefined}
               />
+
+              {/* Inline schedule form */}
+              {schedulingGame && (
+                <div className="mt-4">
+                  <CreateEventForm
+                    compact
+                    defaultGameId={schedulingGame.id}
+                    defaultGameName={schedulingGame.name}
+                    onSuccess={() => setSchedulingGame(null)}
+                    onCancel={() => setSchedulingGame(null)}
+                  />
+                </div>
+              )}
 
               {/* Action buttons */}
               <div className="flex gap-3 mt-4">
