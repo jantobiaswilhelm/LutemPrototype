@@ -16,7 +16,13 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-const isConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+// All four are required for Google Auth (signInWithPopup) to work
+const isConfigured = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  firebaseConfig.appId
+);
 
 // Initialize Firebase only when config is available
 let app: FirebaseApp | null = null;
