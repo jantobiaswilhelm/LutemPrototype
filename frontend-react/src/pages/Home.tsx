@@ -10,6 +10,7 @@ import { MoodShortcuts } from '@/components/MoodShortcuts';
 import { InlineWizard } from '@/components/wizard';
 import { FeedbackPrompt } from '@/components/feedback';
 import { CreateEventForm } from '@/components/calendar/CreateEventForm';
+import { RecommendationFilters } from '@/components/RecommendationFilters';
 import { sessionsApi } from '@/api/client';
 import type { Game } from '@/types';
 
@@ -103,7 +104,9 @@ export default function Home() {
           <h1 className="text-xl font-bold text-[var(--color-text-primary)]">Lutem</h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <RecommendationFilters />
+
           <label htmlFor="theme-select" className="sr-only">Theme</label>
           <select
             id="theme-select"

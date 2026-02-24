@@ -133,7 +133,8 @@ export interface RecommendationRequest {
   timeOfDay?: TimeOfDay;
   preferredGenres?: string[];
   userId?: string;
-  // New filter parameters
+  timeOfDayInferred?: boolean;
+  // Filter parameters
   audioAvailability?: AudioAvailability;
   maxContentRating?: ContentRating;
   allowNsfw?: boolean;

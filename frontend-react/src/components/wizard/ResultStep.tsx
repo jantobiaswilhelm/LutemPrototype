@@ -3,7 +3,7 @@ import { Sparkles, RotateCcw } from 'lucide-react';
 import { useWizardStore } from '@/stores/wizardStore';
 import { useRecommendationStore } from '@/stores/recommendationStore';
 import { recommendationsApi } from '@/api/client';
-import { getContentPreferences } from '@/hooks/useContentPreferences';
+import { enrichRequest } from '@/lib/recommendationDefaults';
 
 function LoadingState() {
   return (
@@ -75,22 +75,16 @@ export default function ResultStep() {
     if (!energyLevel || !interruptibility || !socialPreference) return;
     
     setError(null);
-    
-    // Get content preferences from localStorage
-    const contentPrefs = getContentPreferences();
-    
+
     try {
-      const data = await recommendationsApi.getRecommendation({
+      const data = await recommendationsApi.getRecommendation(enrichRequest({
         availableMinutes,
         desiredEmotionalGoals: selectedMoods,
         currentEnergyLevel: energyLevel,
         requiredInterruptibility: interruptibility,
         socialPreference,
-        // New parameters
         audioAvailability: audioAvailability ?? undefined,
-        maxContentRating: contentPrefs.maxContentRating,
-        allowNsfw: contentPrefs.allowNsfw,
-      });
+      }));
       // Save to store
       saveToStore(data);
       
