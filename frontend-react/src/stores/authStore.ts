@@ -9,7 +9,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
+import { auth, googleProvider, isConfigured as firebaseConfigured } from '@/lib/firebase';
 import { API_BASE } from '@/lib/config';
 import { getCsrfToken, captureCsrfToken } from '@/api/csrf';
 
@@ -65,6 +65,10 @@ export const useAuthStore = create<AuthState>()(
       loginWithGoogle: async () => {
         try {
           set({ error: null, isLoading: true });
+
+          if (!firebaseConfigured || !auth || !googleProvider) {
+            throw new Error('Google login is not available — Firebase is not configured.');
+          }
 
           const result = await signInWithPopup(auth, googleProvider);
           const idToken = await result.user.getIdToken();
@@ -148,7 +152,7 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try {
           // Clear Firebase auth state
-          await firebaseSignOut(auth).catch(() => {});
+          if (auth) await firebaseSignOut(auth).catch(() => {});
 
           // Call backend logout (clears httpOnly cookie)
           const csrfToken = getCsrfToken();

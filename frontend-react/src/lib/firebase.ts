@@ -1,9 +1,10 @@
 /**
  * Firebase Configuration
  * All values loaded from environment variables (VITE_ prefix for Vite).
+ * Gracefully handles missing config (local dev without Firebase).
  */
-import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, type Auth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -15,7 +16,19 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
+const isConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+
+// Initialize Firebase only when config is available
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let googleProvider: GoogleAuthProvider | null = null;
+
+if (isConfigured) {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  googleProvider = new GoogleAuthProvider();
+} else {
+  console.warn('Firebase not configured — Google login will be unavailable. Steam login still works.');
+}
+
+export { app, auth, googleProvider, isConfigured };
