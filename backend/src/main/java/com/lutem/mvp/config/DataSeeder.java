@@ -11,18 +11,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 /**
- * Seeds local H2 database from production PostgreSQL via API.
+ * Seeds/syncs local H2 database from production data.
  * Only runs with 'seed' profile: -Dspring.profiles.active=local,seed
- * 
+ *
+ * Reads from local games-seed.json first (fast, reliable).
+ * Falls back to production API if local file is missing.
+ *
  * Usage:
- *   1. Make sure production backend is running
- *   2. Run with: mvn spring-boot:run -Dspring-boot.run.profiles=local,seed
- *   3. Or set SPRING_PROFILES_ACTIVE=local,seed
+ *   Initial seed:    mvn spring-boot:run -Dspring-boot.run.profiles=local,seed
+ *   Force re-sync:   mvn spring-boot:run -Dspring-boot.run.profiles=local,seed -Dspring-boot.run.arguments=--force-reseed
+ *   Refresh seed file first:
+ *     curl -s https://lutemprototype-production.up.railway.app/games/all > backend/src/main/resources/games-seed.json
  */
 @Configuration
 @Profile("seed")
@@ -30,80 +39,59 @@ public class DataSeeder {
 
     private static final Logger logger = LoggerFactory.getLogger(DataSeeder.class);
     private static final String PROD_API_URL = "https://lutemprototype-production.up.railway.app";
+    private static final String SEED_FILE = "games-seed.json";
 
     @Bean
     CommandLineRunner seedFromProduction(GameRepository gameRepository,
                                           ObjectMapper objectMapper,
                                           Environment env) {
         return args -> {
-            logger.info("========== LUTEM DATA SEEDER - Production Sync ==========");
+            boolean forceReseed = "true".equalsIgnoreCase(env.getProperty("FORCE_RESEED"))
+                || java.util.Arrays.asList(args).contains("--force-reseed");
 
-            // Check if we should skip (already have data)
+            logger.info("========== LUTEM DATA SEEDER ==========");
+
             long existingCount = gameRepository.count();
-            if (existingCount > 0) {
-                logger.warn("Local database already has {} games. Skipping seed process.", existingCount);
-                logger.info("To force re-seed, clear your H2 database first.");
+            if (existingCount > 0 && !forceReseed) {
+                logger.warn("Local database already has {} games. Skipping seed.", existingCount);
+                logger.info("To force re-sync, run with --force-reseed or set FORCE_RESEED=true");
                 return;
             }
 
+            if (forceReseed && existingCount > 0) {
+                logger.info("Force re-sync enabled. Will update existing and add new games.");
+            }
+
             try {
-                logger.info("Fetching games from production: {}", PROD_API_URL);
+                List<Game> prodGames = loadGames(objectMapper);
+                logger.info("Loaded {} games", prodGames.size());
 
-                RestTemplate restTemplate = new RestTemplate();
-                String response = restTemplate.getForObject(
-                    PROD_API_URL + "/games/all",
-                    String.class
-                );
-
-                List<Game> prodGames = objectMapper.readValue(
-                    response,
-                    new TypeReference<List<Game>>() {}
-                );
-
-                logger.info("Retrieved {} games from production", prodGames.size());
-
-                // Save each game (without ID to let H2 auto-generate)
-                int saved = 0;
+                int created = 0;
+                int updated = 0;
                 int skipped = 0;
 
                 for (Game prodGame : prodGames) {
                     try {
-                        // Create fresh game without ID
-                        Game localGame = new Game();
-                        localGame.setName(prodGame.getName());
-                        localGame.setMinMinutes(prodGame.getMinMinutes());
-                        localGame.setMaxMinutes(prodGame.getMaxMinutes());
-                        localGame.setEmotionalGoals(prodGame.getEmotionalGoals());
-                        localGame.setInterruptibility(prodGame.getInterruptibility());
-                        localGame.setEnergyRequired(prodGame.getEnergyRequired());
-                        localGame.setAudioDependency(prodGame.getAudioDependency());
-                        localGame.setContentRating(prodGame.getContentRating());
-                        localGame.setNsfwLevel(prodGame.getNsfwLevel());
-                        localGame.setBestTimeOfDay(prodGame.getBestTimeOfDay());
-                        localGame.setSocialPreferences(prodGame.getSocialPreferences());
-                        localGame.setGenres(prodGame.getGenres());
-                        localGame.setDescription(prodGame.getDescription());
-                        localGame.setImageUrl(prodGame.getImageUrl());
-                        localGame.setStoreUrl(prodGame.getStoreUrl());
-                        localGame.setUserRating(prodGame.getUserRating());
-                        localGame.setAverageSatisfaction(prodGame.getAverageSatisfaction());
-                        localGame.setSessionCount(prodGame.getSessionCount());
-                        localGame.setSteamAppId(prodGame.getSteamAppId());
-                        localGame.setTaggingSource(prodGame.getTaggingSource());
-                        localGame.setTaggingConfidence(prodGame.getTaggingConfidence());
-                        localGame.setRawgId(prodGame.getRawgId());
-                        localGame.setSteamPositiveReviews(prodGame.getSteamPositiveReviews());
-                        localGame.setSteamNegativeReviews(prodGame.getSteamNegativeReviews());
-                        localGame.setMetacriticScore(prodGame.getMetacriticScore());
-                        localGame.setPopularityScore(prodGame.getPopularityScore());
-                        localGame.setSteamPlaytimeForever(prodGame.getSteamPlaytimeForever());
+                        Optional<Game> existingOpt = Optional.empty();
+                        if (prodGame.getSteamAppId() != null) {
+                            existingOpt = gameRepository.findBySteamAppId(prodGame.getSteamAppId());
+                        }
+                        if (existingOpt.isEmpty()) {
+                            existingOpt = gameRepository.findByNameIgnoreCase(prodGame.getName());
+                        }
 
+                        Game localGame = existingOpt.orElse(new Game());
+                        copyGameFields(prodGame, localGame);
                         gameRepository.save(localGame);
-                        saved++;
 
-                        // Progress indicator every 50 games
-                        if (saved % 50 == 0) {
-                            logger.debug("Seeded {} games...", saved);
+                        if (existingOpt.isPresent()) {
+                            updated++;
+                        } else {
+                            created++;
+                        }
+
+                        if ((created + updated) % 100 == 0) {
+                            logger.info("Progress: {} created, {} updated...", created, updated);
                         }
                     } catch (Exception e) {
                         logger.warn("Skipped: {} - {}", prodGame.getName(), e.getMessage());
@@ -111,13 +99,60 @@ public class DataSeeder {
                     }
                 }
 
-                logger.info("========== Seed complete! ==========");
-                logger.info("Saved: {} games | Skipped: {} games | Total in local DB: {}",
-                    saved, skipped, gameRepository.count());
+                logger.info("========== Sync complete! ==========");
+                logger.info("Created: {} | Updated: {} | Skipped: {} | Total in local DB: {}",
+                    created, updated, skipped, gameRepository.count());
 
             } catch (Exception e) {
-                logger.error("Seed failed: {}. Make sure production backend is accessible.", e.getMessage(), e);
+                logger.error("Seed failed: {}", e.getMessage(), e);
             }
         };
+    }
+
+    private List<Game> loadGames(ObjectMapper objectMapper) throws Exception {
+        // Try local seed file first (classpath)
+        ClassPathResource seedResource = new ClassPathResource(SEED_FILE);
+        if (seedResource.exists()) {
+            logger.info("Loading from local seed file: {}", SEED_FILE);
+            try (InputStream is = seedResource.getInputStream()) {
+                return objectMapper.readValue(is, new TypeReference<>() {});
+            }
+        }
+
+        // Fallback: fetch from production API
+        logger.info("No local seed file found. Fetching from production: {}", PROD_API_URL);
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(PROD_API_URL + "/games/all", String.class);
+        return objectMapper.readValue(response, new TypeReference<>() {});
+    }
+
+    private void copyGameFields(Game source, Game target) {
+        target.setName(source.getName());
+        target.setMinMinutes(source.getMinMinutes());
+        target.setMaxMinutes(source.getMaxMinutes());
+        target.setEmotionalGoals(source.getEmotionalGoals());
+        target.setInterruptibility(source.getInterruptibility());
+        target.setEnergyRequired(source.getEnergyRequired());
+        target.setAudioDependency(source.getAudioDependency());
+        target.setContentRating(source.getContentRating());
+        target.setNsfwLevel(source.getNsfwLevel());
+        target.setBestTimeOfDay(source.getBestTimeOfDay());
+        target.setSocialPreferences(source.getSocialPreferences());
+        target.setGenres(source.getGenres());
+        target.setDescription(source.getDescription());
+        target.setImageUrl(source.getImageUrl());
+        target.setStoreUrl(source.getStoreUrl());
+        target.setUserRating(source.getUserRating());
+        target.setAverageSatisfaction(source.getAverageSatisfaction());
+        target.setSessionCount(source.getSessionCount());
+        target.setSteamAppId(source.getSteamAppId());
+        target.setTaggingSource(source.getTaggingSource());
+        target.setTaggingConfidence(source.getTaggingConfidence());
+        target.setRawgId(source.getRawgId());
+        target.setSteamPositiveReviews(source.getSteamPositiveReviews());
+        target.setSteamNegativeReviews(source.getSteamNegativeReviews());
+        target.setMetacriticScore(source.getMetacriticScore());
+        target.setPopularityScore(source.getPopularityScore());
+        target.setSteamPlaytimeForever(source.getSteamPlaytimeForever());
     }
 }
