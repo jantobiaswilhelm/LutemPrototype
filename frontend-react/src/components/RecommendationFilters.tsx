@@ -2,45 +2,14 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Settings2, ChevronDown } from 'lucide-react';
 import { useContentPreferences } from '@/hooks/useContentPreferences';
 import { useGamingPreferences } from '@/hooks/useGamingPreferences';
-import { getDiscoveryMode, type DiscoveryMode } from '@/lib/recommendationDefaults';
+import { getDiscoveryMode, saveDiscoveryMode, type DiscoveryMode } from '@/lib/recommendationDefaults';
+import { GENRE_LIST, DISCOVERY_OPTIONS } from '@/lib/constants';
 import type { ContentRating } from '@/types';
 import { CONTENT_RATING } from '@/types';
 
 // --- Constants ---
 
-const DISCOVERY_STORAGE_KEY = 'lutem_discovery_mode';
-
-const DISCOVERY_OPTIONS: { value: DiscoveryMode; label: string }[] = [
-  { value: 'popular', label: 'Popular picks' },
-  { value: 'balanced', label: 'Balanced' },
-  { value: 'hidden_gems', label: 'Hidden gems' },
-];
-
-const GENRE_LIST = [
-  'Action',
-  'Adventure',
-  'RPG',
-  'Strategy',
-  'Puzzle',
-  'Simulation',
-  'Platformer',
-  'Racing',
-  'Sports',
-  'Horror',
-  'Card Game',
-  'Roguelike',
-  'Party Game',
-  'Sandbox',
-  'Survival',
-];
-
 const CONTENT_RATING_OPTIONS: ContentRating[] = ['EVERYONE', 'TEEN', 'MATURE', 'ADULT'];
-
-// --- Helpers ---
-
-function saveDiscoveryMode(mode: DiscoveryMode) {
-  localStorage.setItem(DISCOVERY_STORAGE_KEY, mode);
-}
 
 /** Returns true if any filter is non-default */
 function hasNonDefaultFilters(

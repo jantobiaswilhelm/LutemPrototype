@@ -18,6 +18,10 @@ export function inferTimeOfDay(): TimeOfDay {
 
 export type DiscoveryMode = 'popular' | 'hidden_gems' | 'balanced';
 
+export function saveDiscoveryMode(mode: DiscoveryMode) {
+  localStorage.setItem(DISCOVERY_STORAGE_KEY, mode);
+}
+
 export function getDiscoveryMode(): DiscoveryMode {
   try {
     const stored = localStorage.getItem(DISCOVERY_STORAGE_KEY);

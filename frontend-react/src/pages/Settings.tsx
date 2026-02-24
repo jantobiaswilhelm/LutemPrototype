@@ -1,7 +1,10 @@
-import { Settings as SettingsIcon, Palette, Bell, Shield, Monitor, Sun, Moon, Check, ShieldAlert, Gamepad2, Clock, Users, Volume2 } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Settings as SettingsIcon, Palette, Bell, Shield, Monitor, Sun, Moon, Check, ShieldAlert, Gamepad2, Clock, Users, Volume2, Compass } from 'lucide-react';
 import { useThemeStore } from '@/stores/themeStore';
 import { useContentPreferences } from '@/hooks/useContentPreferences';
 import { useGamingPreferences } from '@/hooks/useGamingPreferences';
+import { getDiscoveryMode, saveDiscoveryMode, type DiscoveryMode } from '@/lib/recommendationDefaults';
+import { GENRE_LIST, DISCOVERY_OPTIONS } from '@/lib/constants';
 import { CONTENT_RATING, SOCIAL_PREFERENCES, AUDIO_AVAILABILITY, type Theme, type ContentRating, type SocialPreference, type AudioAvailability } from '@/types';
 
 const THEMES: { id: Theme; name: string; emoji: string; colors: { primary: string; secondary: string } }[] = [
@@ -25,11 +28,6 @@ const TIME_OPTIONS = [
   { value: 180, label: '3+ hours' },
 ];
 
-const POPULAR_GENRES = [
-  'Action', 'Adventure', 'RPG', 'Strategy', 'Simulation',
-  'Puzzle', 'Platformer', 'Shooter', 'Horror', 'Indie',
-  'Roguelike', 'Survival', 'Racing', 'Sports', 'Fighting',
-];
 
 export function Settings() {
   const { theme, mode, setTheme, setMode } = useThemeStore();
@@ -44,6 +42,13 @@ export function Settings() {
     setDefaultAudioAvailability,
     toggleGenre,
   } = useGamingPreferences();
+
+  const [discoveryMode, setDiscoveryModeState] = useState<DiscoveryMode>(getDiscoveryMode);
+
+  const setDiscoveryMode = useCallback((mode: DiscoveryMode) => {
+    setDiscoveryModeState(mode);
+    saveDiscoveryMode(mode);
+  }, []);
 
   return (
     <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
@@ -326,7 +331,7 @@ export function Settings() {
             </div>
 
             {/* Preferred Genres */}
-            <div>
+            <div className="mb-6">
               <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 block">
                 Preferred Genres
               </label>
@@ -334,7 +339,7 @@ export function Settings() {
                 Select genres you enjoy - these will boost recommendations
               </p>
               <div className="flex flex-wrap gap-2">
-                {POPULAR_GENRES.map((genre) => {
+                {GENRE_LIST.map((genre) => {
                   const isSelected = preferredGenres.includes(genre.toLowerCase());
                   return (
                     <button
@@ -350,6 +355,32 @@ export function Settings() {
                     </button>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* Discovery Mode */}
+            <div>
+              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
+                <Compass className="w-4 h-4" />
+                Discovery Mode
+              </label>
+              <p className="text-xs text-[var(--color-text-muted)] mb-3">
+                Control whether you see popular titles or hidden gems
+              </p>
+              <div className="flex rounded-xl bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] p-1">
+                {DISCOVERY_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => setDiscoveryMode(option.value)}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      discoveryMode === option.value
+                        ? 'bg-[var(--color-accent)] text-white shadow-sm'
+                        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
