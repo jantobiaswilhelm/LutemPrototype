@@ -1,0 +1,57 @@
+/* ============================================
+   SUMI — newsprint & oxblood
+   The most serious of the four. Aged periodical.
+   ============================================ */
+
+/* Light */
+[data-theme="sumi"] {
+  --color-bg-primary:   #EBE3CE;
+  --color-bg-secondary: #E2D9BE;
+  --color-bg-tertiary:  #D5CAA9;
+
+  --color-text-primary:   #1C1714;
+  --color-text-secondary: #2E2722;
+  --color-text-muted:     #968B7D;
+
+  --color-accent:       #6E1E1E;
+  --color-accent-hover: #511515;
+  --color-accent-soft:  rgba(110, 30, 30, 0.10);
+
+  --color-success: #4A5F3E;
+  --color-warning: #A67C30;
+  --color-error:   #6E1E1E;
+
+  --color-border:        rgba(28, 23, 20, 0.12);
+  --color-border-strong: #1C1714;
+
+  --color-energy-low:    #7A8B95;
+  --color-energy-medium: #A67C30;
+  --color-energy-high:   #6E1E1E;
+}
+
+/* Dark */
+.dark[data-theme="sumi"],
+[data-theme="sumi"].dark {
+  --color-bg-primary:   #141210;
+  --color-bg-secondary: #1B1815;
+  --color-bg-tertiary:  #221F1A;
+
+  --color-text-primary:   #EDE5D1;
+  --color-text-secondary: #D3C8B1;
+  --color-text-muted:     #5E574E;
+
+  --color-accent:       #C55252;
+  --color-accent-hover: #E27777;
+  --color-accent-soft:  rgba(197, 82, 82, 0.12);
+
+  --color-success: #95AD88;
+  --color-warning: #C69D54;
+  --color-error:   #C55252;
+
+  --color-border:        rgba(237, 229, 209, 0.13);
+  --color-border-strong: #EDE5D1;
+
+  --color-energy-low:    #95A4AE;
+  --color-energy-medium: #C69D54;
+  --color-energy-high:   #C55252;
+}

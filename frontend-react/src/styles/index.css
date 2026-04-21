@@ -1,7 +1,10 @@
 /* ============================================
-   LUTEM DESIGN SYSTEM - "Headspace meets Steam"
+   LUTEM DESIGN SYSTEM — Editorial Quietude
    Main Entry Point
    ============================================ */
+
+/* Fonts — must come before all other statements */
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
 @import "tailwindcss";
 
@@ -9,11 +12,11 @@
 @import "./tokens.css";
 @import "./base.css";
 
-/* Themes (Ocean is default, loaded first) */
-@import "./themes/ocean.css";
-@import "./themes/cafe.css";
-@import "./themes/lavender.css";
-@import "./themes/earth.css";
+/* Themes (Prussian is default, loaded first) */
+@import "./themes/prussian.css";
+@import "./themes/bindery.css";
+@import "./themes/fieldbook.css";
+@import "./themes/sumi.css";
 
 /* Components */
 @import "./components/buttons.css";

@@ -8,10 +8,10 @@ import { GENRE_LIST, DISCOVERY_OPTIONS } from '@/lib/constants';
 import { CONTENT_RATING, SOCIAL_PREFERENCES, AUDIO_AVAILABILITY, type Theme, type ContentRating, type SocialPreference, type AudioAvailability } from '@/types';
 
 const THEMES: { id: Theme; name: string; emoji: string; colors: { primary: string; secondary: string } }[] = [
-  { id: 'cafe', name: 'Café', emoji: '☕', colors: { primary: '#8B7355', secondary: '#D4C4B5' } },
-  { id: 'lavender', name: 'Lavender', emoji: '💜', colors: { primary: '#9D8EC7', secondary: '#E8E0F0' } },
-  { id: 'earth', name: 'Earth', emoji: '🌿', colors: { primary: '#6B8E6B', secondary: '#D5E5D5' } },
-  { id: 'ocean', name: 'Ocean', emoji: '🌊', colors: { primary: '#5B8A9A', secondary: '#D0E5EB' } },
+  { id: 'prussian',  name: 'Prussian',  emoji: '§', colors: { primary: '#1F3A5F', secondary: '#EEE9DC' } },
+  { id: 'bindery',   name: 'Bindery',   emoji: '❋', colors: { primary: '#A67C30', secondary: '#F2EDDF' } },
+  { id: 'fieldbook', name: 'Fieldbook', emoji: '¶', colors: { primary: '#B8842E', secondary: '#F1ECDE' } },
+  { id: 'sumi',      name: 'Sumi',      emoji: '◉', colors: { primary: '#6E1E1E', secondary: '#EBE3CE' } },
 ];
 
 const RATING_ORDER: ContentRating[] = ['EVERYONE', 'TEEN', 'MATURE', 'ADULT'];

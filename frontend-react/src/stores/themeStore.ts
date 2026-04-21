@@ -13,8 +13,8 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: 'ocean',
-      mode: 'dark',
+      theme: 'prussian',
+      mode: 'light',
       setTheme: (theme) => {
         set({ theme });
         applyTheme(theme, get().mode);
@@ -30,7 +30,7 @@ export const useThemeStore = create<ThemeState>()(
       },
     }),
     {
-      name: 'lutem-theme',
+      name: 'lutem-theme-v2',
       onRehydrateStorage: () => (state) => {
         // Apply theme after rehydration from localStorage
         if (state) {
@@ -58,15 +58,15 @@ function applyTheme(theme: Theme, mode: ThemeMode) {
 
 // Initialize theme on app load
 export function initializeTheme() {
-  const stored = localStorage.getItem('lutem-theme');
+  const stored = localStorage.getItem('lutem-theme-v2');
   if (stored) {
     try {
       const { state } = JSON.parse(stored);
-      applyTheme(state.theme || 'ocean', state.mode || 'dark');
+      applyTheme(state.theme || 'prussian', state.mode || 'light');
     } catch {
-      applyTheme('ocean', 'dark');
+      applyTheme('prussian', 'light');
     }
   } else {
-    applyTheme('ocean', 'dark');
+    applyTheme('prussian', 'light');
   }
 }

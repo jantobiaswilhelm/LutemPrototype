@@ -1,0 +1,60 @@
+/* ============================================
+   PRUSSIAN (default) — paper & prussian blue
+   A game treated like a dossier, not an object.
+   ============================================ */
+
+/* Light */
+:root,
+[data-theme="prussian"] {
+  --color-bg-primary:   #EEE9DC;
+  --color-bg-secondary: #E5DFCF;
+  --color-bg-tertiary:  #D8CFBA;
+
+  --color-text-primary:   #15171C;
+  --color-text-secondary: #262A31;
+  --color-text-muted:     #8B90A0;
+
+  --color-accent:       #1F3A5F;
+  --color-accent-hover: #152941;
+  --color-accent-soft:  rgba(31, 58, 95, 0.08);
+
+  --color-success: #2F5A3A;
+  --color-warning: #8B6220;
+  --color-error:   #6E1E1E;
+
+  --color-border:        rgba(21, 23, 28, 0.13);
+  --color-border-strong: #15171C;
+
+  /* Energy levels tuned to palette */
+  --color-energy-low:    #6A93C2;
+  --color-energy-medium: #B8842E;
+  --color-energy-high:   #6E1E1E;
+}
+
+/* Dark */
+.dark,
+.dark[data-theme="prussian"],
+[data-theme="prussian"].dark {
+  --color-bg-primary:   #0E1014;
+  --color-bg-secondary: #14171D;
+  --color-bg-tertiary:  #1C2028;
+
+  --color-text-primary:   #E8E3D3;
+  --color-text-secondary: #CEC6B3;
+  --color-text-muted:     #5E5A50;
+
+  --color-accent:       #6A93C2;
+  --color-accent-hover: #8CB0DA;
+  --color-accent-soft:  rgba(106, 147, 194, 0.12);
+
+  --color-success: #82B095;
+  --color-warning: #D4A247;
+  --color-error:   #C55252;
+
+  --color-border:        rgba(232, 227, 211, 0.13);
+  --color-border-strong: #E8E3D3;
+
+  --color-energy-low:    #6A93C2;
+  --color-energy-medium: #D4A247;
+  --color-energy-high:   #C55252;
+}

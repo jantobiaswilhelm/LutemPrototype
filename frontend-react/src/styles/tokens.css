@@ -1,39 +1,49 @@
 /* ============================================
-   DESIGN TOKENS
+   DESIGN TOKENS — Editorial Quietude
    ============================================ */
 
 :root {
-  /* Typography */
-  --font-sans: 'Nunito', 'SF Pro Rounded', system-ui, -apple-system, sans-serif;
-  
-  /* Spacing (base: 4px) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
+  /* ── Typography ─────────────────────────── */
+  --font-serif: 'Shippori Mincho', 'Iowan Old Style', Georgia, serif;
+  --font-sans:  'Zen Kaku Gothic New', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ── Spacing (base 4px, unchanged for compatibility) ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
-  
-  /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+
+  /* ── Radius — sharp editorial defaults ─── */
+  /* We keep the names for backwards compatibility but values now tend to zero. */
+  --radius-sm:   0;
+  --radius-md:   0;
+  --radius-lg:   1px;
+  --radius-xl:   2px;
   --radius-full: 9999px;
-  
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  
-  /* Transitions - soft, cozy easing */
-  --ease-cozy: cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-fast: 150ms var(--ease-cozy);
-  --transition-base: 250ms var(--ease-cozy);
-  --transition-slow: 350ms var(--ease-cozy);
+
+  /* ── Shadows — mostly removed ──────────── */
+  /* Editorial aesthetic replaces shadow with hairline rules and whitespace. */
+  --shadow-sm: 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 1px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 2px 10px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.08);
+
+  /* ── Motion ─────────────────────────────── */
+  /* Restrained easing — magazine page turn, not app animation. */
+  --ease-cozy: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --transition-fast: 180ms var(--ease-cozy);
+  --transition-base: 320ms var(--ease-cozy);
+  --transition-slow: 520ms var(--ease-cozy);
+
+  /* ── Paper grain (SVG noise, shared across themes) ── */
+  /* Usage: apply via body::before in base.css */
+  --paper-grain-light: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='w'><feTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch' seed='5'/><feColorMatrix values='0 0 0 0 .08  0 0 0 0 .065  0 0 0 0 .05  0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23w)'/></svg>");
+  --paper-grain-dark:  url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='w'><feTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch' seed='5'/><feColorMatrix values='0 0 0 0 .9  0 0 0 0 .85  0 0 0 0 .75  0 0 0 .04 0'/></filter><rect width='100%' height='100%' filter='url(%23w)'/></svg>");
 }

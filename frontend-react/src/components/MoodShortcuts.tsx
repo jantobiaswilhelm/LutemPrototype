@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
 import { useRecommendation } from '@/api/hooks';
 import { useRecommendationStore } from '@/stores/recommendationStore';
 import { enrichRequest } from '@/lib/recommendationDefaults';
@@ -8,7 +7,8 @@ import type { EmotionalGoal, EnergyLevel, RecommendationRequest } from '@/types'
 interface MoodShortcut {
   id: string;
   label: string;
-  emoji: string;
+  glyph: string;
+  numeral: string;
   emotionalGoal: EmotionalGoal;
   energyLevel: EnergyLevel;
   description: string;
@@ -17,39 +17,42 @@ interface MoodShortcut {
 const MOOD_SHORTCUTS: MoodShortcut[] = [
   {
     id: 'relax',
-    label: 'Relax',
-    emoji: '😌',
+    label: 'Unwind',
+    glyph: '❧',           // ❧ — floral heart, quiet
+    numeral: 'i.',
     emotionalGoal: 'UNWIND',
     energyLevel: 'LOW',
-    description: 'Calm & peaceful',
+    description: 'Low energy. Drifting time.',
   },
   {
     id: 'challenge',
     label: 'Challenge',
-    emoji: '⚡',
+    glyph: '¶',           // ¶ — pilcrow, presence
+    numeral: 'ii.',
     emotionalGoal: 'CHALLENGE',
     energyLevel: 'HIGH',
-    description: 'Test your skills',
+    description: 'Focused, present, awake.',
   },
   {
     id: 'quick-break',
-    label: 'Quick Break',
-    emoji: '🔋',
+    label: 'A quick one',
+    glyph: '§',           // § — section, a pause
+    numeral: 'iii.',
     emotionalGoal: 'RECHARGE',
     energyLevel: 'MEDIUM',
-    description: 'Mental refresh',
+    description: 'Thirty minutes, contained.',
   },
   {
     id: 'explore',
-    label: 'Explore',
-    emoji: '🗺️',
+    label: 'Wander',
+    glyph: '◉',           // ◉ — fisheye, a waypoint
+    numeral: 'iv.',
     emotionalGoal: 'ADVENTURE_TIME',
     energyLevel: 'MEDIUM',
-    description: 'Discover something new',
+    description: 'Something you haven’t played.',
   },
 ];
 
-// Default time range: 30-45 min (use 30 as the base value)
 const DEFAULT_MINUTES = 30;
 
 export function MoodShortcuts() {
@@ -83,40 +86,89 @@ export function MoodShortcuts() {
     }
   };
 
-  const buttons = MOOD_SHORTCUTS.map((shortcut) => {
-    const isLoading = loadingId === shortcut.id;
-    return (
-      <button
-        key={shortcut.id}
-        onClick={() => handleShortcutClick(shortcut)}
-        disabled={loadingId !== null}
-        aria-busy={isLoading}
-        aria-label={`${shortcut.label}: ${shortcut.description}`}
-        className={`
-          flex items-center justify-center gap-2 px-3 py-2.5 rounded-full
-          bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-          text-[var(--color-text-secondary)]
-          hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)]
-          disabled:opacity-50 disabled:cursor-not-allowed
-          transition-all duration-200
-          ${isLoading ? 'border-[var(--color-accent)]' : ''}
-        `}
-      >
-        {isLoading ? (
-          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-        ) : (
-          <span className="text-base" aria-hidden="true">{shortcut.emoji}</span>
-        )}
-        <span className="text-sm font-medium whitespace-nowrap">{shortcut.label}</span>
-      </button>
-    );
-  });
-
   return (
-    <div className="mb-6" role="group" aria-label="Quick mood shortcuts">
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {buttons}
+    <section role="group" aria-label="Quick mood shortcuts" className="mb-12">
+      <div
+        className="flex items-center gap-3 mb-4 font-mono text-[0.7rem] tracking-[0.28em] uppercase"
+        style={{ color: 'var(--color-text-muted)' }}
+      >
+        <span className="inline-block w-6 h-px" style={{ background: 'var(--color-accent)' }} />
+        Or, if you&rsquo;d rather choose
       </div>
-    </div>
+
+      <div
+        className="grid grid-cols-2 md:grid-cols-4"
+        style={{ borderTop: '1px solid var(--color-border-strong)' }}
+      >
+        {MOOD_SHORTCUTS.map((s, i) => {
+          const isLoading = loadingId === s.id;
+          const disabled = loadingId !== null;
+          return (
+            <button
+              key={s.id}
+              onClick={() => handleShortcutClick(s)}
+              disabled={disabled}
+              aria-busy={isLoading}
+              aria-label={`${s.label}: ${s.description}`}
+              className={`
+                mood-sc relative block text-left bg-transparent p-7 pt-8 pb-6 transition-colors duration-500
+                disabled:cursor-wait
+              `}
+              style={{
+                borderRight: i < MOOD_SHORTCUTS.length - 1 ? '1px solid var(--color-border)' : 'none',
+                borderBottom: '1px solid var(--color-border)',
+                color: 'var(--color-text-primary)',
+              }}
+            >
+              <span
+                className="absolute top-4 right-5 font-mono text-[0.64rem] tracking-[0.15em]"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                {s.numeral}
+              </span>
+
+              <span
+                className={`mood-glyph font-serif italic block text-[2.75rem] leading-none mb-4 transition-[color,transform] duration-500 ${isLoading ? 'mood-glyph-loading' : ''}`}
+                style={{ color: isLoading ? 'var(--color-accent)' : 'var(--color-text-primary)' }}
+                aria-hidden="true"
+              >
+                {s.glyph}
+              </span>
+
+              <span
+                className="font-serif font-medium text-[1.25rem] leading-tight block mb-2 tracking-[-0.005em]"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                {s.label}
+              </span>
+
+              <span
+                className="font-sans text-[0.82rem] leading-[1.5] block"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                {s.description}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <style>{`
+        .mood-sc:hover:not(:disabled) {
+          background: var(--color-bg-secondary);
+        }
+        .mood-sc:hover:not(:disabled) .mood-glyph {
+          color: var(--color-accent);
+          transform: translateY(-2px);
+        }
+        .mood-glyph-loading {
+          animation: mood-pulse 1.4s ease-in-out infinite;
+        }
+        @keyframes mood-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.35; }
+        }
+      `}</style>
+    </section>
   );
 }
