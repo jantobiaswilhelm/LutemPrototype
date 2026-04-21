@@ -1,0 +1,57 @@
+/* ============================================
+   FIELDBOOK — bone & ochre
+   Warm journal, Moleskine field notes, autumn.
+   ============================================ */
+
+/* Light */
+[data-theme="fieldbook"] {
+  --color-bg-primary:   #F1ECDE;
+  --color-bg-secondary: #E9E3D1;
+  --color-bg-tertiary:  #DDD5BE;
+
+  --color-text-primary:   #1E1914;
+  --color-text-secondary: #2F2923;
+  --color-text-muted:     #958A7C;
+
+  --color-accent:       #B8842E;
+  --color-accent-hover: #8B6220;
+  --color-accent-soft:  rgba(184, 132, 46, 0.10);
+
+  --color-success: #5A7048;
+  --color-warning: #B8842E;
+  --color-error:   #8B3524;
+
+  --color-border:        rgba(30, 25, 20, 0.12);
+  --color-border-strong: #1E1914;
+
+  --color-energy-low:    #7A958A;
+  --color-energy-medium: #B8842E;
+  --color-energy-high:   #8B3524;
+}
+
+/* Dark */
+.dark[data-theme="fieldbook"],
+[data-theme="fieldbook"].dark {
+  --color-bg-primary:   #15120F;
+  --color-bg-secondary: #1D1913;
+  --color-bg-tertiary:  #251F17;
+
+  --color-text-primary:   #EFE7D3;
+  --color-text-secondary: #D4C9B2;
+  --color-text-muted:     #968B79;
+
+  --color-accent:       #D4A247;
+  --color-accent-hover: #E8BB69;
+  --color-accent-soft:  rgba(212, 162, 71, 0.12);
+
+  --color-success: #A2BB90;
+  --color-warning: #E8BB69;
+  --color-error:   #C47158;
+
+  --color-border:        rgba(239, 231, 211, 0.13);
+  --color-border-strong: #EFE7D3;
+
+  --color-energy-low:    #9CB3A8;
+  --color-energy-medium: #D4A247;
+  --color-energy-high:   #C47158;
+}

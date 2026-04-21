@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CalendarPlus, Loader2, X } from 'lucide-react';
 import { useCreateCalendarEvent, useGames } from '@/api/hooks';
 import type { CreateEventRequest, EventVisibility, EventType } from '@/types';
 
@@ -20,6 +19,33 @@ interface CreateEventFormProps {
   defaultGameName?: string;
   /** Compact mode: fewer fields, used from Home page */
   compact?: boolean;
+}
+
+const FIELD_INPUT_CLASS =
+  'w-full py-2 px-0 bg-transparent font-serif text-[1rem] leading-snug focus:outline-none';
+
+function fieldInputStyle(error = false): React.CSSProperties {
+  return {
+    border: 'none',
+    borderBottom: `1px solid ${error ? 'var(--color-error)' : 'var(--color-border-strong)'}`,
+    color: 'var(--color-text-primary)',
+    borderRadius: 0,
+  };
+}
+
+// Native select with editorial closed-state: strip default chrome, add a small mono chevron.
+const SELECT_CLASS =
+  'w-full py-2 pr-8 pl-0 bg-transparent focus:outline-none appearance-none';
+
+function selectStyle(error = false): React.CSSProperties {
+  return {
+    ...fieldInputStyle(error),
+    backgroundImage:
+      "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='currentColor' stroke-width='1' fill='none' stroke-linecap='square'/></svg>\")",
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 2px center',
+    backgroundSize: '10px 6px',
+  };
 }
 
 export function CreateEventForm({
@@ -70,61 +96,77 @@ export function CreateEventForm({
   ];
 
   return (
-    <div className="rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--color-border)]">
-        <h3 className="text-sm font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
-          <CalendarPlus className="w-4 h-4 text-[var(--color-accent)]" />
-          {compact ? 'Schedule for Later' : 'New Event'}
-        </h3>
+    <div
+      className="py-6 px-0"
+      style={{
+        borderTop: '1px solid var(--color-border-strong)',
+        borderBottom: '1px solid var(--color-border-strong)',
+      }}
+    >
+      {/* ─── header ─── */}
+      <div className="flex items-baseline justify-between gap-4 mb-6">
+        <div
+          className="flex items-center gap-3 font-mono text-[0.68rem] tracking-[0.28em] uppercase"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          <span
+            className="inline-block w-5 h-px"
+            style={{ background: 'var(--color-accent)' }}
+            aria-hidden="true"
+          />
+          § {compact ? 'Schedule for later' : 'Propose a session'}
+        </div>
         {onCancel && (
           <button
+            type="button"
             onClick={onCancel}
-            className="p-1.5 rounded-lg text-[var(--color-text-muted)] hover:bg-[var(--color-bg-tertiary)]"
+            className="cef-cancel font-mono text-[0.62rem] tracking-[0.22em] uppercase bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-colors duration-300"
+            style={{
+              color: 'var(--color-text-muted)',
+              borderBottom: '1px solid var(--color-border)',
+            }}
             aria-label="Cancel"
           >
-            <X className="w-4 h-4" />
+            Dismiss
           </button>
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Title */}
         <div>
-          <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+          <label
+            className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
             Title
           </label>
           <input
             type="text"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            placeholder={compact ? 'Session name...' : 'Gaming session...'}
+            placeholder={compact ? 'Session name…' : 'Gaming session…'}
             required
-            className="
-              w-full px-3 py-2 rounded-lg text-sm
-              bg-[var(--color-bg-primary)] border border-[var(--color-border)]
-              text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]
-              focus:outline-none focus:border-[var(--color-accent)]
-            "
+            className={FIELD_INPUT_CLASS}
+            style={fieldInputStyle()}
           />
         </div>
 
         {/* Full mode: Type & Visibility side by side */}
         {!compact && (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+              <label
+                className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
                 Type
               </label>
               <select
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value as EventType })}
-                className="
-                  w-full px-3 py-2 rounded-lg text-sm
-                  bg-[var(--color-bg-primary)] border border-[var(--color-border)]
-                  text-[var(--color-text-primary)]
-                  focus:outline-none focus:border-[var(--color-accent)]
-                "
+                className={SELECT_CLASS + ' font-mono text-[0.85rem] tracking-[0.06em]'}
+                style={selectStyle()}
               >
                 <option value="GAME">Game</option>
                 <option value="REMINDER">Reminder</option>
@@ -133,18 +175,17 @@ export function CreateEventForm({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+              <label
+                className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
                 Visibility
               </label>
               <select
                 value={form.visibility}
                 onChange={(e) => setForm({ ...form, visibility: e.target.value as EventVisibility })}
-                className="
-                  w-full px-3 py-2 rounded-lg text-sm
-                  bg-[var(--color-bg-primary)] border border-[var(--color-border)]
-                  text-[var(--color-text-primary)]
-                  focus:outline-none focus:border-[var(--color-accent)]
-                "
+                className={SELECT_CLASS + ' font-mono text-[0.85rem] tracking-[0.06em]'}
+                style={selectStyle()}
               >
                 <option value="PRIVATE">Private</option>
                 <option value="FRIENDS_ONLY">Friends Only</option>
@@ -154,21 +195,20 @@ export function CreateEventForm({
           </div>
         )}
 
-        {/* Full mode: Game selection (when type is GAME and no default) */}
+        {/* Full mode: Game selection */}
         {!compact && !defaultGameId && form.type === 'GAME' && games && games.length > 0 && (
           <div>
-            <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
-              Game (optional)
+            <label
+              className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              Game <span className="opacity-60">— optional</span>
             </label>
             <select
               value={form.gameId || ''}
               onChange={(e) => setForm({ ...form, gameId: e.target.value ? Number(e.target.value) : undefined })}
-              className="
-                w-full px-3 py-2 rounded-lg text-sm
-                bg-[var(--color-bg-primary)] border border-[var(--color-border)]
-                text-[var(--color-text-primary)]
-                focus:outline-none focus:border-[var(--color-accent)]
-              "
+              className={SELECT_CLASS + ' font-serif italic text-[0.95rem]'}
+              style={selectStyle()}
             >
               <option value="">Select a game</option>
               {games.map((game) => (
@@ -180,11 +220,14 @@ export function CreateEventForm({
           </div>
         )}
 
-        {/* Date/Time + Visibility (compact: side by side) */}
+        {/* Date/Time + Visibility */}
         {compact ? (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+              <label
+                className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
                 When
               </label>
               <input
@@ -192,41 +235,46 @@ export function CreateEventForm({
                 value={form.startTime}
                 onChange={(e) => setForm({ ...form, startTime: e.target.value })}
                 required
-                className="
-                  w-full px-3 py-2 rounded-lg text-sm
-                  bg-[var(--color-bg-primary)] border border-[var(--color-border)]
-                  text-[var(--color-text-primary)]
-                  focus:outline-none focus:border-[var(--color-accent)]
-                "
+                className={FIELD_INPUT_CLASS + ' font-mono text-[0.9rem] tracking-[0.04em]'}
+                style={fieldInputStyle()}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+              <label
+                className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
                 Visibility
               </label>
-              <div className="flex rounded-lg border border-[var(--color-border)] overflow-hidden">
-                {visibilityOptions.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => setForm({ ...form, visibility: opt.value })}
-                    className={`
-                      flex-1 py-2 text-xs font-medium transition-colors
-                      ${form.visibility === opt.value
-                        ? 'bg-[var(--color-accent)] text-white'
-                        : 'bg-[var(--color-bg-primary)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
-                      }
-                    `}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+              <div className="flex items-center gap-5 pb-1" style={{ borderBottom: '1px solid var(--color-border-strong)' }}>
+                {visibilityOptions.map((opt) => {
+                  const active = form.visibility === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setForm({ ...form, visibility: opt.value })}
+                      className="font-serif text-[0.95rem] leading-none bg-transparent border-0 p-0 cursor-pointer transition-colors duration-300"
+                      style={{
+                        color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                        fontStyle: active ? 'italic' : 'normal',
+                        fontWeight: active ? 500 : 400,
+                      }}
+                      aria-pressed={active}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
         ) : (
           <div>
-            <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
+            <label
+              className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
               When
             </label>
             <input
@@ -234,12 +282,8 @@ export function CreateEventForm({
               value={form.startTime}
               onChange={(e) => setForm({ ...form, startTime: e.target.value })}
               required
-              className="
-                w-full px-3 py-2 rounded-lg text-sm
-                bg-[var(--color-bg-primary)] border border-[var(--color-border)]
-                text-[var(--color-text-primary)]
-                focus:outline-none focus:border-[var(--color-accent)]
-              "
+              className={FIELD_INPUT_CLASS + ' font-mono text-[0.9rem] tracking-[0.04em]'}
+              style={fieldInputStyle()}
             />
           </div>
         )}
@@ -247,22 +291,23 @@ export function CreateEventForm({
         {/* Full mode: Max Participants */}
         {!compact && form.visibility !== 'PRIVATE' && form.type === 'GAME' && (
           <div>
-            <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
-              Max Participants (optional)
+            <label
+              className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              Max participants <span className="opacity-60">— optional</span>
             </label>
             <input
               type="number"
               min="2"
               max="100"
               value={form.maxParticipants || ''}
-              onChange={(e) => setForm({ ...form, maxParticipants: e.target.value ? Number(e.target.value) : undefined })}
+              onChange={(e) =>
+                setForm({ ...form, maxParticipants: e.target.value ? Number(e.target.value) : undefined })
+              }
               placeholder="No limit"
-              className="
-                w-full px-3 py-2 rounded-lg text-sm
-                bg-[var(--color-bg-primary)] border border-[var(--color-border)]
-                text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]
-                focus:outline-none focus:border-[var(--color-accent)]
-              "
+              className={FIELD_INPUT_CLASS + ' font-mono text-[0.9rem]'}
+              style={fieldInputStyle()}
             />
           </div>
         )}
@@ -270,47 +315,54 @@ export function CreateEventForm({
         {/* Full mode: Description */}
         {!compact && (
           <div>
-            <label className="block text-xs font-medium text-[var(--color-text-muted)] mb-1">
-              Description (optional)
+            <label
+              className="block font-mono text-[0.62rem] tracking-[0.22em] uppercase mb-2"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              A note <span className="opacity-60">— optional</span>
             </label>
             <textarea
               value={form.description || ''}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="What's the plan?"
               rows={2}
-              className="
-                w-full px-3 py-2 rounded-lg text-sm
-                bg-[var(--color-bg-primary)] border border-[var(--color-border)]
-                text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]
-                focus:outline-none focus:border-[var(--color-accent)]
-                resize-none
-              "
+              className={FIELD_INPUT_CLASS + ' font-serif italic text-[0.98rem] resize-none'}
+              style={fieldInputStyle()}
             />
           </div>
         )}
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={createEvent.isPending || !form.title}
-          className="
-            w-full py-2.5 rounded-lg text-sm
-            bg-[var(--color-accent)] text-white font-medium
-            hover:bg-[var(--color-accent-hover)] transition-colors
-            disabled:opacity-50 disabled:cursor-not-allowed
-            flex items-center justify-center gap-2
-          "
+        {/* ─── actions ─── */}
+        <div
+          className="flex items-baseline gap-6 flex-wrap pt-2"
+          style={{ borderTop: '1px solid var(--color-border)' }}
         >
-          {createEvent.isPending ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <>
-              <CalendarPlus className="w-4 h-4" />
-              {compact ? 'Add to Calendar' : 'Create Event'}
-            </>
-          )}
-        </button>
+          <button
+            type="submit"
+            disabled={createEvent.isPending || !form.title}
+            className="cef-submit relative font-serif italic font-medium text-[1.2rem] inline-flex items-baseline gap-2 bg-transparent border-0 p-0 pt-4 pb-1.5 cursor-pointer transition-[letter-spacing] duration-500 disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ color: 'var(--color-accent)' }}
+          >
+            {createEvent.isPending ? 'Proposing…' : (compact ? 'Add to calendar' : 'Propose')}
+            <span aria-hidden="true" className="cef-arrow font-sans not-italic transition-transform duration-500">&rarr;</span>
+            <span
+              aria-hidden="true"
+              className="cef-underline absolute left-0 bottom-0 h-px transition-[right] duration-[600ms]"
+              style={{ background: 'var(--color-accent)', right: '30%' }}
+            />
+          </button>
+        </div>
       </form>
+
+      <style>{`
+        .cef-submit:hover:not(:disabled) { letter-spacing: 0.03em; }
+        .cef-submit:hover:not(:disabled) .cef-underline { right: 0 !important; }
+        .cef-submit:hover:not(:disabled) .cef-arrow { transform: translateX(0.35rem); }
+        .cef-cancel:hover {
+          color: var(--color-error);
+          border-bottom-color: var(--color-error);
+        }
+      `}</style>
     </div>
   );
 }

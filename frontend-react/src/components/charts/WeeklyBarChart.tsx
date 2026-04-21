@@ -5,7 +5,7 @@ interface WeeklyBarChartProps {
   sessions: SessionHistory[];
 }
 
-const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAY_LABELS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 export function WeeklyBarChart({ sessions }: WeeklyBarChartProps) {
   const dayCounts = useMemo(() => {
@@ -29,57 +29,75 @@ export function WeeklyBarChart({ sessions }: WeeklyBarChartProps) {
   const maxCount = Math.max(...dayCounts, 1);
 
   // Chart dimensions
-  const width = 280;
-  const height = 120;
-  const barWidth = 24;
+  const width = 320;
+  const height = 140;
+  const barWidth = 18;
   const gap = (width - 7 * barWidth) / 8;
-  const chartTop = 8;
-  const chartBottom = height - 20;
+  const chartTop = 16;
+  const chartBottom = height - 28;
   const chartHeight = chartBottom - chartTop;
 
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      className="w-full max-w-[280px] mx-auto"
+      className="w-full max-w-[320px]"
       role="img"
       aria-label="Sessions per day this week"
     >
+      {/* baseline rule */}
+      <line
+        x1={0}
+        x2={width}
+        y1={chartBottom + 0.5}
+        y2={chartBottom + 0.5}
+        stroke="var(--color-border)"
+        strokeWidth={1}
+      />
+
       {dayCounts.map((count, i) => {
         const barH = maxCount > 0 ? (count / maxCount) * chartHeight : 0;
         const x = gap + i * (barWidth + gap);
         const y = chartBottom - barH;
+        const isActive = count > 0;
 
         return (
           <g key={i}>
-            {/* Bar */}
+            {/* Bar — thin ink rectangle, no rounding, no gradient */}
             <rect
               x={x}
-              y={barH > 0 ? y : chartBottom - 2}
+              y={isActive ? y : chartBottom - 2}
               width={barWidth}
-              height={barH > 0 ? barH : 2}
-              rx={4}
-              fill={count > 0 ? 'var(--color-accent)' : 'var(--color-bg-tertiary)'}
-              opacity={count > 0 ? 0.8 : 0.4}
+              height={isActive ? barH : 2}
+              fill={isActive ? 'var(--color-accent)' : 'var(--color-border-strong)'}
+              opacity={isActive ? 1 : 0.55}
             />
-            {/* Count label above bar */}
-            {count > 0 && (
+            {/* Count label above bar — serif numeral */}
+            {isActive && (
               <text
                 x={x + barWidth / 2}
-                y={y - 4}
+                y={y - 5}
                 textAnchor="middle"
-                className="text-[9px] font-medium"
-                fill="var(--color-text-secondary)"
+                style={{
+                  fontFamily: 'var(--font-serif, "Shippori Mincho", serif)',
+                  fontSize: '10px',
+                  fill: 'var(--color-text-primary)',
+                }}
               >
                 {count}
               </text>
             )}
-            {/* Day label */}
+            {/* Day label — mono, uppercase */}
             <text
               x={x + barWidth / 2}
-              y={height - 4}
+              y={height - 8}
               textAnchor="middle"
-              className="text-[9px]"
-              fill="var(--color-text-muted)"
+              style={{
+                fontFamily: 'var(--font-mono, "JetBrains Mono", monospace)',
+                fontSize: '8px',
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                fill: 'var(--color-text-muted)',
+              }}
             >
               {DAY_LABELS[i]}
             </text>

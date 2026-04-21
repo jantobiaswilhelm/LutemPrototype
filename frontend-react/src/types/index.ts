@@ -256,7 +256,7 @@ export interface CreateEventRequest {
 }
 
 // Theme types
-export type Theme = 'cafe' | 'lavender' | 'earth' | 'ocean';
+export type Theme = 'prussian' | 'bindery' | 'fieldbook' | 'sumi';
 export type ThemeMode = 'light' | 'dark';
 
 // Re-export steam types

@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { Settings as SettingsIcon, Palette, Bell, Shield, Monitor, Sun, Moon, Check, ShieldAlert, Gamepad2, Clock, Users, Volume2, Compass } from 'lucide-react';
 import { useThemeStore } from '@/stores/themeStore';
 import { useContentPreferences } from '@/hooks/useContentPreferences';
 import { useGamingPreferences } from '@/hooks/useGamingPreferences';
@@ -7,14 +6,15 @@ import { getDiscoveryMode, saveDiscoveryMode, type DiscoveryMode } from '@/lib/r
 import { GENRE_LIST, DISCOVERY_OPTIONS } from '@/lib/constants';
 import { CONTENT_RATING, SOCIAL_PREFERENCES, AUDIO_AVAILABILITY, type Theme, type ContentRating, type SocialPreference, type AudioAvailability } from '@/types';
 
-const THEMES: { id: Theme; name: string; emoji: string; colors: { primary: string; secondary: string } }[] = [
-  { id: 'cafe', name: 'Café', emoji: '☕', colors: { primary: '#8B7355', secondary: '#D4C4B5' } },
-  { id: 'lavender', name: 'Lavender', emoji: '💜', colors: { primary: '#9D8EC7', secondary: '#E8E0F0' } },
-  { id: 'earth', name: 'Earth', emoji: '🌿', colors: { primary: '#6B8E6B', secondary: '#D5E5D5' } },
-  { id: 'ocean', name: 'Ocean', emoji: '🌊', colors: { primary: '#5B8A9A', secondary: '#D0E5EB' } },
+const THEMES: { id: Theme; name: string; emoji: string; description: string }[] = [
+  { id: 'prussian',  name: 'Prussian',  emoji: '§', description: 'Deep navy, paper cream.' },
+  { id: 'bindery',   name: 'Bindery',   emoji: '❋', description: 'Warm ochre, old linen.' },
+  { id: 'fieldbook', name: 'Fieldbook', emoji: '¶', description: 'Fieldbook ochre on cream.' },
+  { id: 'sumi',      name: 'Sumi',      emoji: '◉', description: 'Ink red, rice paper.' },
 ];
 
 const RATING_ORDER: ContentRating[] = ['EVERYONE', 'TEEN', 'MATURE', 'ADULT'];
+const RATING_NUMERALS = ['i', 'ii', 'iii', 'iv'];
 
 const SOCIAL_ORDER: SocialPreference[] = ['SOLO', 'COOP', 'COMPETITIVE', 'BOTH'];
 const AUDIO_ORDER: AudioAvailability[] = ['full', 'low', 'muted'];
@@ -23,11 +23,56 @@ const TIME_OPTIONS = [
   { value: 15, label: '15 min' },
   { value: 30, label: '30 min' },
   { value: 60, label: '1 hour' },
-  { value: 90, label: '1.5 hours' },
+  { value: 90, label: '1½ hours' },
   { value: 120, label: '2 hours' },
   { value: 180, label: '3+ hours' },
 ];
 
+
+// ─── small editorial helpers ────────────────────────────────
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.28em] uppercase"
+      style={{ color: 'var(--color-text-muted)' }}
+    >
+      <span className="inline-block w-6 h-px" style={{ background: 'var(--color-accent)' }} />
+      {children}
+    </div>
+  );
+}
+
+function SectionHeader({ eyebrow, title, descriptor }: { eyebrow: string; title: string; descriptor: string }) {
+  return (
+    <header className="mb-8">
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <h2
+        className="font-serif italic text-[clamp(1.45rem,2.6vw,2rem)] leading-[1.1] tracking-[-0.012em] mt-3 mb-2"
+        style={{ color: 'var(--color-text-primary)' }}
+      >
+        {title}
+      </h2>
+      <p
+        className="font-serif italic text-[1rem] leading-snug max-w-[48ch]"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
+        {descriptor}
+      </p>
+    </header>
+  );
+}
+
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="font-mono text-[0.64rem] tracking-[0.22em] uppercase mb-4"
+      style={{ color: 'var(--color-text-muted)' }}
+    >
+      {children}
+    </div>
+  );
+}
 
 export function Settings() {
   const { theme, mode, setTheme, setMode } = useThemeStore();
@@ -45,403 +90,498 @@ export function Settings() {
 
   const [discoveryMode, setDiscoveryModeState] = useState<DiscoveryMode>(getDiscoveryMode);
 
-  const setDiscoveryMode = useCallback((mode: DiscoveryMode) => {
-    setDiscoveryModeState(mode);
-    saveDiscoveryMode(mode);
+  const setDiscoveryMode = useCallback((m: DiscoveryMode) => {
+    setDiscoveryModeState(m);
+    saveDiscoveryMode(m);
   }, []);
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--color-accent)]/10 mb-4">
-            <SettingsIcon className="w-8 h-8 text-[var(--color-accent)]" />
-          </div>
-          <h1 className="text-2xl font-semibold text-[var(--color-text-primary)] mb-2">
-            Settings
+    <main
+      id="main-content"
+      className="min-h-screen px-5 md:px-10 pt-8 pb-24"
+      style={{ background: 'var(--color-bg-primary)' }}
+    >
+      <div className="max-w-[1040px] mx-auto">
+        {/* ─── masthead ─── */}
+        <header
+          className="pb-6 mb-12 md:mb-16"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+        >
+          <Eyebrow>§ The apparatus</Eyebrow>
+          <h1
+            className="font-serif text-[clamp(2rem,4.4vw,3.4rem)] leading-[1.02] tracking-[-0.016em] mt-4 mb-4"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            Settings.
           </h1>
-          <p className="text-[var(--color-text-muted)]">
-            Customize your experience
+          <p
+            className="font-serif italic text-[clamp(1.05rem,1.4vw,1.2rem)] leading-[1.48] max-w-[46ch]"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            Lutem reads a few of your preferences before offering anything. Adjust them here &mdash; they are remembered.
           </p>
-        </div>
+        </header>
 
-        {/* Appearance Section */}
-        <div className="mb-6">
-          <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="p-2 rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
-                <Palette className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-medium text-[var(--color-text-primary)] mb-1">Appearance</h3>
-                <p className="text-sm text-[var(--color-text-muted)]">Choose your theme and display mode</p>
-              </div>
-            </div>
+        {/* ─── appearance ─── */}
+        <section
+          className="mb-16 pb-10"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+          aria-labelledby="appearance-heading"
+        >
+          <SectionHeader
+            eyebrow="i. Appearance"
+            title="The cast of the page."
+            descriptor="Light or dark, and the imprint that colours the whole."
+          />
 
-            {/* Mode toggle */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 block">
-                Display Mode
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setMode('light')}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
-                    mode === 'light' 
-                      ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
-                      : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                  }`}
-                >
-                  <Sun className={`w-5 h-5 ${mode === 'light' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}`} />
-                  <span className={`font-medium ${mode === 'light' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-                    Light
-                  </span>
-                </button>
-                <button
-                  onClick={() => setMode('dark')}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-xl border-2 transition-all ${
-                    mode === 'dark' 
-                      ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
-                      : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                  }`}
-                >
-                  <Moon className={`w-5 h-5 ${mode === 'dark' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'}`} />
-                  <span className={`font-medium ${mode === 'dark' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-                    Dark
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Theme selection */}
-            <div>
-              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 block">
-                Color Theme
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {THEMES.map((t) => (
+          {/* Display mode — editorial text toggle */}
+          <div className="mb-10">
+            <FieldLabel>Display mode</FieldLabel>
+            <div className="flex items-baseline gap-6 font-serif text-[1.15rem]">
+              {(['light', 'dark'] as const).map((m) => {
+                const active = mode === m;
+                return (
                   <button
-                    key={t.id}
-                    onClick={() => setTheme(t.id)}
-                    className={`relative flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${
-                      theme === t.id 
-                        ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10' 
-                        : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                    }`}
+                    key={m}
+                    onClick={() => setMode(m)}
+                    aria-pressed={active}
+                    className="theme-option relative bg-transparent border-0 p-0 pb-1 cursor-pointer transition-[letter-spacing,color] duration-400"
+                    style={{
+                      color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                      fontStyle: active ? 'italic' : 'normal',
+                      fontWeight: active ? 500 : 400,
+                      borderBottom: active ? '1px solid var(--color-accent)' : '1px solid transparent',
+                    }}
                   >
-                    <div className="flex-shrink-0 flex gap-1">
-                      <div className="w-4 h-8 rounded-l-md" style={{ backgroundColor: t.colors.primary }} />
-                      <div className="w-4 h-8 rounded-r-md" style={{ backgroundColor: t.colors.secondary }} />
-                    </div>
-                    <div>
-                      <span className="text-sm">{t.emoji}</span>
-                      <span className={`ml-1 font-medium ${theme === t.id ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-                        {t.name}
-                      </span>
-                    </div>
-                    {theme === t.id && <Check className="absolute top-2 right-2 w-4 h-4 text-[var(--color-accent)]" />}
+                    {m === 'light' ? 'Light' : 'Dark'}
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </div>
-        </div>
 
-        {/* Content Preferences Section */}
-        <div className="mb-6">
-          <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="p-2 rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
-                <ShieldAlert className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-medium text-[var(--color-text-primary)] mb-1">Content Preferences</h3>
-                <p className="text-sm text-[var(--color-text-muted)]">Filter recommendations by content maturity</p>
-              </div>
-            </div>
-
-            {/* Content Rating */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 block">
-                Maximum Content Rating
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {RATING_ORDER.map((rating) => {
-                  const data = CONTENT_RATING[rating];
-                  const isSelected = maxContentRating === rating;
-                  return (
+          {/* Theme selection */}
+          <div>
+            <FieldLabel>Colour theme</FieldLabel>
+            <ul
+              className="list-none p-0 m-0"
+              style={{ borderTop: '1px solid var(--color-border)' }}
+            >
+              {THEMES.map((t, i) => {
+                const active = theme === t.id;
+                return (
+                  <li key={t.id}>
                     <button
-                      key={rating}
-                      onClick={() => setMaxContentRating(rating)}
-                      className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
-                        isSelected
-                          ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10'
-                          : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                      }`}
+                      onClick={() => setTheme(t.id)}
+                      aria-pressed={active}
+                      className="theme-row w-full grid grid-cols-[2.25rem_1fr_auto] gap-5 items-baseline text-left py-4 px-1 bg-transparent border-0 cursor-pointer transition-[padding,background] duration-400"
+                      style={{ borderBottom: '1px solid var(--color-border)' }}
                     >
-                      <span className="text-lg">{data.emoji}</span>
-                      <div className="flex-1 min-w-0">
-                        <span className={`block text-sm font-medium ${isSelected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-                          {data.displayName}
+                      <span
+                        className="font-serif text-[1.15rem]"
+                        style={{ color: active ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+                        aria-hidden="true"
+                      >
+                        {t.emoji}
+                      </span>
+                      <span className="flex flex-col">
+                        <span
+                          className="font-serif text-[1.2rem] leading-tight"
+                          style={{
+                            color: active ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                            fontStyle: active ? 'italic' : 'normal',
+                            fontWeight: active ? 500 : 400,
+                          }}
+                        >
+                          {t.name}
                         </span>
-                        <span className="block text-xs text-[var(--color-text-muted)] truncate">
-                          {data.description}
+                        <span
+                          className="font-serif italic text-[0.88rem] mt-1"
+                          style={{ color: 'var(--color-text-secondary)' }}
+                        >
+                          {t.description}
                         </span>
-                      </div>
-                      {isSelected && <Check className="w-4 h-4 text-[var(--color-accent)] flex-shrink-0" />}
+                      </span>
+                      <span
+                        className="font-mono text-[0.64rem] tracking-[0.22em] uppercase"
+                        style={{ color: active ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+                      >
+                        {active ? 'current' : `no. ${String(i + 1).padStart(2, '0')}`}
+                      </span>
                     </button>
-                  );
-                })}
-              </div>
-            </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
 
-            {/* NSFW Toggle */}
-            <div>
-              <div className="flex items-center justify-between p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-tertiary)]">
-                <div className="flex items-center gap-3">
-                  <span className="text-lg">🔥</span>
-                  <div>
-                    <span className="block text-sm font-medium text-[var(--color-text-primary)]">
-                      Allow NSFW Content
+        {/* ─── content preferences ─── */}
+        <section
+          className="mb-16 pb-10"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+          aria-labelledby="content-heading"
+        >
+          <SectionHeader
+            eyebrow="ii. Content"
+            title="What you are willing to see."
+            descriptor="The ceiling of maturity Lutem may suggest, and whether adult imagery is welcome."
+          />
+
+          {/* Maximum content rating */}
+          <div className="mb-10">
+            <FieldLabel>Maximum content rating</FieldLabel>
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-0"
+              style={{ borderTop: '1px solid var(--color-border)' }}
+            >
+              {RATING_ORDER.map((rating, i) => {
+                const data = CONTENT_RATING[rating];
+                const active = maxContentRating === rating;
+                return (
+                  <button
+                    key={rating}
+                    onClick={() => setMaxContentRating(rating)}
+                    aria-pressed={active}
+                    className="rating-cell text-left py-4 px-4 bg-transparent cursor-pointer transition-colors duration-400"
+                    style={{
+                      borderRight: i < RATING_ORDER.length - 1 ? '1px solid var(--color-border)' : 'none',
+                      borderBottom: '1px solid var(--color-border)',
+                    }}
+                  >
+                    <span
+                      className="font-mono text-[0.6rem] tracking-[0.15em] uppercase block mb-2"
+                      style={{ color: active ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+                    >
+                      {RATING_NUMERALS[i]}.
                     </span>
-                    <span className="block text-xs text-[var(--color-text-muted)]">
-                      Include games with sexual/suggestive content
+                    <span
+                      className="font-serif text-[1.1rem] leading-tight block"
+                      style={{
+                        color: active ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                        fontStyle: active ? 'italic' : 'normal',
+                        fontWeight: active ? 500 : 400,
+                      }}
+                    >
+                      {data.displayName}
                     </span>
-                  </div>
-                </div>
-                <button
-                  onClick={toggleNsfw}
-                  role="switch"
-                  aria-checked={allowNsfw}
-                  aria-label="Allow NSFW content"
-                  className={`relative w-12 h-7 rounded-full transition-colors ${
-                    allowNsfw ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-border-strong)]'
-                  }`}
-                >
-                  <div
-                    className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-                      allowNsfw ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
+                    <span
+                      className="font-serif italic text-[0.82rem] leading-snug block mt-1"
+                      style={{ color: 'var(--color-text-secondary)' }}
+                    >
+                      {data.description}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
-        </div>
 
-        {/* Gaming Preferences Section */}
-        <div className="mb-6">
-          <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="p-2 rounded-xl bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
-                <Gamepad2 className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-medium text-[var(--color-text-primary)] mb-1">Gaming Defaults</h3>
-                <p className="text-sm text-[var(--color-text-muted)]">Set your typical gaming preferences</p>
-              </div>
+          {/* NSFW toggle — editorial text */}
+          <div>
+            <FieldLabel>Adult imagery</FieldLabel>
+            <div className="flex items-baseline gap-5 flex-wrap">
+              <span
+                className="font-serif text-[1rem] max-w-[36ch]"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Include titles with sexual or suggestive content.
+              </span>
+              <button
+                onClick={toggleNsfw}
+                role="switch"
+                aria-checked={allowNsfw}
+                aria-label="Allow NSFW content"
+                className="font-serif text-[1.05rem] bg-transparent border-0 p-0 cursor-pointer"
+              >
+                <span
+                  style={{
+                    color: allowNsfw ? 'var(--color-accent)' : 'var(--color-text-muted)',
+                    fontStyle: allowNsfw ? 'italic' : 'normal',
+                    fontWeight: allowNsfw ? 500 : 400,
+                    borderBottom: allowNsfw ? '1px solid var(--color-accent)' : '1px solid transparent',
+                    paddingBottom: '2px',
+                  }}
+                >
+                  on
+                </span>
+                <span className="mx-2 font-sans" style={{ color: 'var(--color-text-muted)' }}>&middot;</span>
+                <span
+                  style={{
+                    color: !allowNsfw ? 'var(--color-accent)' : 'var(--color-text-muted)',
+                    fontStyle: !allowNsfw ? 'italic' : 'normal',
+                    fontWeight: !allowNsfw ? 500 : 400,
+                    borderBottom: !allowNsfw ? '1px solid var(--color-accent)' : '1px solid transparent',
+                    paddingBottom: '2px',
+                  }}
+                >
+                  off
+                </span>
+              </button>
             </div>
+          </div>
+        </section>
 
-            {/* Default Time Available */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Default Time Available
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {TIME_OPTIONS.map((option) => {
-                  const isSelected = defaultTimeAvailable === option.value;
-                  return (
-                    <button
-                      key={option.value}
-                      onClick={() => setDefaultTimeAvailable(option.value)}
-                      className={`p-2.5 rounded-xl border-2 text-sm font-medium transition-all ${
-                        isSelected
-                          ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
-                          : 'border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)]/50'
-                      }`}
+        {/* ─── gaming defaults ─── */}
+        <section
+          className="mb-16 pb-10"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+          aria-labelledby="gaming-heading"
+        >
+          <SectionHeader
+            eyebrow="iii. Defaults"
+            title="The shape of a usual evening."
+            descriptor="Lutem will assume these when you do not say otherwise."
+          />
+
+          {/* Default time */}
+          <div className="mb-10">
+            <FieldLabel>Time available</FieldLabel>
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-0"
+              style={{ borderTop: '1px solid var(--color-border)' }}
+            >
+              {TIME_OPTIONS.map((option, i) => {
+                const active = defaultTimeAvailable === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    onClick={() => setDefaultTimeAvailable(option.value)}
+                    aria-pressed={active}
+                    className="time-cell text-left py-4 px-3 bg-transparent cursor-pointer transition-colors duration-400"
+                    style={{
+                      borderRight: i < TIME_OPTIONS.length - 1 ? '1px solid var(--color-border)' : 'none',
+                      borderBottom: '1px solid var(--color-border)',
+                    }}
+                  >
+                    <span
+                      className="font-mono text-[0.58rem] tracking-[0.18em] uppercase block mb-1.5"
+                      style={{ color: active ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span
+                      className="font-serif text-[1.05rem] leading-tight block"
+                      style={{
+                        color: active ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                        fontStyle: active ? 'italic' : 'normal',
+                        fontWeight: active ? 500 : 400,
+                      }}
                     >
                       {option.label}
-                    </button>
-                  );
-                })}
-              </div>
+                    </span>
+                  </button>
+                );
+              })}
             </div>
+          </div>
 
-            {/* Social Preference */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                Default Play Style
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {SOCIAL_ORDER.map((social) => {
-                  const data = SOCIAL_PREFERENCES[social];
-                  const isSelected = defaultSocialPreference === social;
-                  return (
+          {/* Social preference */}
+          <div className="mb-10">
+            <FieldLabel>Play style</FieldLabel>
+            <ul
+              className="list-none p-0 m-0"
+              style={{ borderTop: '1px solid var(--color-border)' }}
+            >
+              {SOCIAL_ORDER.map((social, i) => {
+                const data = SOCIAL_PREFERENCES[social];
+                const active = defaultSocialPreference === social;
+                return (
+                  <li key={social}>
                     <button
-                      key={social}
                       onClick={() => setDefaultSocialPreference(social)}
-                      className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
-                        isSelected
-                          ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10'
-                          : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                      }`}
+                      aria-pressed={active}
+                      className="social-row w-full grid grid-cols-[2rem_1fr_2fr] gap-5 items-baseline text-left py-4 px-1 bg-transparent border-0 cursor-pointer transition-[padding,background] duration-400"
+                      style={{ borderBottom: '1px solid var(--color-border)' }}
                     >
-                      <span className="text-lg">{data.emoji}</span>
-                      <span className={`text-sm font-medium ${isSelected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
+                      <span
+                        className="font-mono text-[0.65rem] tracking-[0.15em] uppercase"
+                        style={{ color: active ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+                      >
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span
+                        className="font-serif text-[1.15rem] leading-tight"
+                        style={{
+                          color: active ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                          fontStyle: active ? 'italic' : 'normal',
+                          fontWeight: active ? 500 : 400,
+                        }}
+                      >
                         {data.displayName}
                       </span>
-                      {isSelected && <Check className="w-4 h-4 text-[var(--color-accent)] ml-auto" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Audio Availability */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
-                <Volume2 className="w-4 h-4" />
-                Default Audio Situation
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {AUDIO_ORDER.map((audio) => {
-                  const data = AUDIO_AVAILABILITY[audio];
-                  const isSelected = defaultAudioAvailability === audio;
-                  return (
-                    <button
-                      key={audio}
-                      onClick={() => setDefaultAudioAvailability(audio)}
-                      className={`flex flex-col items-center gap-1 p-3 rounded-xl border-2 transition-all ${
-                        isSelected
-                          ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10'
-                          : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
-                      }`}
-                    >
-                      <span className="text-xl">{data.emoji}</span>
-                      <span className={`text-xs font-medium text-center ${isSelected ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-secondary)]'}`}>
-                        {data.displayName}
+                      <span
+                        className="font-serif italic text-[0.9rem] leading-snug"
+                        style={{ color: 'var(--color-text-secondary)' }}
+                      >
+                        {data.description}
                       </span>
                     </button>
-                  );
-                })}
-              </div>
-            </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
 
-            {/* Preferred Genres */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 block">
-                Preferred Genres
-              </label>
-              <p className="text-xs text-[var(--color-text-muted)] mb-3">
-                Select genres you enjoy - these will boost recommendations
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {GENRE_LIST.map((genre) => {
-                  const isSelected = preferredGenres.includes(genre.toLowerCase());
-                  return (
+          {/* Audio availability */}
+          <div className="mb-10">
+            <FieldLabel>Audio</FieldLabel>
+            <div
+              className="grid grid-cols-3 gap-0"
+              style={{ borderTop: '1px solid var(--color-border)' }}
+            >
+              {AUDIO_ORDER.map((audio, i) => {
+                const data = AUDIO_AVAILABILITY[audio];
+                const active = defaultAudioAvailability === audio;
+                return (
+                  <button
+                    key={audio}
+                    onClick={() => setDefaultAudioAvailability(audio)}
+                    aria-pressed={active}
+                    className="audio-cell text-left py-4 px-3 bg-transparent cursor-pointer transition-colors duration-400"
+                    style={{
+                      borderRight: i < AUDIO_ORDER.length - 1 ? '1px solid var(--color-border)' : 'none',
+                      borderBottom: '1px solid var(--color-border)',
+                    }}
+                  >
+                    <span
+                      className="font-mono text-[0.58rem] tracking-[0.18em] uppercase block mb-1.5"
+                      style={{ color: active ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+                    >
+                      {['i', 'ii', 'iii'][i]}.
+                    </span>
+                    <span
+                      className="font-serif text-[1.05rem] leading-tight block"
+                      style={{
+                        color: active ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                        fontStyle: active ? 'italic' : 'normal',
+                        fontWeight: active ? 500 : 400,
+                      }}
+                    >
+                      {data.displayName}
+                    </span>
+                    <span
+                      className="font-serif italic text-[0.8rem] leading-snug block mt-1"
+                      style={{ color: 'var(--color-text-secondary)' }}
+                    >
+                      {data.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Preferred genres — typographic list */}
+          <div className="mb-10">
+            <FieldLabel>Preferred genres</FieldLabel>
+            <p
+              className="font-serif italic text-[0.92rem] mb-4 max-w-[48ch]"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              Genres marked here are given more weight when Lutem chooses.
+            </p>
+            <div
+              className="genre-list font-serif text-[1rem] leading-[1.9]"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              {GENRE_LIST.map((genre, i) => {
+                const isSelected = preferredGenres.includes(genre.toLowerCase());
+                return (
+                  <span key={genre}>
                     <button
-                      key={genre}
                       onClick={() => toggleGenre(genre)}
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                        isSelected
-                          ? 'bg-[var(--color-accent)] text-white'
-                          : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-accent)]/20'
-                      }`}
+                      aria-pressed={isSelected}
+                      className="genre-term bg-transparent border-0 p-0 cursor-pointer transition-colors duration-300"
+                      style={{
+                        color: isSelected ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                        fontStyle: isSelected ? 'italic' : 'normal',
+                        fontWeight: isSelected ? 500 : 400,
+                        borderBottom: isSelected ? '1px solid var(--color-accent)' : '1px solid transparent',
+                        paddingBottom: '2px',
+                      }}
                     >
-                      {genre}
+                      {genre.toLowerCase()}
                     </button>
-                  );
-                })}
-              </div>
+                    {i < GENRE_LIST.length - 1 && (
+                      <span
+                        aria-hidden="true"
+                        className="mx-3 font-sans"
+                        style={{ color: 'var(--color-text-muted)' }}
+                      >
+                        &middot;
+                      </span>
+                    )}
+                  </span>
+                );
+              })}
             </div>
+          </div>
 
-            {/* Discovery Mode */}
-            <div>
-              <label className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
-                <Compass className="w-4 h-4" />
-                Discovery Mode
-              </label>
-              <p className="text-xs text-[var(--color-text-muted)] mb-3">
-                Control whether you see popular titles or hidden gems
-              </p>
-              <div className="flex rounded-xl bg-[var(--color-bg-tertiary)] border border-[var(--color-border)] p-1">
-                {DISCOVERY_OPTIONS.map((option) => (
+          {/* Discovery mode */}
+          <div>
+            <FieldLabel>Discovery</FieldLabel>
+            <p
+              className="font-serif italic text-[0.92rem] mb-4 max-w-[48ch]"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              Whether Lutem favours familiar titles or quietly unearths the lesser known.
+            </p>
+            <div className="flex items-baseline gap-6 flex-wrap font-serif text-[1.15rem]">
+              {DISCOVERY_OPTIONS.map((option) => {
+                const active = discoveryMode === option.value;
+                return (
                   <button
                     key={option.value}
                     onClick={() => setDiscoveryMode(option.value)}
-                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                      discoveryMode === option.value
-                        ? 'bg-[var(--color-accent)] text-white shadow-sm'
-                        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-                    }`}
+                    aria-pressed={active}
+                    className="discovery-option bg-transparent border-0 p-0 pb-1 cursor-pointer transition-colors duration-400"
+                    style={{
+                      color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                      fontStyle: active ? 'italic' : 'normal',
+                      fontWeight: active ? 500 : 400,
+                      borderBottom: active ? '1px solid var(--color-accent)' : '1px solid transparent',
+                    }}
                   >
-                    {option.label}
+                    {option.label.toLowerCase()}
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Coming soon sections */}
-        <div className="space-y-4">
-          <PlaceholderCard
-            icon={<Bell className="w-5 h-5" />}
-            title="Notifications"
-            description="Control when and how Lutem reaches out to you"
-          />
-          <PlaceholderCard
-            icon={<Monitor className="w-5 h-5" />}
-            title="Display"
-            description="Customize card layouts, animations, and more"
-          />
-          <PlaceholderCard
-            icon={<Shield className="w-5 h-5" />}
-            title="Privacy"
-            description="Manage your data and privacy preferences"
-          />
-        </div>
-
-        {/* Coming soon message */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-[var(--color-text-muted)]">
-            More settings coming soon
+        {/* ─── forthcoming — editorial footnote ─── */}
+        <section aria-labelledby="forthcoming-heading" className="pt-2">
+          <Eyebrow>iv. Forthcoming</Eyebrow>
+          <p
+            id="forthcoming-heading"
+            className="font-serif italic text-[clamp(1.05rem,1.4vw,1.2rem)] leading-[1.5] mt-3 max-w-[52ch]"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            Notifications, display nuances, and privacy controls are in preparation. They will appear here, quietly, when ready.
           </p>
-        </div>
+        </section>
       </div>
-    </main>
-  );
-}
 
-function PlaceholderCard({ 
-  icon, 
-  title, 
-  description 
-}: { 
-  icon: React.ReactNode; 
-  title: string; 
-  description: string;
-}) {
-  return (
-    <div className="p-5 rounded-2xl bg-[var(--color-bg-secondary)]/50 border border-[var(--color-border)]/50 opacity-60">
-      <div className="flex items-start gap-4">
-        <div className="p-2 rounded-xl bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)]">
-          {icon}
-        </div>
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-medium text-[var(--color-text-primary)]">{title}</h3>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)]">
-              Soon
-            </span>
-          </div>
-          <p className="text-sm text-[var(--color-text-muted)]">{description}</p>
-        </div>
-      </div>
-    </div>
+      <style>{`
+        .theme-row:hover, .social-row:hover {
+          background: var(--color-bg-secondary);
+          padding-left: 0.85rem;
+        }
+        .rating-cell:hover, .time-cell:hover, .audio-cell:hover {
+          background: var(--color-bg-secondary);
+        }
+        .theme-option:hover, .discovery-option:hover {
+          letter-spacing: 0.02em;
+          color: var(--color-text-primary);
+        }
+        .genre-term:hover {
+          color: var(--color-text-primary);
+          border-bottom-color: var(--color-border-strong) !important;
+        }
+      `}</style>
+    </main>
   );
 }
 

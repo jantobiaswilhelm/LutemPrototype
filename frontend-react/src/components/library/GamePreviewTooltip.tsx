@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback, type ReactNode } from 'react';
-import { Clock, Zap } from 'lucide-react';
 
 interface GamePreviewData {
   name: string;
@@ -23,10 +22,9 @@ export function GamePreviewTooltip({ game, children }: GamePreviewTooltipProps) 
 
   const show = useCallback(() => {
     timerRef.current = setTimeout(() => {
-      // Determine position: show above or below depending on viewport space
       if (wrapperRef.current) {
         const rect = wrapperRef.current.getBoundingClientRect();
-        setPosition(rect.top > 200 ? 'top' : 'bottom');
+        setPosition(rect.top > 220 ? 'top' : 'bottom');
       }
       setVisible(true);
     }, 300);
@@ -42,7 +40,6 @@ export function GamePreviewTooltip({ game, children }: GamePreviewTooltipProps) 
 
   const hasDetails = game.description || game.minMinutes || game.genres?.length;
 
-  // Don't wrap if no extra info to show
   if (!hasDetails) return <>{children}</>;
 
   return (
@@ -56,47 +53,79 @@ export function GamePreviewTooltip({ game, children }: GamePreviewTooltipProps) 
 
       {visible && (
         <div
-          className={`
-            absolute left-1/2 -translate-x-1/2 z-30
-            w-64 p-3 rounded-xl
-            bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-            shadow-xl backdrop-blur-md
-            animate-fadeIn
-            pointer-events-none
-            ${position === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'}
-          `}
+          className={`absolute left-1/2 -translate-x-1/2 z-30 w-72 p-4 pointer-events-none ${
+            position === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
+          }`}
+          style={{
+            background: 'var(--color-bg-primary)',
+            border: '1px solid var(--color-border-strong)',
+            borderRadius: 0,
+          }}
         >
+          <div
+            className="font-mono text-[0.64rem] tracking-[0.22em] uppercase mb-2"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            <span
+              className="inline-block w-4 h-px mr-2 align-middle"
+              style={{ background: 'var(--color-accent)' }}
+            />
+            Entry
+          </div>
+
           {game.description && (
-            <p className="text-xs text-[var(--color-text-secondary)] line-clamp-3 mb-2">
+            <p
+              className="font-serif italic text-[0.88rem] leading-snug line-clamp-3 mb-3"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
               {game.description}
             </p>
           )}
 
-          <div className="flex items-center gap-3 text-xs text-[var(--color-text-muted)]">
+          <div
+            className="grid gap-y-1 font-mono text-[0.7rem] tracking-wide"
+            style={{
+              gridTemplateColumns: '5rem 1fr',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
             {game.minMinutes != null && game.maxMinutes != null && (
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {game.minMinutes}-{game.maxMinutes} min
-              </span>
+              <>
+                <span
+                  className="uppercase tracking-[0.18em]"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  Session
+                </span>
+                <span style={{ color: 'var(--color-text-primary)' }}>
+                  {game.minMinutes}&ndash;{game.maxMinutes} min
+                </span>
+              </>
             )}
             {game.energyRequired && (
-              <span className="flex items-center gap-1">
-                <Zap className="w-3 h-3" />
-                {game.energyRequired}
-              </span>
+              <>
+                <span
+                  className="uppercase tracking-[0.18em]"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  Energy
+                </span>
+                <span style={{ color: 'var(--color-text-primary)' }}>
+                  {game.energyRequired.toLowerCase()}
+                </span>
+              </>
             )}
           </div>
 
           {game.genres && game.genres.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {game.genres.slice(0, 3).map((g) => (
-                <span
-                  key={g}
-                  className="text-[10px] px-1.5 py-0.5 rounded-full bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)]"
-                >
-                  {g}
-                </span>
-              ))}
+            <div
+              className="mt-3 pt-3 font-serif italic text-[0.82rem]"
+              style={{
+                borderTop: '1px solid var(--color-border)',
+                color: 'var(--color-text-secondary)',
+              }}
+            >
+              {game.genres.slice(0, 3).map((g) => g.toLowerCase()).join(' · ')}
             </div>
           )}
         </div>

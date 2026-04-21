@@ -1,14 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import {
-  Search,
-  Clock,
-  AlertCircle,
-  SortAsc,
-  SortDesc,
-  Grid,
-  List,
-  Globe,
-} from 'lucide-react';
 import { GameGridSkeleton } from '@/components/skeletons/GameCardSkeleton';
 import { gamesApi } from '@/api/client';
 import type { Game } from '@/types';
@@ -19,6 +9,12 @@ type AllGamesSortOption = 'name' | 'minTime' | 'maxTime';
 type ViewMode = 'grid' | 'list';
 
 const PAGE_SIZE = 40;
+
+const SORT_OPTIONS: { value: AllGamesSortOption; label: string }[] = [
+  { value: 'name',    label: 'name'     },
+  { value: 'minTime', label: 'min time' },
+  { value: 'maxTime', label: 'max time' },
+];
 
 export function AllGamesContent() {
   const [allGames, setAllGames] = useState<Game[]>([]);
@@ -90,75 +86,154 @@ export function AllGamesContent() {
 
   if (error) {
     return (
-      <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center gap-3">
-        <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-        <p className="text-sm text-red-500">{error}</p>
+      <div
+        role="alert"
+        className="p-4 flex items-start gap-3"
+        style={{
+          borderTop: '1px solid var(--color-error)',
+          borderBottom: '1px solid var(--color-error)',
+          color: 'var(--color-error)',
+        }}
+      >
+        <span className="font-serif italic text-[0.78rem] tracking-[0.18em] uppercase shrink-0 mt-0.5">
+          Notice
+        </span>
+        <p className="font-serif text-[1rem]" style={{ color: 'var(--color-text-primary)' }}>
+          {error}
+        </p>
       </div>
     );
   }
 
   return (
     <>
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-xl bg-[var(--color-accent)]/10">
-          <Globe className="w-6 h-6 text-[var(--color-accent)]" />
+      {/* section eyebrow + total */}
+      <div className="flex items-baseline justify-between gap-4 mb-6">
+        <div
+          className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.28em] uppercase"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          <span
+            className="inline-block w-6 h-px"
+            style={{ background: 'var(--color-accent)' }}
+          />
+          The register
         </div>
-        <div>
-          <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">
-            All Games
-          </h2>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            {allGames.length} games available for recommendations
-          </p>
-        </div>
+        <span
+          className="font-mono text-[0.72rem] tracking-[0.08em]"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          {allGames.length} entries
+        </span>
       </div>
 
-      {/* Search and filters */}
-      <div className="mb-6 space-y-3">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--color-text-muted)]" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search games..."
-            className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)]/50 focus:outline-none focus:border-[var(--color-accent)] transition-colors"
-          />
-        </div>
+      {/* search as hairline input */}
+      <div
+        className="mb-6 flex items-baseline gap-3"
+        style={{ borderBottom: '1px solid var(--color-border-strong)' }}
+      >
+        <label
+          htmlFor="all-games-search"
+          className="font-mono text-[0.66rem] tracking-[0.22em] uppercase pb-2"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          Search
+        </label>
+        <input
+          id="all-games-search"
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="title..."
+          className="flex-1 bg-transparent border-0 outline-none font-serif text-[1.05rem] py-2 px-0 placeholder:italic"
+          style={{
+            color: 'var(--color-text-primary)',
+          }}
+        />
+      </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex-1" />
-
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as AllGamesSortOption)}
-            className="px-3 py-2 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] text-sm focus:outline-none focus:border-[var(--color-accent)]"
+      {/* sort + view toggles as editorial mono toggles */}
+      <div
+        className="flex flex-wrap items-baseline justify-between gap-4 pb-3 mb-8"
+        style={{ borderBottom: '1px solid var(--color-border)' }}
+      >
+        <div className="flex items-baseline gap-5 flex-wrap">
+          <span
+            className="font-mono text-[0.64rem] tracking-[0.22em] uppercase"
+            style={{ color: 'var(--color-text-muted)' }}
           >
-            <option value="name">Name</option>
-            <option value="minTime">Min Time</option>
-            <option value="maxTime">Max Time</option>
-          </select>
-
+            Sort
+          </span>
+          <div className="flex items-baseline gap-4">
+            {SORT_OPTIONS.map((opt) => {
+              const active = sortBy === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  onClick={() => setSortBy(opt.value)}
+                  className="relative font-mono text-[0.72rem] tracking-[0.12em] uppercase bg-transparent border-0 p-0 pb-1 cursor-pointer transition-colors duration-300"
+                  style={{
+                    color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                    fontStyle: active ? 'italic' : 'normal',
+                    borderBottom: active
+                      ? '1px solid var(--color-accent)'
+                      : '1px solid transparent',
+                  }}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
           <button
             onClick={() => setSortDesc(!sortDesc)}
-            className="p-2 rounded-lg bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] transition-colors"
+            aria-label={sortDesc ? 'Sort ascending' : 'Sort descending'}
+            className="font-mono text-[0.72rem] tracking-[0.12em] uppercase bg-transparent border-0 p-0 pb-1 cursor-pointer transition-colors duration-300"
+            style={{
+              color: 'var(--color-text-secondary)',
+              borderBottom: '1px solid var(--color-border)',
+            }}
           >
-            {sortDesc ? <SortDesc className="w-4 h-4" /> : <SortAsc className="w-4 h-4" />}
+            {sortDesc ? 'desc ↓' : 'asc ↑'}
           </button>
+        </div>
 
-          <div className="flex rounded-lg border border-[var(--color-border)] overflow-hidden">
+        <div className="flex items-baseline gap-3">
+          <span
+            className="font-mono text-[0.64rem] tracking-[0.22em] uppercase"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            View
+          </span>
+          <div className="flex items-baseline gap-2 font-mono text-[0.72rem] tracking-[0.12em] uppercase">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 ${viewMode === 'grid' ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]'}`}
+              className="bg-transparent border-0 p-0 pb-1 cursor-pointer transition-colors duration-300"
+              style={{
+                color: viewMode === 'grid' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                fontStyle: viewMode === 'grid' ? 'italic' : 'normal',
+                borderBottom:
+                  viewMode === 'grid'
+                    ? '1px solid var(--color-accent)'
+                    : '1px solid transparent',
+              }}
             >
-              <Grid className="w-4 h-4" />
+              grid
             </button>
+            <span style={{ color: 'var(--color-text-muted)' }}>·</span>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 ${viewMode === 'list' ? 'bg-[var(--color-accent)] text-white' : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]'}`}
+              className="bg-transparent border-0 p-0 pb-1 cursor-pointer transition-colors duration-300"
+              style={{
+                color: viewMode === 'list' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                fontStyle: viewMode === 'list' ? 'italic' : 'normal',
+                borderBottom:
+                  viewMode === 'list'
+                    ? '1px solid var(--color-accent)'
+                    : '1px solid transparent',
+              }}
             >
-              <List className="w-4 h-4" />
+              list
             </button>
           </div>
         </div>
@@ -166,13 +241,25 @@ export function AllGamesContent() {
 
       {/* Empty state */}
       {filteredGames.length === 0 && (
-        <div className="text-center py-16">
-          <EmptyLibrarySvg className="w-48 h-36 mx-auto mb-2" />
-          <h3 className="text-lg font-medium text-[var(--color-text-primary)] mb-2">
-            No games found
+        <div className="py-16 text-center">
+          <EmptyLibrarySvg className="w-40 h-28 mx-auto mb-6 opacity-60" />
+          <div
+            className="font-mono text-[0.68rem] tracking-[0.28em] uppercase mb-3"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            Nothing in the register
+          </div>
+          <h3
+            className="font-serif text-[1.8rem] leading-[1.1] tracking-[-0.01em] mb-3"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            No entries found.
           </h3>
-          <p className="text-[var(--color-text-muted)]">
-            Try a different search term
+          <p
+            className="font-serif italic text-[1rem] leading-snug max-w-[32ch] mx-auto"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            Try another search term, or clear the query to see the whole collection.
           </p>
         </div>
       )}
@@ -180,83 +267,96 @@ export function AllGamesContent() {
       {/* Games grid/list */}
       {filteredGames.length > 0 && (
         <>
-          <div className={
-            viewMode === 'grid'
-              ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'
-              : 'space-y-2'
-          }>
-            {displayedGames.map((game) => (
+          <div
+            className={
               viewMode === 'grid'
-                ? <GamePreviewTooltip key={game.id} game={game}><AllGameCard game={game} /></GamePreviewTooltip>
-                : <AllGameRow key={game.id} game={game} />
+                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10'
+                : ''
+            }
+            style={viewMode === 'list' ? { borderTop: '1px solid var(--color-border)' } : undefined}
+          >
+            {displayedGames.map((game, i) => (
+              viewMode === 'grid'
+                ? (
+                  <GamePreviewTooltip key={game.id} game={game}>
+                    <AllGameCard game={game} index={i} />
+                  </GamePreviewTooltip>
+                )
+                : <AllGameRow key={game.id} game={game} index={i} />
             ))}
           </div>
 
-          {/* Load more */}
+          {/* Load more as editorial link */}
           {hasMore && (
-            <div className="flex justify-center mt-6">
+            <div
+              className="flex justify-center pt-10 mt-10"
+              style={{ borderTop: '1px solid var(--color-border)' }}
+            >
               <button
                 onClick={() => setDisplayCount((c) => c + PAGE_SIZE)}
-                className="px-6 py-2.5 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-accent)] hover:text-[var(--color-text-primary)] transition-colors font-medium text-sm"
+                className="game-begin-link relative font-serif italic font-medium text-[1.25rem] leading-none inline-flex items-baseline gap-2 bg-transparent border-0 p-0 pb-1.5 cursor-pointer transition-[letter-spacing] duration-500"
+                style={{ color: 'var(--color-accent)' }}
               >
-                Load More ({filteredGames.length - displayCount} remaining)
+                Load the next {Math.min(PAGE_SIZE, filteredGames.length - displayCount)}
+                <span aria-hidden="true" className="game-begin-arrow font-sans not-italic transition-transform duration-500">→</span>
+                <span
+                  aria-hidden="true"
+                  className="game-begin-underline absolute left-0 bottom-0 h-px transition-[right] duration-[600ms]"
+                  style={{ background: 'var(--color-accent)', right: '30%' }}
+                />
               </button>
             </div>
           )}
 
           {/* Results count */}
-          <p className="text-center text-sm text-[var(--color-text-muted)] mt-4">
-            Showing {displayedGames.length} of {filteredGames.length} games
-            {filteredGames.length !== allGames.length && ` (${allGames.length} total)`}
+          <p
+            className="text-center font-mono text-[0.68rem] tracking-[0.2em] uppercase mt-8"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            Showing {displayedGames.length} of {filteredGames.length}
+            {filteredGames.length !== allGames.length && ` · ${allGames.length} total`}
           </p>
         </>
       )}
+
+      <style>{`
+        .game-begin-link:hover {
+          letter-spacing: 0.04em;
+        }
+        .game-begin-link:hover .game-begin-underline {
+          right: 0 !important;
+        }
+        .game-begin-link:hover .game-begin-arrow {
+          transform: translateX(0.4rem);
+        }
+        .library-grid-card:hover .library-grid-title {
+          color: var(--color-accent);
+        }
+        .library-list-row:hover {
+          background: var(--color-bg-secondary);
+        }
+        .library-list-row:hover .library-list-title {
+          color: var(--color-accent);
+        }
+      `}</style>
     </>
   );
 }
 
-function AllGameCard({ game }: { game: Game }) {
+function AllGameCard({ game, index }: { game: Game; index: number }) {
   const imageUrl = game.steamAppId
     ? `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.steamAppId}/header.jpg`
     : null;
 
   return (
-    <div className="group rounded-xl overflow-hidden bg-[var(--color-bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)]/50 transition-all hover:shadow-lg">
-      <div className="aspect-[460/215] bg-gradient-to-br from-[var(--color-accent-soft)] to-[var(--color-bg-tertiary)] relative overflow-hidden">
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={game.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            loading="lazy"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        )}
-      </div>
-
-      <div className="p-3">
-        <h3 className="font-medium text-[var(--color-text-primary)] text-sm truncate mb-1" title={game.name}>
-          {game.name}
-        </h3>
-        <div className="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
-          <Clock className="w-3.5 h-3.5" />
-          <span>{game.minMinutes}-{game.maxMinutes} min</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function AllGameRow({ game }: { game: Game }) {
-  const imageUrl = game.steamAppId
-    ? `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.steamAppId}/header.jpg`
-    : null;
-
-  return (
-    <div className="flex items-center gap-4 p-3 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] hover:border-[var(--color-accent)]/50 transition-all">
-      <div className="w-20 h-10 rounded-lg bg-gradient-to-br from-[var(--color-accent-soft)] to-[var(--color-bg-tertiary)] overflow-hidden flex-shrink-0">
+    <div className="library-grid-card group block">
+      <div
+        className="relative overflow-hidden aspect-[460/215]"
+        style={{
+          background: 'var(--color-text-primary)',
+          border: '1px solid var(--color-border-strong)',
+        }}
+      >
         {imageUrl && (
           <img
             src={imageUrl}
@@ -266,21 +366,118 @@ function AllGameRow({ game }: { game: Game }) {
             onError={(e) => {
               e.currentTarget.style.display = 'none';
             }}
+            style={{ filter: 'contrast(1.05) saturate(0.9)' }}
           />
         )}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .14 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>\")",
+            mixBlendMode: 'soft-light',
+          }}
+        />
       </div>
 
-      <div className="flex-1 min-w-0">
-        <h3 className="font-medium text-[var(--color-text-primary)] text-sm truncate">
-          {game.name}
-        </h3>
-        <div className="flex items-center gap-3 text-xs text-[var(--color-text-muted)]">
-          <span className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {game.minMinutes}-{game.maxMinutes} min
-          </span>
+      <div
+        className="mt-3 pt-3 grid grid-cols-[1fr_auto] gap-x-4 font-mono text-[0.68rem] tracking-wide"
+        style={{
+          borderTop: '1px solid var(--color-border)',
+          color: 'var(--color-text-secondary)',
+        }}
+      >
+        <div className="min-w-0">
+          <div
+            className="library-grid-title font-serif font-medium text-[0.95rem] leading-tight truncate transition-colors duration-300"
+            style={{ color: 'var(--color-text-primary)' }}
+            title={game.name}
+          >
+            {game.name}
+          </div>
+          {game.genres?.[0] && (
+            <div
+              className="font-serif italic text-[0.8rem] mt-0.5"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              {game.genres[0].toLowerCase()}
+            </div>
+          )}
+        </div>
+        <div className="text-right" style={{ color: 'var(--color-text-muted)' }}>
+          <div>{game.minMinutes}&ndash;{game.maxMinutes}m</div>
+          <div className="opacity-60">no. {String(index + 1).padStart(3, '0')}</div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function AllGameRow({ game, index }: { game: Game; index: number }) {
+  const imageUrl = game.steamAppId
+    ? `https://cdn.cloudflare.steamstatic.com/steam/apps/${game.steamAppId}/header.jpg`
+    : null;
+  const primaryGenre = game.genres?.[0];
+
+  return (
+    <div
+      className="library-list-row grid items-center text-left py-4 px-2 transition-colors duration-300"
+      style={{
+        borderBottom: '1px solid var(--color-border)',
+        gridTemplateColumns: '2.25rem 5rem 1fr auto',
+        columnGap: 'clamp(0.75rem, 2vw, 1.5rem)',
+      }}
+    >
+      <span
+        className="font-mono text-[0.72rem] tracking-wider"
+        style={{ color: 'var(--color-text-muted)' }}
+      >
+        {String(index + 1).padStart(3, '0')}
+      </span>
+
+      <span
+        className="overflow-hidden aspect-[460/215] block"
+        style={{
+          background: 'var(--color-text-primary)',
+          border: '1px solid var(--color-border)',
+        }}
+      >
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt=""
+            className="w-full h-full object-cover"
+            loading="lazy"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            style={{ filter: 'contrast(1.05) saturate(0.9)' }}
+          />
+        )}
+      </span>
+
+      <span className="block min-w-0">
+        <span
+          className="library-list-title font-serif font-medium block text-[1rem] leading-tight truncate transition-colors duration-300"
+          style={{ color: 'var(--color-text-primary)' }}
+          title={game.name}
+        >
+          {game.name}
+        </span>
+        {primaryGenre && (
+          <span
+            className="font-serif italic block text-[0.85rem] mt-0.5"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            {primaryGenre.toLowerCase()}
+          </span>
+        )}
+      </span>
+
+      <span
+        className="font-mono text-[0.72rem] tracking-wider whitespace-nowrap text-right"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
+        {game.minMinutes}&ndash;{game.maxMinutes}m
+      </span>
     </div>
   );
 }

@@ -1,19 +1,16 @@
 import {
-  Calendar as CalendarIcon,
-  Users,
-  Globe,
-  Lock,
-  UserPlus,
-  LogOut,
-  Clock,
-  Gamepad2,
-} from 'lucide-react';
-import {
   useJoinCalendarEvent,
   useLeaveCalendarEvent,
   useDeleteCalendarEvent,
 } from '@/api/hooks';
 import type { CalendarEvent } from '@/types';
+
+function formatDatePieces(d: Date) {
+  const day = d.getDate().toString().padStart(2, '0');
+  const month = d.toLocaleDateString(undefined, { month: 'short' }).toLowerCase();
+  const weekday = d.toLocaleDateString(undefined, { weekday: 'short' }).toLowerCase();
+  return { day, month, weekday };
+}
 
 export function EventCard({ event, compact = false }: { event: CalendarEvent; compact?: boolean }) {
   const joinEvent = useJoinCalendarEvent();
@@ -21,107 +18,169 @@ export function EventCard({ event, compact = false }: { event: CalendarEvent; co
   const deleteEvent = useDeleteCalendarEvent();
 
   const eventDate = new Date(event.startTime);
+  const { day, month, weekday } = formatDatePieces(eventDate);
   const timeStr = eventDate.toLocaleTimeString(undefined, {
-    hour: 'numeric',
+    hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   });
 
-  const VisibilityIcon = event.visibility === 'PUBLIC'
-    ? Globe
-    : event.visibility === 'FRIENDS_ONLY'
-    ? Users
-    : Lock;
+  const visibilityLabel =
+    event.visibility === 'PUBLIC' ? 'public' :
+    event.visibility === 'FRIENDS_ONLY' ? 'friends' :
+    'private';
+
+  const typeGlyph = event.type === 'GAME' ? '◉' : '§';
 
   return (
-    <div className={`
-      rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]
-      ${compact ? 'p-3' : 'p-4'}
-    `}>
-      <div className="flex items-start gap-3">
-        {/* Type Icon */}
-        <div className={`
-          rounded-lg flex items-center justify-center flex-shrink-0
-          ${event.type === 'GAME' ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]' : 'bg-[var(--color-bg-tertiary)] text-[var(--color-text-muted)]'}
-          ${compact ? 'w-10 h-10' : 'w-12 h-12'}
-        `}>
-          {event.type === 'GAME' ? (
-            <Gamepad2 className={compact ? 'w-5 h-5' : 'w-6 h-6'} />
-          ) : (
-            <CalendarIcon className={compact ? 'w-5 h-5' : 'w-6 h-6'} />
-          )}
+    <div
+      className="event-card grid grid-cols-[auto_1fr_auto] gap-5 items-baseline py-4 px-3 -mx-3 transition-colors duration-300"
+      style={{ borderTop: '1px solid var(--color-border)' }}
+    >
+      {/* Date pillar */}
+      <div className="min-w-[3.25rem] text-left">
+        <div
+          className="font-serif text-[1.6rem] leading-none tabular-nums"
+          style={{ color: 'var(--color-text-primary)' }}
+        >
+          {day}
+        </div>
+        <div
+          className="font-mono text-[0.6rem] tracking-[0.22em] uppercase mt-1"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          {month} &middot; {weekday}
+        </div>
+      </div>
+
+      {/* Title + note + game */}
+      <div className="min-w-0">
+        <div className="flex items-baseline gap-2.5">
+          <span
+            className="font-mono text-[0.72rem] leading-none shrink-0"
+            style={{ color: 'var(--color-accent)' }}
+            aria-hidden="true"
+          >
+            {typeGlyph}
+          </span>
+          <h4
+            className={`font-serif ${compact ? 'text-[1rem]' : 'text-[1.15rem]'} leading-tight truncate`}
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            {event.title}
+          </h4>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <h4 className={`font-medium text-[var(--color-text-primary)] truncate ${compact ? 'text-sm' : ''}`}>
-                {event.title}
-              </h4>
-              {event.gameName && (
-                <p className="text-xs text-[var(--color-accent)]">{event.gameName}</p>
-              )}
-            </div>
-            <VisibilityIcon className="w-4 h-4 text-[var(--color-text-muted)] flex-shrink-0" />
+        {event.gameName && (
+          <div
+            className="font-serif italic text-[0.85rem] leading-snug mt-1 pl-[1.1rem]"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            {event.gameName}
           </div>
+        )}
 
-          <div className="flex items-center gap-3 mt-1 text-xs text-[var(--color-text-muted)]">
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {timeStr}
-            </span>
-            {event.owner && !event.isOwner && (
-              <span className="truncate">by {event.owner.displayName}</span>
-            )}
-            {event.participantCount > 0 && (
-              <span className="flex items-center gap-1">
-                <Users className="w-3 h-3" />
-                {event.participantCount}
-                {event.maxParticipants && `/${event.maxParticipants}`}
-              </span>
-            )}
+        {event.owner && !event.isOwner && (
+          <div
+            className="font-mono text-[0.62rem] tracking-[0.14em] uppercase mt-1.5 pl-[1.1rem]"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            by {event.owner.displayName}
           </div>
+        )}
 
-          {/* Actions */}
-          {!compact && (
-            <div className="flex items-center gap-2 mt-3">
-              {event.isOwner ? (
-                <button
-                  onClick={() => {
-                    if (confirm('Delete this event?')) {
-                      deleteEvent.mutate(event.id);
-                    }
-                  }}
-                  className="text-xs px-3 py-1.5 rounded-lg text-red-500 hover:bg-red-500/10"
-                  aria-label={`Delete event: ${event.title}`}
-                >
-                  Delete
-                </button>
-              ) : event.hasJoined ? (
-                <button
-                  onClick={() => leaveEvent.mutate(event.id)}
-                  disabled={leaveEvent.isPending}
-                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg text-[var(--color-text-muted)] hover:bg-[var(--color-bg-tertiary)]"
-                  aria-label={`Leave event: ${event.title}`}
-                >
-                  <LogOut className="w-3 h-3" />
-                  Leave
-                </button>
-              ) : event.canJoin ? (
-                <button
-                  onClick={() => joinEvent.mutate(event.id)}
-                  disabled={joinEvent.isPending}
-                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-[var(--color-accent)] text-white hover:opacity-90"
-                  aria-label={`Join event: ${event.title}`}
-                >
-                  <UserPlus className="w-3 h-3" />
-                  Join
-                </button>
-              ) : null}
-            </div>
+        {/* Actions */}
+        {!compact && (
+          <div className="flex items-center gap-5 mt-3 pl-[1.1rem]">
+            {event.isOwner ? (
+              <button
+                onClick={() => {
+                  if (confirm('Delete this event?')) {
+                    deleteEvent.mutate(event.id);
+                  }
+                }}
+                className="event-action-delete font-mono text-[0.62rem] tracking-[0.22em] uppercase bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-colors duration-300"
+                style={{
+                  color: 'var(--color-text-muted)',
+                  borderBottom: '1px solid var(--color-border)',
+                }}
+                aria-label={`Delete event: ${event.title}`}
+              >
+                Delete
+              </button>
+            ) : event.hasJoined ? (
+              <button
+                onClick={() => leaveEvent.mutate(event.id)}
+                disabled={leaveEvent.isPending}
+                className="event-action-leave font-mono text-[0.62rem] tracking-[0.22em] uppercase bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-colors duration-300"
+                style={{
+                  color: 'var(--color-text-muted)',
+                  borderBottom: '1px solid var(--color-border)',
+                }}
+                aria-label={`Leave event: ${event.title}`}
+              >
+                Leave
+              </button>
+            ) : event.canJoin ? (
+              <button
+                onClick={() => joinEvent.mutate(event.id)}
+                disabled={joinEvent.isPending}
+                className="event-action-join relative font-serif italic font-medium text-[0.95rem] inline-flex items-baseline gap-1.5 bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-[letter-spacing] duration-300"
+                style={{ color: 'var(--color-accent)' }}
+                aria-label={`Join event: ${event.title}`}
+              >
+                Join
+                <span aria-hidden="true">&rarr;</span>
+                <span
+                  aria-hidden="true"
+                  className="event-join-underline absolute left-0 bottom-0 h-px transition-[right] duration-[500ms]"
+                  style={{ background: 'var(--color-accent)', right: '30%' }}
+                />
+              </button>
+            ) : null}
+          </div>
+        )}
+      </div>
+
+      {/* Time + participants */}
+      <div className="text-right shrink-0">
+        <div
+          className="font-mono text-[0.82rem] tracking-[0.06em] tabular-nums"
+          style={{ color: 'var(--color-text-primary)' }}
+        >
+          {timeStr}
+        </div>
+        <div
+          className="font-mono text-[0.6rem] tracking-[0.18em] uppercase mt-1"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          {event.participantCount > 0 ? (
+            <>
+              {event.participantCount}
+              {event.maxParticipants ? `/${event.maxParticipants}` : ''} &middot; {visibilityLabel}
+            </>
+          ) : (
+            visibilityLabel
           )}
         </div>
       </div>
+
+      <style>{`
+        .event-card:hover {
+          background: var(--color-bg-secondary);
+        }
+        .event-action-delete:hover,
+        .event-action-leave:hover {
+          color: var(--color-error);
+          border-bottom-color: var(--color-error);
+        }
+        .event-action-join:hover {
+          letter-spacing: 0.03em;
+        }
+        .event-action-join:hover .event-join-underline {
+          right: 0 !important;
+        }
+      `}</style>
     </div>
   );
 }

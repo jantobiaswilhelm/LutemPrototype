@@ -1,5 +1,4 @@
 import { useState, useMemo } from 'react';
-import { Calendar, Clock, Star, AlertCircle, Gamepad2 } from 'lucide-react';
 import { SessionListSkeleton } from '@/components/skeletons/SessionCardSkeleton';
 import { EmptySessionsSvg } from '@/components/illustrations';
 import { WeeklyBarChart } from '@/components/charts/WeeklyBarChart';
@@ -8,6 +7,17 @@ import { useSessionHistory, useSubmitFeedback } from '@/api/hooks';
 import { LoginPrompt } from '@/components/LoginPrompt';
 import { StarRating } from '@/components/feedback';
 import type { SessionHistory } from '@/types';
+
+// Typographic dot ratings — mirrors the pattern in GameCard.tsx.
+function RatingDots({ value, total = 5 }: { value: number; total?: number }) {
+  const filled = Math.max(0, Math.min(total, Math.round(value)));
+  return (
+    <span className="font-serif tracking-[0.32em] text-[0.85rem] leading-none">
+      <span style={{ color: 'var(--color-accent)' }}>{'●'.repeat(filled)}</span>
+      <span style={{ color: 'var(--color-text-muted)', opacity: 0.45 }}>{'●'.repeat(total - filled)}</span>
+    </span>
+  );
+}
 
 export function Sessions() {
   const { isAuthenticated } = useAuthStore();
@@ -38,101 +48,182 @@ export function Sessions() {
   }, [sessions]);
 
   return (
-    <main id="main-content" className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--color-accent)]/10 mb-4">
-            <Calendar className="w-8 h-8 text-[var(--color-accent)]" />
+    <main
+      id="main-content"
+      className="min-h-screen px-5 md:px-10 pt-8 pb-24"
+      style={{ background: 'var(--color-bg-primary)' }}
+    >
+      <div className="max-w-[1040px] mx-auto">
+        {/* ─── masthead ─── */}
+        <header
+          className="pb-6 mb-10 md:mb-14"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+        >
+          <div
+            className="flex items-center gap-3 mb-5 font-mono text-[0.7rem] tracking-[0.28em] uppercase"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            <span className="inline-block w-6 h-px" style={{ background: 'var(--color-accent)' }} />
+            § The record
           </div>
-          <h1 className="text-2xl font-semibold text-[var(--color-text-primary)] mb-2">
-            Session History
-          </h1>
-          <p className="text-[var(--color-text-muted)]">
-            Track and reflect on your gaming sessions
-          </p>
-        </div>
 
-        {/* Weekly Stats Card */}
+          <h1
+            className="font-serif text-[clamp(2rem,4.4vw,3.4rem)] leading-[1.02] tracking-[-0.016em] mb-4"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            Your recent hours.
+          </h1>
+
+          <p
+            className="font-serif italic text-[clamp(1.05rem,1.4vw,1.2rem)] leading-[1.48] max-w-[44ch]"
+            style={{ color: 'var(--color-text-secondary)' }}
+          >
+            A ledger of sessions past &mdash; a quiet way to notice what satisfies you.
+          </p>
+        </header>
+
+        {/* ─── weekly stats ─── */}
         {weeklyStats && weeklyStats.sessionsCount > 0 && (
-          <div className="
-            mb-6 p-5 rounded-xl
-            bg-[var(--color-bg-secondary)]
-            border border-[var(--color-border)]
-          ">
-            <h2 className="text-sm font-medium text-[var(--color-text-muted)] mb-4">
-              This Week
-            </h2>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-bold text-[var(--color-text-primary)]">
-                  {weeklyStats.sessionsCount}
-                </div>
-                <div className="text-xs text-[var(--color-text-muted)]">Sessions</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-[var(--color-text-primary)]">
-                  {weeklyStats.avgRating > 0 ? weeklyStats.avgRating.toFixed(1) : '—'}
-                </div>
-                <div className="text-xs text-[var(--color-text-muted)]">Avg Rating</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-[var(--color-text-primary)]">
-                  {weeklyStats.ratedCount}/{weeklyStats.sessionsCount}
-                </div>
-                <div className="text-xs text-[var(--color-text-muted)]">Rated</div>
+          <section
+            className="mb-14"
+            aria-labelledby="weekly-stats-heading"
+          >
+            <div className="flex items-baseline justify-between mb-5">
+              <div
+                id="weekly-stats-heading"
+                className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.28em] uppercase"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                <span className="inline-block w-6 h-px" style={{ background: 'var(--color-accent)' }} />
+                This week
               </div>
             </div>
 
-            {/* Weekly bar chart */}
+            <div className="grid grid-cols-3 gap-4 text-left">
+              <div className="py-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+                <div
+                  className="font-mono text-[0.64rem] tracking-[0.22em] uppercase mb-2"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  Sessions
+                </div>
+                <div
+                  className="font-serif text-[2rem] leading-none"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  {weeklyStats.sessionsCount}
+                </div>
+              </div>
+
+              <div className="py-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+                <div
+                  className="font-mono text-[0.64rem] tracking-[0.22em] uppercase mb-2"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  Avg. rating
+                </div>
+                <div
+                  className="font-serif text-[2rem] leading-none"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  {weeklyStats.avgRating > 0 ? weeklyStats.avgRating.toFixed(1) : '—'}
+                </div>
+              </div>
+
+              <div className="py-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+                <div
+                  className="font-mono text-[0.64rem] tracking-[0.22em] uppercase mb-2"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  Rated
+                </div>
+                <div
+                  className="font-serif text-[2rem] leading-none"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
+                  {weeklyStats.ratedCount}
+                  <span
+                    className="font-mono text-[0.95rem] tracking-wider ml-1"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    /{weeklyStats.sessionsCount}
+                  </span>
+                </div>
+              </div>
+            </div>
+
             {sessions && sessions.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
+              <div
+                className="mt-6 pt-6"
+                style={{ borderTop: '1px solid var(--color-border)' }}
+              >
                 <WeeklyBarChart sessions={sessions} />
               </div>
             )}
-          </div>
+          </section>
         )}
 
-        {/* Loading State */}
+        {/* ─── loading ─── */}
         {isLoading && <SessionListSkeleton />}
 
-        {/* Error State */}
+        {/* ─── error ─── */}
         {error && (
-          <div role="alert" className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 flex items-start gap-3 mb-6">
-            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm text-red-700 dark:text-red-300">
-                Failed to load session history
+          <div
+            role="alert"
+            className="mb-10 p-4 flex items-start gap-4"
+            style={{
+              borderTop: '1px solid var(--color-error)',
+              borderBottom: '1px solid var(--color-error)',
+            }}
+          >
+            <span
+              className="font-serif italic text-[0.8rem] tracking-[0.18em] uppercase shrink-0 mt-0.5"
+              style={{ color: 'var(--color-error)' }}
+            >
+              Notice
+            </span>
+            <div className="flex-1">
+              <p className="font-serif text-[1rem]" style={{ color: 'var(--color-text-primary)' }}>
+                Failed to load session history.
               </p>
-              <p className="text-xs text-red-500 dark:text-red-400 mt-1">
-                Please try again later
+              <p className="font-serif italic text-[0.9rem] mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                Please try again later.
               </p>
             </div>
           </div>
         )}
 
-        {/* Empty State */}
+        {/* ─── empty ─── */}
         {!isLoading && !error && sessions?.length === 0 && (
           <EmptyState isAuthenticated={isAuthenticated} />
         )}
 
-        {/* Session List */}
+        {/* ─── session list ─── */}
         {sessions && sessions.length > 0 && (
-          <div className="space-y-3">
-            <h2 className="text-sm font-medium text-[var(--color-text-muted)] px-1">
-              Recent Sessions
-            </h2>
-            {sessions.map((session) => (
-              <SessionCard key={session.id} session={session} />
-            ))}
-          </div>
+          <section aria-labelledby="session-list-heading">
+            <div
+              className="flex items-center gap-3 mb-4 font-mono text-[0.7rem] tracking-[0.28em] uppercase"
+              id="session-list-heading"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              <span className="inline-block w-6 h-px" style={{ background: 'var(--color-accent)' }} />
+              Recent sessions
+            </div>
+
+            <ul
+              className="list-none p-0 m-0"
+              style={{ borderTop: '1px solid var(--color-border-strong)' }}
+            >
+              {sessions.map((session) => (
+                <SessionRow key={session.id} session={session} />
+              ))}
+            </ul>
+          </section>
         )}
 
-        {/* Login prompt for non-authenticated users */}
+        {/* ─── login invitation ─── */}
         {!isAuthenticated && (
-          <div className="mt-8">
-            <LoginPrompt feature="personalized session tracking" />
-          </div>
+          <LoginPrompt feature="personalised session tracking" />
         )}
       </div>
     </main>
@@ -141,25 +232,27 @@ export function Sessions() {
 
 function EmptyState({ isAuthenticated }: { isAuthenticated: boolean }) {
   return (
-    <div className="
-      p-8 rounded-xl text-center
-      bg-[var(--color-bg-secondary)]
-      border border-[var(--color-border)]
-    ">
-      <EmptySessionsSvg className="w-48 h-36 mx-auto mb-2" />
-      <h3 className="text-lg font-medium text-[var(--color-text-primary)] mb-2">
-        No sessions yet
-      </h3>
-      <p className="text-[var(--color-text-muted)] text-sm">
+    <div
+      className="py-12 md:py-16 text-center max-w-[44ch] mx-auto"
+      style={{
+        borderTop: '1px solid var(--color-border)',
+        borderBottom: '1px solid var(--color-border)',
+      }}
+    >
+      <EmptySessionsSvg className="w-40 h-32 mx-auto mb-6 opacity-80" />
+      <p
+        className="font-serif italic text-[clamp(1.1rem,1.6vw,1.35rem)] leading-[1.42]"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
         {isAuthenticated
-          ? "Get a recommendation and launch a game to start tracking your sessions."
-          : "Sign in and start using Lutem to track your gaming sessions."}
+          ? 'Nothing is written yet. Begin a session tonight and the page will fill in.'
+          : 'Sign in and each session will be quietly recorded here.'}
       </p>
     </div>
   );
 }
 
-function SessionCard({ session }: { session: SessionHistory }) {
+function SessionRow({ session }: { session: SessionHistory }) {
   const [isRating, setIsRating] = useState(false);
   const [pendingRating, setPendingRating] = useState(0);
   const submitFeedback = useSubmitFeedback();
@@ -168,19 +261,21 @@ function SessionCard({ session }: { session: SessionHistory }) {
   const isToday = isDateToday(sessionDate);
   const isYesterday = isDateYesterday(sessionDate);
 
-  const dateLabel = isToday
-    ? 'Today'
+  const dateLabel = (isToday
+    ? 'today'
     : isYesterday
-    ? 'Yesterday'
+    ? 'yesterday'
     : sessionDate.toLocaleDateString(undefined, {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
-      });
+      })
+  ).toLowerCase();
 
   const timeLabel = sessionDate.toLocaleTimeString(undefined, {
-    hour: 'numeric',
+    hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   });
 
   const handleRate = async (rating: number) => {
@@ -193,8 +288,8 @@ function SessionCard({ session }: { session: SessionHistory }) {
       setIsRating(false);
       const { useToastStore } = await import('@/stores/toastStore');
       useToastStore.getState().addToast('Rating saved', 'success');
-    } catch (error) {
-      console.error('Failed to submit rating:', error);
+    } catch (err) {
+      console.error('Failed to submit rating:', err);
       const { useToastStore } = await import('@/stores/toastStore');
       useToastStore.getState().addToast('Failed to save rating', 'error');
     }
@@ -203,83 +298,94 @@ function SessionCard({ session }: { session: SessionHistory }) {
   const displayRating = pendingRating || session.satisfactionScore;
 
   return (
-    <div className="
-      p-4 rounded-xl
-      bg-[var(--color-bg-secondary)]
-      border border-[var(--color-border)]
-      hover:border-[var(--color-border-hover)]
-      active:scale-[0.995]
-      transition-all
-    ">
-      <div className="flex items-start gap-3">
-        {/* Game Image */}
-        {session.gameImageUrl ? (
-          <img
-            src={session.gameImageUrl}
-            alt={session.gameName}
-            className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg object-cover flex-shrink-0"
-          />
-        ) : (
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-[var(--color-bg-tertiary)] flex items-center justify-center flex-shrink-0">
-            <Gamepad2 className="w-5 h-5 sm:w-6 sm:h-6 text-[var(--color-text-muted)]" />
-          </div>
-        )}
+    <li
+      className="session-row grid grid-cols-[auto_1fr] gap-x-5 md:gap-x-8 gap-y-2 items-baseline py-5 px-1"
+      style={{ borderBottom: '1px solid var(--color-border)' }}
+    >
+      {/* date column (mono) */}
+      <div className="font-mono text-[0.7rem] tracking-[0.08em] leading-snug min-w-[5.5rem]">
+        <div style={{ color: 'var(--color-text-secondary)' }}>{dateLabel}</div>
+        <div style={{ color: 'var(--color-text-muted)' }}>{timeLabel}</div>
+      </div>
 
-        {/* Session Info */}
-        <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-[var(--color-text-primary)] truncate text-sm sm:text-base">
+      {/* title + optional cover */}
+      <div className="flex items-start gap-3 min-w-0">
+        {session.gameImageUrl ? (
+          <div
+            className="shrink-0 overflow-hidden aspect-[600/900] w-9 mt-0.5"
+            style={{
+              background: 'var(--color-text-primary)',
+              border: '1px solid var(--color-border)',
+            }}
+          >
+            <img
+              src={session.gameImageUrl}
+              alt=""
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              style={{ filter: 'contrast(1.05) saturate(0.9)' }}
+            />
+          </div>
+        ) : null}
+        <div className="min-w-0">
+          <h4
+            className="font-serif text-[1.05rem] md:text-[1.15rem] leading-tight truncate"
+            style={{ color: 'var(--color-text-primary)', fontWeight: 500 }}
+          >
             {session.gameName}
           </h4>
-
-          <div className="flex items-center gap-2 sm:gap-3 mt-1 text-xs text-[var(--color-text-muted)]">
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" />
-              {dateLabel}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {timeLabel}
-            </span>
-          </div>
-
-          {/* Rating Section */}
-          <div className="mt-2">
+          {/* Rating / rate button */}
+          <div className="mt-1.5">
             {displayRating ? (
-              <div className="flex items-center gap-2 flex-wrap">
-                <StarRating value={displayRating} size="sm" readonly />
-                <span className="text-xs text-[var(--color-text-muted)]">
+              <span className="inline-flex items-baseline gap-3 flex-wrap">
+                <RatingDots value={displayRating} />
+                <span
+                  className="font-serif italic text-[0.82rem]"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
                   {getRatingText(displayRating)}
                 </span>
-              </div>
+              </span>
             ) : isRating ? (
-              <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-baseline gap-4 flex-wrap">
                 <StarRating value={0} onChange={handleRate} size="sm" />
                 <button
                   onClick={() => setIsRating(false)}
-                  className="text-xs py-1 px-2 rounded text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-tertiary)]"
+                  className="font-mono text-[0.62rem] tracking-[0.18em] uppercase bg-transparent border-0 p-0 pb-0.5 cursor-pointer"
+                  style={{
+                    color: 'var(--color-text-muted)',
+                    borderBottom: '1px solid var(--color-border)',
+                  }}
                 >
                   Cancel
                 </button>
-              </div>
+              </span>
             ) : (
               <button
                 onClick={() => setIsRating(true)}
-                className="
-                  flex items-center gap-1
-                  text-xs py-1 -ml-1 px-1
-                  text-[var(--color-accent)]
-                  hover:text-[var(--color-accent-hover)]
-                  transition-colors
-                "
+                className="session-rate-link font-serif italic text-[0.88rem] bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-colors duration-300"
+                style={{
+                  color: 'var(--color-accent)',
+                  borderBottom: '1px solid var(--color-border)',
+                }}
               >
-                <Star className="w-3.5 h-3.5" />
                 Rate this session
               </button>
             )}
           </div>
         </div>
       </div>
-    </div>
+
+      <style>{`
+        .session-row:hover {
+          background: var(--color-bg-secondary);
+        }
+        .session-rate-link:hover {
+          border-bottom-color: var(--color-accent);
+        }
+      `}</style>
+    </li>
   );
 }
 
@@ -304,11 +410,11 @@ function isDateYesterday(date: Date): boolean {
 
 function getRatingText(rating: number): string {
   switch (rating) {
-    case 1: return 'Not great';
-    case 2: return 'Meh';
-    case 3: return 'Okay';
-    case 4: return 'Good';
-    case 5: return 'Excellent';
+    case 1: return 'not great';
+    case 2: return 'meh';
+    case 3: return 'okay';
+    case 4: return 'good';
+    case 5: return 'excellent';
     default: return '';
   }
 }

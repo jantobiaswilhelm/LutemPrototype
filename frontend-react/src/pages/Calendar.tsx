@@ -1,18 +1,4 @@
 import { useState, useMemo } from 'react';
-import { EmptyCalendarSvg } from '@/components/illustrations';
-import {
-  Calendar as CalendarIcon,
-  Plus,
-  Users,
-  User,
-  Globe,
-  UserPlus,
-  Loader2,
-  Check,
-  X,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
 import { LoginPrompt } from '@/components/LoginPrompt';
 import { useAuthStore } from '@/stores/authStore';
 import {
@@ -88,19 +74,36 @@ export function Calendar() {
 
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[var(--color-accent)]/10 mb-4">
-              <CalendarIcon className="w-8 h-8 text-[var(--color-accent)]" />
+      <main className="min-h-screen">
+        <div className="max-w-[1080px] mx-auto px-5 md:px-10 pt-8 pb-20">
+          <header
+            className="pb-5 mb-10 md:mb-14"
+            style={{ borderBottom: '1px solid var(--color-border)' }}
+          >
+            <div
+              className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.28em] uppercase mb-5"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              <span
+                className="inline-block w-6 h-px"
+                style={{ background: 'var(--color-accent)' }}
+                aria-hidden="true"
+              />
+              § The schedule
             </div>
-            <h1 className="text-2xl font-semibold text-[var(--color-text-primary)] mb-2">
-              Gaming Calendar
+            <h1
+              className="font-serif text-[clamp(2rem,4.4vw,3.4rem)] leading-[1.02] tracking-[-0.016em] mb-3"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              Calendar.
             </h1>
-            <p className="text-[var(--color-text-muted)]">
-              Schedule and join gaming sessions with friends
+            <p
+              className="font-serif italic text-[clamp(1rem,1.4vw,1.2rem)] leading-[1.48] max-w-[44ch]"
+              style={{ color: 'var(--color-text-secondary)' }}
+            >
+              Plan and join gaming sessions.
             </p>
-          </div>
+          </header>
           <LoginPrompt feature="the gaming calendar" />
         </div>
       </main>
@@ -108,30 +111,61 @@ export function Calendar() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg-primary)] px-4 py-8 pb-24">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-semibold text-[var(--color-text-primary)]">
-              Calendar
-            </h1>
-            <p className="text-sm text-[var(--color-text-muted)]">
-              Plan and join gaming sessions
-            </p>
-          </div>
-          <button
-            onClick={() => setShowCreateForm(!showCreateForm)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-accent)] text-white font-medium hover:opacity-90 transition-opacity"
+    <main className="min-h-screen">
+      <div className="max-w-[1080px] mx-auto px-5 md:px-10 pt-8 pb-20">
+        {/* ─── masthead ─────────────────────────────────── */}
+        <header
+          className="pb-5 mb-10 md:mb-14"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+        >
+          <div
+            className="flex items-center gap-3 font-mono text-[0.7rem] tracking-[0.28em] uppercase mb-5"
+            style={{ color: 'var(--color-text-muted)' }}
           >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">New Event</span>
-          </button>
-        </div>
+            <span
+              className="inline-block w-6 h-px"
+              style={{ background: 'var(--color-accent)' }}
+              aria-hidden="true"
+            />
+            § The schedule
+          </div>
 
-        {/* Inline Create Event Form */}
+          <div className="flex items-end justify-between gap-6 flex-wrap">
+            <div>
+              <h1
+                className="font-serif text-[clamp(2rem,4.4vw,3.4rem)] leading-[1.02] tracking-[-0.016em] mb-2"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
+                Calendar.
+              </h1>
+              <p
+                className="font-serif italic text-[clamp(1rem,1.4vw,1.2rem)] leading-[1.48] max-w-[44ch]"
+                style={{ color: 'var(--color-text-secondary)' }}
+              >
+                Planned sessions, invitations.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowCreateForm(!showCreateForm)}
+              className="cal-cta relative font-serif italic font-medium text-[1.2rem] inline-flex items-baseline gap-2 bg-transparent border-0 p-0 pb-1.5 cursor-pointer transition-[letter-spacing] duration-500"
+              style={{ color: 'var(--color-accent)' }}
+              aria-expanded={showCreateForm}
+            >
+              {showCreateForm ? 'Close the draft' : '+ Propose a session'}
+              <span aria-hidden="true" className="cal-arrow font-sans not-italic transition-transform duration-500">&rarr;</span>
+              <span
+                aria-hidden="true"
+                className="cal-underline absolute left-0 bottom-0 h-px transition-[right] duration-[600ms]"
+                style={{ background: 'var(--color-accent)', right: '30%' }}
+              />
+            </button>
+          </div>
+        </header>
+
+        {/* ─── create form ──────────────────────────────── */}
         {showCreateForm && (
-          <div className="mb-6">
+          <div className="mb-10">
             <CreateEventForm
               onSuccess={() => setShowCreateForm(false)}
               onCancel={() => setShowCreateForm(false)}
@@ -139,71 +173,129 @@ export function Calendar() {
           </div>
         )}
 
-        {/* Invitations Banner */}
+        {/* ─── invitations ──────────────────────────────── */}
         {invitations && invitations.length > 0 && (
           <InvitationsBanner invitations={invitations} />
         )}
 
-        {/* View Filter */}
-        <div className="flex gap-2 mb-6 p-1 bg-[var(--color-bg-secondary)] rounded-xl">
-          <FilterButton
-            active={viewFilter === 'all'}
-            onClick={() => setViewFilter('all')}
-            icon={<Globe className="w-4 h-4" />}
-            label="All"
-          />
-          <FilterButton
-            active={viewFilter === 'friends'}
-            onClick={() => setViewFilter('friends')}
-            icon={<Users className="w-4 h-4" />}
-            label="Friends"
-          />
-          <FilterButton
-            active={viewFilter === 'mine'}
-            onClick={() => setViewFilter('mine')}
-            icon={<User className="w-4 h-4" />}
-            label="Mine"
-          />
+        {/* ─── filters ──────────────────────────────────── */}
+        <div
+          className="flex items-baseline gap-8 mb-8"
+          style={{ borderBottom: '1px solid var(--color-border)' }}
+          role="tablist"
+          aria-label="Calendar filter"
+        >
+          {([
+            { id: 'all', label: 'All' },
+            { id: 'friends', label: 'Friends' },
+            { id: 'mine', label: 'Mine' },
+          ] as { id: ViewFilter; label: string }[]).map((tab) => {
+            const active = viewFilter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setViewFilter(tab.id)}
+                className="relative font-serif text-[1.05rem] leading-none bg-transparent border-0 p-0 pb-3 cursor-pointer transition-colors duration-300"
+                style={{
+                  color: active ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+                  fontStyle: active ? 'italic' : 'normal',
+                  fontWeight: active ? 500 : 400,
+                }}
+              >
+                {tab.label}
+                {active && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-0 right-0 h-px"
+                    style={{ background: 'var(--color-accent)', bottom: '-1px' }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Month Navigation */}
-        <div className="flex items-center justify-between mb-4">
+        {/* ─── month navigation ─────────────────────────── */}
+        <div className="flex items-center justify-center gap-8 mb-10">
           <button
-            onClick={() => setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1))}
-            className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)]"
+            onClick={() =>
+              setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1))
+            }
+            className="cal-month-nav font-mono text-[0.72rem] tracking-[0.2em] uppercase bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-colors duration-300"
+            style={{
+              color: 'var(--color-text-secondary)',
+              borderBottom: '1px solid var(--color-border)',
+            }}
             aria-label="Previous month"
           >
-            <ChevronLeft className="w-5 h-5" />
+            &larr; Previous
           </button>
-          <h2 className="text-lg font-medium text-[var(--color-text-primary)]">
+          <h2
+            className="font-mono text-[0.88rem] tracking-[0.18em] uppercase tabular-nums"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
             {selectedDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
           </h2>
           <button
-            onClick={() => setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1))}
-            className="p-2 rounded-lg hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)]"
+            onClick={() =>
+              setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1))
+            }
+            className="cal-month-nav font-mono text-[0.72rem] tracking-[0.2em] uppercase bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-colors duration-300"
+            style={{
+              color: 'var(--color-text-secondary)',
+              borderBottom: '1px solid var(--color-border)',
+            }}
             aria-label="Next month"
           >
-            <ChevronRight className="w-5 h-5" />
+            Next &rarr;
           </button>
         </div>
 
-        {/* Loading */}
+        {/* ─── loading ──────────────────────────────────── */}
         {isLoading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 text-[var(--color-accent)] animate-spin" />
+          <div
+            className="flex items-center justify-center gap-3 py-12"
+            role="status"
+            aria-live="polite"
+          >
+            <span
+              className="inline-block w-2 h-2 rounded-full cal-pulse"
+              style={{ background: 'var(--color-accent)' }}
+              aria-hidden="true"
+            />
+            <span
+              className="font-mono text-[0.62rem] tracking-[0.28em] uppercase"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              loading
+            </span>
           </div>
         )}
 
-        {/* Events List */}
+        {/* ─── events ───────────────────────────────────── */}
         {!isLoading && (
-          <div className="space-y-6">
-            {/* Upcoming Section */}
+          <>
             {upcomingEvents.length > 0 && (
-              <section>
-                <h3 className="text-sm font-medium text-[var(--color-text-muted)] mb-3">
-                  Upcoming This Week
-                </h3>
-                <div className="space-y-3">
+              <section className="mb-12">
+                <div
+                  className="flex items-center gap-3 font-mono text-[0.68rem] tracking-[0.28em] uppercase mb-4"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  <span
+                    className="inline-block w-5 h-px"
+                    style={{ background: 'var(--color-accent)' }}
+                    aria-hidden="true"
+                  />
+                  Upcoming this week
+                  <span
+                    className="flex-1 h-px"
+                    style={{ background: 'var(--color-border)' }}
+                    aria-hidden="true"
+                  />
+                </div>
+                <div>
                   {upcomingEvents.map((event) => (
                     <EventCard key={event.id} event={event} />
                   ))}
@@ -211,23 +303,44 @@ export function Calendar() {
               </section>
             )}
 
-            {/* Mini Calendar / Date Groups */}
             <section>
-              <h3 className="text-sm font-medium text-[var(--color-text-muted)] mb-3">
-                All Events
-              </h3>
+              <div
+                className="flex items-center gap-3 font-mono text-[0.68rem] tracking-[0.28em] uppercase mb-4"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                <span
+                  className="inline-block w-5 h-px"
+                  style={{ background: 'var(--color-accent)' }}
+                  aria-hidden="true"
+                />
+                All events
+                <span
+                  className="flex-1 h-px"
+                  style={{ background: 'var(--color-border)' }}
+                  aria-hidden="true"
+                />
+              </div>
+
               {Object.keys(eventsByDate).length === 0 ? (
                 <EmptyState viewFilter={viewFilter} onCreateClick={() => setShowCreateForm(true)} />
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-8">
                   {Object.entries(eventsByDate)
                     .sort(([a], [b]) => a.localeCompare(b))
                     .map(([dateKey, dayEvents]) => (
                       <div key={dateKey}>
-                        <h4 className="text-xs font-medium text-[var(--color-text-muted)] mb-2 uppercase">
-                          {formatDateHeader(dateKey)}
-                        </h4>
-                        <div className="space-y-2">
+                        <div
+                          className="flex items-center gap-3 font-mono text-[0.62rem] tracking-[0.28em] uppercase mb-1"
+                          style={{ color: 'var(--color-text-muted)' }}
+                        >
+                          <span>{formatDateHeader(dateKey)}</span>
+                          <span
+                            className="flex-1 h-px"
+                            style={{ background: 'var(--color-border)' }}
+                            aria-hidden="true"
+                          />
+                        </div>
+                        <div>
                           {dayEvents.map((event) => (
                             <EventCard key={event.id} event={event} compact />
                           ))}
@@ -237,40 +350,25 @@ export function Calendar() {
                 </div>
               )}
             </section>
-          </div>
+          </>
         )}
-
       </div>
-    </main>
-  );
-}
 
-function FilterButton({
-  active,
-  onClick,
-  icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`
-        flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg
-        font-medium text-sm transition-colors
-        ${active
-          ? 'bg-[var(--color-accent)] text-white'
-          : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]'
+      <style>{`
+        .cal-cta:hover { letter-spacing: 0.03em; }
+        .cal-cta:hover .cal-underline { right: 0 !important; }
+        .cal-cta:hover .cal-arrow { transform: translateX(0.35rem); }
+        .cal-month-nav:hover {
+          color: var(--color-accent);
+          border-bottom-color: var(--color-accent);
         }
-      `}
-    >
-      {icon}
-      {label}
-    </button>
+        @keyframes cal-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+        .cal-pulse { animation: cal-pulse 1.4s ease-in-out infinite; }
+      `}</style>
+    </main>
   );
 }
 
@@ -279,85 +377,146 @@ function InvitationsBanner({ invitations }: { invitations: CalendarInvitation[] 
   const respondToInvitation = useRespondToCalendarInvitation();
 
   return (
-    <div className="mb-6 p-4 rounded-xl bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/20">
+    <div
+      className="mb-10 py-5 px-0"
+      style={{
+        borderTop: '1px solid var(--color-border-strong)',
+        borderBottom: '1px solid var(--color-border-strong)',
+      }}
+    >
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between"
+        className="w-full flex items-baseline justify-between gap-4 bg-transparent border-0 p-0 cursor-pointer text-left"
+        aria-expanded={expanded}
       >
-        <div className="flex items-center gap-2">
-          <UserPlus className="w-5 h-5 text-[var(--color-accent)]" />
-          <span className="font-medium text-[var(--color-text-primary)]">
-            {invitations.length} pending invitation{invitations.length > 1 ? 's' : ''}
-          </span>
+        <div>
+          <div
+            className="flex items-center gap-3 font-mono text-[0.68rem] tracking-[0.28em] uppercase mb-1"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
+            <span
+              className="inline-block w-5 h-px"
+              style={{ background: 'var(--color-accent)' }}
+              aria-hidden="true"
+            />
+            § Pending invitations
+          </div>
+          <p
+            className="font-serif italic text-[1.05rem] leading-snug"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
+            {invitations.length} pending invitation{invitations.length > 1 ? 's' : ''} awaiting you.
+          </p>
         </div>
-        <ChevronRight className={`w-5 h-5 text-[var(--color-text-muted)] transition-transform ${expanded ? 'rotate-90' : ''}`} />
+        <span
+          className="font-mono text-[0.72rem] tracking-[0.2em] uppercase transition-colors duration-300"
+          style={{
+            color: 'var(--color-accent)',
+            borderBottom: '1px solid var(--color-accent)',
+          }}
+        >
+          {expanded ? 'Collapse' : 'View'}
+        </span>
       </button>
 
       {expanded && (
-        <div className="mt-4 space-y-3">
+        <div className="mt-6 space-y-4">
           {invitations.map((inv) => (
             <div
               key={inv.invitationId}
-              className="flex items-center justify-between p-3 rounded-lg bg-[var(--color-bg-secondary)]"
+              className="flex items-baseline justify-between gap-4 py-3"
+              style={{ borderTop: '1px solid var(--color-border)' }}
             >
-              <div className="min-w-0">
-                <p className="font-medium text-[var(--color-text-primary)] truncate">
+              <div className="min-w-0 flex-1">
+                <p
+                  className="font-serif text-[1rem] leading-snug truncate"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
                   {inv.event.title}
                 </p>
-                <p className="text-xs text-[var(--color-text-muted)]">
-                  {inv.invitedBy?.displayName && `From ${inv.invitedBy.displayName} • `}
+                <p
+                  className="font-mono text-[0.62rem] tracking-[0.14em] uppercase mt-1"
+                  style={{ color: 'var(--color-text-muted)' }}
+                >
+                  {inv.invitedBy?.displayName && <>from {inv.invitedBy.displayName} &middot; </>}
                   {new Date(inv.event.startTime).toLocaleDateString()}
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex items-baseline gap-5 shrink-0">
                 <button
                   onClick={() => respondToInvitation.mutate({ id: inv.invitationId, accept: true })}
                   disabled={respondToInvitation.isPending}
-                  className="p-2 rounded-lg text-green-500 hover:bg-green-500/10"
+                  className="invite-accept font-serif italic text-[0.95rem] leading-none bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-colors duration-300"
+                  style={{
+                    color: 'var(--color-accent)',
+                    borderBottom: '1px solid var(--color-accent)',
+                  }}
                   aria-label={`Accept invitation to ${inv.event.title}`}
                 >
-                  <Check className="w-5 h-5" />
+                  Accept
                 </button>
                 <button
                   onClick={() => respondToInvitation.mutate({ id: inv.invitationId, accept: false })}
                   disabled={respondToInvitation.isPending}
-                  className="p-2 rounded-lg text-red-500 hover:bg-red-500/10"
+                  className="invite-decline font-mono text-[0.62rem] tracking-[0.22em] uppercase bg-transparent border-0 p-0 pb-0.5 cursor-pointer transition-colors duration-300"
+                  style={{
+                    color: 'var(--color-text-muted)',
+                    borderBottom: '1px solid var(--color-border)',
+                  }}
                   aria-label={`Decline invitation to ${inv.event.title}`}
                 >
-                  <X className="w-5 h-5" />
+                  Decline
                 </button>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      <style>{`
+        .invite-decline:hover {
+          color: var(--color-error);
+          border-bottom-color: var(--color-error);
+        }
+      `}</style>
     </div>
   );
 }
 
 function EmptyState({ viewFilter, onCreateClick }: { viewFilter: ViewFilter; onCreateClick: () => void }) {
-  const messages = {
-    all: 'No events scheduled yet',
-    friends: 'No events from friends',
-    mine: 'You haven\'t created any events',
+  const messages: Record<ViewFilter, string> = {
+    all: 'No events scheduled yet.',
+    friends: 'No events from friends.',
+    mine: 'You have not created any events.',
   };
 
   return (
-    <div className="text-center py-12">
-      <EmptyCalendarSvg className="w-48 h-36 mx-auto mb-2" />
-      <h3 className="font-medium text-[var(--color-text-primary)] mb-1">
+    <div className="py-10">
+      <p
+        className="font-serif italic text-[1.1rem] leading-snug mb-6 max-w-[40ch]"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
         {messages[viewFilter]}
-      </h3>
-      <p className="text-sm text-[var(--color-text-muted)] mb-4">
-        Create an event to start planning gaming sessions
       </p>
       <button
         onClick={onCreateClick}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-accent)] text-white font-medium hover:opacity-90"
+        className="empty-cta relative font-serif italic font-medium text-[1.1rem] inline-flex items-baseline gap-2 bg-transparent border-0 p-0 pb-1.5 cursor-pointer transition-[letter-spacing] duration-500"
+        style={{ color: 'var(--color-accent)' }}
       >
-        <Plus className="w-4 h-4" />
-        Create Event
+        + Propose the first
+        <span aria-hidden="true" className="empty-arrow font-sans not-italic transition-transform duration-500">&rarr;</span>
+        <span
+          aria-hidden="true"
+          className="empty-underline absolute left-0 bottom-0 h-px transition-[right] duration-[600ms]"
+          style={{ background: 'var(--color-accent)', right: '30%' }}
+        />
       </button>
+
+      <style>{`
+        .empty-cta:hover { letter-spacing: 0.03em; }
+        .empty-cta:hover .empty-underline { right: 0 !important; }
+        .empty-cta:hover .empty-arrow { transform: translateX(0.35rem); }
+      `}</style>
     </div>
   );
 }

@@ -2,50 +2,87 @@ import { useWizardStore } from '@/stores/wizardStore';
 import { ENERGY_LEVELS, type EnergyLevel } from '@/types';
 
 const ENERGY_ORDER: EnergyLevel[] = ['LOW', 'MEDIUM', 'HIGH'];
+const NUMERALS = ['i', 'ii', 'iii'];
+
+// a 5-bar ASCII energy meter mapped to level
+const METERS: Record<EnergyLevel, string> = {
+  LOW:    '● ○ ○ ○ ○',
+  MEDIUM: '● ● ● ○ ○',
+  HIGH:   '● ● ● ● ●',
+};
 
 export default function EnergyStep() {
   const { energyLevel, setEnergyLevel, nextStep } = useWizardStore();
 
   const handleSelect = (level: EnergyLevel) => {
     setEnergyLevel(level);
-    setTimeout(() => nextStep(), 300);
+    nextStep();
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="text-center mb-4">
-        <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[var(--color-accent-soft)] mb-2">
-          <div className="w-5 h-6 border-2 border-[var(--color-accent)] rounded-sm relative">
-            <div className="absolute bottom-0.5 left-0.5 right-0.5 h-2/3 bg-[var(--color-accent)] rounded-sm" />
-          </div>
-        </div>
-        <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-1">
-          How's your energy level?
-        </h3>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          Tap to select
-        </p>
-      </div>
+    <div>
+      <h2
+        className="font-serif text-[clamp(1.6rem,3.2vw,2.4rem)] leading-[1.04] tracking-[-0.015em] mb-3"
+        style={{ color: 'var(--color-text-primary)' }}
+      >
+        How is your energy?
+      </h2>
+      <p
+        className="font-serif italic text-[1rem] leading-snug mb-8 max-w-[40ch]"
+        style={{ color: 'var(--color-text-secondary)' }}
+      >
+        Quiet hours need different games than wide-awake ones.
+      </p>
 
-      <div className="flex gap-3 justify-center">
-        {ENERGY_ORDER.map((level) => {
+      <div
+        className="grid grid-cols-3"
+        style={{ borderTop: '1px solid var(--color-border-strong)' }}
+      >
+        {ENERGY_ORDER.map((level, i) => {
           const data = ENERGY_LEVELS[level];
           const isSelected = energyLevel === level;
           return (
             <button
               key={level}
               onClick={() => handleSelect(level)}
-              data-value={level}
-              className={`energy-card ${isSelected ? 'selected' : ''}`}
+              className="energy-cell text-left py-8 px-5 bg-transparent cursor-pointer transition-colors duration-500"
+              style={{
+                borderRight: i < ENERGY_ORDER.length - 1 ? '1px solid var(--color-border)' : 'none',
+                borderBottom: '1px solid var(--color-border)',
+              }}
             >
-              <div className="battery-icon">
-                <div className="battery-fill" />
-              </div>
-              <span className="energy-card-label">{data.displayName}</span>
+              <span
+                className="font-mono text-[0.6rem] tracking-[0.15em] uppercase block mb-3"
+                style={{ color: isSelected ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+              >
+                {NUMERALS[i]}.
+              </span>
+              <span
+                className="font-serif text-[1.3rem] leading-tight block mb-3 tracking-[-0.005em]"
+                style={{
+                  color: isSelected ? 'var(--color-accent)' : 'var(--color-text-primary)',
+                  fontStyle: isSelected ? 'italic' : 'normal',
+                  fontWeight: isSelected ? 500 : 400,
+                }}
+              >
+                {data.displayName}
+              </span>
+              <span
+                className="font-mono text-[0.78rem] tracking-[0.08em] block"
+                style={{ color: isSelected ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
+              >
+                {METERS[level]}
+              </span>
             </button>
           );
         })}
       </div>
+
+      <style>{`
+        .energy-cell:hover {
+          background: var(--color-bg-secondary);
+        }
+      `}</style>
     </div>
   );
 }

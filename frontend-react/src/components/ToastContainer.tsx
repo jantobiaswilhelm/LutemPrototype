@@ -1,10 +1,16 @@
-import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useToastStore, type ToastType } from '@/stores/toastStore';
 
-const icons: Record<ToastType, React.ReactNode> = {
-  success: <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />,
-  error: <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />,
-  info: <Info className="w-5 h-5 text-[var(--color-accent)] flex-shrink-0" />,
+const EYEBROW: Record<ToastType, string> = {
+  success: 'Noted',
+  error:   'Notice',
+  info:    'For your attention',
+};
+
+const DOT_COLOR: Record<ToastType, string> = {
+  success: 'var(--color-accent)',
+  error:   'var(--color-error)',
+  info:    'var(--color-accent)',
 };
 
 export function ToastContainer() {
@@ -15,27 +21,62 @@ export function ToastContainer() {
   return (
     <div
       aria-live="polite"
-      className="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 max-w-sm"
+      className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 max-w-sm"
     >
       {toasts.map((toast) => (
         <div
           key={toast.id}
           role="status"
-          className="animate-slideUp flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)] shadow-lg backdrop-blur-md"
+          className="toast-enter relative flex items-start gap-3 px-5 py-4"
+          style={{
+            background: 'var(--color-bg-primary)',
+            border: '1px solid var(--color-border-strong)',
+            borderRadius: 0,
+          }}
         >
-          {icons[toast.type]}
-          <span className="text-sm text-[var(--color-text-primary)] flex-1">
-            {toast.message}
-          </span>
+          <span
+            aria-hidden="true"
+            className="mt-[0.45rem] w-1.5 h-1.5 rounded-full shrink-0"
+            style={{ background: DOT_COLOR[toast.type] }}
+          />
+          <div className="flex-1 min-w-0">
+            <div
+              className="font-mono text-[0.6rem] tracking-[0.28em] uppercase mb-1"
+              style={{ color: toast.type === 'error' ? 'var(--color-error)' : 'var(--color-text-muted)' }}
+            >
+              {EYEBROW[toast.type]}
+            </div>
+            <div
+              className="font-serif text-[0.95rem] leading-snug"
+              style={{ color: 'var(--color-text-primary)' }}
+            >
+              {toast.message}
+            </div>
+          </div>
           <button
             onClick={() => removeToast(toast.id)}
-            className="p-1 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+            className="shrink-0 p-1 transition-colors"
+            style={{ color: 'var(--color-text-muted)', background: 'transparent', border: 'none', cursor: 'pointer' }}
             aria-label="Dismiss notification"
+            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--color-text-primary)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--color-text-muted)'; }}
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       ))}
+      <style>{`
+        .toast-enter {
+          animation: toast-in 520ms cubic-bezier(.22,.61,.36,1) both;
+        }
+        @keyframes toast-in {
+          from { opacity: 0; transform: translateY(0.75rem); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .toast-enter { animation: none; }
+        }
+      `}</style>
     </div>
   );
 }
