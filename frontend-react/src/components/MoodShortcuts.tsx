@@ -77,7 +77,6 @@ export function MoodShortcuts({ orientation = 'horizontal' }: MoodShortcutsProps
         {MOOD_SHORTCUTS.map((s, i) => {
           const isLoading = loadingId === s.id;
           const disabled = loadingId !== null;
-          const isLast = i === MOOD_SHORTCUTS.length - 1;
 
           return (
             <button
