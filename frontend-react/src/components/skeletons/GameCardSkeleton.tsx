@@ -1,6 +1,6 @@
 export function GameCardSkeleton() {
   return (
-    <div className="rounded-xl overflow-hidden bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
+    <div style={{ border: '1px solid var(--color-border)', background: 'var(--color-bg-primary)' }}>
       <div className="aspect-[460/215] skeleton" />
       <div className="p-3 space-y-2">
         <div className="h-4 w-3/4 skeleton" />
@@ -12,8 +12,11 @@ export function GameCardSkeleton() {
 
 export function GameRowSkeleton() {
   return (
-    <div className="flex items-center gap-4 p-3 rounded-xl bg-[var(--color-bg-secondary)] border border-[var(--color-border)]">
-      <div className="w-20 h-10 rounded-lg skeleton flex-shrink-0" />
+    <div
+      className="flex items-center gap-4 p-3"
+      style={{ border: '1px solid var(--color-border)', background: 'var(--color-bg-primary)' }}
+    >
+      <div className="w-20 h-10 skeleton flex-shrink-0" />
       <div className="flex-1 space-y-2">
         <div className="h-4 w-2/3 skeleton" />
         <div className="h-3 w-1/3 skeleton" />

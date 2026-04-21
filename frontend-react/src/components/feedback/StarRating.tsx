@@ -1,4 +1,3 @@
-import { Star } from 'lucide-react';
 import { useState } from 'react';
 
 interface StarRatingProps {
@@ -8,10 +7,11 @@ interface StarRatingProps {
   readonly?: boolean;
 }
 
+// Typographic dot sizes — map legacy size prop onto a serif dot scale.
 const sizeMap = {
-  sm: 'w-5 h-5',      // Slightly larger for better touch targets
-  md: 'w-7 h-7',
-  lg: 'w-9 h-9',
+  sm: 'text-[0.9rem] tracking-[0.32em]',
+  md: 'text-[1.15rem] tracking-[0.36em]',
+  lg: 'text-[1.5rem] tracking-[0.4em]',
 };
 
 export function StarRating({
@@ -29,35 +29,31 @@ export function StarRating({
     <div
       role="group"
       aria-label={readonly ? `Rating: ${value} out of 5 stars` : 'Rate this session'}
-      className="flex gap-1"
+      className={`star-rating inline-flex items-baseline font-serif leading-none ${sizeClass}`}
       onMouseLeave={() => !readonly && setHoverValue(null)}
     >
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          disabled={readonly}
-          onClick={() => onChange?.(star)}
-          onMouseEnter={() => !readonly && setHoverValue(star)}
-          className={`
-            transition-colors
-            ${readonly ? 'cursor-default' : 'cursor-pointer hover:scale-110'}
-            disabled:opacity-100
-          `}
-          aria-label={`${star} out of 5 stars`}
-        >
-          <Star
-            className={`
-              ${sizeClass}
-              transition-colors
-              ${star <= displayValue
-                ? 'fill-[var(--color-accent)] text-[var(--color-accent)]'
-                : 'fill-transparent text-[var(--color-text-muted)]'
-              }
-            `}
-          />
-        </button>
-      ))}
+      {[1, 2, 3, 4, 5].map((star) => {
+        const filled = star <= displayValue;
+        return (
+          <button
+            key={star}
+            type="button"
+            disabled={readonly}
+            onClick={() => onChange?.(star)}
+            onMouseEnter={() => !readonly && setHoverValue(star)}
+            onFocus={() => !readonly && setHoverValue(star)}
+            onBlur={() => !readonly && setHoverValue(null)}
+            className={`star-rating-dot bg-transparent border-0 p-0 leading-none transition-[color,opacity] duration-200 ${readonly ? 'cursor-default' : 'cursor-pointer'}`}
+            style={{
+              color: filled ? 'var(--color-accent)' : 'var(--color-text-muted)',
+              opacity: filled ? 1 : 0.45,
+            }}
+            aria-label={`${star} out of 5 stars`}
+          >
+            <span aria-hidden="true">{filled ? '●' : '○'}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

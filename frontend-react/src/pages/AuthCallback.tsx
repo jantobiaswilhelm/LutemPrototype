@@ -46,7 +46,7 @@ export default function AuthCallback() {
         await handleAuthCallback();
 
         setStatus('success');
-        setMessage('Login successful! Redirecting...');
+        setMessage('Login successful. Redirecting…');
 
         setTimeout(() => navigate('/', { replace: true }), 1000);
 
@@ -62,55 +62,79 @@ export default function AuthCallback() {
     processCallback();
   }, [searchParams, handleAuthCallback, setError, navigate]);
 
+  const eyebrow =
+    status === 'processing' ? '§ Connecting' :
+    status === 'success' ? '§ Welcome' :
+    '§ Something went wrong';
+
+  const heading =
+    status === 'processing' ? 'One moment.' :
+    status === 'success' ? 'You are in.' :
+    'We could not complete that.';
+
+  const markColor =
+    status === 'error' ? 'var(--color-error)' : 'var(--color-accent)';
+
   return (
-    <main className="content-area flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        {/* Status indicator */}
-        <div className="mb-6">
-          {status === 'processing' && (
-            <div
-              className="w-12 h-12 border-4 rounded-full animate-spin mx-auto"
-              style={{
-                borderColor: 'var(--color-border)',
-                borderTopColor: 'var(--color-accent)'
-              }}
+    <main className="content-area flex items-center justify-center min-h-screen px-6">
+      <div className="w-full max-w-[32rem] text-center" role="status" aria-live="polite">
+        {/* Eyebrow */}
+        <div
+          className="flex items-center justify-center gap-3 font-mono text-[0.7rem] tracking-[0.28em] uppercase mb-8"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          <span
+            className="inline-block w-6 h-px"
+            style={{ background: markColor }}
+            aria-hidden="true"
+          />
+          <span>{eyebrow}</span>
+          <span
+            className="inline-block w-6 h-px"
+            style={{ background: markColor }}
+            aria-hidden="true"
+          />
+        </div>
+
+        {/* Status mark */}
+        <div className="mb-6 flex items-center justify-center" aria-hidden="true">
+          {status === 'processing' ? (
+            <span
+              className="inline-block w-2.5 h-2.5 rounded-full authcb-pulse"
+              style={{ background: markColor }}
             />
-          )}
-          {status === 'success' && (
-            <div
-              className="w-12 h-12 rounded-full mx-auto flex items-center justify-center"
-              style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)' }}
-            >
-              <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-          )}
-          {status === 'error' && (
-            <div
-              className="w-12 h-12 rounded-full mx-auto flex items-center justify-center"
-              style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)' }}
-            >
-              <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
+          ) : (
+            <span
+              className="inline-block w-2.5 h-2.5 rounded-full"
+              style={{ background: markColor }}
+            />
           )}
         </div>
 
-        {/* Message */}
+        {/* Heading */}
         <h1
-          className="text-xl font-semibold mb-2"
+          className="font-serif italic text-[clamp(1.4rem,2.6vw,1.9rem)] leading-[1.1] tracking-[-0.01em] mb-3"
           style={{ color: 'var(--color-text-primary)' }}
         >
-          {status === 'processing' && 'Completing Login'}
-          {status === 'success' && 'Welcome!'}
-          {status === 'error' && 'Login Failed'}
+          {heading}
         </h1>
-        <p style={{ color: 'var(--color-text-secondary)' }}>
+
+        {/* Message */}
+        <p
+          className="font-serif italic text-[1rem] leading-snug"
+          style={{ color: status === 'error' ? 'var(--color-error)' : 'var(--color-text-secondary)' }}
+        >
           {message}
         </p>
       </div>
+
+      <style>{`
+        @keyframes authcb-pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.35; }
+        }
+        .authcb-pulse { animation: authcb-pulse 1.4s ease-in-out infinite; }
+      `}</style>
     </main>
   );
 }
