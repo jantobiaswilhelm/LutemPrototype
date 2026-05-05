@@ -2,6 +2,7 @@ package com.lutem.mvp.service;
 
 import com.lutem.mvp.model.Game;
 import com.lutem.mvp.model.GameSession;
+import com.lutem.mvp.model.User;
 import com.lutem.mvp.repository.GameSessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +21,17 @@ public class GameSessionService {
     }
     
     /**
-     * Record a recommendation given to user
+     * Record a recommendation given to user. Pass {@code user} to bind the
+     * session to the authenticated user; pass {@code null} for anonymous calls.
      */
     @Transactional
     public GameSession recordRecommendation(
-        Game game, 
-        Integer availableMinutes, 
-        String desiredMood
+        Game game,
+        Integer availableMinutes,
+        String desiredMood,
+        User user
     ) {
-        GameSession session = new GameSession(game, availableMinutes, desiredMood);
+        GameSession session = new GameSession(game, availableMinutes, desiredMood, user);
         return repository.save(session);
     }
     
@@ -94,24 +97,17 @@ public class GameSessionService {
     /**
      * Create a session when user selects an alternative game.
      * Immediately marks as started since user is about to launch it.
+     * Pass {@code user} to bind ownership; {@code null} for anonymous.
      */
     @Transactional
-    public GameSession createAlternativeSession(Game game) {
-        GameSession session = new GameSession(game, null, "alternative_selection");
+    public GameSession createAlternativeSession(Game game, User user) {
+        GameSession session = new GameSession(game, null, "alternative_selection", user);
         session.setStartedAt(LocalDateTime.now());
         return repository.save(session);
     }
 
     /**
-     * Get session history (most recent first)
-     * Returns all sessions that were actually started by the user
-     */
-    public List<GameSession> getSessionHistory(int limit) {
-        return repository.findStartedSessionsOrderByStartedAtDesc(limit);
-    }
-
-    /**
-     * Get session history for a specific user
+     * Get session history for a specific user, most recent first.
      */
     public List<GameSession> getSessionHistoryForUser(String legacyUserId, int limit) {
         return repository.findStartedSessionsForUserOrderByStartedAtDesc(legacyUserId, limit);

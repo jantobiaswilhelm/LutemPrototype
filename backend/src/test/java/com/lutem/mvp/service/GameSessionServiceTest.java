@@ -52,7 +52,7 @@ class GameSessionServiceTest {
 
     @Test
     void recordRecommendation_ShouldCreateSession() {
-        GameSession session = sessionService.recordRecommendation(testGame, 30, "unwind");
+        GameSession session = sessionService.recordRecommendation(testGame, 30, "unwind", null);
 
         assertNotNull(session);
         assertNotNull(session.getId());
@@ -64,7 +64,7 @@ class GameSessionServiceTest {
 
     @Test
     void startSession_ShouldUpdateStartedAt() {
-        GameSession session = sessionService.recordRecommendation(testGame, 30, "unwind");
+        GameSession session = sessionService.recordRecommendation(testGame, 30, "unwind", null);
 
         Optional<GameSession> started = sessionService.startSession(session.getId());
 
@@ -80,7 +80,7 @@ class GameSessionServiceTest {
 
     @Test
     void recordFeedback_ShouldUpdateSatisfaction() {
-        GameSession session = sessionService.recordRecommendation(testGame, 30, "unwind");
+        GameSession session = sessionService.recordRecommendation(testGame, 30, "unwind", null);
         sessionService.startSession(session.getId());
 
         Optional<GameSession> updated = sessionService.recordFeedback(session.getId(), 5);
@@ -92,7 +92,7 @@ class GameSessionServiceTest {
 
     @Test
     void endSession_ShouldUpdateEndedAt() {
-        GameSession session = sessionService.recordRecommendation(testGame, 30, "unwind");
+        GameSession session = sessionService.recordRecommendation(testGame, 30, "unwind", null);
         sessionService.startSession(session.getId());
 
         Optional<GameSession> ended = sessionService.endSession(session.getId());
@@ -104,13 +104,13 @@ class GameSessionServiceTest {
     @Test
     void getAverageSatisfaction_ShouldCalculateCorrectly() {
         // Create multiple sessions with feedback
-        GameSession session1 = sessionService.recordRecommendation(testGame, 30, "unwind");
+        GameSession session1 = sessionService.recordRecommendation(testGame, 30, "unwind", null);
         sessionService.recordFeedback(session1.getId(), 4);
 
-        GameSession session2 = sessionService.recordRecommendation(testGame, 30, "unwind");
+        GameSession session2 = sessionService.recordRecommendation(testGame, 30, "unwind", null);
         sessionService.recordFeedback(session2.getId(), 5);
 
-        GameSession session3 = sessionService.recordRecommendation(testGame, 30, "unwind");
+        GameSession session3 = sessionService.recordRecommendation(testGame, 30, "unwind", null);
         sessionService.recordFeedback(session3.getId(), 3);
 
         Double average = sessionService.getAverageSatisfaction(testGame.getId());
@@ -127,7 +127,7 @@ class GameSessionServiceTest {
 
     @Test
     void createAlternativeSession_ShouldCreateAndStart() {
-        GameSession session = sessionService.createAlternativeSession(testGame);
+        GameSession session = sessionService.createAlternativeSession(testGame, null);
 
         assertNotNull(session);
         assertNotNull(session.getId());

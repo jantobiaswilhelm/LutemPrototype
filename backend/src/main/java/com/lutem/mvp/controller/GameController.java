@@ -106,7 +106,11 @@ public class GameController {
     // POST /recommendations with multi-dimensional scoring
     @PostMapping("/recommendations")
     @Transactional
-    public RecommendationResponse getRecommendation(@Valid @RequestBody RecommendationRequest request) {
+    public RecommendationResponse getRecommendation(
+            @Valid @RequestBody RecommendationRequest request,
+            HttpServletRequest httpRequest) {
+        // Public path: getCurrentUser is null when no JWT is present.
+        User authenticatedUser = getCurrentUser(httpRequest);
         // Backend validation
         List<String> validationErrors = validateRequest(request);
         if (!validationErrors.isEmpty()) {
@@ -188,7 +192,8 @@ public class GameController {
         GameSession session = sessionService.recordRecommendation(
             topRecommendation,
             request.getAvailableMinutes(),
-            request.getDesiredMood() // Uses helper method from request
+            request.getDesiredMood(), // Uses helper method from request
+            authenticatedUser
         );
         
         // Build response with sessionId
@@ -478,26 +483,36 @@ public class GameController {
     @GetMapping("/sessions/history")
     @Transactional(readOnly = true)
     public List<SessionHistoryDTO> getSessionHistory(
-            @RequestParam(defaultValue = "20") int limit) {
+            @RequestParam(defaultValue = "20") int limit,
+            HttpServletRequest httpRequest) {
 
-        logger.debug("GET /sessions/history called (limit: {})", limit);
+        User currentUser = getCurrentUser(httpRequest);
+        if (currentUser == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.UNAUTHORIZED);
+        }
+
+        logger.debug("GET /sessions/history called by user {} (limit: {})", currentUser.getId(), limit);
 
         // Cap at 100 to prevent excessive data transfer
         int safeLimit = Math.min(limit, 100);
 
-        List<GameSession> sessions = sessionService.getSessionHistory(safeLimit);
+        List<GameSession> sessions = sessionService.getSessionHistoryForUser(
+            String.valueOf(currentUser.getId()), safeLimit);
 
         List<SessionHistoryDTO> history = sessions.stream()
             .map(SessionHistoryDTO::new)
             .collect(Collectors.toList());
 
-        logger.info("Returning {} session history items", history.size());
+        logger.info("Returning {} session history items for user {}", history.size(), currentUser.getId());
         return history;
     }
 
     // POST /sessions/alternative/{gameId} - Creates a new session when user picks an alternative
     @PostMapping("/sessions/alternative/{gameId}")
-    public Map<String, Object> createAlternativeSession(@PathVariable("gameId") Long gameId) {
+    public Map<String, Object> createAlternativeSession(
+            @PathVariable("gameId") Long gameId,
+            HttpServletRequest httpRequest) {
         Map<String, Object> response = new HashMap<>();
 
         Optional<Game> gameOpt = gameRepository.findById(gameId);
@@ -507,7 +522,7 @@ public class GameController {
             return response;
         }
 
-        GameSession session = sessionService.createAlternativeSession(gameOpt.get());
+        GameSession session = sessionService.createAlternativeSession(gameOpt.get(), getCurrentUser(httpRequest));
         logger.info("Alternative session created - Game: {}, Session ID: {}",
             gameOpt.get().getName(), session.getId());
 

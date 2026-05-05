@@ -31,45 +31,42 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
     
     @Override
-    protected void doFilterInternal(HttpServletRequest request, 
-                                    HttpServletResponse response, 
-                                    FilterChain filterChain) 
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
-        
+
         // Handle CORS preflight
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         String path = request.getRequestURI();
-        
-        // Skip auth for public paths
-        if (!requiresAuth(path)) {
+        boolean authRequired = requiresAuth(path);
+
+        // Try to get token from header or cookie. Always attempt validation —
+        // even on public paths — so endpoints like /recommendations can identify
+        // a logged-in caller when one is present, without forcing auth.
+        String token = extractToken(request);
+        Claims claims = (token != null) ? jwtService.validateToken(token) : null;
+
+        if (claims == null) {
+            if (authRequired) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write(token == null
+                    ? "{\"error\": \"Authentication required\"}"
+                    : "{\"error\": \"Invalid or expired token\"}");
+                return;
+            }
+            // Public path with no/invalid token — proceed unauthenticated.
             filterChain.doFilter(request, response);
             return;
         }
-        
-        // Try to get token from header or cookie
-        String token = extractToken(request);
-        
-        if (token == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Authentication required\"}");
-            return;
-        }
-        
-        Claims claims = jwtService.validateToken(token);
-        
-        if (claims == null) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.getWriter().write("{\"error\": \"Invalid or expired token\"}");
-            return;
-        }
-        
-        // Add user info to request attributes
+
+        // Populate user info on the request — available to controllers whether
+        // the path required auth or not.
         request.setAttribute("userId", claims.get("userId", Long.class));
         request.setAttribute("authProvider", claims.get("authProvider", String.class));
         request.setAttribute("steamId", claims.get("steamId", String.class));
