@@ -23,8 +23,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * - Configurable requests-per-minute limit
  * - Scheduled cleanup to prevent memory leaks
  * - Max tracked IPs cap to bound memory usage
- * - X-Forwarded-For / X-Real-IP proxy support
  * - Rate limit headers on responses
+ *
+ * Trusts the real client IP from {@link HttpServletRequest#getRemoteAddr()},
+ * which is rewritten by Tomcat's RemoteIpValve from X-Forwarded-For when the
+ * connecting peer is in the configured internal-proxies range
+ * ({@code server.forward-headers-strategy=NATIVE} in application.properties).
+ * External clients cannot spoof their IP with forged headers.
  *
  * Note: For multi-instance deployment, replace with Redis-backed rate limiting.
  */
@@ -120,18 +125,12 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * Extract client IP, handling proxies.
+     * Extract client IP. Tomcat's RemoteIpValve has already validated the
+     * X-Forwarded-For chain against trusted internal proxies and rewritten
+     * getRemoteAddr() to the true client IP, so we trust it directly.
+     * Bypassing the valve to read raw headers would re-open the spoofing hole.
      */
     private String getClientIp(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            // Take the first IP in the chain (original client)
-            return xForwardedFor.split(",")[0].trim();
-        }
-        String xRealIp = request.getHeader("X-Real-IP");
-        if (xRealIp != null && !xRealIp.isEmpty()) {
-            return xRealIp;
-        }
         return request.getRemoteAddr();
     }
 
