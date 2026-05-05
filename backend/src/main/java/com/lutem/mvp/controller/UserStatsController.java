@@ -3,9 +3,11 @@ package com.lutem.mvp.controller;
 import com.lutem.mvp.dto.SatisfactionStats;
 import com.lutem.mvp.dto.WeeklySummary;
 import com.lutem.mvp.service.UserSatisfactionService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +38,12 @@ public class UserStatsController {
      * @return Comprehensive satisfaction statistics
      */
     @GetMapping("/{uid}/satisfaction-stats")
-    public ResponseEntity<SatisfactionStats> getSatisfactionStats(@PathVariable String uid) {
+    public ResponseEntity<SatisfactionStats> getSatisfactionStats(
+            @PathVariable String uid,
+            HttpServletRequest request) {
+        if (!isOwner(request, uid)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             SatisfactionStats stats = satisfactionService.getSatisfactionStats(uid);
             return ResponseEntity.ok(stats);
@@ -54,7 +61,12 @@ public class UserStatsController {
      * @return Weekly activity summary
      */
     @GetMapping("/{uid}/summary/weekly")
-    public ResponseEntity<WeeklySummary> getWeeklySummary(@PathVariable String uid) {
+    public ResponseEntity<WeeklySummary> getWeeklySummary(
+            @PathVariable String uid,
+            HttpServletRequest request) {
+        if (!isOwner(request, uid)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         try {
             WeeklySummary summary = satisfactionService.getWeeklySummary(uid);
             return ResponseEntity.ok(summary);
@@ -62,5 +74,10 @@ public class UserStatsController {
             logger.error("Error fetching weekly summary for {}: {}", uid, e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    private boolean isOwner(HttpServletRequest request, String uid) {
+        String authenticatedUid = (String) request.getAttribute("firebaseUid");
+        return authenticatedUid != null && authenticatedUid.equals(uid);
     }
 }
